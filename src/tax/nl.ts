@@ -4,7 +4,7 @@
  * Data sourced from Belastingdienst official tables.
  * TODO: Verify and extend with user-provided spreadsheet data for each year.
  */
-import type { TaxInputs, NLTaxResult, BracketLine } from './types';
+import type { TaxInputs, NLTaxResult, BracketLine, TaxYear } from './types';
 
 interface Bracket {
   from: number;
@@ -36,7 +36,7 @@ interface YearParams {
  *   2025 AHK: https://www.belastingdienst.nl (tabel-algemene-heffingskorting-2025)
  *   2025 AK:  https://www.belastingdienst.nl (tabel-arbeidskorting-2025)
  */
-const PARAMS: Record<number, { under: YearParams; over: YearParams }> = {
+const PARAMS: Record<TaxYear, { under: YearParams; over: YearParams }> = {
   2024: {
     // TODO: Replace with exact 2024 values from user spreadsheets
     under: {

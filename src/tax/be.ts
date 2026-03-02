@@ -15,7 +15,7 @@
  * TODO: Refine regional supplements and special social security contribution
  *       once user spreadsheets are available.
  */
-import type { TaxInputs, BETaxResult } from './types';
+import type { TaxInputs, BETaxResult, TaxYear } from './types';
 
 interface BEBracket {
   from: number;
@@ -32,7 +32,7 @@ interface BEYearParams {
   forfaitMax: number;
 }
 
-const BE_PARAMS: Record<number, BEYearParams> = {
+const BE_PARAMS: Record<TaxYear, BEYearParams> = {
   2024: {
     // TODO: Verify 2024 values with user spreadsheets
     brackets: [
@@ -99,8 +99,8 @@ function belastingvrijeSomReduction(inputs: TaxInputs, p: BEYearParams): number 
     n === 0
       ? 0
       : n <= 4
-        ? p.childExtraAmounts[n]
-        : p.childExtraAmounts[4] + (n - 4) * p.extraPerChildAbove4;
+        ? (p.childExtraAmounts[n] ?? 0)
+        : (p.childExtraAmounts[4] ?? 0) + (n - 4) * p.extraPerChildAbove4;
 
   return (baseAmount + childAmount) * 0.25;
 }
