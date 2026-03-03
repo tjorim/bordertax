@@ -75,6 +75,7 @@ function loadInitialInputs(): TaxInputs {
 
 export default function App() {
   const [inputs, setInputs] = useState<TaxInputs>(loadInitialInputs);
+  const nextLangLabel = getLocale() === 'en' ? m.lang_nl() : m.lang_en();
 
   const result = useMemo(() => calculate(inputs), [inputs]);
   const comparisonResults = useMemo(
@@ -105,9 +106,9 @@ export default function App() {
             size="sm"
             className="ms-3"
             onClick={() => setLocale(getLocale() === 'en' ? 'nl' : 'en')}
-            aria-label={getLocale() === 'en' ? m.lang_nl() : m.lang_en()}
+            aria-label={nextLangLabel}
           >
-            {getLocale() === 'en' ? m.lang_nl() : m.lang_en()}
+            {nextLangLabel}
           </Button>
         </Container>
       </Navbar>
