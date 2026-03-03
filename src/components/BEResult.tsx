@@ -1,6 +1,7 @@
 import { Alert, Table } from 'react-bootstrap';
 import type { BETaxResult, TaxInputs } from '../tax/types';
 import * as m from '../paraglide/messages.js';
+import { getLocale } from '../paraglide/runtime.js';
 
 interface Props {
   result: BETaxResult | null;
@@ -8,7 +9,7 @@ interface Props {
 }
 
 const fmt = (n: number) =>
-  n.toLocaleString('nl-NL', { style: 'currency', currency: 'EUR', maximumFractionDigits: 2 });
+  n.toLocaleString(getLocale(), { style: 'currency', currency: 'EUR', maximumFractionDigits: 2 });
 const pct = (n: number) => `${(n * 100).toFixed(2)}%`;
 
 export default function BEResult({ result, residentCountry }: Props) {
@@ -115,7 +116,7 @@ export default function BEResult({ result, residentCountry }: Props) {
 
       <Alert variant="warning" className="mt-3 small mb-0">
         <i className="bi bi-exclamation-triangle me-2" />
-        <strong>{m.be_warning_note()}:</strong> {m.be_warning_text()}
+        <strong>{m.be_warning_note()}</strong> {m.be_warning_text()}
       </Alert>
     </div>
   );

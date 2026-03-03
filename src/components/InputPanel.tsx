@@ -51,7 +51,7 @@ export default function InputPanel({ inputs, onChange }: Props) {
             <Col xs={12} sm={6}>
               <Form.Label>
                 {m.input_civil_status()}{' '}
-                <Badge bg="secondary" className="ms-1 fw-normal" aria-label={`Note: ${m.input_civil_status_not_used()}`}>
+                <Badge bg="secondary" className="ms-1 fw-normal" aria-label={m.input_civil_status_not_used()}>
                   {m.input_civil_status_not_used()}
                 </Badge>
               </Form.Label>
@@ -89,7 +89,7 @@ export default function InputPanel({ inputs, onChange }: Props) {
                 <Col xs={12} sm={6}>
                   <Form.Label>
                     {m.input_belgian_region()}{' '}
-                    <Badge bg="secondary" className="ms-1 fw-normal" aria-label={`Note: ${m.input_belgian_region_not_used()}`}>
+                    <Badge bg="secondary" className="ms-1 fw-normal" aria-label={m.input_belgian_region_not_used()}>
                       {m.input_belgian_region_not_used()}
                     </Badge>
                   </Form.Label>

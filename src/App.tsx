@@ -105,7 +105,7 @@ export default function App() {
             size="sm"
             className="ms-3"
             onClick={() => setLocale(getLocale() === 'en' ? 'nl' : 'en')}
-            aria-label="Switch language"
+            aria-label={getLocale() === 'en' ? m.lang_nl() : m.lang_en()}
           >
             {getLocale() === 'en' ? m.lang_nl() : m.lang_en()}
           </Button>
