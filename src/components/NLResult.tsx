@@ -1,13 +1,14 @@
 import { Table } from 'react-bootstrap';
 import type { NLTaxResult } from '../tax/types';
 import * as m from '../paraglide/messages.js';
+import { getLocale } from '../paraglide/runtime.js';
 
 interface Props {
   result: NLTaxResult;
 }
 
 const fmt = (n: number) =>
-  n.toLocaleString('nl-NL', { style: 'currency', currency: 'EUR', maximumFractionDigits: 2 });
+  n.toLocaleString(getLocale(), { style: 'currency', currency: 'EUR', maximumFractionDigits: 2 });
 const pct = (n: number) => `${(n * 100).toFixed(2)}%`;
 
 export default function NLResult({ result }: Props) {

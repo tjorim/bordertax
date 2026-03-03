@@ -2,6 +2,7 @@ import { Badge, Table } from 'react-bootstrap';
 import { VALID_YEARS } from '../tax/constants';
 import type { TaxResult, TaxYear } from '../tax/types';
 import * as m from '../paraglide/messages.js';
+import { getLocale } from '../paraglide/runtime.js';
 
 interface ComparisonRow {
   year: (typeof VALID_YEARS)[number];
@@ -14,7 +15,7 @@ interface Props {
 }
 
 const fmt = (n: number) =>
-  n.toLocaleString('nl-NL', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 });
+  n.toLocaleString(getLocale(), { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 });
 
 const pct = (n: number) => `${(n * 100).toFixed(1)}%`;
 
