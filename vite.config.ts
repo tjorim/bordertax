@@ -1,9 +1,17 @@
 import reactPlugin from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
+import { paraglideVitePlugin } from '@inlang/paraglide-js';
 
 export default defineConfig({
   base: '/bordertax/',
-  plugins: [reactPlugin()],
+  plugins: [
+    reactPlugin(),
+    paraglideVitePlugin({
+      project: './project.inlang',
+      outdir: './src/paraglide',
+      strategy: ['cookie', 'baseLocale'],
+    }),
+  ],
   css: {
     transformer: 'lightningcss',
   },
