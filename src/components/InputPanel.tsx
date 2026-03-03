@@ -1,6 +1,7 @@
 import { Accordion, Badge, Col, Form, Row } from 'react-bootstrap';
 import { VALID_YEARS } from '../tax/constants';
 import type { TaxInputs } from '../tax/types';
+import * as m from '../paraglide/messages.js';
 
 interface Props {
   inputs: TaxInputs;
@@ -18,12 +19,12 @@ export default function InputPanel({ inputs, onChange }: Props) {
       <Accordion.Item eventKey="0">
         <Accordion.Header>
           <i className="bi bi-person-fill me-2" />
-          Personal situation
+          {m.input_personal_situation()}
         </Accordion.Header>
         <Accordion.Body>
           <Row className="g-3">
             <Col xs={12} sm={6}>
-              <Form.Label>Tax year</Form.Label>
+              <Form.Label>{m.input_tax_year()}</Form.Label>
               <Form.Select
                 value={inputs.year}
                 onChange={(e) => set('year', Number(e.target.value) as TaxInputs['year'])}
@@ -37,34 +38,34 @@ export default function InputPanel({ inputs, onChange }: Props) {
             </Col>
 
             <Col xs={12} sm={6}>
-              <Form.Label>Country of residence</Form.Label>
+              <Form.Label>{m.input_resident_country()}</Form.Label>
               <Form.Select
                 value={inputs.residentCountry}
                 onChange={(e) => set('residentCountry', e.target.value as TaxInputs['residentCountry'])}
               >
-                <option value="BE">🇧🇪 Belgium</option>
-                <option value="NL">🇳🇱 Netherlands</option>
+                <option value="BE">🇧🇪 {m.input_resident_country_be()}</option>
+                <option value="NL">🇳🇱 {m.input_resident_country_nl()}</option>
               </Form.Select>
             </Col>
 
             <Col xs={12} sm={6}>
               <Form.Label>
-                Civil status{' '}
-                <Badge bg="secondary" className="ms-1 fw-normal" aria-label="Note: this field is not yet used in calculations">
-                  not yet used in calculations
+                {m.input_civil_status()}{' '}
+                <Badge bg="secondary" className="ms-1 fw-normal" aria-label={m.input_civil_status_not_used()}>
+                  {m.input_civil_status_not_used()}
                 </Badge>
               </Form.Label>
               <Form.Select
                 value={inputs.civilStatus}
                 onChange={(e) => set('civilStatus', e.target.value as TaxInputs['civilStatus'])}
               >
-                <option value="single">Single</option>
-                <option value="married">Married / registered partner</option>
+                <option value="single">{m.input_civil_status_single()}</option>
+                <option value="married">{m.input_civil_status_married()}</option>
               </Form.Select>
             </Col>
 
             <Col xs={12} sm={6}>
-              <Form.Label>Dependents (children)</Form.Label>
+              <Form.Label>{m.input_dependents()}</Form.Label>
               <Form.Control
                 type="number"
                 min={0}
@@ -77,7 +78,7 @@ export default function InputPanel({ inputs, onChange }: Props) {
             <Col xs={12}>
               <Form.Check
                 id="aow-age"
-                label="I am below Dutch AOW retirement age"
+                label={m.input_below_aow_age()}
                 checked={inputs.belowAOWAge}
                 onChange={(e) => set('belowAOWAge', e.target.checked)}
               />
@@ -87,24 +88,24 @@ export default function InputPanel({ inputs, onChange }: Props) {
               <>
                 <Col xs={12} sm={6}>
                   <Form.Label>
-                    Belgian region{' '}
-                    <Badge bg="secondary" className="ms-1 fw-normal" aria-label="Note: this field is not yet used in calculations">
-                      not yet used in calculations
+                    {m.input_belgian_region()}{' '}
+                    <Badge bg="secondary" className="ms-1 fw-normal" aria-label={m.input_belgian_region_not_used()}>
+                      {m.input_belgian_region_not_used()}
                     </Badge>
                   </Form.Label>
                   <Form.Select
                     value={inputs.belgianRegion}
                     onChange={(e) => set('belgianRegion', e.target.value as TaxInputs['belgianRegion'])}
                   >
-                    <option value="flemish">Flemish Region</option>
-                    <option value="walloon">Walloon Region</option>
-                    <option value="brussels">Brussels-Capital Region</option>
+                    <option value="flemish">{m.input_belgian_region_flemish()}</option>
+                    <option value="walloon">{m.input_belgian_region_walloon()}</option>
+                    <option value="brussels">{m.input_belgian_region_brussels()}</option>
                   </Form.Select>
                 </Col>
 
                 <Col xs={12} sm={6}>
                   <Form.Label>
-                    Municipal tax{' '}
+                    {m.input_municipal_tax()}{' '}
                     <Badge bg="secondary" className="ms-1">
                       %
                     </Badge>
@@ -117,7 +118,7 @@ export default function InputPanel({ inputs, onChange }: Props) {
                     value={inputs.communalTaxRate}
                     onChange={(e) => set('communalTaxRate', Number(e.target.value))}
                   />
-                  <Form.Text className="text-muted">Check your municipality (average ±7%)</Form.Text>
+                  <Form.Text className="text-muted">{m.input_municipal_tax_hint()}</Form.Text>
                 </Col>
               </>
             )}
@@ -129,12 +130,12 @@ export default function InputPanel({ inputs, onChange }: Props) {
       <Accordion.Item eventKey="1">
         <Accordion.Header>
           <i className="bi bi-cash-coin me-2" />
-          Income
+          {m.input_income()}
         </Accordion.Header>
         <Accordion.Body>
           <Row className="g-3">
             <Col xs={12}>
-              <Form.Label>Gross annual salary (€)</Form.Label>
+              <Form.Label>{m.input_gross_salary()}</Form.Label>
               <Form.Control
                 type="number"
                 min={0}
@@ -143,13 +144,13 @@ export default function InputPanel({ inputs, onChange }: Props) {
                 onChange={(e) => set('grossSalary', Number(e.target.value))}
               />
               <Form.Text className="text-muted">
-                Full gross salary as listed on your annual statement / payslip
+                {m.input_gross_salary_hint()}
               </Form.Text>
             </Col>
 
             <Col xs={12} sm={6}>
               <Form.Label>
-                Workdays in 🇳🇱 NL
+                {m.input_workdays_nl()}
               </Form.Label>
               <Form.Control
                 type="number"
@@ -161,7 +162,7 @@ export default function InputPanel({ inputs, onChange }: Props) {
 
             <Col xs={12} sm={6}>
               <Form.Label>
-                Home-working days in 🇧🇪 BE
+                {m.input_workdays_be()}
               </Form.Label>
               <Form.Control
                 type="number"
@@ -174,12 +175,12 @@ export default function InputPanel({ inputs, onChange }: Props) {
             <Col xs={12}>
               <Form.Check
                 id="thirty-ruling"
-                label="30% ruling applies (NL)"
+                label={m.input_thirty_percent_ruling()}
                 checked={inputs.thirtyPercentRuling}
                 onChange={(e) => set('thirtyPercentRuling', e.target.checked)}
               />
               <Form.Text className="text-muted">
-                Expat rule: 30% of salary is tax free
+                {m.input_thirty_percent_ruling_hint()}
               </Form.Text>
             </Col>
           </Row>

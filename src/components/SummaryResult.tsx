@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Alert, Button, Col, ProgressBar, Row, Stack, Table } from 'react-bootstrap';
 import type { TaxResult } from '../tax/types';
+import * as m from '../paraglide/messages.js';
+import { getLocale } from '../paraglide/runtime.js';
 
 interface Props {
   result: TaxResult;
@@ -10,7 +12,7 @@ interface Props {
 const DEFAULT_WORKDAYS = 220;
 
 const fmt = (n: number) =>
-  n.toLocaleString('nl-NL', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 });
+  n.toLocaleString(getLocale(), { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 });
 const pct = (n: number) => `${(n * 100).toFixed(1)}%`;
 
 export default function SummaryResult({ result, onResetInputs }: Props) {
@@ -38,13 +40,13 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
 
   async function copySummary() {
     const lines = [
-      `Border worker tax summary (${result.inputs.year})`,
-      `Gross income: ${fmt(grossIncome)}`,
-      `Dutch tax: ${fmt(nl.netTaxNL)}`,
-      `Belgian tax: ${fmt(be?.netTaxBE ?? 0)}`,
-      `Total tax: ${fmt(totalTax)}`,
-      `Net income: ${fmt(netIncome)}`,
-      `Effective total rate: ${pct(effectiveRateTotal)}`,
+      `${m.app_title()} (${result.inputs.year})`,
+      `${m.summary_gross_income()} ${fmt(grossIncome)}`,
+      `${m.summary_dutch_tax()} ${fmt(nl.netTaxNL)}`,
+      `${m.summary_belgian_tax()} ${fmt(be?.netTaxBE ?? 0)}`,
+      `${m.summary_total_tax()} ${fmt(totalTax)}`,
+      `${m.summary_net_income()} ${fmt(netIncome)}`,
+      `${m.summary_effective_rate_total()} ${pct(effectiveRateTotal)}`,
     ].join('\n');
 
     try {
@@ -60,59 +62,59 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
       <Stack direction="horizontal" gap={2} className="mb-3">
         <Button variant="outline-primary" size="sm" onClick={() => void copySummary()}>
           <i className="bi bi-clipboard me-1" />
-          Copy summary
+          {m.summary_copy()}
         </Button>
         <Button variant="outline-secondary" size="sm" onClick={onResetInputs}>
           <i className="bi bi-arrow-counterclockwise me-1" />
-          Reset defaults
+          {m.summary_reset()}
         </Button>
       </Stack>
 
       {copyStatus === 'success' && (
         <Alert variant="success" className="py-2">
-          Summary copied to clipboard.
+          {m.summary_copy_success()}
         </Alert>
       )}
       {copyStatus === 'error' && (
         <Alert variant="warning" className="py-2">
-          Copy failed. Please allow clipboard access in your browser.
+          {m.summary_copy_error()}
         </Alert>
       )}
 
-      <h6 className="text-muted mb-3">Net income summary</h6>
+      <h6 className="text-muted mb-3">{m.summary_title()}</h6>
 
       <Table bordered className="mb-4">
         <tbody>
           <tr>
-            <td>Gross annual salary</td>
+            <td>{m.summary_gross_income()}</td>
             <td className="text-end fw-semibold">{fmt(grossIncome)}</td>
           </tr>
           <tr>
-            <td>🇳🇱 Dutch tax</td>
+            <td>🇳🇱 {m.summary_dutch_tax()}</td>
             <td className="text-end text-danger">−{fmt(nl.netTaxNL)}</td>
           </tr>
           {be && be.netTaxBE > 0 && (
             <tr>
-              <td>🇧🇪 Belgian tax</td>
+              <td>🇧🇪 {m.summary_belgian_tax()}</td>
               <td className="text-end text-danger">−{fmt(be.netTaxBE)}</td>
             </tr>
           )}
           <tr className="table-secondary fw-semibold">
-            <td>Total tax</td>
+            <td>{m.summary_total_tax()}</td>
             <td className="text-end text-danger">−{fmt(totalTax)}</td>
           </tr>
           <tr className="table-success fw-bold fs-5">
-            <td>Net income</td>
+            <td>{m.summary_net_income()}</td>
             <td className="text-end">{fmt(netIncome)}</td>
           </tr>
           <tr>
-            <td>Effective rate (total)</td>
+            <td>{m.summary_effective_rate_total()}</td>
             <td className="text-end">{pct(effectiveRateTotal)}</td>
           </tr>
         </tbody>
       </Table>
 
-      <p className="fw-semibold small mb-2">Gross income allocation</p>
+      <p className="fw-semibold small mb-2">{m.summary_allocation()}</p>
       <ProgressBar className="mb-2" style={{ height: '1.5rem' }}>
         <ProgressBar variant="success" now={netPct} key={1} label={`Net ${pct(netPct / 100)}`} />
         <ProgressBar variant="danger" now={nlPct} key={2} label={`NL ${pct(nlPct / 100)}`} />
@@ -124,19 +126,19 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
       <Row className="mt-3 text-center g-3">
         <Col>
           <div className="border rounded p-3">
-            <div className="text-muted small">Net / month</div>
+            <div className="text-muted small">{m.summary_net_monthly()}</div>
             <div className="fs-5 fw-bold text-success">{fmt(netIncome / 12)}</div>
           </div>
         </Col>
         <Col>
           <div className="border rounded p-3">
-            <div className="text-muted small">Effective rate</div>
+            <div className="text-muted small">{m.summary_effective_rate()}</div>
             <div className="fs-5 fw-bold">{pct(effectiveRateTotal)}</div>
           </div>
         </Col>
         <Col>
           <div className="border rounded p-3">
-            <div className="text-muted small">Net / day</div>
+            <div className="text-muted small">{m.summary_net_daily()}</div>
             <div className="fs-5 fw-bold text-success">
               {fmt(netIncome / ((result.inputs.daysWorkedNL + result.inputs.daysWorkedBE) || DEFAULT_WORKDAYS))}
             </div>

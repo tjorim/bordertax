@@ -1,5 +1,7 @@
 import { Alert, Table } from 'react-bootstrap';
 import type { BETaxResult, TaxInputs } from '../tax/types';
+import * as m from '../paraglide/messages.js';
+import { getLocale } from '../paraglide/runtime.js';
 
 interface Props {
   result: BETaxResult | null;
@@ -7,7 +9,7 @@ interface Props {
 }
 
 const fmt = (n: number) =>
-  n.toLocaleString('nl-NL', { style: 'currency', currency: 'EUR', maximumFractionDigits: 2 });
+  n.toLocaleString(getLocale(), { style: 'currency', currency: 'EUR', maximumFractionDigits: 2 });
 const pct = (n: number) => `${(n * 100).toFixed(2)}%`;
 
 export default function BEResult({ result, residentCountry }: Props) {
@@ -15,7 +17,7 @@ export default function BEResult({ result, residentCountry }: Props) {
     return (
       <Alert variant="info" className="mb-0">
         <i className="bi bi-info-circle me-2" />
-        Belgian tax only applies to residents of Belgium.
+        {m.be_only_residents()}
       </Alert>
     );
   }
@@ -26,25 +28,25 @@ export default function BEResult({ result, residentCountry }: Props) {
 
   return (
     <div>
-      <h6 className="text-muted mb-3">🇧🇪 Belgian personal income tax</h6>
+      <h6 className="text-muted mb-3">🇧🇪 {m.be_title()}</h6>
 
       {!hasBeIncome && (
         <Alert variant="success" className="mb-3">
           <i className="bi bi-check-circle me-2" />
-          No home-working days in Belgium → no Belgian tax due on salary.
+          {m.be_no_home_working()}
         </Alert>
       )}
 
-      <p className="mb-1 fw-semibold small">Income split</p>
+      <p className="mb-1 fw-semibold small">{m.be_income_split()}</p>
       <Table bordered size="sm" className="mb-3">
         <tbody>
           <tr>
-            <td>🇳🇱 Exempt NL income</td>
+            <td>🇳🇱 {m.be_exempt_nl_income()}</td>
             <td className="text-end">{fmt(result.nlExemptIncome)}</td>
             <td className="text-end text-muted small">{pct(1 - result.beFraction)}</td>
           </tr>
           <tr>
-            <td>🇧🇪 Taxable BE income</td>
+            <td>🇧🇪 {m.be_taxable_be_income()}</td>
             <td className="text-end">{fmt(result.beIncome)}</td>
             <td className="text-end text-muted small">{pct(result.beFraction)}</td>
           </tr>
@@ -52,61 +54,61 @@ export default function BEResult({ result, residentCountry }: Props) {
       </Table>
 
       <p className="mb-1 fw-semibold small">
-        Exemption with progression{' '}
+        {m.be_exemption_with_progression()}{' '}
         <span className="text-muted fw-normal">
-          (calculated on total worldwide income)
+          ({m.be_progression_hint()})
         </span>
       </p>
       <Table bordered size="sm" className="mb-3">
         <tbody>
           <tr>
-            <td>Total gross income</td>
+            <td>{m.be_total_gross_income()}</td>
             <td className="text-end">{fmt(result.nlExemptIncome + result.beIncome)}</td>
           </tr>
           <tr>
-            <td>Lump-sum professional expenses (−)</td>
+            <td>{m.be_professional_expenses()}</td>
             <td className="text-end text-success">−{fmt(result.professionalExpenses)}</td>
           </tr>
           <tr className="fw-semibold">
-            <td>Net taxable total income</td>
+            <td>{m.be_net_taxable_income()}</td>
             <td className="text-end">{fmt(result.netTotalIncome)}</td>
           </tr>
           <tr>
-            <td>Tax on total income (brackets)</td>
+            <td>{m.be_tax_on_total()}</td>
             <td className="text-end">{fmt(result.taxOnTotalIncome)}</td>
           </tr>
           <tr>
-            <td>Personal allowance (−)</td>
+            <td>{m.be_personal_allowance()}</td>
             <td className="text-end text-success">−{fmt(result.belastingvrijeSomReduction)}</td>
           </tr>
           <tr className="fw-semibold">
-            <td>Tax after allowance</td>
+            <td>{m.be_tax_after_allowance()}</td>
             <td className="text-end">{fmt(result.taxAfterPersonalExemption)}</td>
           </tr>
           <tr>
-            <td>× Belgian fraction ({pct(result.beFraction)})</td>
+            <td>× {m.be_belgian_fraction()} ({pct(result.beFraction)})</td>
             <td className="text-end">{fmt(result.federalTax)}</td>
           </tr>
         </tbody>
       </Table>
 
-      <p className="mb-1 fw-semibold small">Final calculation</p>
+      <p className="mb-1 fw-semibold small">{m.be_final_calculation()}</p>
       <Table bordered size="sm">
         <tbody>
           <tr>
-            <td>Federal personal income tax</td>
+            <td>{m.be_federal_tax()}</td>
             <td className="text-end">{fmt(result.federalTax)}</td>
           </tr>
           <tr>
-            <td>Municipal tax</td>
+            <td>{m.be_municipal_tax()}</td>
             <td className="text-end">{fmt(result.communalTax)}</td>
           </tr>
           <tr className="table-primary fw-bold">
-            <td>BE tax payable</td>
+            <td>{m.be_tax_payable()}</td>
             <td className="text-end">{fmt(result.netTaxBE)}</td>
           </tr>
           <tr>
-            <td className="text-muted small">Effective rate (on gross salary)</td>
+            <td className="text-muted small">{m.be_effective_rate()}</td>
             <td className="text-end text-muted small">{pct(result.effectiveRateBE)}</td>
           </tr>
         </tbody>
@@ -114,9 +116,7 @@ export default function BEResult({ result, residentCountry }: Props) {
 
       <Alert variant="warning" className="mt-3 small mb-0">
         <i className="bi bi-exclamation-triangle me-2" />
-        <strong>Note:</strong> This is a simplified estimate. Your final return may differ due to
-        spouse income splitting, special social security contributions, regional taxes and other
-        personal deductions. Consult a tax advisor for your final tax return.
+        <strong>{m.be_warning_note()}</strong> {m.be_warning_text()}
       </Alert>
     </div>
   );

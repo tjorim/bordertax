@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Alert, Col, Container, Nav, Navbar, Row, Tab } from 'react-bootstrap';
+import { Alert, Button, Col, Container, Nav, Navbar, Row, Tab } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
@@ -16,6 +16,8 @@ import {
   VALID_RESIDENT_COUNTRIES,
   VALID_YEARS,
 } from './tax/constants';
+import * as m from './paraglide/messages.js';
+import { getLocale, setLocale } from './paraglide/runtime.js';
 
 const DEFAULT_INPUTS: TaxInputs = {
   year: 2025,
@@ -73,6 +75,7 @@ function loadInitialInputs(): TaxInputs {
 
 export default function App() {
   const [inputs, setInputs] = useState<TaxInputs>(loadInitialInputs);
+  const nextLangLabel = getLocale() === 'en' ? m.lang_nl() : m.lang_en();
 
   const result = useMemo(() => calculate(inputs), [inputs]);
   const comparisonResults = useMemo(
@@ -93,11 +96,20 @@ export default function App() {
       <Navbar bg="dark" variant="dark" expand="lg" className="mb-4">
         <Container>
           <Navbar.Brand>
-            🇧🇪&thinsp;🇳🇱&nbsp; Border Worker Tax Calculator
+            🇧🇪&thinsp;🇳🇱&nbsp; {m.app_title()}
           </Navbar.Brand>
           <Navbar.Text className="text-secondary small">
-            Tax year {inputs.year}
+            {m.app_tax_year()} {inputs.year}
           </Navbar.Text>
+          <Button
+            variant="outline-light"
+            size="sm"
+            className="ms-3"
+            onClick={() => setLocale(getLocale() === 'en' ? 'nl' : 'en')}
+            aria-label={nextLangLabel}
+          >
+            {nextLangLabel}
+          </Button>
         </Container>
       </Navbar>
 
@@ -113,8 +125,7 @@ export default function App() {
             {inputs.year === 2026 && (
               <Alert variant="warning" className="small py-2">
                 <i className="bi bi-exclamation-triangle me-2" />
-                2026 tax rates are provisional estimates — official tables have not yet been published.
-                Results for 2026 may be inaccurate.
+                {m.alert_2026_provisional()}
               </Alert>
             )}
             <Tab.Container defaultActiveKey="summary">
@@ -122,7 +133,7 @@ export default function App() {
                 <Nav.Item>
                   <Nav.Link eventKey="summary">
                     <i className="bi bi-pie-chart-fill me-1" />
-                    Summary
+                    {m.tabs_summary()}
                   </Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
@@ -138,7 +149,7 @@ export default function App() {
                 <Nav.Item>
                   <Nav.Link eventKey="years">
                     <i className="bi bi-bar-chart-line-fill me-1" />
-                    Year comparison
+                    {m.tabs_year_comparison()}
                   </Nav.Link>
                 </Nav.Item>
               </Nav>
@@ -166,8 +177,8 @@ export default function App() {
       </Container>
 
       <footer className="text-center text-muted small py-3 border-top mt-4">
-        Calculations are indicative. Always consult a tax advisor for your final tax return.
-        &nbsp;|&nbsp; Sources:{' '}
+        {m.footer_disclaimer()}
+        &nbsp;|&nbsp; {m.footer_sources()}:{' '}
         <a href="https://www.belastingdienst.nl" target="_blank" rel="noreferrer">
           Belastingdienst
         </a>{' '}

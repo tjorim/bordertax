@@ -1,36 +1,38 @@
 import { Table } from 'react-bootstrap';
 import type { NLTaxResult } from '../tax/types';
+import * as m from '../paraglide/messages.js';
+import { getLocale } from '../paraglide/runtime.js';
 
 interface Props {
   result: NLTaxResult;
 }
 
 const fmt = (n: number) =>
-  n.toLocaleString('nl-NL', { style: 'currency', currency: 'EUR', maximumFractionDigits: 2 });
+  n.toLocaleString(getLocale(), { style: 'currency', currency: 'EUR', maximumFractionDigits: 2 });
 const pct = (n: number) => `${(n * 100).toFixed(2)}%`;
 
 export default function NLResult({ result }: Props) {
   return (
     <div>
-      <h6 className="text-muted mb-3">🇳🇱 Dutch income tax (Box 1)</h6>
+      <h6 className="text-muted mb-3">🇳🇱 {m.nl_title()}</h6>
 
       <Table bordered size="sm" className="mb-3">
         <tbody>
           <tr>
-            <td>Taxable Box 1 income</td>
+            <td>{m.nl_taxable_income()}</td>
             <td className="text-end fw-semibold">{fmt(result.nlTaxableIncome)}</td>
           </tr>
         </tbody>
       </Table>
 
-      <p className="mb-1 fw-semibold small">Bracket calculation</p>
+      <p className="mb-1 fw-semibold small">{m.nl_bracket_calculation()}</p>
       <Table bordered size="sm" className="mb-3">
         <thead className="table-light">
           <tr>
-            <th>Bracket</th>
-            <th className="text-end">Rate</th>
-            <th className="text-end">Amount</th>
-            <th className="text-end">Tax</th>
+            <th>{m.nl_bracket()}</th>
+            <th className="text-end">{m.nl_rate()}</th>
+            <th className="text-end">{m.nl_amount()}</th>
+            <th className="text-end">{m.nl_tax()}</th>
           </tr>
         </thead>
         <tbody>
@@ -43,25 +45,25 @@ export default function NLResult({ result }: Props) {
             </tr>
           ))}
           <tr className="table-secondary fw-semibold">
-            <td colSpan={3}>Tax before credits</td>
+            <td colSpan={3}>{m.nl_tax_before_credits()}</td>
             <td className="text-end">{fmt(result.taxBeforeCredits)}</td>
           </tr>
         </tbody>
       </Table>
 
-      <p className="mb-1 fw-semibold small">Tax credits</p>
+      <p className="mb-1 fw-semibold small">{m.nl_tax_credits()}</p>
       <Table bordered size="sm" className="mb-3">
         <tbody>
           <tr>
-            <td>General tax credit</td>
+            <td>{m.nl_general_tax_credit()}</td>
             <td className="text-end text-success">−{fmt(result.algemeneHeffingskorting)}</td>
           </tr>
           <tr>
-            <td>Labour tax credit</td>
+            <td>{m.nl_labour_tax_credit()}</td>
             <td className="text-end text-success">−{fmt(result.arbeidskorting)}</td>
           </tr>
           <tr className="table-secondary fw-semibold">
-            <td>Total credits</td>
+            <td>{m.nl_total_credits()}</td>
             <td className="text-end text-success">−{fmt(result.totalCredits)}</td>
           </tr>
         </tbody>
@@ -70,11 +72,11 @@ export default function NLResult({ result }: Props) {
       <Table bordered size="sm">
         <tbody>
           <tr className="table-primary fw-bold">
-            <td>NL tax payable</td>
+            <td>{m.nl_tax_payable()}</td>
             <td className="text-end">{fmt(result.netTaxNL)}</td>
           </tr>
           <tr>
-            <td className="text-muted small">Effective rate (on gross salary)</td>
+            <td className="text-muted small">{m.nl_effective_rate()}</td>
             <td className="text-end text-muted small">{pct(result.effectiveRateNL)}</td>
           </tr>
         </tbody>
