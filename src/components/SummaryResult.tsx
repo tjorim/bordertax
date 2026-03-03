@@ -41,12 +41,12 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
   async function copySummary() {
     const lines = [
       `${m.app_title()} (${result.inputs.year})`,
-      `${m.summary_gross_income()}: ${fmt(grossIncome)}`,
-      `${m.summary_dutch_tax()}: ${fmt(nl.netTaxNL)}`,
-      `${m.summary_belgian_tax()}: ${fmt(be?.netTaxBE ?? 0)}`,
-      `${m.summary_total_tax()}: ${fmt(totalTax)}`,
-      `${m.summary_net_income()}: ${fmt(netIncome)}`,
-      `${m.summary_effective_rate_total()}: ${pct(effectiveRateTotal)}`,
+      `${m.summary_gross_income()} ${fmt(grossIncome)}`,
+      `${m.summary_dutch_tax()} ${fmt(nl.netTaxNL)}`,
+      `${m.summary_belgian_tax()} ${fmt(be?.netTaxBE ?? 0)}`,
+      `${m.summary_total_tax()} ${fmt(totalTax)}`,
+      `${m.summary_net_income()} ${fmt(netIncome)}`,
+      `${m.summary_effective_rate_total()} ${pct(effectiveRateTotal)}`,
     ].join('\n');
 
     try {
