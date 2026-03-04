@@ -116,7 +116,7 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
 
       <p className="fw-semibold small mb-2">{m.summary_allocation()}</p>
       <ProgressBar className="mb-2" style={{ height: '1.5rem' }}>
-        <ProgressBar variant="success" now={netPct} key={1} label={`Net ${pct(netPct / 100)}`} />
+        <ProgressBar variant="success" now={netPct} key={1} label={`${m.summary_net_label()} ${pct(netPct / 100)}`} />
         <ProgressBar variant="danger" now={nlPct} key={2} label={`NL ${pct(nlPct / 100)}`} />
         {bePct > 0 && (
           <ProgressBar variant="warning" now={bePct} key={3} label={`BE ${pct(bePct / 100)}`} />

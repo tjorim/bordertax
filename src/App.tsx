@@ -137,13 +137,13 @@ export default function App() {
                   </Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                  <Nav.Link eventKey="nl" aria-label="Netherlands">
-                    🇳🇱 Nederland
+                  <Nav.Link eventKey="nl" aria-label={m.tabs_nl()}>
+                    🇳🇱 {m.tabs_nl()}
                   </Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                  <Nav.Link eventKey="be" aria-label="Belgium">
-                    🇧🇪 België
+                  <Nav.Link eventKey="be" aria-label={m.tabs_be()}>
+                    🇧🇪 {m.tabs_be()}
                   </Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
