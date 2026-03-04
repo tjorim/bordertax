@@ -41,6 +41,9 @@ updates:
         patterns:
           - "oxlint"
           - "oxfmt"
+      i18n:
+        patterns:
+          - "@inlang/*"
 
   - package-ecosystem: "github-actions"
     directory: "/"
