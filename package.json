@@ -27,12 +27,12 @@
     "typecheck": "tsc -b --noEmit",
     "lint": "oxlint",
     "format": "oxfmt .",
-    "test": "vitest run --passWithNoTests",
+    "test": "vitest run",
     "test:ui": "vitest --ui",
     "test:watch": "vitest",
     "i18n:compile": "paraglide-js compile --project ./project.inlang --outdir ./src/paraglide",
-    "prebuild": "npm run i18n:compile",
-    "pretypecheck": "npm run i18n:compile"
+    "pretypecheck": "npm run i18n:compile",
+    "test:ci": "vitest run --passWithNoTests"
   },
   "dependencies": {
     "bootstrap": "^5.3.8",
