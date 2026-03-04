@@ -24,13 +24,14 @@
     "dev": "vite",
     "build": "vite build && tsc -b",
     "preview": "vite preview",
-    "typecheck": "npm run i18n:compile && tsc -b --noEmit",
+    "typecheck": "tsc -b --noEmit",
     "lint": "oxlint",
     "format": "oxfmt .",
     "test": "vitest run",
     "test:ui": "vitest --ui",
     "test:watch": "vitest",
-    "i18n:compile": "paraglide-js compile --project ./project.inlang --outdir ./src/paraglide"
+    "i18n:compile": "paraglide-js compile --project ./project.inlang --outdir ./src/paraglide",
+    "pretypecheck": "npm run i18n:compile"
   },
   "dependencies": {
     "bootstrap": "^5.3.8",
