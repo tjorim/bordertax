@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { calculateNLTax } from './nl';
-import type { TaxInputs } from './types';
+import { calculateNLTax } from '../../src/tax/nl';
+import type { TaxInputs } from '../../src/tax/types';
 
 const base: TaxInputs = {
   year: 2025,

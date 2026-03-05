@@ -1,7 +1,7 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import SummaryResult from './SummaryResult';
+import SummaryResult from '../../src/components/SummaryResult';
 import { mockTaxResult, mockTaxResultNLResident } from '../test-utils/mockData';
 
 describe('SummaryResult', () => {
@@ -94,4 +94,3 @@ describe('SummaryResult', () => {
     expect(screen.getByRole('alert')).toBeInTheDocument();
   });
 });
-

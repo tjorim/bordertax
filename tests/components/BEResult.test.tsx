@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
-import BEResult from './BEResult';
+import BEResult from '../../src/components/BEResult';
 import { mockBEResult } from '../test-utils/mockData';
 
 describe('BEResult', () => {
