@@ -1,9 +1,15 @@
 import { paraglideVitePlugin } from '@inlang/paraglide-js';
 import reactPlugin from '@vitejs/plugin-react';
+import { resolve } from 'node:path';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
   base: '/bordertax/',
+  resolve: {
+    alias: {
+      '@': resolve(__dirname, 'src'),
+    },
+  },
   plugins: [
     paraglideVitePlugin({
       project: './project.inlang',
