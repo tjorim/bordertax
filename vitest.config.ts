@@ -14,6 +14,25 @@ export default defineConfig({
   test: {
     environment: 'happy-dom',
     globals: true,
+    setupFiles: ['./src/test-setup.ts'],
     exclude: ['**/node_modules/**', '**/dist/**'],
+    coverage: {
+      provider: 'v8',
+      include: ['src/**'],
+      exclude: [
+        'src/paraglide/**',
+        'src/test-utils/**',
+        'src/test-setup.ts',
+        'src/main.tsx',
+        'src/assets/**',
+        'src/tax/types.ts',
+      ],
+      thresholds: {
+        statements: 90,
+        branches: 90,
+        functions: 90,
+        lines: 90,
+      },
+    },
   },
 });
