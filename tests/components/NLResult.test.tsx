@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
-import NLResult from '../../src/components/NLResult';
+import NLResult from '@/components/NLResult';
 import { mockNLResult } from '../test-utils/mockData';
 
 describe('NLResult', () => {

@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
-import InputPanel from '../../src/components/InputPanel';
+import InputPanel from '@/components/InputPanel';
 import { mockInputs } from '../test-utils/mockData';
 
 describe('InputPanel', () => {
@@ -31,7 +31,7 @@ describe('InputPanel', () => {
     const onChange = vi.fn();
     render(<InputPanel inputs={mockInputs} onChange={onChange} />);
     const selects = screen.getAllByRole('combobox');
-    fireEvent.change(selects[0], { target: { value: '2024' } });
+    fireEvent.change(selects[0]!, { target: { value: '2024' } });
     expect(onChange).toHaveBeenCalledOnce();
     expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ year: 2024 }));
   });
@@ -40,7 +40,7 @@ describe('InputPanel', () => {
     const onChange = vi.fn();
     render(<InputPanel inputs={mockInputs} onChange={onChange} />);
     const selects = screen.getAllByRole('combobox');
-    fireEvent.change(selects[1], { target: { value: 'NL' } });
+    fireEvent.change(selects[1]!, { target: { value: 'NL' } });
     expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ residentCountry: 'NL' }));
   });
 
@@ -48,7 +48,7 @@ describe('InputPanel', () => {
     const onChange = vi.fn();
     render(<InputPanel inputs={mockInputs} onChange={onChange} />);
     const selects = screen.getAllByRole('combobox');
-    fireEvent.change(selects[2], { target: { value: 'married' } });
+    fireEvent.change(selects[2]!, { target: { value: 'married' } });
     expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ civilStatus: 'married' }));
   });
 
@@ -57,7 +57,7 @@ describe('InputPanel', () => {
     render(<InputPanel inputs={{ ...mockInputs, residentCountry: 'BE' }} onChange={onChange} />);
     const selects = screen.getAllByRole('combobox');
     // belgianRegion is the 4th dropdown (index 3)
-    fireEvent.change(selects[3], { target: { value: 'walloon' } });
+    fireEvent.change(selects[3]!, { target: { value: 'walloon' } });
     expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ belgianRegion: 'walloon' }));
   });
 
@@ -66,7 +66,7 @@ describe('InputPanel', () => {
     render(<InputPanel inputs={{ ...mockInputs, residentCountry: 'BE' }} onChange={onChange} />);
     // For BE resident: spinbuttons are [dependentChildren, communalTaxRate, grossSalary, daysWorkedNL, daysWorkedBE]
     const inputs = screen.getAllByRole('spinbutton');
-    fireEvent.change(inputs[1], { target: { value: '8' } });
+    fireEvent.change(inputs[1]!, { target: { value: '8' } });
     expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ communalTaxRate: 8 }));
   });
 
@@ -75,7 +75,7 @@ describe('InputPanel', () => {
     render(<InputPanel inputs={mockInputs} onChange={onChange} />);
     // For BE resident: spinbuttons are [dependentChildren, communalTaxRate, grossSalary, daysWorkedNL, daysWorkedBE]
     const inputs = screen.getAllByRole('spinbutton');
-    const grossSalaryInput = inputs[2];
+    const grossSalaryInput = inputs[2]!;
     fireEvent.change(grossSalaryInput, { target: { value: '80000' } });
     expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ grossSalary: 80000 }));
   });
@@ -84,7 +84,7 @@ describe('InputPanel', () => {
     const onChange = vi.fn();
     render(<InputPanel inputs={mockInputs} onChange={onChange} />);
     const inputs = screen.getAllByRole('spinbutton');
-    fireEvent.change(inputs[3], { target: { value: '150' } });
+    fireEvent.change(inputs[3]!, { target: { value: '150' } });
     expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ daysWorkedNL: 150 }));
   });
 
@@ -92,7 +92,7 @@ describe('InputPanel', () => {
     const onChange = vi.fn();
     render(<InputPanel inputs={mockInputs} onChange={onChange} />);
     const inputs = screen.getAllByRole('spinbutton');
-    fireEvent.change(inputs[4], { target: { value: '30' } });
+    fireEvent.change(inputs[4]!, { target: { value: '30' } });
     expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ daysWorkedBE: 30 }));
   });
 
@@ -109,7 +109,7 @@ describe('InputPanel', () => {
     render(<InputPanel inputs={mockInputs} onChange={onChange} />);
     const checkboxes = screen.getAllByRole('checkbox');
     // thirtyPercentRuling checkbox is the second checkbox
-    fireEvent.click(checkboxes[1]);
+    fireEvent.click(checkboxes[1]!);
     expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ thirtyPercentRuling: true }));
   });
 
@@ -117,7 +117,7 @@ describe('InputPanel', () => {
     const onChange = vi.fn();
     render(<InputPanel inputs={mockInputs} onChange={onChange} />);
     const inputs = screen.getAllByRole('spinbutton');
-    fireEvent.change(inputs[0], { target: { value: '2' } });
+    fireEvent.change(inputs[0]!, { target: { value: '2' } });
     expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ dependentChildren: 2 }));
   });
 });

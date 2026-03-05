@@ -1,8 +1,14 @@
 import { paraglideVitePlugin } from '@inlang/paraglide-js';
 import reactPlugin from '@vitejs/plugin-react';
+import { resolve } from 'node:path';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
+  resolve: {
+    alias: {
+      '@': resolve(__dirname, 'src'),
+    },
+  },
   plugins: [
     paraglideVitePlugin({
       project: './project.inlang',

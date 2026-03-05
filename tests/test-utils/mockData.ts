@@ -1,4 +1,4 @@
-import type { BETaxResult, NLTaxResult, TaxInputs, TaxResult } from '../../src/tax/types';
+import type { BETaxResult, NLTaxResult, TaxInputs, TaxResult } from '@/tax/types';
 
 export const mockInputs: TaxInputs = {
   year: 2025,

@@ -1,9 +1,9 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
-import MultiYearComparison from '../../src/components/MultiYearComparison';
+import MultiYearComparison from '@/components/MultiYearComparison';
 import { mockTaxResult } from '../test-utils/mockData';
-import { calculate } from '../../src/tax';
+import { calculate } from '@/tax';
 
 const rows = [2024, 2025, 2026].map((year) => ({
   year: year as 2024 | 2025 | 2026,
