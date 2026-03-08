@@ -191,7 +191,7 @@ export default function InputPanel({ inputs, onChange }: Props) {
             {inputs.residentCountry === "BE" && (
               <>
                 <Col xs={12} sm={6}>
-                  <Form.Label>Social contributions (€)</Form.Label>
+                  <Form.Label>{m.input_social_contributions()}</Form.Label>
                   <Form.Control
                     type="number"
                     min={0}
@@ -202,7 +202,7 @@ export default function InputPanel({ inputs, onChange }: Props) {
                 </Col>
 
                 <Col xs={12} sm={6}>
-                  <Form.Label>Aanvullend pensioen (€)</Form.Label>
+                  <Form.Label>{m.input_aanvullend_pensioen()}</Form.Label>
                   <Form.Control
                     type="number"
                     min={0}
@@ -213,7 +213,7 @@ export default function InputPanel({ inputs, onChange }: Props) {
                 </Col>
 
                 <Col xs={12} sm={6}>
-                  <Form.Label>Dienstencheques (€)</Form.Label>
+                  <Form.Label>{m.input_dienstencheques()}</Form.Label>
                   <Form.Control
                     type="number"
                     min={0}
@@ -224,7 +224,7 @@ export default function InputPanel({ inputs, onChange }: Props) {
                 </Col>
 
                 <Col xs={12} sm={6}>
-                  <Form.Label>Roerende voorheffing (€)</Form.Label>
+                  <Form.Label>{m.input_roerende_voorheffing()}</Form.Label>
                   <Form.Control
                     type="number"
                     min={0}
