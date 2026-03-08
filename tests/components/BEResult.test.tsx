@@ -33,7 +33,8 @@ describe('BEResult', () => {
     const resultNoBeIncome = { ...mockBEResult, beIncome: 0 };
     render(<BEResult result={resultNoBeIncome} residentCountry="BE" />);
     const alerts = screen.getAllByRole('alert');
-    expect(alerts.some((alert) => (alert.textContent ?? '').includes(m.be_no_home_working()))).toBe(true);
+    expect(alerts).toHaveLength(2);
+    expect(screen.getByText(m.be_no_home_working())).toBeInTheDocument();
   });
 
   it('displays the beFraction as percentage', () => {
