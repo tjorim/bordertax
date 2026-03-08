@@ -21,8 +21,7 @@ describe('App', () => {
 
   it('renders the language toggle button', () => {
     render(<App />);
-    const buttons = screen.getAllByRole('button');
-    expect(buttons.length).toBeGreaterThan(0);
+    expect(screen.getByRole('button', { name: /english|nederlands|language|taal/i })).toBeInTheDocument();
   });
 
   it('renders input panel and result tabs', () => {

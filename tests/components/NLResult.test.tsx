@@ -24,7 +24,7 @@ describe('NLResult', () => {
 
   it('shows the effective rate', () => {
     render(<NLResult result={mockNLResult} />);
-    // effectiveRateNL of 0.2083 → "20.83%"
-    expect(screen.getByText('20.83%')).toBeInTheDocument();
+    // effectiveRateNL of 0.2806 → "28.06%"
+    expect(screen.getByText('28.06%')).toBeInTheDocument();
   });
 });

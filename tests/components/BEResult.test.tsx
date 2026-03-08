@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
 import BEResult from '@/components/BEResult';
+import * as m from '@/paraglide/messages.js';
 import { mockBEResult } from '../test-utils/mockData';
 
 describe('BEResult', () => {
@@ -17,10 +18,10 @@ describe('BEResult', () => {
 
   it('renders full result for BE resident with BE income', () => {
     render(<BEResult result={mockBEResult} residentCountry="BE" />);
-    // Should not show the info alert for NL residents
-    const alerts = screen.queryAllByRole('alert');
-    // Only the warning note alert at the bottom should be present, not the "NL residents only" alert
-    expect(alerts.length).toBeLessThan(2);
+    const alerts = screen.getAllByRole('alert');
+    expect(alerts).toHaveLength(1);
+    expect(alerts[0]).toHaveTextContent(m.be_warning_note());
+    expect(screen.queryByText(m.be_only_residents())).toBeNull();
   });
 
   it('shows the effective rate for BE', () => {
@@ -32,8 +33,7 @@ describe('BEResult', () => {
     const resultNoBeIncome = { ...mockBEResult, beIncome: 0 };
     render(<BEResult result={resultNoBeIncome} residentCountry="BE" />);
     const alerts = screen.getAllByRole('alert');
-    // Success alert for no home-working + warning note at bottom
-    expect(alerts.length).toBeGreaterThanOrEqual(1);
+    expect(alerts.some((alert) => (alert.textContent ?? '').includes(m.be_no_home_working()))).toBe(true);
   });
 
   it('displays the beFraction as percentage', () => {

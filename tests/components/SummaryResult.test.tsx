@@ -2,6 +2,7 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import SummaryResult from '@/components/SummaryResult';
+import * as m from '@/paraglide/messages.js';
 import { mockTaxResult, mockTaxResultNLResident } from '../test-utils/mockData';
 
 describe('SummaryResult', () => {
@@ -56,7 +57,7 @@ describe('SummaryResult', () => {
     await act(async () => {
       fireEvent.click(copyButton);
     });
-    expect(screen.getByRole('alert')).toBeInTheDocument();
+    expect(screen.getByRole('alert')).toHaveTextContent(m.summary_copy_success());
   });
 
   it('clears copy status after timeout', async () => {
@@ -91,6 +92,6 @@ describe('SummaryResult', () => {
     await act(async () => {
       fireEvent.click(copyButton);
     });
-    expect(screen.getByRole('alert')).toBeInTheDocument();
+    expect(screen.getByRole('alert')).toHaveTextContent(m.summary_copy_error());
   });
 });
