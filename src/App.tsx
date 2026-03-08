@@ -86,16 +86,16 @@ function sanitizeInputs(raw: unknown): TaxInputs {
         : DEFAULT_INPUTS.thirtyPercentRuling,
     socialContributions: sanitizeNonNegative(
       input.socialContributions,
-      DEFAULT_INPUTS.socialContributions,
+      DEFAULT_INPUTS.socialContributions ?? 0,
     ),
     aanvullendPensioen: sanitizeNonNegative(
       input.aanvullendPensioen,
-      DEFAULT_INPUTS.aanvullendPensioen,
+      DEFAULT_INPUTS.aanvullendPensioen ?? 0,
     ),
-    dienstencheques: sanitizeNonNegative(input.dienstencheques, DEFAULT_INPUTS.dienstencheques),
+    dienstencheques: sanitizeNonNegative(input.dienstencheques, DEFAULT_INPUTS.dienstencheques ?? 0),
     roerendeVoorheffing: sanitizeNonNegative(
       input.roerendeVoorheffing,
-      DEFAULT_INPUTS.roerendeVoorheffing,
+      DEFAULT_INPUTS.roerendeVoorheffing ?? 0,
     ),
   };
 }
