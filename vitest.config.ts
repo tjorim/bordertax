@@ -1,6 +1,7 @@
 import { defineConfig, mergeConfig } from 'vitest/config';
 import viteConfig from './vite.config';
 
+// Reuse the app's Vite config (plugins + aliases) and only layer Vitest settings.
 export default mergeConfig(viteConfig, defineConfig({
   test: {
     environment: 'happy-dom',
