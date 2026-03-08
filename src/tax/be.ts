@@ -3,19 +3,18 @@
  *
  * For Belgian residents who work (partly) in the Netherlands under the BE-NL tax treaty.
  * Method used: Exemption with progression (vrijstelling met progressievoorbehoud).
- *   - NL-sourced income is exempt from Belgian tax.
- *   - Belgian federal tax is calculated on TOTAL world income, then scaled by the BE fraction.
- *   - Communal tax (gemeentebelasting) is levied on the Belgian federal tax portion.
+ *
+ * The Belgian declared income (code 1250) = grossSalary − nl.netTaxNL.
+ * NL-sourced income is exempt from Belgian tax but raises the progression rate.
+ * Communal tax (gemeentebelasting) is levied on both the taxable AND the exempt portion.
  *
  * Sources:
  *   Brackets: https://fin.belgium.be/en/private-individuals/tax-return/income/tax-rates
- *   Sample calc: https://taxsummaries.pwc.com/belgium/individual/sample-personal-income-tax-calculation
- *   Forfait 2025: 30% up to €5,930  (AJ 2026)
+ *   2024 gereduceerdRate / gewestelijkeRate: verified from official BE aanslagbiljet 2025 (income 2024)
  *
- * TODO: Refine regional supplements and special social security contribution
- *       once user spreadsheets are available.
+ * TODO: Verify gereduceerdRate / gewestelijkeRate for 2025 and 2026 once official billets are available.
  */
-import type { TaxInputs, BETaxResult, TaxYear } from "./types";
+import type { TaxInputs, BETaxResult, NLTaxResult, TaxYear } from "./types";
 
 interface BEBracket {
   from: number;
@@ -30,11 +29,14 @@ interface BEYearParams {
   extraPerChildAbove4: number;
   forfaitRate: number;
   forfaitMax: number;
+  /** Federal reduction rate: portion of hoofdsom that is federal (verified per year). */
+  gereduceerdRate: number;
+  /** Regional supplement rate applied to gereduceerde (verified per year). */
+  gewestelijkeRate: number;
 }
 
 const BE_PARAMS: Record<TaxYear, BEYearParams> = {
   2024: {
-    // TODO: Verify 2024 values with user spreadsheets
     brackets: [
       { from: 0, to: 15820, rate: 0.25 },
       { from: 15820, to: 27920, rate: 0.4 },
@@ -46,6 +48,9 @@ const BE_PARAMS: Record<TaxYear, BEYearParams> = {
     extraPerChildAbove4: 5990,
     forfaitRate: 0.3,
     forfaitMax: 5750,
+    // Verified from official BE aanslagbiljet personenbelasting 2025 (income 2024)
+    gereduceerdRate: 0.75043,
+    gewestelijkeRate: 0.33257,
   },
   2025: {
     brackets: [
@@ -59,6 +64,9 @@ const BE_PARAMS: Record<TaxYear, BEYearParams> = {
     extraPerChildAbove4: 6190,
     forfaitRate: 0.3,
     forfaitMax: 5930,
+    // TODO: Verify with official 2025 aanslagbiljet when available
+    gereduceerdRate: 0.75043,
+    gewestelijkeRate: 0.33257,
   },
   2026: {
     // TODO: Update with official 2026 figures when published
@@ -73,6 +81,9 @@ const BE_PARAMS: Record<TaxYear, BEYearParams> = {
     extraPerChildAbove4: 6370,
     forfaitRate: 0.3,
     forfaitMax: 6100,
+    // TODO: Verify with official 2026 aanslagbiljet when available
+    gereduceerdRate: 0.75043,
+    gewestelijkeRate: 0.33257,
   },
 };
 
@@ -105,7 +116,7 @@ function belastingvrijeSomReduction(inputs: TaxInputs, p: BEYearParams): number 
   return (baseAmount + childAmount) * 0.25;
 }
 
-export function calculateBETax(inputs: TaxInputs): BETaxResult | null {
+export function calculateBETax(inputs: TaxInputs, nl: NLTaxResult): BETaxResult | null {
   if (inputs.residentCountry !== "BE") return null;
 
   const p = BE_PARAMS[inputs.year] ?? BE_PARAMS[2025];
@@ -113,43 +124,100 @@ export function calculateBETax(inputs: TaxInputs): BETaxResult | null {
   const totalDays = inputs.daysWorkedNL + inputs.daysWorkedBE;
   const beFraction = totalDays > 0 ? inputs.daysWorkedBE / totalDays : 0;
 
+  // Gross split for reference fields
   const beIncome = inputs.grossSalary * beFraction;
+
+  // Optional deduction inputs (default to 0)
+  const socialContributions = inputs.socialContributions ?? 0;
+  const aanvullendPensioen = inputs.aanvullendPensioen ?? 0;
+  const dienstencheques = inputs.dienstencheques ?? 0;
+  const roerendeVoorheffing = inputs.roerendeVoorheffing ?? 0;
+
+  // Declared income: code 1250 = grossSalary − netTaxNL (paid to NL, not seen by BE)
+  const declaredIncome = inputs.grossSalary - nl.netTaxNL;
+
+  // Professional expenses (forfait applied to declared income after social contributions)
+  const forfaitBase = Math.max(0, declaredIncome - socialContributions);
+  const forfait = Math.min(p.forfaitRate * forfaitBase, p.forfaitMax);
+
+  // Net professional income
+  const netProfessionalIncome = Math.max(0, declaredIncome - socialContributions - forfait);
+
+  // NL exempt net income = nlTaxableIncome − netTaxNL (the NL after-tax earnings)
+  const nlNetIncome = nl.nlTaxableIncome - nl.netTaxNL;
+
+  // Vrijgesteld fraction: what share of declaredIncome is NL-sourced net income
+  const vrijgesteldFrac = declaredIncome > 0 ? nlNetIncome / declaredIncome : 0;
+
+  // Exempt and taxable portions of net professional income
+  const vrijgesteld = vrijgesteldFrac * netProfessionalIncome;
+  const volTarief = netProfessionalIncome - vrijgesteld;
+
+  // nlExemptIncome for legacy/display: gross NL income (days-based)
   const nlExemptIncome = inputs.grossSalary - beIncome;
 
-  // Professional expenses: forfait applied to Belgian-sourced income only
-  const professionalExpenses = Math.min(beIncome * p.forfaitRate, p.forfaitMax);
-
-  // Net total income (for the progression calculation over world income)
-  const netTotalIncome = Math.max(0, inputs.grossSalary - professionalExpenses);
-
-  // Federal tax calculated on total net world income (for progression)
-  const taxOnTotalIncome = applyBEBrackets(netTotalIncome, p.brackets);
+  // Belgian progressive tax on total net professional income
+  const basisbelasting = applyBEBrackets(netProfessionalIncome, p.brackets);
 
   // Personal exemption (belastingvrije som reduction)
   const bvReduction = belastingvrijeSomReduction(inputs, p);
 
-  // Tax after personal exemption on total income
-  const taxAfterPersonalExemption = Math.max(0, taxOnTotalIncome - bvReduction);
+  // Om te slane = tax after personal exemption
+  const omTeSlane = Math.max(0, basisbelasting - bvReduction);
 
-  // Scale to Belgian portion only (exemption with progression)
-  const federalTax = taxAfterPersonalExemption * beFraction;
+  // Vrijstelling reduction: proportion of omTeSlane corresponding to exempt NL income
+  const vrijstellingReduction =
+    netProfessionalIncome > 0 ? (vrijgesteld / netProfessionalIncome) * omTeSlane : 0;
 
-  // Communal (municipal) tax on top of federal tax
-  const communalTax = federalTax * (inputs.communalTaxRate / 100);
+  // Net Belgian tax before federal/regional split
+  const hoofdsom = omTeSlane - vrijstellingReduction;
 
-  const netTaxBE = federalTax + communalTax;
+  // Federal/regional split
+  const gereduceerde = hoofdsom * p.gereduceerdRate;
+  const gewestelijke = gereduceerde * p.gewestelijkeRate;
+
+  // Optional deductions
+  const pensioenRed = aanvullendPensioen * 0.3;
+  const dienstchequesRed = dienstencheques * 0.2;
+
+  // Saldi
+  const saldoFederaal = Math.max(0, gereduceerde - pensioenRed - roerendeVoorheffing);
+  const saldoGewestelijk = Math.max(0, gewestelijke - dienstchequesRed);
+  const totaleBelasting = saldoFederaal + saldoGewestelijk;
+
+  // federalTax = combined saldo (saldoFederaal + saldoGewestelijk)
+  const federalTax = totaleBelasting;
+
+  // Communal tax — levied on BOTH taxable and exempt income
+  const communalRate = inputs.communalTaxRate / 100;
+  const communalTax = totaleBelasting * communalRate;
+  const communalTaxOnVrijgesteld = vrijstellingReduction * communalRate;
+
+  const netTaxBE = saldoFederaal + saldoGewestelijk + communalTax + communalTaxOnVrijgesteld;
 
   return {
+    declaredIncome,
+    socialContributionsDeducted: socialContributions,
+    professionalExpenses: forfait,
+    netProfessionalIncome,
     beIncome,
     nlExemptIncome,
-    professionalExpenses,
-    netTotalIncome,
-    taxOnTotalIncome,
-    belastingvrijeSomReduction: bvReduction,
-    taxAfterPersonalExemption,
+    vrijgesteld,
+    volTarief,
     beFraction,
-    federalTax,
+    basisbelasting,
+    belastingvrijeSomReduction: bvReduction,
+    omTeSlane,
+    vrijstellingReduction,
+    hoofdsom,
+    gereduceerde,
+    gewestelijke,
+    saldoFederaal,
+    saldoGewestelijk,
+    totaleBelasting,
     communalTax,
+    communalTaxOnVrijgesteld,
+    federalTax,
     netTaxBE,
     effectiveRateBE: inputs.grossSalary > 0 ? netTaxBE / inputs.grossSalary : 0,
   };
