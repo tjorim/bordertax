@@ -19,7 +19,14 @@ import {
 import * as m from "./paraglide/messages.js";
 import { getLocale, setLocale } from "./paraglide/runtime.js";
 
-const DEFAULT_INPUTS: TaxInputs = {
+type TaxInputsWithRequiredBEDeductions = TaxInputs & {
+  socialContributions: number;
+  aanvullendPensioen: number;
+  dienstencheques: number;
+  roerendeVoorheffing: number;
+};
+
+const DEFAULT_INPUTS: TaxInputsWithRequiredBEDeductions = {
   year: 2025,
   residentCountry: "BE",
   civilStatus: "single",
@@ -31,6 +38,10 @@ const DEFAULT_INPUTS: TaxInputs = {
   daysWorkedNL: 200,
   daysWorkedBE: 20,
   thirtyPercentRuling: false,
+  socialContributions: 0,
+  aanvullendPensioen: 0,
+  dienstencheques: 0,
+  roerendeVoorheffing: 0,
 };
 
 const STORAGE_KEY = "grensarbeider-tax-inputs-v1";
@@ -44,6 +55,9 @@ function sanitizeInputs(raw: unknown): TaxInputs {
 
   const isOneOf = <T,>(value: unknown, options: readonly T[]): value is T =>
     options.includes(value as T);
+
+  const sanitizeNonNegative = (value: unknown, defaultValue: number): number =>
+    Number.isFinite(value) ? Math.max(0, Number(value)) : defaultValue;
 
   return {
     year: isOneOf(input.year, VALID_YEARS) ? input.year : DEFAULT_INPUTS.year,
@@ -77,6 +91,19 @@ function sanitizeInputs(raw: unknown): TaxInputs {
       typeof input.thirtyPercentRuling === "boolean"
         ? input.thirtyPercentRuling
         : DEFAULT_INPUTS.thirtyPercentRuling,
+    socialContributions: sanitizeNonNegative(
+      input.socialContributions,
+      DEFAULT_INPUTS.socialContributions,
+    ),
+    aanvullendPensioen: sanitizeNonNegative(
+      input.aanvullendPensioen,
+      DEFAULT_INPUTS.aanvullendPensioen,
+    ),
+    dienstencheques: sanitizeNonNegative(input.dienstencheques, DEFAULT_INPUTS.dienstencheques),
+    roerendeVoorheffing: sanitizeNonNegative(
+      input.roerendeVoorheffing,
+      DEFAULT_INPUTS.roerendeVoorheffing,
+    ),
   };
 }
 

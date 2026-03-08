@@ -69,11 +69,11 @@ export default function BEResult({ result, residentCountry }: Props) {
           </tr>
           <tr className="fw-semibold">
             <td>{m.be_net_taxable_income()}</td>
-            <td className="text-end">{fmt(result.netTotalIncome)}</td>
+            <td className="text-end">{fmt(result.netProfessionalIncome)}</td>
           </tr>
           <tr>
             <td>{m.be_tax_on_total()}</td>
-            <td className="text-end">{fmt(result.taxOnTotalIncome)}</td>
+            <td className="text-end">{fmt(result.basisbelasting)}</td>
           </tr>
           <tr>
             <td>{m.be_personal_allowance()}</td>
@@ -81,7 +81,7 @@ export default function BEResult({ result, residentCountry }: Props) {
           </tr>
           <tr className="fw-semibold">
             <td>{m.be_tax_after_allowance()}</td>
-            <td className="text-end">{fmt(result.taxAfterPersonalExemption)}</td>
+            <td className="text-end">{fmt(result.omTeSlane)}</td>
           </tr>
           <tr>
             <td>

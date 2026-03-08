@@ -8,6 +8,12 @@ interface Props {
   onChange: (updated: TaxInputs) => void;
 }
 
+type BelgianDeductionKey =
+  | "socialContributions"
+  | "aanvullendPensioen"
+  | "dienstencheques"
+  | "roerendeVoorheffing";
+
 export default function InputPanel({ inputs, onChange }: Props) {
   function set<K extends keyof TaxInputs>(key: K, value: TaxInputs[K]) {
     onChange({ ...inputs, [key]: value });
@@ -187,6 +193,44 @@ export default function InputPanel({ inputs, onChange }: Props) {
               />
               <Form.Text className="text-muted">{m.input_thirty_percent_ruling_hint()}</Form.Text>
             </Col>
+
+            {inputs.residentCountry === "BE" && (
+              <>
+                {(
+                  [
+                    {
+                      key: "socialContributions",
+                      label: m.input_social_contributions(),
+                    },
+                    {
+                      key: "aanvullendPensioen",
+                      label: m.input_aanvullend_pensioen(),
+                    },
+                    {
+                      key: "dienstencheques",
+                      label: m.input_dienstencheques(),
+                    },
+                    {
+                      key: "roerendeVoorheffing",
+                      label: m.input_roerende_voorheffing(),
+                    },
+                  ] as const satisfies readonly { key: BelgianDeductionKey; label: string }[]
+                ).map((field) => (
+                  <Col key={field.key} xs={12} sm={6}>
+                    <Form.Label>{field.label}</Form.Label>
+                    <Form.Control
+                      type="number"
+                      min={0}
+                      step={100}
+                      value={inputs[field.key] ?? 0}
+                      onChange={(e) =>
+                        set(field.key, Math.max(0, Number(e.target.value)) as TaxInputs[BelgianDeductionKey])
+                      }
+                    />
+                  </Col>
+                ))}
+              </>
+            )}
           </Row>
         </Accordion.Body>
       </Accordion.Item>
