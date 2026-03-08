@@ -15,7 +15,8 @@ describe('InputPanel', () => {
     render(<InputPanel inputs={{ ...mockInputs, residentCountry: 'BE' }} onChange={onChange} />);
     const selects = screen.getAllByRole('combobox');
     expect(selects.length).toBeGreaterThanOrEqual(4);
-    expect(screen.getByRole('spinbutton', { name: /municipal|communal|gemeentebelasting/i })).toBeInTheDocument();
+    expect(screen.getByText(/municipal tax|communal tax|gemeentebelasting/i)).toBeInTheDocument();
+    expect(screen.getAllByRole('spinbutton').length).toBeGreaterThanOrEqual(5);
   });
 
   it('hides Belgian region and communal tax fields for NL residents', () => {
@@ -23,7 +24,8 @@ describe('InputPanel', () => {
     render(<InputPanel inputs={{ ...mockInputs, residentCountry: 'NL' }} onChange={onChange} />);
     const selects = screen.getAllByRole('combobox');
     expect(selects.length).toBe(3);
-    expect(screen.queryByRole('spinbutton', { name: /municipal|communal|gemeentebelasting/i })).toBeNull();
+    expect(screen.queryByText(/municipal tax|communal tax|gemeentebelasting/i)).toBeNull();
+    expect(screen.getAllByRole('spinbutton').length).toBe(4);
   });
 
   it('calls onChange when year dropdown is changed', () => {

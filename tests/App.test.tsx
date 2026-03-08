@@ -21,7 +21,7 @@ describe('App', () => {
 
   it('renders the language toggle button', () => {
     render(<App />);
-    expect(screen.getByRole('button', { name: /english|nederlands|language|taal/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /english|nederlands|language|taal|^nl$|^en$/i })).toBeInTheDocument();
   });
 
   it('renders input panel and result tabs', () => {
