@@ -4,7 +4,7 @@
  * Data sourced from Belastingdienst official tables.
  * TODO: Verify and extend with user-provided spreadsheet data for each year.
  */
-import type { TaxInputs, NLTaxResult, BracketLine, TaxYear } from './types';
+import type { TaxInputs, NLTaxResult, BracketLine, TaxYear } from "./types";
 
 interface Bracket {
   from: number;
@@ -58,7 +58,7 @@ const PARAMS: Record<TaxYear, { under: YearParams; over: YearParams }> = {
     },
     over: {
       brackets: [
-        { from: 0, to: 75624, rate: 0.1950 },
+        { from: 0, to: 75624, rate: 0.195 },
         { from: 75624, to: Infinity, rate: 0.495 },
       ],
       ahkMax: 1537,
@@ -154,7 +154,10 @@ const PARAMS: Record<TaxYear, { under: YearParams; over: YearParams }> = {
   },
 };
 
-function applyBrackets(income: number, brackets: Bracket[]): { lines: BracketLine[]; total: number } {
+function applyBrackets(
+  income: number,
+  brackets: Bracket[],
+): { lines: BracketLine[]; total: number } {
   let remaining = income;
   let total = 0;
   const lines: BracketLine[] = [];
@@ -166,8 +169,8 @@ function applyBrackets(income: number, brackets: Bracket[]): { lines: BracketLin
     lines.push({
       label:
         b.to === Infinity
-          ? `> €${b.from.toLocaleString('nl-NL')}`
-          : `€${b.from.toLocaleString('nl-NL')} – €${b.to.toLocaleString('nl-NL')}`,
+          ? `> €${b.from.toLocaleString("nl-NL")}`
+          : `€${b.from.toLocaleString("nl-NL")} – €${b.to.toLocaleString("nl-NL")}`,
       rate: b.rate,
       taxableAmount: size,
       tax,

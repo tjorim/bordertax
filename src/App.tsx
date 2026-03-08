@@ -1,31 +1,31 @@
-import { useEffect, useMemo, useState } from 'react';
-import { Alert, Button, Col, Container, Nav, Navbar, Row, Tab } from 'react-bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap-icons/font/bootstrap-icons.css';
+import { useEffect, useMemo, useState } from "react";
+import { Alert, Button, Col, Container, Nav, Navbar, Row, Tab } from "react-bootstrap";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap-icons/font/bootstrap-icons.css";
 
-import InputPanel from './components/InputPanel';
-import NLResult from './components/NLResult';
-import BEResult from './components/BEResult';
-import SummaryResult from './components/SummaryResult';
-import MultiYearComparison from './components/MultiYearComparison';
-import { calculate } from './tax';
-import type { TaxInputs } from './tax/types';
+import InputPanel from "./components/InputPanel";
+import NLResult from "./components/NLResult";
+import BEResult from "./components/BEResult";
+import SummaryResult from "./components/SummaryResult";
+import MultiYearComparison from "./components/MultiYearComparison";
+import { calculate } from "./tax";
+import type { TaxInputs } from "./tax/types";
 import {
   VALID_BELGIAN_REGIONS,
   VALID_CIVIL_STATUSES,
   VALID_RESIDENT_COUNTRIES,
   VALID_YEARS,
-} from './tax/constants';
-import * as m from './paraglide/messages.js';
-import { getLocale, setLocale } from './paraglide/runtime.js';
+} from "./tax/constants";
+import * as m from "./paraglide/messages.js";
+import { getLocale, setLocale } from "./paraglide/runtime.js";
 
 const DEFAULT_INPUTS: TaxInputs = {
   year: 2025,
-  residentCountry: 'BE',
-  civilStatus: 'single',
+  residentCountry: "BE",
+  civilStatus: "single",
   dependentChildren: 0,
   belowAOWAge: true,
-  belgianRegion: 'flemish',
+  belgianRegion: "flemish",
   communalTaxRate: 7,
   grossSalary: 60000,
   daysWorkedNL: 200,
@@ -33,10 +33,10 @@ const DEFAULT_INPUTS: TaxInputs = {
   thirtyPercentRuling: false,
 };
 
-const STORAGE_KEY = 'grensarbeider-tax-inputs-v1';
+const STORAGE_KEY = "grensarbeider-tax-inputs-v1";
 
 function sanitizeInputs(raw: unknown): TaxInputs {
-  if (!raw || typeof raw !== 'object') {
+  if (!raw || typeof raw !== "object") {
     return DEFAULT_INPUTS;
   }
 
@@ -47,16 +47,36 @@ function sanitizeInputs(raw: unknown): TaxInputs {
 
   return {
     year: isOneOf(input.year, VALID_YEARS) ? input.year : DEFAULT_INPUTS.year,
-    residentCountry: isOneOf(input.residentCountry, VALID_RESIDENT_COUNTRIES) ? input.residentCountry : DEFAULT_INPUTS.residentCountry,
-    civilStatus: isOneOf(input.civilStatus, VALID_CIVIL_STATUSES) ? input.civilStatus : DEFAULT_INPUTS.civilStatus,
-    dependentChildren: Number.isFinite(input.dependentChildren) ? Math.min(10, Math.max(0, Number(input.dependentChildren))) : DEFAULT_INPUTS.dependentChildren,
-    belowAOWAge: typeof input.belowAOWAge === 'boolean' ? input.belowAOWAge : DEFAULT_INPUTS.belowAOWAge,
-    belgianRegion: isOneOf(input.belgianRegion, VALID_BELGIAN_REGIONS) ? input.belgianRegion : DEFAULT_INPUTS.belgianRegion,
-    communalTaxRate: Number.isFinite(input.communalTaxRate) ? Math.min(15, Math.max(0, Number(input.communalTaxRate))) : DEFAULT_INPUTS.communalTaxRate,
-    grossSalary: Number.isFinite(input.grossSalary) ? Math.max(0, Number(input.grossSalary)) : DEFAULT_INPUTS.grossSalary,
-    daysWorkedNL: Number.isFinite(input.daysWorkedNL) ? Math.max(0, Number(input.daysWorkedNL)) : DEFAULT_INPUTS.daysWorkedNL,
-    daysWorkedBE: Number.isFinite(input.daysWorkedBE) ? Math.max(0, Number(input.daysWorkedBE)) : DEFAULT_INPUTS.daysWorkedBE,
-    thirtyPercentRuling: typeof input.thirtyPercentRuling === 'boolean' ? input.thirtyPercentRuling : DEFAULT_INPUTS.thirtyPercentRuling,
+    residentCountry: isOneOf(input.residentCountry, VALID_RESIDENT_COUNTRIES)
+      ? input.residentCountry
+      : DEFAULT_INPUTS.residentCountry,
+    civilStatus: isOneOf(input.civilStatus, VALID_CIVIL_STATUSES)
+      ? input.civilStatus
+      : DEFAULT_INPUTS.civilStatus,
+    dependentChildren: Number.isFinite(input.dependentChildren)
+      ? Math.min(10, Math.max(0, Number(input.dependentChildren)))
+      : DEFAULT_INPUTS.dependentChildren,
+    belowAOWAge:
+      typeof input.belowAOWAge === "boolean" ? input.belowAOWAge : DEFAULT_INPUTS.belowAOWAge,
+    belgianRegion: isOneOf(input.belgianRegion, VALID_BELGIAN_REGIONS)
+      ? input.belgianRegion
+      : DEFAULT_INPUTS.belgianRegion,
+    communalTaxRate: Number.isFinite(input.communalTaxRate)
+      ? Math.min(15, Math.max(0, Number(input.communalTaxRate)))
+      : DEFAULT_INPUTS.communalTaxRate,
+    grossSalary: Number.isFinite(input.grossSalary)
+      ? Math.max(0, Number(input.grossSalary))
+      : DEFAULT_INPUTS.grossSalary,
+    daysWorkedNL: Number.isFinite(input.daysWorkedNL)
+      ? Math.max(0, Number(input.daysWorkedNL))
+      : DEFAULT_INPUTS.daysWorkedNL,
+    daysWorkedBE: Number.isFinite(input.daysWorkedBE)
+      ? Math.max(0, Number(input.daysWorkedBE))
+      : DEFAULT_INPUTS.daysWorkedBE,
+    thirtyPercentRuling:
+      typeof input.thirtyPercentRuling === "boolean"
+        ? input.thirtyPercentRuling
+        : DEFAULT_INPUTS.thirtyPercentRuling,
   };
 }
 
@@ -75,7 +95,7 @@ function loadInitialInputs(): TaxInputs {
 
 export default function App() {
   const [inputs, setInputs] = useState<TaxInputs>(loadInitialInputs);
-  const nextLangLabel = getLocale() === 'en' ? m.lang_nl() : m.lang_en();
+  const nextLangLabel = getLocale() === "en" ? m.lang_nl() : m.lang_en();
 
   const result = useMemo(() => calculate(inputs), [inputs]);
   const comparisonResults = useMemo(
@@ -95,9 +115,7 @@ export default function App() {
     <>
       <Navbar bg="dark" variant="dark" expand="lg" className="mb-4">
         <Container>
-          <Navbar.Brand>
-            🇧🇪&thinsp;🇳🇱&nbsp; {m.app_title()}
-          </Navbar.Brand>
+          <Navbar.Brand>🇧🇪&thinsp;🇳🇱&nbsp; {m.app_title()}</Navbar.Brand>
           <Navbar.Text className="text-secondary small">
             {m.app_tax_year()} {inputs.year}
           </Navbar.Text>
@@ -105,7 +123,7 @@ export default function App() {
             variant="outline-light"
             size="sm"
             className="ms-3"
-            onClick={() => setLocale(getLocale() === 'en' ? 'nl' : 'en')}
+            onClick={() => setLocale(getLocale() === "en" ? "nl" : "en")}
             aria-label={nextLangLabel}
           >
             {nextLangLabel}
@@ -156,10 +174,7 @@ export default function App() {
 
               <Tab.Content>
                 <Tab.Pane eventKey="summary">
-                  <SummaryResult
-                    result={result}
-                    onResetInputs={() => setInputs(DEFAULT_INPUTS)}
-                  />
+                  <SummaryResult result={result} onResetInputs={() => setInputs(DEFAULT_INPUTS)} />
                 </Tab.Pane>
                 <Tab.Pane eventKey="nl">
                   <NLResult result={result.nl} />
@@ -178,11 +193,11 @@ export default function App() {
 
       <footer className="text-center text-muted small py-3 border-top mt-4">
         {m.footer_disclaimer()}
-        &nbsp;|&nbsp; {m.footer_sources()}:{' '}
+        &nbsp;|&nbsp; {m.footer_sources()}:{" "}
         <a href="https://www.belastingdienst.nl" target="_blank" rel="noreferrer">
           Belastingdienst
-        </a>{' '}
-        &amp;{' '}
+        </a>{" "}
+        &amp;{" "}
         <a href="https://fin.belgium.be" target="_blank" rel="noreferrer">
           FOD Financiën
         </a>

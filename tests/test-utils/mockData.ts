@@ -1,12 +1,12 @@
-import type { BETaxResult, NLTaxResult, TaxInputs, TaxResult } from '@/tax/types';
+import type { BETaxResult, NLTaxResult, TaxInputs, TaxResult } from "@/tax/types";
 
 export const mockInputs: TaxInputs = {
   year: 2025,
-  residentCountry: 'BE',
-  civilStatus: 'single',
+  residentCountry: "BE",
+  civilStatus: "single",
   dependentChildren: 0,
   belowAOWAge: true,
-  belgianRegion: 'flemish',
+  belgianRegion: "flemish",
   communalTaxRate: 7,
   grossSalary: 60000,
   daysWorkedNL: 200,
@@ -18,8 +18,8 @@ export const mockNLResult: NLTaxResult = {
   nlTaxableIncome: 54545.45,
   taxBeforeCredits: 19807.51,
   brackets: [
-    { label: '€0 – €38.441', rate: 0.3582, taxableAmount: 38441, tax: 13773.56 },
-    { label: '€38.441 – €76.817', rate: 0.3748, taxableAmount: 16104.45, tax: 6033.95 },
+    { label: "€0 – €38.441", rate: 0.3582, taxableAmount: 38441, tax: 13773.56 },
+    { label: "€38.441 – €76.817", rate: 0.3748, taxableAmount: 16104.45, tax: 6033.95 },
   ],
   algemeneHeffingskorting: 0,
   arbeidskorting: 4500,
@@ -54,7 +54,7 @@ export const mockTaxResult: TaxResult = {
 };
 
 export const mockTaxResultNLResident: TaxResult = {
-  inputs: { ...mockInputs, residentCountry: 'NL' },
+  inputs: { ...mockInputs, residentCountry: "NL" },
   nl: mockNLResult,
   be: null,
   grossIncome: 60000,

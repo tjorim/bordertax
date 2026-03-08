@@ -1,19 +1,19 @@
-import { Alert, Table } from 'react-bootstrap';
-import type { BETaxResult, TaxInputs } from '../tax/types';
-import * as m from '../paraglide/messages.js';
-import { getLocale } from '../paraglide/runtime.js';
+import { Alert, Table } from "react-bootstrap";
+import type { BETaxResult, TaxInputs } from "../tax/types";
+import * as m from "../paraglide/messages.js";
+import { getLocale } from "../paraglide/runtime.js";
 
 interface Props {
   result: BETaxResult | null;
-  residentCountry: TaxInputs['residentCountry'];
+  residentCountry: TaxInputs["residentCountry"];
 }
 
 const fmt = (n: number) =>
-  n.toLocaleString(getLocale(), { style: 'currency', currency: 'EUR', maximumFractionDigits: 2 });
+  n.toLocaleString(getLocale(), { style: "currency", currency: "EUR", maximumFractionDigits: 2 });
 const pct = (n: number) => `${(n * 100).toFixed(2)}%`;
 
 export default function BEResult({ result, residentCountry }: Props) {
-  if (residentCountry !== 'BE') {
+  if (residentCountry !== "BE") {
     return (
       <Alert variant="info" className="mb-0">
         <i className="bi bi-info-circle me-2" />
@@ -54,10 +54,8 @@ export default function BEResult({ result, residentCountry }: Props) {
       </Table>
 
       <p className="mb-1 fw-semibold small">
-        {m.be_exemption_with_progression()}{' '}
-        <span className="text-muted fw-normal">
-          ({m.be_progression_hint()})
-        </span>
+        {m.be_exemption_with_progression()}{" "}
+        <span className="text-muted fw-normal">({m.be_progression_hint()})</span>
       </p>
       <Table bordered size="sm" className="mb-3">
         <tbody>
@@ -86,7 +84,9 @@ export default function BEResult({ result, residentCountry }: Props) {
             <td className="text-end">{fmt(result.taxAfterPersonalExemption)}</td>
           </tr>
           <tr>
-            <td>× {m.be_belgian_fraction()} ({pct(result.beFraction)})</td>
+            <td>
+              × {m.be_belgian_fraction()} ({pct(result.beFraction)})
+            </td>
             <td className="text-end">{fmt(result.federalTax)}</td>
           </tr>
         </tbody>

@@ -15,7 +15,7 @@
  * TODO: Refine regional supplements and special social security contribution
  *       once user spreadsheets are available.
  */
-import type { TaxInputs, BETaxResult, TaxYear } from './types';
+import type { TaxInputs, BETaxResult, TaxYear } from "./types";
 
 interface BEBracket {
   from: number;
@@ -37,27 +37,27 @@ const BE_PARAMS: Record<TaxYear, BEYearParams> = {
     // TODO: Verify 2024 values with user spreadsheets
     brackets: [
       { from: 0, to: 15820, rate: 0.25 },
-      { from: 15820, to: 27920, rate: 0.40 },
+      { from: 15820, to: 27920, rate: 0.4 },
       { from: 27920, to: 46740, rate: 0.45 },
-      { from: 46740, to: Infinity, rate: 0.50 },
+      { from: 46740, to: Infinity, rate: 0.5 },
     ],
     baseBelastingvrijeSom: 10570,
     childExtraAmounts: [0, 1690, 4340, 9730, 15740],
     extraPerChildAbove4: 5990,
-    forfaitRate: 0.30,
+    forfaitRate: 0.3,
     forfaitMax: 5750,
   },
   2025: {
     brackets: [
       { from: 0, to: 16320, rate: 0.25 },
-      { from: 16320, to: 28800, rate: 0.40 },
+      { from: 16320, to: 28800, rate: 0.4 },
       { from: 28800, to: 48320, rate: 0.45 },
-      { from: 48320, to: Infinity, rate: 0.50 },
+      { from: 48320, to: Infinity, rate: 0.5 },
     ],
     baseBelastingvrijeSom: 10910,
     childExtraAmounts: [0, 1740, 4490, 10070, 16270],
     extraPerChildAbove4: 6190,
-    forfaitRate: 0.30,
+    forfaitRate: 0.3,
     forfaitMax: 5930,
   },
   2026: {
@@ -66,12 +66,12 @@ const BE_PARAMS: Record<TaxYear, BEYearParams> = {
       { from: 0, to: 16320, rate: 0.25 },
       { from: 16320, to: 28800, rate: 0.35 }, // proposed reform: 40→35
       { from: 28800, to: 48320, rate: 0.45 },
-      { from: 48320, to: Infinity, rate: 0.50 },
+      { from: 48320, to: Infinity, rate: 0.5 },
     ],
     baseBelastingvrijeSom: 11200,
     childExtraAmounts: [0, 1790, 4620, 10360, 16740],
     extraPerChildAbove4: 6370,
-    forfaitRate: 0.30,
+    forfaitRate: 0.3,
     forfaitMax: 6100,
   },
 };
@@ -106,7 +106,7 @@ function belastingvrijeSomReduction(inputs: TaxInputs, p: BEYearParams): number 
 }
 
 export function calculateBETax(inputs: TaxInputs): BETaxResult | null {
-  if (inputs.residentCountry !== 'BE') return null;
+  if (inputs.residentCountry !== "BE") return null;
 
   const p = BE_PARAMS[inputs.year] ?? BE_PARAMS[2025];
 

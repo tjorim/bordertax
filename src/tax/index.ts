@@ -1,6 +1,6 @@
-import type { TaxInputs, TaxResult } from './types';
-import { calculateNLTax } from './nl';
-import { calculateBETax } from './be';
+import type { TaxInputs, TaxResult } from "./types";
+import { calculateNLTax } from "./nl";
+import { calculateBETax } from "./be";
 
 export function calculate(inputs: TaxInputs): TaxResult {
   const nl = calculateNLTax(inputs);
@@ -20,4 +20,4 @@ export function calculate(inputs: TaxInputs): TaxResult {
   };
 }
 
-export type { TaxInputs, TaxResult, NLTaxResult, BETaxResult, BracketLine } from './types';
+export type { TaxInputs, TaxResult, NLTaxResult, BETaxResult, BracketLine } from "./types";

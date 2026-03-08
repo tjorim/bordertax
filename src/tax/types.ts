@@ -1,7 +1,7 @@
 export type TaxYear = 2024 | 2025 | 2026;
-export type ResidentCountry = 'NL' | 'BE';
-export type CivilStatus = 'single' | 'married';
-export type BelgianRegion = 'flemish' | 'walloon' | 'brussels';
+export type ResidentCountry = "NL" | "BE";
+export type CivilStatus = "single" | "married";
+export type BelgianRegion = "flemish" | "walloon" | "brussels";
 
 export interface TaxInputs {
   year: TaxYear;

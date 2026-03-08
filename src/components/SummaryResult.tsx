@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
-import { Alert, Button, Col, ProgressBar, Row, Stack, Table } from 'react-bootstrap';
-import type { TaxResult } from '../tax/types';
-import * as m from '../paraglide/messages.js';
-import { getLocale } from '../paraglide/runtime.js';
+import { useEffect, useState } from "react";
+import { Alert, Button, Col, ProgressBar, Row, Stack, Table } from "react-bootstrap";
+import type { TaxResult } from "../tax/types";
+import * as m from "../paraglide/messages.js";
+import { getLocale } from "../paraglide/runtime.js";
 
 interface Props {
   result: TaxResult;
@@ -12,25 +12,24 @@ interface Props {
 const DEFAULT_WORKDAYS = 220;
 
 const fmt = (n: number) =>
-  n.toLocaleString(getLocale(), { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 });
+  n.toLocaleString(getLocale(), { style: "currency", currency: "EUR", maximumFractionDigits: 0 });
 const pct = (n: number) => `${(n * 100).toFixed(1)}%`;
 
 export default function SummaryResult({ result, onResetInputs }: Props) {
-  const [copyStatus, setCopyStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [copyStatus, setCopyStatus] = useState<"idle" | "success" | "error">("idle");
   const { grossIncome, totalTax, netIncome, effectiveRateTotal, nl, be } = result;
 
   const nlPct = grossIncome > 0 ? (nl.netTaxNL / grossIncome) * 100 : 0;
   const bePct = grossIncome > 0 ? ((be?.netTaxBE ?? 0) / grossIncome) * 100 : 0;
   const netPct = 100 - nlPct - bePct;
 
-
   useEffect(() => {
-    if (copyStatus === 'idle') {
+    if (copyStatus === "idle") {
       return;
     }
 
     const timer = window.setTimeout(() => {
-      setCopyStatus('idle');
+      setCopyStatus("idle");
     }, 3000);
 
     return () => {
@@ -47,13 +46,13 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
       `${m.summary_total_tax()} ${fmt(totalTax)}`,
       `${m.summary_net_income()} ${fmt(netIncome)}`,
       `${m.summary_effective_rate_total()} ${pct(effectiveRateTotal)}`,
-    ].join('\n');
+    ].join("\n");
 
     try {
       await navigator.clipboard.writeText(lines);
-      setCopyStatus('success');
+      setCopyStatus("success");
     } catch {
-      setCopyStatus('error');
+      setCopyStatus("error");
     }
   }
 
@@ -70,12 +69,12 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
         </Button>
       </Stack>
 
-      {copyStatus === 'success' && (
+      {copyStatus === "success" && (
         <Alert variant="success" className="py-2">
           {m.summary_copy_success()}
         </Alert>
       )}
-      {copyStatus === 'error' && (
+      {copyStatus === "error" && (
         <Alert variant="warning" className="py-2">
           {m.summary_copy_error()}
         </Alert>
@@ -115,8 +114,13 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
       </Table>
 
       <p className="fw-semibold small mb-2">{m.summary_allocation()}</p>
-      <ProgressBar className="mb-2" style={{ height: '1.5rem' }}>
-        <ProgressBar variant="success" now={netPct} key={1} label={`${m.summary_net_label()} ${pct(netPct / 100)}`} />
+      <ProgressBar className="mb-2" style={{ height: "1.5rem" }}>
+        <ProgressBar
+          variant="success"
+          now={netPct}
+          key={1}
+          label={`${m.summary_net_label()} ${pct(netPct / 100)}`}
+        />
         <ProgressBar variant="danger" now={nlPct} key={2} label={`NL ${pct(nlPct / 100)}`} />
         {bePct > 0 && (
           <ProgressBar variant="warning" now={bePct} key={3} label={`BE ${pct(bePct / 100)}`} />
@@ -140,7 +144,10 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
           <div className="border rounded p-3">
             <div className="text-muted small">{m.summary_net_daily()}</div>
             <div className="fs-5 fw-bold text-success">
-              {fmt(netIncome / ((result.inputs.daysWorkedNL + result.inputs.daysWorkedBE) || DEFAULT_WORKDAYS))}
+              {fmt(
+                netIncome /
+                  (result.inputs.daysWorkedNL + result.inputs.daysWorkedBE || DEFAULT_WORKDAYS),
+              )}
             </div>
           </div>
         </Col>
