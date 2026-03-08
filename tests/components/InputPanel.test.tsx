@@ -13,18 +13,19 @@ describe('InputPanel', () => {
   it('shows Belgian region and communal tax fields for BE residents', () => {
     const onChange = vi.fn();
     render(<InputPanel inputs={{ ...mockInputs, residentCountry: 'BE' }} onChange={onChange} />);
-    // These fields are only shown for BE residents
     const selects = screen.getAllByRole('combobox');
-    // year, residentCountry, civilStatus, belgianRegion – at least 4 dropdowns for BE
     expect(selects.length).toBeGreaterThanOrEqual(4);
+    expect(screen.getByText(/municipal tax|communal tax|gemeentebelasting/i)).toBeInTheDocument();
+    expect(screen.getAllByRole('spinbutton').length).toBeGreaterThanOrEqual(5);
   });
 
   it('hides Belgian region and communal tax fields for NL residents', () => {
     const onChange = vi.fn();
     render(<InputPanel inputs={{ ...mockInputs, residentCountry: 'NL' }} onChange={onChange} />);
     const selects = screen.getAllByRole('combobox');
-    // year, residentCountry, civilStatus – 3 dropdowns for NL (no belgianRegion)
     expect(selects.length).toBe(3);
+    expect(screen.queryByText(/municipal tax|communal tax|gemeentebelasting/i)).toBeNull();
+    expect(screen.getAllByRole('spinbutton').length).toBe(4);
   });
 
   it('calls onChange when year dropdown is changed', () => {

@@ -24,7 +24,9 @@ describe('MultiYearComparison', () => {
 
   it('marks the active year with a badge', () => {
     render(<MultiYearComparison rows={rows} activeYear={2025} />);
-    expect(screen.getByText('active')).toBeInTheDocument();
+    const activeYearCell = screen.getByText('2025').closest('td');
+    const activeRow = activeYearCell?.closest('tr');
+    expect(activeRow).toHaveClass('table-primary');
   });
 
   it('renders table with column headers', () => {

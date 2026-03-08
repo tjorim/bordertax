@@ -16,7 +16,7 @@ export const mockInputs: TaxInputs = {
 
 export const mockNLResult: NLTaxResult = {
   nlTaxableIncome: 54545.45,
-  taxBeforeCredits: 17000,
+  taxBeforeCredits: 19807.51,
   brackets: [
     { label: '€0 – €38.441', rate: 0.3582, taxableAmount: 38441, tax: 13773.56 },
     { label: '€38.441 – €76.817', rate: 0.3748, taxableAmount: 16104.45, tax: 6033.95 },
@@ -24,8 +24,8 @@ export const mockNLResult: NLTaxResult = {
   algemeneHeffingskorting: 0,
   arbeidskorting: 4500,
   totalCredits: 4500,
-  netTaxNL: 12500,
-  effectiveRateNL: 0.2083,
+  netTaxNL: 15307.51,
+  effectiveRateNL: 0.2806,
 };
 
 export const mockBEResult: BETaxResult = {
@@ -48,9 +48,9 @@ export const mockTaxResult: TaxResult = {
   nl: mockNLResult,
   be: mockBEResult,
   grossIncome: 60000,
-  totalTax: 14180.01,
-  netIncome: 45819.99,
-  effectiveRateTotal: 0.2363,
+  totalTax: 16987.52,
+  netIncome: 43012.48,
+  effectiveRateTotal: 0.2831,
 };
 
 export const mockTaxResultNLResident: TaxResult = {
@@ -58,7 +58,7 @@ export const mockTaxResultNLResident: TaxResult = {
   nl: mockNLResult,
   be: null,
   grossIncome: 60000,
-  totalTax: 12500,
-  netIncome: 47500,
-  effectiveRateTotal: 0.2083,
+  totalTax: 15307.51,
+  netIncome: 44692.49,
+  effectiveRateTotal: 0.2551,
 };
