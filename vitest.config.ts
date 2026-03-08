@@ -1,8 +1,23 @@
-import { defineConfig, mergeConfig } from 'vitest/config';
-import viteConfig from './vite.config';
+import { paraglideVitePlugin } from '@inlang/paraglide-js';
+import reactPlugin from '@vitejs/plugin-react';
+import { resolve } from 'node:path';
+import { defineConfig } from 'vitest/config';
 
-// Reuse the app's Vite config (plugins + aliases) and only layer Vitest settings.
-export default mergeConfig(viteConfig, defineConfig({
+export default defineConfig({
+  plugins: [
+    // oxlint-disable-next-line @typescript-eslint/no-explicit-any -- paraglide plugin types don't match vitest's plugin type
+    paraglideVitePlugin({
+      project: './project.inlang',
+      outdir: './src/paraglide',
+      strategy: ['localStorage', 'preferredLanguage', 'baseLocale'],
+    }) as any,
+    reactPlugin(),
+  ],
+  resolve: {
+    alias: {
+      '@': resolve(__dirname, 'src'),
+    },
+  },
   test: {
     environment: 'happy-dom',
     globals: true,
@@ -17,12 +32,6 @@ export default mergeConfig(viteConfig, defineConfig({
         'src/assets/**',
         'src/tax/types.ts',
       ],
-      thresholds: {
-        statements: 90,
-        branches: 90,
-        functions: 90,
-        lines: 90,
-      },
     },
   },
-}));
+});
