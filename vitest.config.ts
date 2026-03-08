@@ -1,5 +1,3 @@
-import { paraglideVitePlugin } from '@inlang/paraglide-js';
-import reactPlugin from '@vitejs/plugin-react';
 import { resolve } from 'node:path';
 import { defineConfig } from 'vitest/config';
 
@@ -9,14 +7,6 @@ export default defineConfig({
       '@': resolve(__dirname, 'src'),
     },
   },
-  plugins: [
-    paraglideVitePlugin({
-      project: './project.inlang',
-      outdir: './src/paraglide',
-      strategy: ['localStorage', 'preferredLanguage', 'baseLocale'],
-    }),
-    reactPlugin(),
-  ] as any,
   test: {
     environment: 'happy-dom',
     globals: true,
