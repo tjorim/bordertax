@@ -49,6 +49,9 @@ function sanitizeInputs(raw: unknown): TaxInputs {
   const isOneOf = <T,>(value: unknown, options: readonly T[]): value is T =>
     options.includes(value as T);
 
+  const sanitizeNonNegative = (value: unknown, defaultValue: number): number =>
+    Number.isFinite(value) ? Math.max(0, Number(value)) : defaultValue;
+
   return {
     year: isOneOf(input.year, VALID_YEARS) ? input.year : DEFAULT_INPUTS.year,
     residentCountry: isOneOf(input.residentCountry, VALID_RESIDENT_COUNTRIES)
@@ -81,18 +84,19 @@ function sanitizeInputs(raw: unknown): TaxInputs {
       typeof input.thirtyPercentRuling === "boolean"
         ? input.thirtyPercentRuling
         : DEFAULT_INPUTS.thirtyPercentRuling,
-    socialContributions: Number.isFinite(input.socialContributions)
-      ? Math.max(0, Number(input.socialContributions))
-      : DEFAULT_INPUTS.socialContributions,
-    aanvullendPensioen: Number.isFinite(input.aanvullendPensioen)
-      ? Math.max(0, Number(input.aanvullendPensioen))
-      : DEFAULT_INPUTS.aanvullendPensioen,
-    dienstencheques: Number.isFinite(input.dienstencheques)
-      ? Math.max(0, Number(input.dienstencheques))
-      : DEFAULT_INPUTS.dienstencheques,
-    roerendeVoorheffing: Number.isFinite(input.roerendeVoorheffing)
-      ? Math.max(0, Number(input.roerendeVoorheffing))
-      : DEFAULT_INPUTS.roerendeVoorheffing,
+    socialContributions: sanitizeNonNegative(
+      input.socialContributions,
+      DEFAULT_INPUTS.socialContributions,
+    ),
+    aanvullendPensioen: sanitizeNonNegative(
+      input.aanvullendPensioen,
+      DEFAULT_INPUTS.aanvullendPensioen,
+    ),
+    dienstencheques: sanitizeNonNegative(input.dienstencheques, DEFAULT_INPUTS.dienstencheques),
+    roerendeVoorheffing: sanitizeNonNegative(
+      input.roerendeVoorheffing,
+      DEFAULT_INPUTS.roerendeVoorheffing,
+    ),
   };
 }
 
