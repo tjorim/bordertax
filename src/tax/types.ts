@@ -57,7 +57,7 @@ export interface BETaxResult {
   netProfessionalIncome: number;
   /** Belgian-sourced income (days in BE fraction of grossSalary) */
   beIncome: number;
-  /** NL-exempt net income (nlTaxableIncome − netTaxNL) */
+  /** NL-sourced gross income (days in NL fraction of grossSalary), for display purposes. */
   nlExemptIncome: number;
   /** Exempt income (with progression): vrijgesteld portion of netProfessionalIncome */
   vrijgesteld: number;
