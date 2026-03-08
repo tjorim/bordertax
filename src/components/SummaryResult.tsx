@@ -146,7 +146,7 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
             <div className="fs-5 fw-bold text-success">
               {fmt(
                 netIncome /
-                  (result.inputs.daysWorkedNL + result.inputs.daysWorkedBE || DEFAULT_WORKDAYS),
+                  (result.inputs.daysWorkedNL + result.inputs.daysWorkedBE + (result.inputs.daysWorkedOther ?? 0) || DEFAULT_WORKDAYS),
               )}
             </div>
           </div>

@@ -8,84 +8,11 @@
  * NL-sourced income is exempt from Belgian tax but raises the progression rate.
  * Communal tax (gemeentebelasting) is levied on both the taxable AND the exempt portion.
  *
- * Sources:
- *   Brackets: https://fin.belgium.be/en/private-individuals/tax-return/income/tax-rates
- *   2024 gereduceerdRate / gewestelijkeRate: verified from official BE aanslagbiljet 2025 (income 2024)
- *
- * TODO: Verify gereduceerdRate / gewestelijkeRate for 2025 and 2026 once official billets are available.
+ * Year-specific rates are in params.ts — that is the only file that needs updating each year.
  */
-import type { TaxInputs, BETaxResult, NLTaxResult, TaxYear } from "./types";
-
-interface BEBracket {
-  from: number;
-  to: number;
-  rate: number;
-}
-
-interface BEYearParams {
-  brackets: BEBracket[];
-  baseBelastingvrijeSom: number;
-  childExtraAmounts: number[]; // [0 children, 1, 2, 3, 4] – index = number of dependent children
-  extraPerChildAbove4: number;
-  forfaitRate: number;
-  forfaitMax: number;
-  /** Federal reduction rate: portion of hoofdsom that is federal (verified per year). */
-  gereduceerdRate: number;
-  /** Regional supplement rate applied to gereduceerde (verified per year). */
-  gewestelijkeRate: number;
-}
-
-const BE_PARAMS: Record<TaxYear, BEYearParams> = {
-  2024: {
-    brackets: [
-      { from: 0, to: 15820, rate: 0.25 },
-      { from: 15820, to: 27920, rate: 0.4 },
-      { from: 27920, to: 46740, rate: 0.45 },
-      { from: 46740, to: Infinity, rate: 0.5 },
-    ],
-    baseBelastingvrijeSom: 10570,
-    childExtraAmounts: [0, 1690, 4340, 9730, 15740],
-    extraPerChildAbove4: 5990,
-    forfaitRate: 0.3,
-    forfaitMax: 5750,
-    // Verified from official BE aanslagbiljet personenbelasting 2025 (income 2024)
-    gereduceerdRate: 0.75043,
-    gewestelijkeRate: 0.33257,
-  },
-  2025: {
-    brackets: [
-      { from: 0, to: 16320, rate: 0.25 },
-      { from: 16320, to: 28800, rate: 0.4 },
-      { from: 28800, to: 48320, rate: 0.45 },
-      { from: 48320, to: Infinity, rate: 0.5 },
-    ],
-    baseBelastingvrijeSom: 10910,
-    childExtraAmounts: [0, 1740, 4490, 10070, 16270],
-    extraPerChildAbove4: 6190,
-    forfaitRate: 0.3,
-    forfaitMax: 5930,
-    // TODO: Verify with official 2025 aanslagbiljet when available
-    gereduceerdRate: 0.75043,
-    gewestelijkeRate: 0.33257,
-  },
-  2026: {
-    // TODO: Update with official 2026 figures when published
-    brackets: [
-      { from: 0, to: 16320, rate: 0.25 },
-      { from: 16320, to: 28800, rate: 0.35 }, // proposed reform: 40→35
-      { from: 28800, to: 48320, rate: 0.45 },
-      { from: 48320, to: Infinity, rate: 0.5 },
-    ],
-    baseBelastingvrijeSom: 11200,
-    childExtraAmounts: [0, 1790, 4620, 10360, 16740],
-    extraPerChildAbove4: 6370,
-    forfaitRate: 0.3,
-    forfaitMax: 6100,
-    // TODO: Verify with official 2026 aanslagbiljet when available
-    gereduceerdRate: 0.75043,
-    gewestelijkeRate: 0.33257,
-  },
-};
+import type { TaxInputs, BETaxResult, NLTaxResult } from "./types";
+import { TAX_PARAMS } from "./params";
+import type { BEBracket, BEYearParams } from "./params";
 
 function applyBEBrackets(income: number, brackets: BEBracket[]): number {
   let remaining = income;
@@ -119,10 +46,11 @@ function belastingvrijeSomReduction(inputs: TaxInputs, p: BEYearParams): number 
 export function calculateBETax(inputs: TaxInputs, nl: NLTaxResult): BETaxResult | null {
   if (inputs.residentCountry !== "BE") return null;
 
-  const p = BE_PARAMS[inputs.year] ?? BE_PARAMS[2025];
+  const p = TAX_PARAMS[inputs.year]?.be ?? TAX_PARAMS[2025].be;
 
-  const totalDays = inputs.daysWorkedNL + inputs.daysWorkedBE;
-  const beFraction = totalDays > 0 ? inputs.daysWorkedBE / totalDays : 0;
+  const daysOutsideNL = inputs.daysWorkedBE + (inputs.daysWorkedOther ?? 0);
+  const totalDays = inputs.daysWorkedNL + daysOutsideNL;
+  const beFraction = totalDays > 0 ? daysOutsideNL / totalDays : 0;
 
   // Gross split for reference fields
   const beIncome = inputs.grossSalary * beFraction;

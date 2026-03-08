@@ -184,6 +184,17 @@ export default function InputPanel({ inputs, onChange }: Props) {
               />
             </Col>
 
+            <Col xs={12} sm={6}>
+              <Form.Label>{m.input_workdays_other()}</Form.Label>
+              <Form.Control
+                type="number"
+                min={0}
+                value={inputs.daysWorkedOther ?? 0}
+                onChange={(e) => set("daysWorkedOther", Math.max(0, Number(e.target.value)))}
+              />
+              <Form.Text className="text-muted">{m.input_workdays_other_hint()}</Form.Text>
+            </Col>
+
             <Col xs={12}>
               <Form.Check
                 id="thirty-ruling"

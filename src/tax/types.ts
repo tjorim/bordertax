@@ -1,4 +1,4 @@
-export type TaxYear = 2024 | 2025 | 2026;
+export type TaxYear = 2023 | 2024 | 2025 | 2026;
 export type ResidentCountry = "NL" | "BE";
 export type CivilStatus = "single" | "married";
 export type BelgianRegion = "flemish" | "walloon" | "brussels";
@@ -15,6 +15,10 @@ export interface TaxInputs {
   grossSalary: number;
   daysWorkedNL: number;
   daysWorkedBE: number;
+  /** Days worked in a third country (e.g. customer installation in France).
+   *  Belgium treats these identically to Belgian days (vol tarief) since the NL-BE treaty
+   *  only covers NL-sourced income. Default 0. */
+  daysWorkedOther?: number;
   thirtyPercentRuling: boolean;
   /** Belgian social contributions (eigen bijdragen) — deductible from Belgian declared income. Default 0. */
   socialContributions?: number;
