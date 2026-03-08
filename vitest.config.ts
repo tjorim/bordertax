@@ -15,8 +15,8 @@ export default defineConfig({
       outdir: './src/paraglide',
       strategy: ['localStorage', 'preferredLanguage', 'baseLocale'],
     }),
-    reactPlugin() as ReturnType<typeof reactPlugin>,
-  ],
+    reactPlugin(),
+  ] as any,
   test: {
     environment: 'happy-dom',
     globals: true,
