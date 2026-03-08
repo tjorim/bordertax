@@ -19,7 +19,14 @@ import {
 import * as m from "./paraglide/messages.js";
 import { getLocale, setLocale } from "./paraglide/runtime.js";
 
-const DEFAULT_INPUTS: TaxInputs = {
+type TaxInputsWithRequiredBEDeductions = TaxInputs & {
+  socialContributions: number;
+  aanvullendPensioen: number;
+  dienstencheques: number;
+  roerendeVoorheffing: number;
+};
+
+const DEFAULT_INPUTS: TaxInputsWithRequiredBEDeductions = {
   year: 2025,
   residentCountry: "BE",
   civilStatus: "single",
@@ -86,16 +93,16 @@ function sanitizeInputs(raw: unknown): TaxInputs {
         : DEFAULT_INPUTS.thirtyPercentRuling,
     socialContributions: sanitizeNonNegative(
       input.socialContributions,
-      DEFAULT_INPUTS.socialContributions ?? 0,
+      DEFAULT_INPUTS.socialContributions,
     ),
     aanvullendPensioen: sanitizeNonNegative(
       input.aanvullendPensioen,
-      DEFAULT_INPUTS.aanvullendPensioen ?? 0,
+      DEFAULT_INPUTS.aanvullendPensioen,
     ),
-    dienstencheques: sanitizeNonNegative(input.dienstencheques, DEFAULT_INPUTS.dienstencheques ?? 0),
+    dienstencheques: sanitizeNonNegative(input.dienstencheques, DEFAULT_INPUTS.dienstencheques),
     roerendeVoorheffing: sanitizeNonNegative(
       input.roerendeVoorheffing,
-      DEFAULT_INPUTS.roerendeVoorheffing ?? 0,
+      DEFAULT_INPUTS.roerendeVoorheffing,
     ),
   };
 }
