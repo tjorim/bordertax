@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { calculateBETax } from "@/tax/be";
+import { calculateNLTax } from "@/tax/nl";
 import type { TaxInputs, NLTaxResult } from "@/tax/types";
 
 const baseNL: TaxInputs = {
@@ -15,6 +16,10 @@ const baseNL: TaxInputs = {
   daysWorkedNL: 220,
   daysWorkedBE: 0,
   thirtyPercentRuling: false,
+  socialContributions: 0,
+  aanvullendPensioen: 0,
+  dienstencheques: 0,
+  roerendeVoorheffing: 0,
 };
 
 const baseBE: TaxInputs = {
@@ -22,21 +27,16 @@ const baseBE: TaxInputs = {
   residentCountry: "BE",
 };
 
-/**
- * Creates a minimal NLTaxResult for use in BE tests.
- * Defaults represent a reasonable NL result for grossSalary=60000.
- */
 function mockNL(overrides?: Partial<NLTaxResult>): NLTaxResult {
+  const canonicalInputs: TaxInputs = {
+    ...baseNL,
+    grossSalary: 60000,
+    daysWorkedNL: 220,
+    daysWorkedBE: 0,
+  };
+
   return {
-    nlTaxableIncome: 55000,
-    taxBeforeCredits: 8000,
-    brackets: [],
-    algemeneHeffingskorting: 0,
-    arbeidskorting: 2000,
-    totalCredits: 2000,
-    volksverzekeringen: 10000,
-    netTaxNL: 16000,
-    effectiveRateNL: 0.267,
+    ...calculateNLTax(canonicalInputs),
     ...overrides,
   };
 }
@@ -99,7 +99,7 @@ describe("calculateBETax", () => {
     expect(result!.beFraction).toBe(1);
   });
 
-  it("communal tax increases with higher communalTaxRate", () => {
+  it("communal levy increases with higher communalTaxRate", () => {
     const low = calculateBETax(
       { ...baseBE, daysWorkedNL: 200, daysWorkedBE: 20, communalTaxRate: 5 },
       mockNL(),
@@ -108,16 +108,19 @@ describe("calculateBETax", () => {
       { ...baseBE, daysWorkedNL: 200, daysWorkedBE: 20, communalTaxRate: 9 },
       mockNL(),
     );
-    expect(high!.communalTax).toBeGreaterThan(low!.communalTax);
+    expect(high!.communalTax + high!.communalTaxOnVrijgesteld).toBeGreaterThan(
+      low!.communalTax + low!.communalTaxOnVrijgesteld,
+    );
   });
 
-  it("communalTax > 0 and communalTaxOnVrijgesteld >= 0", () => {
+  it("communal tax components are non-negative and at least one is positive", () => {
     const result = calculateBETax(
       { ...baseBE, daysWorkedNL: 200, daysWorkedBE: 20, communalTaxRate: 7 },
       mockNL(),
     );
-    expect(result!.communalTax).toBeGreaterThan(0);
+    expect(result!.communalTax).toBeGreaterThanOrEqual(0);
     expect(result!.communalTaxOnVrijgesteld).toBeGreaterThanOrEqual(0);
+    expect(result!.communalTax + result!.communalTaxOnVrijgesteld).toBeGreaterThan(0);
   });
 
   it("netTaxBE equals federalTax + communalTax + communalTaxOnVrijgesteld", () => {

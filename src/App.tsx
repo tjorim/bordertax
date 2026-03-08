@@ -31,6 +31,10 @@ const DEFAULT_INPUTS: TaxInputs = {
   daysWorkedNL: 200,
   daysWorkedBE: 20,
   thirtyPercentRuling: false,
+  socialContributions: 0,
+  aanvullendPensioen: 0,
+  dienstencheques: 0,
+  roerendeVoorheffing: 0,
 };
 
 const STORAGE_KEY = "grensarbeider-tax-inputs-v1";
@@ -77,6 +81,18 @@ function sanitizeInputs(raw: unknown): TaxInputs {
       typeof input.thirtyPercentRuling === "boolean"
         ? input.thirtyPercentRuling
         : DEFAULT_INPUTS.thirtyPercentRuling,
+    socialContributions: Number.isFinite(input.socialContributions)
+      ? Math.max(0, Number(input.socialContributions))
+      : DEFAULT_INPUTS.socialContributions,
+    aanvullendPensioen: Number.isFinite(input.aanvullendPensioen)
+      ? Math.max(0, Number(input.aanvullendPensioen))
+      : DEFAULT_INPUTS.aanvullendPensioen,
+    dienstencheques: Number.isFinite(input.dienstencheques)
+      ? Math.max(0, Number(input.dienstencheques))
+      : DEFAULT_INPUTS.dienstencheques,
+    roerendeVoorheffing: Number.isFinite(input.roerendeVoorheffing)
+      ? Math.max(0, Number(input.roerendeVoorheffing))
+      : DEFAULT_INPUTS.roerendeVoorheffing,
   };
 }
 

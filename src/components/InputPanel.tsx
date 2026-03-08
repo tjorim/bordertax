@@ -187,6 +187,54 @@ export default function InputPanel({ inputs, onChange }: Props) {
               />
               <Form.Text className="text-muted">{m.input_thirty_percent_ruling_hint()}</Form.Text>
             </Col>
+
+            {inputs.residentCountry === "BE" && (
+              <>
+                <Col xs={12} sm={6}>
+                  <Form.Label>Social contributions (€)</Form.Label>
+                  <Form.Control
+                    type="number"
+                    min={0}
+                    step={100}
+                    value={inputs.socialContributions ?? 0}
+                    onChange={(e) => set("socialContributions", Math.max(0, Number(e.target.value)))}
+                  />
+                </Col>
+
+                <Col xs={12} sm={6}>
+                  <Form.Label>Aanvullend pensioen (€)</Form.Label>
+                  <Form.Control
+                    type="number"
+                    min={0}
+                    step={100}
+                    value={inputs.aanvullendPensioen ?? 0}
+                    onChange={(e) => set("aanvullendPensioen", Math.max(0, Number(e.target.value)))}
+                  />
+                </Col>
+
+                <Col xs={12} sm={6}>
+                  <Form.Label>Dienstencheques (€)</Form.Label>
+                  <Form.Control
+                    type="number"
+                    min={0}
+                    step={100}
+                    value={inputs.dienstencheques ?? 0}
+                    onChange={(e) => set("dienstencheques", Math.max(0, Number(e.target.value)))}
+                  />
+                </Col>
+
+                <Col xs={12} sm={6}>
+                  <Form.Label>Roerende voorheffing (€)</Form.Label>
+                  <Form.Control
+                    type="number"
+                    min={0}
+                    step={100}
+                    value={inputs.roerendeVoorheffing ?? 0}
+                    onChange={(e) => set("roerendeVoorheffing", Math.max(0, Number(e.target.value)))}
+                  />
+                </Col>
+              </>
+            )}
           </Row>
         </Accordion.Body>
       </Accordion.Item>
