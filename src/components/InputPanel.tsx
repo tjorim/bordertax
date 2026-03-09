@@ -1,6 +1,7 @@
 import { Accordion, Badge, Col, Form, Row } from "react-bootstrap";
 import { VALID_YEARS } from "../tax/constants";
 import type { TaxInputs } from "../tax/types";
+import { getMaxDaysInYear, getTotalWorkdays } from "../tax/workdays";
 import * as m from "../paraglide/messages.js";
 
 interface Props {
@@ -14,15 +15,16 @@ type BelgianDeductionKey =
   | "dienstencheques"
   | "roerendeVoorheffing";
 
-export default function InputPanel({ inputs, onChange }: Props) {
-  const clampNumber = (value: string, min = 0, max = Number.POSITIVE_INFINITY) =>
-    Math.min(max, Math.max(min, Number(value) || 0));
+const clampNumber = (value: string, min = 0, max = Number.POSITIVE_INFINITY) =>
+  Math.min(max, Math.max(min, Number(value) || 0));
 
+export default function InputPanel({ inputs, onChange }: Props) {
   function set<K extends keyof TaxInputs>(key: K, value: TaxInputs[K]) {
     onChange({ ...inputs, [key]: value });
   }
 
-  const totalWorkdays = inputs.daysWorkedNL + inputs.daysWorkedBE + (inputs.daysWorkedOther ?? 0);
+  const totalWorkdays = getTotalWorkdays(inputs);
+  const maxWorkdaysInYear = getMaxDaysInYear(inputs.year);
 
   return (
     <Accordion defaultActiveKey={["0", "1", "2"]} alwaysOpen>
@@ -231,11 +233,11 @@ export default function InputPanel({ inputs, onChange }: Props) {
             <Col xs={12}>
               <Form.Text
                 role="status"
-                className={totalWorkdays === 0 || totalWorkdays > 366 ? "text-warning" : "text-muted"}
+                className={totalWorkdays === 0 || totalWorkdays > maxWorkdaysInYear ? "text-warning" : "text-muted"}
               >
                 {m.input_workdays_total()} {totalWorkdays}
                 {totalWorkdays === 0 && ` — ${m.input_workdays_total_zero_warning()}`}
-                {totalWorkdays > 366 && ` — ${m.input_workdays_total_high_warning()}`}
+                {totalWorkdays > maxWorkdaysInYear && ` — ${m.input_workdays_total_high_warning()}`}
               </Form.Text>
             </Col>
 
