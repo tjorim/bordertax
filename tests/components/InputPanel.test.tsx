@@ -1,10 +1,15 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import InputPanel from "@/components/InputPanel";
+import { setLocale } from "@/paraglide/runtime";
 import { mockInputs } from "../test-utils/mockData";
 
 describe("InputPanel", () => {
+  beforeEach(() => {
+    setLocale("en", { reload: false });
+  });
+
   it("renders without crashing", () => {
     const onChange = vi.fn();
     render(<InputPanel inputs={mockInputs} onChange={onChange} />);
@@ -140,6 +145,18 @@ describe("InputPanel", () => {
     );
     // 180 + 20 + 5 = 205 — shown inline as "Total workdays: 205"
     expect(screen.getByText(/205/)).toBeInTheDocument();
+  });
+
+
+  it("shows a warning when total workdays is zero", () => {
+    const onChange = vi.fn();
+    render(
+      <InputPanel
+        inputs={{ ...mockInputs, daysWorkedNL: 0, daysWorkedBE: 0, daysWorkedOther: 0 }}
+        onChange={onChange}
+      />,
+    );
+    expect(screen.getByText(/realistic net\/day|realistische netto\/dag/i)).toBeInTheDocument();
   });
 
   it("shows a warning when workdays total exceeds a typical yearly range", () => {
