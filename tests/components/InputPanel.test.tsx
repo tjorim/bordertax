@@ -1,10 +1,19 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import InputPanel from "@/components/InputPanel";
+import { setLocale } from "@/paraglide/runtime";
 import { mockInputs } from "../test-utils/mockData";
 
 describe("InputPanel", () => {
+  beforeEach(() => {
+    setLocale("en", { reload: false });
+  });
+
+  afterEach(() => {
+    setLocale("en", { reload: false });
+  });
+
   it("renders without crashing", () => {
     const onChange = vi.fn();
     render(<InputPanel inputs={mockInputs} onChange={onChange} />);
