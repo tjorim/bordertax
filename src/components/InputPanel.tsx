@@ -1,7 +1,7 @@
 import { Accordion, Badge, Col, Form, Row } from "react-bootstrap";
 import { VALID_YEARS } from "../tax/constants";
 import type { TaxInputs } from "../tax/types";
-import { getTotalWorkdays, MAX_WORKDAYS_IN_YEAR } from "../tax/workdays";
+import { getMaxDaysInYear, getTotalWorkdays } from "../tax/workdays";
 import * as m from "../paraglide/messages.js";
 
 interface Props {
@@ -24,6 +24,7 @@ export default function InputPanel({ inputs, onChange }: Props) {
   }
 
   const totalWorkdays = getTotalWorkdays(inputs);
+  const maxWorkdaysInYear = getMaxDaysInYear(inputs.year);
 
   return (
     <Accordion defaultActiveKey={["0", "1", "2"]} alwaysOpen>
@@ -232,11 +233,11 @@ export default function InputPanel({ inputs, onChange }: Props) {
             <Col xs={12}>
               <Form.Text
                 role="status"
-                className={totalWorkdays === 0 || totalWorkdays > MAX_WORKDAYS_IN_YEAR ? "text-warning" : "text-muted"}
+                className={totalWorkdays === 0 || totalWorkdays > maxWorkdaysInYear ? "text-warning" : "text-muted"}
               >
                 {m.input_workdays_total()} {totalWorkdays}
                 {totalWorkdays === 0 && ` — ${m.input_workdays_total_zero_warning()}`}
-                {totalWorkdays > MAX_WORKDAYS_IN_YEAR && ` — ${m.input_workdays_total_high_warning()}`}
+                {totalWorkdays > maxWorkdaysInYear && ` — ${m.input_workdays_total_high_warning()}`}
               </Form.Text>
             </Col>
 
