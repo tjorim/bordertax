@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Alert, Button, Col, ProgressBar, Row, Stack, Table } from "react-bootstrap";
 import type { TaxResult } from "../tax/types";
+import { getTotalWorkdays } from "../tax/workdays";
 import * as m from "../paraglide/messages.js";
 import { getLocale } from "../paraglide/runtime.js";
 
@@ -28,6 +29,7 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
   const withheldTaxNL = result.inputs.withheldTaxNL ?? 0;
   const nlBalance = withheldTaxNL - nl.netTaxNL;
   const netResult = nlBalance - (be?.netTaxBE ?? 0);
+  const totalWorkdays = getTotalWorkdays(result.inputs);
 
   const nlPct = grossIncome > 0 ? (nl.netTaxNL / grossIncome) * 100 : 0;
   const bePct = grossIncome > 0 ? ((be?.netTaxBE ?? 0) / grossIncome) * 100 : 0;
@@ -154,13 +156,7 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
           <div className="border rounded p-3">
             <div className="text-muted small">{m.summary_net_daily()}</div>
             <div className="fs-5 fw-bold text-success">
-              {(() => {
-                const totalDays =
-                  result.inputs.daysWorkedNL +
-                  result.inputs.daysWorkedBE +
-                  (result.inputs.daysWorkedOther ?? 0);
-                return totalDays > 0 ? fmt(netIncome / totalDays) : "—";
-              })()}
+              {totalWorkdays > 0 ? fmt(netIncome / totalWorkdays) : "—"}
             </div>
           </div>
         </Col>
