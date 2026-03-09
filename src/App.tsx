@@ -185,7 +185,7 @@ export default function App() {
             <Tab.Container defaultActiveKey="summary">
               <Nav variant="tabs" className="mb-3">
                 <Nav.Item>
-                  <Nav.Link eventKey="summary">
+                  <Nav.Link eventKey="summary" aria-label={m.tabs_summary()}>
                     <i className="bi bi-pie-chart-fill me-1" />
                     {m.tabs_summary()}
                   </Nav.Link>
@@ -201,7 +201,7 @@ export default function App() {
                   </Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                  <Nav.Link eventKey="years">
+                  <Nav.Link eventKey="years" aria-label={m.tabs_year_comparison()}>
                     <i className="bi bi-bar-chart-line-fill me-1" />
                     {m.tabs_year_comparison()}
                   </Nav.Link>

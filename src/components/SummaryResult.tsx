@@ -9,8 +9,6 @@ interface Props {
   onResetInputs: () => void;
 }
 
-const DEFAULT_WORKDAYS = 220;
-
 const fmt = (n: number) =>
   n.toLocaleString(getLocale(), { style: "currency", currency: "EUR", maximumFractionDigits: 0 });
 const pct = (n: number) => `${(n * 100).toFixed(1)}%`;
@@ -156,12 +154,13 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
           <div className="border rounded p-3">
             <div className="text-muted small">{m.summary_net_daily()}</div>
             <div className="fs-5 fw-bold text-success">
-              {fmt(
-                netIncome /
-                  (result.inputs.daysWorkedNL +
-                    result.inputs.daysWorkedBE +
-                    (result.inputs.daysWorkedOther ?? 0) || DEFAULT_WORKDAYS),
-              )}
+              {(() => {
+                const totalDays =
+                  result.inputs.daysWorkedNL +
+                  result.inputs.daysWorkedBE +
+                  (result.inputs.daysWorkedOther ?? 0);
+                return totalDays > 0 ? fmt(netIncome / totalDays) : "—";
+              })()}
             </div>
           </div>
         </Col>

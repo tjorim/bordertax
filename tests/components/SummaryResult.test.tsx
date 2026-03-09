@@ -43,6 +43,25 @@ describe("SummaryResult", () => {
     expect(screen.getByRole("button", { name: /copy/i })).toBeInTheDocument();
   });
 
+  it("shows net daily rate when workdays are set", () => {
+    const onReset = vi.fn();
+    render(<SummaryResult result={mockTaxResult} onResetInputs={onReset} />);
+    expect(screen.getByText(m.summary_net_daily())).toBeInTheDocument();
+    // mockTaxResult has daysWorkedNL:200, daysWorkedBE:20 → total 220 days
+    const dailyCell = screen.getByText(m.summary_net_daily()).closest("div")?.parentElement;
+    expect(dailyCell?.textContent).not.toContain("—");
+  });
+
+  it("shows em dash for net daily rate when total workdays is zero", () => {
+    const onReset = vi.fn();
+    const zeroResult = {
+      ...mockTaxResult,
+      inputs: { ...mockTaxResult.inputs, daysWorkedNL: 0, daysWorkedBE: 0, daysWorkedOther: 0 },
+    };
+    render(<SummaryResult result={zeroResult} onResetInputs={onReset} />);
+    const dailyCell = screen.getByText(m.summary_net_daily()).closest("div")?.parentElement;
+    expect(dailyCell?.textContent).toContain("—");
+  });
   it("displays the progress bar", () => {
     const onReset = vi.fn();
     render(<SummaryResult result={mockTaxResult} onResetInputs={onReset} />);

@@ -36,6 +36,8 @@
   "input_workdays_be": "Days worked in 🇧🇪 BE",
   "input_workdays_other": "Days worked in other country (e.g. 🇫🇷 FR)",
   "input_workdays_other_hint": "E.g. customer installations abroad. Counted the same as BE days for Belgian tax.",
+  "input_workdays_total": "Total workdays:",
+  "input_workdays_high_warning": "Total seems high (typical work year: 200–260 days).",
   "input_thirty_percent_ruling": "30% ruling applies (NL)",
   "input_thirty_percent_ruling_hint": "Expat rule: 30% of salary is tax free",
   "input_social_contributions": "Social contributions (€)",

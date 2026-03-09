@@ -36,6 +36,8 @@
   "input_workdays_be": "Werkdagen in 🇧🇪 BE",
   "input_workdays_other": "Werkdagen in ander land (bijv. 🇫🇷 FR)",
   "input_workdays_other_hint": "Bijv. klantinstallaties in het buitenland. Telt mee als BE-dagen voor de Belgische belasting.",
+  "input_workdays_total": "Totaal werkdagen:",
+  "input_workdays_high_warning": "Totaal lijkt hoog (typisch werksaison: 200–260 dagen).",
   "input_thirty_percent_ruling": "30%-regeling van toepassing (NL)",
   "input_thirty_percent_ruling_hint": "Expat-regeling: 30% van het loon is onbelast",
   "input_social_contributions": "Sociale bijdragen (€)",

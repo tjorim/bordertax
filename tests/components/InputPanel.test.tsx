@@ -121,4 +121,38 @@ describe("InputPanel", () => {
     fireEvent.change(inputs[0]!, { target: { value: "2" } });
     expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ dependentChildren: 2 }));
   });
+
+  it("shows total workdays count", () => {
+    const onChange = vi.fn();
+    render(
+      <InputPanel
+        inputs={{ ...mockInputs, daysWorkedNL: 180, daysWorkedBE: 20, daysWorkedOther: 5 }}
+        onChange={onChange}
+      />,
+    );
+    // 180 + 20 + 5 = 205
+    expect(screen.getByText("205")).toBeInTheDocument();
+  });
+
+  it("shows high workdays warning when total exceeds 260", () => {
+    const onChange = vi.fn();
+    render(
+      <InputPanel
+        inputs={{ ...mockInputs, daysWorkedNL: 200, daysWorkedBE: 70, daysWorkedOther: 0 }}
+        onChange={onChange}
+      />,
+    );
+    expect(screen.getByText(/seems high|lijkt hoog/i)).toBeInTheDocument();
+  });
+
+  it("does not show high workdays warning when total is within normal range", () => {
+    const onChange = vi.fn();
+    render(
+      <InputPanel
+        inputs={{ ...mockInputs, daysWorkedNL: 200, daysWorkedBE: 20, daysWorkedOther: 0 }}
+        onChange={onChange}
+      />,
+    );
+    expect(screen.queryByText(/seems high|lijkt hoog/i)).toBeNull();
+  });
 });
