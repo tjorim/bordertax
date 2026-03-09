@@ -77,6 +77,189 @@ interface YearParams {
 }
 
 export const TAX_PARAMS: Record<TaxYear, YearParams> = {
+  2020: {
+    nl: {
+      under: {
+        // Combined schijf 1: 37.35% − 27.65% = 9.70%
+        incomeTaxBrackets: [
+          { from: 0, to: 34712, rate: 0.097 },
+          { from: 34712, to: 68507, rate: 0.3735 },
+          { from: 68507, to: Infinity, rate: 0.495 },
+        ],
+        socialPremiumRate: 0.2765,
+        socialPremiumMax: 34712,
+        ahkMax: 2711,
+        ahkPhaseOutStart: 20711,
+        ahkPhaseOutRate: 0.05672,
+        ahkPhaseOutEnd: 68507,
+        akStages: [
+          { from: 0, to: 9921, baseAmount: 0, rate: 0.02812 },
+          { from: 9921, to: 21430, baseAmount: 279, rate: 0.28812 },
+          { from: 21430, to: 34954, baseAmount: 3595, rate: 0.01656 },
+          { from: 34954, to: 98604, baseAmount: 3819, rate: -0.06000 },
+          { from: 98604, to: Infinity, baseAmount: 0, rate: 0 },
+        ],
+      },
+      over: {
+        incomeTaxBrackets: [
+          { from: 0, to: 34712, rate: 0.097 },
+          { from: 34712, to: 68507, rate: 0.3735 },
+          { from: 68507, to: Infinity, rate: 0.495 },
+        ],
+        socialPremiumRate: 0.0975,
+        socialPremiumMax: 34712,
+        ahkMax: 1356,
+        ahkPhaseOutStart: 20711,
+        ahkPhaseOutRate: 0.02836,
+        ahkPhaseOutEnd: 68507,
+        akStages: [
+          { from: 0, to: 9921, baseAmount: 0, rate: 0.01406 },
+          { from: 9921, to: 21430, baseAmount: 140, rate: 0.14406 },
+          { from: 21430, to: 34954, baseAmount: 1798, rate: 0.00828 },
+          { from: 34954, to: 98604, baseAmount: 1910, rate: -0.03000 },
+          { from: 98604, to: Infinity, baseAmount: 0, rate: 0 },
+        ],
+      },
+    },
+    be: {
+      brackets: [
+        { from: 0, to: 13440, rate: 0.25 },
+        { from: 13440, to: 23720, rate: 0.4 },
+        { from: 23720, to: 41060, rate: 0.45 },
+        { from: 41060, to: Infinity, rate: 0.5 },
+      ],
+      baseBelastingvrijeSom: 8990,
+      childExtraAmounts: [0, 1630, 4210, 9430, 15250],
+      extraPerChildAbove4: 5810, // estimated: childExtraAmounts[4] × 0.381
+      forfaitRate: 0.3,
+      forfaitMax: 4880,
+      gereduceerdRate: 0.75043,
+      gewestelijkeRate: 0.33257,
+    },
+  },
+
+  2021: {
+    nl: {
+      under: {
+        // Combined schijf 1: 37.10% − 27.65% = 9.45%
+        incomeTaxBrackets: [
+          { from: 0, to: 35129, rate: 0.0945 },
+          { from: 35129, to: 68507, rate: 0.3710 },
+          { from: 68507, to: Infinity, rate: 0.495 },
+        ],
+        socialPremiumRate: 0.2765,
+        socialPremiumMax: 35129,
+        ahkMax: 2837,
+        ahkPhaseOutStart: 21043,
+        ahkPhaseOutRate: 0.05977,
+        ahkPhaseOutEnd: 68507,
+        akStages: [
+          { from: 0, to: 10108, baseAmount: 0, rate: 0.04581 },
+          { from: 10108, to: 21835, baseAmount: 463, rate: 0.28771 },
+          { from: 21835, to: 35652, baseAmount: 3837, rate: 0.02663 },
+          { from: 35652, to: 105735, baseAmount: 4205, rate: -0.06000 },
+          { from: 105735, to: Infinity, baseAmount: 0, rate: 0 },
+        ],
+      },
+      over: {
+        incomeTaxBrackets: [
+          { from: 0, to: 35129, rate: 0.0945 },
+          { from: 35129, to: 68507, rate: 0.3710 },
+          { from: 68507, to: Infinity, rate: 0.495 },
+        ],
+        socialPremiumRate: 0.0975,
+        socialPremiumMax: 35129,
+        ahkMax: 1419,
+        ahkPhaseOutStart: 21043,
+        ahkPhaseOutRate: 0.02989,
+        ahkPhaseOutEnd: 68507,
+        akStages: [
+          { from: 0, to: 10108, baseAmount: 0, rate: 0.02291 },
+          { from: 10108, to: 21835, baseAmount: 232, rate: 0.14386 },
+          { from: 21835, to: 35652, baseAmount: 1919, rate: 0.01332 },
+          { from: 35652, to: 105735, baseAmount: 2103, rate: -0.03000 },
+          { from: 105735, to: Infinity, baseAmount: 0, rate: 0 },
+        ],
+      },
+    },
+    be: {
+      brackets: [
+        { from: 0, to: 13540, rate: 0.25 },
+        { from: 13540, to: 23900, rate: 0.4 },
+        { from: 23900, to: 41360, rate: 0.45 },
+        { from: 41360, to: Infinity, rate: 0.5 },
+      ],
+      baseBelastingvrijeSom: 9050,
+      childExtraAmounts: [0, 1650, 4240, 9500, 15360],
+      extraPerChildAbove4: 5850, // estimated: childExtraAmounts[4] × 0.381
+      forfaitRate: 0.3,
+      forfaitMax: 4920,
+      gereduceerdRate: 0.75043,
+      gewestelijkeRate: 0.33257,
+    },
+  },
+
+  2022: {
+    nl: {
+      under: {
+        // Combined schijf 1: 37.07% − 27.65% = 9.42%
+        incomeTaxBrackets: [
+          { from: 0, to: 35472, rate: 0.0942 },
+          { from: 35472, to: 69398, rate: 0.3707 },
+          { from: 69398, to: Infinity, rate: 0.495 },
+        ],
+        socialPremiumRate: 0.2765,
+        socialPremiumMax: 35472,
+        ahkMax: 2888,
+        ahkPhaseOutStart: 21316,
+        ahkPhaseOutRate: 0.06007,
+        ahkPhaseOutEnd: 69398,
+        akStages: [
+          { from: 0, to: 10350, baseAmount: 0, rate: 0.04541 },
+          { from: 10350, to: 22356, baseAmount: 470, rate: 0.28461 },
+          { from: 22356, to: 36649, baseAmount: 3887, rate: 0.02610 },
+          { from: 36649, to: 109346, baseAmount: 4260, rate: -0.05860 },
+          { from: 109346, to: Infinity, baseAmount: 0, rate: 0 },
+        ],
+      },
+      over: {
+        incomeTaxBrackets: [
+          { from: 0, to: 35472, rate: 0.0942 },
+          { from: 35472, to: 69398, rate: 0.3707 },
+          { from: 69398, to: Infinity, rate: 0.495 },
+        ],
+        socialPremiumRate: 0.0975,
+        socialPremiumMax: 35472,
+        ahkMax: 1444,
+        ahkPhaseOutStart: 21316,
+        ahkPhaseOutRate: 0.03004,
+        ahkPhaseOutEnd: 69398,
+        akStages: [
+          { from: 0, to: 10350, baseAmount: 0, rate: 0.02271 },
+          { from: 10350, to: 22356, baseAmount: 235, rate: 0.14231 },
+          { from: 22356, to: 36649, baseAmount: 1944, rate: 0.01305 },
+          { from: 36649, to: 109346, baseAmount: 2130, rate: -0.02930 },
+          { from: 109346, to: Infinity, baseAmount: 0, rate: 0 },
+        ],
+      },
+    },
+    be: {
+      brackets: [
+        { from: 0, to: 13870, rate: 0.25 },
+        { from: 13870, to: 24480, rate: 0.4 },
+        { from: 24480, to: 42370, rate: 0.45 },
+        { from: 42370, to: Infinity, rate: 0.5 },
+      ],
+      baseBelastingvrijeSom: 9270,
+      childExtraAmounts: [0, 1690, 4340, 9730, 15740],
+      extraPerChildAbove4: 6000, // estimated: childExtraAmounts[4] × 0.381
+      forfaitRate: 0.3,
+      forfaitMax: 5040,
+      gereduceerdRate: 0.75043,
+      gewestelijkeRate: 0.33257,
+    },
+  },
+
   2023: {
     nl: {
       under: {
@@ -150,16 +333,16 @@ export const TAX_PARAMS: Record<TaxYear, YearParams> = {
         ],
         socialPremiumRate: 0.2765,
         socialPremiumMax: 38098,
-        ahkMax: 3068,
-        ahkPhaseOutStart: 22660,
-        ahkPhaseOutRate: 0.06095,
-        ahkPhaseOutEnd: 73031,
+        ahkMax: 3362,
+        ahkPhaseOutStart: 24812,
+        ahkPhaseOutRate: 0.06630,
+        ahkPhaseOutEnd: 75518,
         akStages: [
-          { from: 0, to: 11491, baseAmount: 0, rate: 0.08231 },
-          { from: 11491, to: 24821, baseAmount: 945, rate: 0.29861 },
-          { from: 24821, to: 39957, baseAmount: 4927, rate: 0.02471 },
-          { from: 39957, to: 124935, baseAmount: 5532, rate: -0.0651 },
-          { from: 124935, to: Infinity, baseAmount: 0, rate: 0 },
+          { from: 0, to: 11490, baseAmount: 0, rate: 0.08425 },
+          { from: 11490, to: 24820, baseAmount: 968, rate: 0.31433 },
+          { from: 24820, to: 39957, baseAmount: 5158, rate: 0.02471 },
+          { from: 39957, to: 124934, baseAmount: 5532, rate: -0.0651 },
+          { from: 124934, to: Infinity, baseAmount: 0, rate: 0 },
         ],
       },
       over: {

@@ -1,4 +1,4 @@
-export type TaxYear = 2023 | 2024 | 2025 | 2026;
+export type TaxYear = 2020 | 2021 | 2022 | 2023 | 2024 | 2025 | 2026;
 export type ResidentCountry = "NL" | "BE";
 export type CivilStatus = "single" | "married";
 export type BelgianRegion = "flemish" | "walloon" | "brussels";
