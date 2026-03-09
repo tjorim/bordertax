@@ -15,9 +15,14 @@ type BelgianDeductionKey =
   | "roerendeVoorheffing";
 
 export default function InputPanel({ inputs, onChange }: Props) {
+  const clampNumber = (value: string, min = 0, max = Number.POSITIVE_INFINITY) =>
+    Math.min(max, Math.max(min, Number(value) || 0));
+
   function set<K extends keyof TaxInputs>(key: K, value: TaxInputs[K]) {
     onChange({ ...inputs, [key]: value });
   }
+
+  const totalWorkdays = inputs.daysWorkedNL + inputs.daysWorkedBE + (inputs.daysWorkedOther ?? 0);
 
   return (
     <Accordion defaultActiveKey={["0", "1", "2"]} alwaysOpen>
@@ -83,7 +88,7 @@ export default function InputPanel({ inputs, onChange }: Props) {
                 min={0}
                 max={10}
                 value={inputs.dependentChildren}
-                onChange={(e) => set("dependentChildren", Math.max(0, Number(e.target.value)))}
+                onChange={(e) => set("dependentChildren", clampNumber(e.target.value, 0, 10))}
               />
             </Col>
 
@@ -134,7 +139,7 @@ export default function InputPanel({ inputs, onChange }: Props) {
                     max={15}
                     step={0.1}
                     value={inputs.communalTaxRate}
-                    onChange={(e) => set("communalTaxRate", Number(e.target.value))}
+                    onChange={(e) => set("communalTaxRate", clampNumber(e.target.value, 0, 15))}
                     aria-describedby="communal-tax-hint"
                   />
                   <Form.Text id="communal-tax-hint" className="text-muted">
@@ -162,7 +167,7 @@ export default function InputPanel({ inputs, onChange }: Props) {
                 min={0}
                 step={100}
                 value={inputs.grossSalary}
-                onChange={(e) => set("grossSalary", Number(e.target.value))}
+                onChange={(e) => set("grossSalary", clampNumber(e.target.value))}
                 aria-describedby="gross-salary-hint"
               />
               <Form.Text id="gross-salary-hint" className="text-muted">
@@ -178,7 +183,7 @@ export default function InputPanel({ inputs, onChange }: Props) {
                   min={0}
                   step={100}
                   value={inputs.withheldTaxNL ?? 0}
-                  onChange={(e) => set("withheldTaxNL", Math.max(0, Number(e.target.value)))}
+                  onChange={(e) => set("withheldTaxNL", clampNumber(e.target.value))}
                   aria-describedby="withheld-tax-nl-hint"
                 />
                 <Form.Text id="withheld-tax-nl-hint" className="text-muted">
@@ -193,7 +198,7 @@ export default function InputPanel({ inputs, onChange }: Props) {
                 type="number"
                 min={0}
                 value={inputs.daysWorkedNL}
-                onChange={(e) => set("daysWorkedNL", Math.max(0, Number(e.target.value)))}
+                onChange={(e) => set("daysWorkedNL", clampNumber(e.target.value))}
               />
             </Col>
 
@@ -203,7 +208,7 @@ export default function InputPanel({ inputs, onChange }: Props) {
                 type="number"
                 min={0}
                 value={inputs.daysWorkedBE}
-                onChange={(e) => set("daysWorkedBE", Math.max(0, Number(e.target.value)))}
+                onChange={(e) => set("daysWorkedBE", clampNumber(e.target.value))}
               />
             </Col>
 
@@ -214,7 +219,7 @@ export default function InputPanel({ inputs, onChange }: Props) {
                   type="number"
                   min={0}
                   value={inputs.daysWorkedOther ?? 0}
-                  onChange={(e) => set("daysWorkedOther", Math.max(0, Number(e.target.value)))}
+                  onChange={(e) => set("daysWorkedOther", clampNumber(e.target.value))}
                   aria-describedby="days-other-hint"
                 />
                 <Form.Text id="days-other-hint" className="text-muted">
@@ -224,21 +229,13 @@ export default function InputPanel({ inputs, onChange }: Props) {
             </Col>
 
             <Col xs={12}>
-              {(() => {
-                const totalDays =
-                  inputs.daysWorkedNL + inputs.daysWorkedBE + (inputs.daysWorkedOther ?? 0);
-                return (
-                  <div className="text-muted small">
-                    {m.input_workdays_total()} <strong>{totalDays}</strong>
-                    {totalDays > 260 && (
-                      <span className="text-warning ms-2">
-                        <i className="bi bi-exclamation-triangle-fill me-1" />
-                        {m.input_workdays_high_warning()}
-                      </span>
-                    )}
-                  </div>
-                );
-              })()}
+              <Form.Text
+                className={totalWorkdays === 0 || totalWorkdays > 366 ? "text-warning" : "text-muted"}
+              >
+                {m.input_workdays_total()} {totalWorkdays}
+                {totalWorkdays === 0 && ` — ${m.input_workdays_total_zero_warning()}`}
+                {totalWorkdays > 366 && ` — ${m.input_workdays_total_high_warning()}`}
+              </Form.Text>
             </Col>
 
             <Col xs={12}>
@@ -287,7 +284,7 @@ export default function InputPanel({ inputs, onChange }: Props) {
                         onChange={(e) =>
                           set(
                             field.key,
-                            Math.max(0, Number(e.target.value)) as TaxInputs[BelgianDeductionKey],
+                            clampNumber(e.target.value) as TaxInputs[BelgianDeductionKey],
                           )
                         }
                       />

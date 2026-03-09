@@ -122,6 +122,14 @@ describe("InputPanel", () => {
     expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ dependentChildren: 2 }));
   });
 
+  it("clamps dependent children to the allowed maximum", () => {
+    const onChange = vi.fn();
+    render(<InputPanel inputs={mockInputs} onChange={onChange} />);
+    const inputs = screen.getAllByRole("spinbutton");
+    fireEvent.change(inputs[0]!, { target: { value: "99" } });
+    expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ dependentChildren: 10 }));
+  });
+
   it("shows total workdays count", () => {
     const onChange = vi.fn();
     render(
@@ -130,19 +138,20 @@ describe("InputPanel", () => {
         onChange={onChange}
       />,
     );
-    // 180 + 20 + 5 = 205
-    expect(screen.getByText("205")).toBeInTheDocument();
+    // 180 + 20 + 5 = 205 — shown inline as "Total workdays: 205"
+    expect(screen.getByText(/205/)).toBeInTheDocument();
   });
 
-  it("shows high workdays warning when total exceeds 260", () => {
+  it("shows a warning when workdays total exceeds a typical yearly range", () => {
     const onChange = vi.fn();
     render(
       <InputPanel
-        inputs={{ ...mockInputs, daysWorkedNL: 200, daysWorkedBE: 70, daysWorkedOther: 0 }}
+        inputs={{ ...mockInputs, daysWorkedNL: 260, daysWorkedBE: 120, daysWorkedOther: 20 }}
         onChange={onChange}
       />,
     );
-    expect(screen.getByText(/seems high|lijkt hoog/i)).toBeInTheDocument();
+    expect(screen.getByText(/total workdays|totaal aantal werkdagen/i)).toBeInTheDocument();
+    expect(screen.getByText(/double-check|controleer/i)).toBeInTheDocument();
   });
 
   it("does not show high workdays warning when total is within normal range", () => {
@@ -153,6 +162,6 @@ describe("InputPanel", () => {
         onChange={onChange}
       />,
     );
-    expect(screen.queryByText(/seems high|lijkt hoog/i)).toBeNull();
+    expect(screen.queryByText(/double-check|controleer/i)).toBeNull();
   });
 });
