@@ -26,7 +26,5 @@ Object.defineProperty(globalThis, "localStorage", {
 
 
 beforeEach(() => {
-  for (const key of Object.keys(store)) {
-    delete store[key];
-  }
+  localStorage.clear();
 });
