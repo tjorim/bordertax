@@ -164,6 +164,18 @@ export default function InputPanel({ inputs, onChange }: Props) {
               <Form.Text className="text-muted">{m.input_gross_salary_hint()}</Form.Text>
             </Col>
 
+            <Col xs={12}>
+              <Form.Label>{m.input_withheld_tax_nl()}</Form.Label>
+              <Form.Control
+                type="number"
+                min={0}
+                step={100}
+                value={inputs.withheldTaxNL ?? 0}
+                onChange={(e) => set("withheldTaxNL", Math.max(0, Number(e.target.value)))}
+              />
+              <Form.Text className="text-muted">{m.input_withheld_tax_nl_hint()}</Form.Text>
+            </Col>
+
             <Col xs={12} sm={6}>
               <Form.Label>{m.input_workdays_nl()}</Form.Label>
               <Form.Control

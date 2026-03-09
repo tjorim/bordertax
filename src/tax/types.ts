@@ -28,6 +28,9 @@ export interface TaxInputs {
   dienstencheques?: number;
   /** Roerende voorheffing / withholding tax already paid (code 1437). Default 0. */
   roerendeVoorheffing?: number;
+  /** NL wage tax withheld by employer (ingehouden loonheffing from jaaropgave).
+   *  Used to compute NL refund/payment and net eindafrekening. Default 0. */
+  withheldTaxNL?: number;
 }
 
 export interface BracketLine {

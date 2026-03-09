@@ -104,6 +104,7 @@ function sanitizeInputs(raw: unknown): TaxInputs {
       input.roerendeVoorheffing,
       DEFAULT_INPUTS.roerendeVoorheffing,
     ),
+    withheldTaxNL: sanitizeNonNegative(input.withheldTaxNL, 0),
   };
 }
 
@@ -204,7 +205,7 @@ export default function App() {
                   <SummaryResult result={result} onResetInputs={() => setInputs(DEFAULT_INPUTS)} />
                 </Tab.Pane>
                 <Tab.Pane eventKey="nl">
-                  <NLResult result={result.nl} />
+                  <NLResult result={result.nl} withheldTaxNL={inputs.withheldTaxNL} />
                 </Tab.Pane>
                 <Tab.Pane eventKey="be">
                   <BEResult result={result.be} residentCountry={inputs.residentCountry} />

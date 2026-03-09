@@ -27,7 +27,7 @@ function applyBrackets(
   for (const b of brackets) {
     if (remaining <= 0) break;
     const size = b.to === Infinity ? remaining : Math.min(remaining, b.to - b.from);
-    const tax = size * b.rate;
+    const tax = Math.floor(size * b.rate);
     lines.push({
       label:
         b.to === Infinity
@@ -47,13 +47,13 @@ function applyBrackets(
 function calcAHK(income: number, p: NLYearParams): number {
   if (income <= p.ahkPhaseOutStart) return p.ahkMax;
   if (income >= p.ahkPhaseOutEnd) return 0;
-  return Math.max(0, p.ahkMax - (income - p.ahkPhaseOutStart) * p.ahkPhaseOutRate);
+  return Math.ceil(Math.max(0, p.ahkMax - (income - p.ahkPhaseOutStart) * p.ahkPhaseOutRate));
 }
 
 function calcAK(income: number, p: NLYearParams): number {
   for (const stage of p.akStages) {
     if (income >= stage.from && income < stage.to) {
-      return Math.max(0, stage.baseAmount + (income - stage.from) * stage.rate);
+      return Math.ceil(Math.max(0, stage.baseAmount + (income - stage.from) * stage.rate));
     }
   }
   return 0;
@@ -66,11 +66,11 @@ export function calculateNLTax(inputs: TaxInputs): NLTaxResult {
   const totalDays = inputs.daysWorkedNL + inputs.daysWorkedBE + (inputs.daysWorkedOther ?? 0);
   const nlFraction = totalDays > 0 ? inputs.daysWorkedNL / totalDays : 0;
 
-  let nlTaxableIncome = inputs.grossSalary * nlFraction;
+  let nlTaxableIncome = Math.round(inputs.grossSalary * nlFraction);
 
   if (inputs.thirtyPercentRuling) {
     // 30% of the income is tax-free; only 70% is taxed
-    nlTaxableIncome *= 0.7;
+    nlTaxableIncome = Math.round(nlTaxableIncome * 0.7);
   }
 
   // Income tax only — applied to NL-fraction income

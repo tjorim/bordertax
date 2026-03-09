@@ -15,9 +15,21 @@ const fmt = (n: number) =>
   n.toLocaleString(getLocale(), { style: "currency", currency: "EUR", maximumFractionDigits: 0 });
 const pct = (n: number) => `${(n * 100).toFixed(1)}%`;
 
+const fmtSigned = (n: number) => {
+  const abs = Math.abs(n).toLocaleString(getLocale(), {
+    style: "currency",
+    currency: "EUR",
+    maximumFractionDigits: 0,
+  });
+  return n >= 0 ? `+${abs}` : `−${abs}`;
+};
+
 export default function SummaryResult({ result, onResetInputs }: Props) {
   const [copyStatus, setCopyStatus] = useState<"idle" | "success" | "error">("idle");
   const { grossIncome, totalTax, netIncome, effectiveRateTotal, nl, be } = result;
+  const withheldTaxNL = result.inputs.withheldTaxNL ?? 0;
+  const nlBalance = withheldTaxNL - nl.netTaxNL;
+  const netResult = nlBalance - (be?.netTaxBE ?? 0);
 
   const nlPct = grossIncome > 0 ? (nl.netTaxNL / grossIncome) * 100 : 0;
   const bePct = grossIncome > 0 ? ((be?.netTaxBE ?? 0) / grossIncome) * 100 : 0;
@@ -152,6 +164,42 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
           </div>
         </Col>
       </Row>
+
+      {withheldTaxNL > 0 && (
+        <>
+          <h6 className="text-muted mt-4 mb-3">{m.summary_eindafrekening()}</h6>
+          <Table bordered className="mb-0">
+            <tbody>
+              <tr>
+                <td>🇳🇱 {m.summary_withheld_nl()}</td>
+                <td className="text-end">{fmt(withheldTaxNL)}</td>
+              </tr>
+              <tr>
+                <td>🇳🇱 {m.summary_nl_owed()}</td>
+                <td className="text-end text-danger">−{fmt(nl.netTaxNL)}</td>
+              </tr>
+              <tr className={nlBalance >= 0 ? "table-success" : "table-danger"}>
+                <td className="fw-semibold">🇳🇱 {m.summary_nl_balance()}</td>
+                <td className={`text-end fw-semibold ${nlBalance >= 0 ? "text-success" : "text-danger"}`}>
+                  {fmtSigned(nlBalance)}
+                </td>
+              </tr>
+              {be && be.netTaxBE > 0 && (
+                <tr>
+                  <td>🇧🇪 {m.summary_be_owed()}</td>
+                  <td className="text-end text-danger">−{fmt(be.netTaxBE)}</td>
+                </tr>
+              )}
+              <tr className={netResult >= 0 ? "table-success fw-bold fs-5" : "table-danger fw-bold fs-5"}>
+                <td>{m.summary_net_result()}</td>
+                <td className={`text-end ${netResult >= 0 ? "text-success" : "text-danger"}`}>
+                  {fmtSigned(netResult)}
+                </td>
+              </tr>
+            </tbody>
+          </Table>
+        </>
+      )}
     </div>
   );
 }
