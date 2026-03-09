@@ -98,7 +98,8 @@ export default function NLResult({ result, withheldTaxNL = 0 }: Props) {
               <tr className={`fw-bold ${nlBalance >= 0 ? "table-success" : "table-danger"}`}>
                 <td>{nlBalance >= 0 ? m.nl_balance_refund() : m.nl_balance_due()}</td>
                 <td className={`text-end ${nlBalance >= 0 ? "text-success" : "text-danger"}`}>
-                  {nlBalance >= 0 ? "+" : "−"}{fmt(Math.abs(nlBalance))}
+                  {nlBalance >= 0 ? "+" : "−"}
+                  {fmt(Math.abs(nlBalance))}
                 </td>
               </tr>
             </>

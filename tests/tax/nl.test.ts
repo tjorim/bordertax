@@ -147,5 +147,4 @@ describe("calculateNLTax", () => {
     const over = calculateNLTax({ ...base, grossSalary: 10000, belowAOWAge: false });
     expect(over.algemeneHeffingskorting).toBeLessThan(under.algemeneHeffingskorting);
   });
-
 });

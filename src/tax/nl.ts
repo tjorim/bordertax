@@ -85,8 +85,7 @@ export function calculateNLTax(inputs: TaxInputs): NLTaxResult {
   );
 
   // AHK: 0 for Belgian residents (buitenlandse belastingplichtige policy)
-  const ahk =
-    inputs.residentCountry === "BE" ? 0 : calcAHK(inputs.grossSalary, p);
+  const ahk = inputs.residentCountry === "BE" ? 0 : calcAHK(inputs.grossSalary, p);
 
   // AK: always calculated on full gross salary (verified from Belastingdienst aanslag)
   const ak = calcAK(inputs.grossSalary, p);

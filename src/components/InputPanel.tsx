@@ -247,7 +247,10 @@ export default function InputPanel({ inputs, onChange }: Props) {
                       step={100}
                       value={inputs[field.key] ?? 0}
                       onChange={(e) =>
-                        set(field.key, Math.max(0, Number(e.target.value)) as TaxInputs[BelgianDeductionKey])
+                        set(
+                          field.key,
+                          Math.max(0, Number(e.target.value)) as TaxInputs[BelgianDeductionKey],
+                        )
                       }
                     />
                   </Col>

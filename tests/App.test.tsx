@@ -80,7 +80,7 @@ describe("App", () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(savedInputs));
     render(<App />);
     expect(screen.getByText(/Tax year.*2026/)).toBeInTheDocument();
-    expect(screen.getByText(/provisional/i)).toBeInTheDocument();
+    expect(screen.getByText(/indexed amounts|AJ 2027/i)).toBeInTheDocument();
   });
 
   it("sanitizes invalid enum field values from localStorage", () => {

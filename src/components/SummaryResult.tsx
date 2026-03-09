@@ -158,7 +158,9 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
             <div className="fs-5 fw-bold text-success">
               {fmt(
                 netIncome /
-                  (result.inputs.daysWorkedNL + result.inputs.daysWorkedBE + (result.inputs.daysWorkedOther ?? 0) || DEFAULT_WORKDAYS),
+                  (result.inputs.daysWorkedNL +
+                    result.inputs.daysWorkedBE +
+                    (result.inputs.daysWorkedOther ?? 0) || DEFAULT_WORKDAYS),
               )}
             </div>
           </div>
@@ -180,7 +182,9 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
               </tr>
               <tr className={nlBalance >= 0 ? "table-success" : "table-danger"}>
                 <td className="fw-semibold">🇳🇱 {m.summary_nl_balance()}</td>
-                <td className={`text-end fw-semibold ${nlBalance >= 0 ? "text-success" : "text-danger"}`}>
+                <td
+                  className={`text-end fw-semibold ${nlBalance >= 0 ? "text-success" : "text-danger"}`}
+                >
                   {fmtSigned(nlBalance)}
                 </td>
               </tr>
@@ -190,7 +194,11 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
                   <td className="text-end text-danger">−{fmt(be.netTaxBE)}</td>
                 </tr>
               )}
-              <tr className={netResult >= 0 ? "table-success fw-bold fs-5" : "table-danger fw-bold fs-5"}>
+              <tr
+                className={
+                  netResult >= 0 ? "table-success fw-bold fs-5" : "table-danger fw-bold fs-5"
+                }
+              >
                 <td>{m.summary_net_result()}</td>
                 <td className={`text-end ${netResult >= 0 ? "text-success" : "text-danger"}`}>
                   {fmtSigned(netResult)}

@@ -52,10 +52,7 @@ describe("calculateBETax", () => {
   });
 
   it("returns non-zero tax for BE resident with some BE days", () => {
-    const result = calculateBETax(
-      { ...baseBE, daysWorkedNL: 200, daysWorkedBE: 20 },
-      mockNL(),
-    );
+    const result = calculateBETax({ ...baseBE, daysWorkedNL: 200, daysWorkedBE: 20 }, mockNL());
     expect(result!.netTaxBE).toBeGreaterThan(0);
   });
 
@@ -124,10 +121,7 @@ describe("calculateBETax", () => {
   });
 
   it("netTaxBE equals federalTax + communalTax + communalTaxOnVrijgesteld", () => {
-    const result = calculateBETax(
-      { ...baseBE, daysWorkedNL: 200, daysWorkedBE: 20 },
-      mockNL(),
-    );
+    const result = calculateBETax({ ...baseBE, daysWorkedNL: 200, daysWorkedBE: 20 }, mockNL());
     expect(result!.netTaxBE).toBeCloseTo(
       result!.federalTax + result!.communalTax + result!.communalTaxOnVrijgesteld,
       5,
@@ -135,10 +129,7 @@ describe("calculateBETax", () => {
   });
 
   it("effectiveRateBE is between 0 and 1 for normal inputs", () => {
-    const result = calculateBETax(
-      { ...baseBE, daysWorkedNL: 200, daysWorkedBE: 20 },
-      mockNL(),
-    );
+    const result = calculateBETax({ ...baseBE, daysWorkedNL: 200, daysWorkedBE: 20 }, mockNL());
     expect(result!.effectiveRateBE).toBeGreaterThan(0);
     expect(result!.effectiveRateBE).toBeLessThan(1);
   });
@@ -198,10 +189,7 @@ describe("calculateBETax", () => {
   });
 
   it("nlExemptIncome + beIncome equals grossSalary", () => {
-    const result = calculateBETax(
-      { ...baseBE, daysWorkedNL: 200, daysWorkedBE: 20 },
-      mockNL(),
-    );
+    const result = calculateBETax({ ...baseBE, daysWorkedNL: 200, daysWorkedBE: 20 }, mockNL());
     expect(result!.nlExemptIncome + result!.beIncome).toBeCloseTo(baseBE.grossSalary, 5);
   });
 
@@ -224,10 +212,7 @@ describe("calculateBETax", () => {
   });
 
   it("returns correct result structure", () => {
-    const result = calculateBETax(
-      { ...baseBE, daysWorkedNL: 200, daysWorkedBE: 20 },
-      mockNL(),
-    );
+    const result = calculateBETax({ ...baseBE, daysWorkedNL: 200, daysWorkedBE: 20 }, mockNL());
     expect(result).toHaveProperty("beIncome");
     expect(result).toHaveProperty("nlExemptIncome");
     expect(result).toHaveProperty("professionalExpenses");
@@ -251,5 +236,4 @@ describe("calculateBETax", () => {
     );
     expect(result!.omTeSlane).toBeGreaterThanOrEqual(0);
   });
-
 });
