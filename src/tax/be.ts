@@ -81,6 +81,8 @@ export function calculateBETax(inputs: TaxInputs, nl: NLTaxResult): BETaxResult 
   const netProfessionalIncome = Math.max(0, declaredIncome - socialContributions - forfait);
 
   // NL-source after-tax amount on the same base as nlTaxableIncome.
+  // nlTaxOnNLSource may be negative when credits exceed taxBeforeCredits; clamp at 0
+  // so nlNetFromNLSource and vrijgesteldFrac stay within a valid [0,1] ratio basis.
   const nlTaxOnNLSource = nl.netTaxNL - nl.volksverzekeringen;
   const nlNetFromNLSource = Math.max(0, nl.nlTaxableIncome - Math.max(0, nlTaxOnNLSource));
 

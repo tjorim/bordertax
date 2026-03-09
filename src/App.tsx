@@ -91,9 +91,10 @@ function sanitizeInputs(raw: unknown): TaxInputs {
     daysWorkedBE: Number.isFinite(input.daysWorkedBE)
       ? Math.max(0, Number(input.daysWorkedBE))
       : DEFAULT_INPUTS.daysWorkedBE,
-    daysWorkedOther: Number.isFinite(input.daysWorkedOther)
-      ? Math.max(0, Number(input.daysWorkedOther))
-      : DEFAULT_INPUTS.daysWorkedOther,
+    daysWorkedOther: sanitizeNonNegative(
+      input.daysWorkedOther,
+      DEFAULT_INPUTS.daysWorkedOther,
+    ),
     thirtyPercentRuling:
       typeof input.thirtyPercentRuling === "boolean"
         ? input.thirtyPercentRuling
