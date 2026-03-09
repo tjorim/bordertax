@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import InputPanel from "@/components/InputPanel";
 import { setLocale } from "@/paraglide/runtime";
@@ -7,10 +7,6 @@ import { mockInputs } from "../test-utils/mockData";
 
 describe("InputPanel", () => {
   beforeEach(() => {
-    setLocale("en", { reload: false });
-  });
-
-  afterEach(() => {
     setLocale("en", { reload: false });
   });
 

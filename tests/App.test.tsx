@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, within } from "@testing-library/react";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 
 import App from "@/App";
 import { setLocale } from "@/paraglide/runtime";
@@ -8,11 +8,6 @@ const STORAGE_KEY = "grensarbeider-tax-inputs-v1";
 
 describe("App", () => {
   beforeEach(() => {
-    localStorage.clear();
-    setLocale("en", { reload: false });
-  });
-
-  afterEach(() => {
     localStorage.clear();
     setLocale("en", { reload: false });
   });
