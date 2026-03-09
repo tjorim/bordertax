@@ -19,7 +19,16 @@ import {
 import * as m from "./paraglide/messages.js";
 import { getLocale, setLocale } from "./paraglide/runtime.js";
 
-const DEFAULT_INPUTS: TaxInputs = {
+type TaxInputsWithRequiredBEDeductions = TaxInputs & {
+  socialContributions: number;
+  aanvullendPensioen: number;
+  dienstencheques: number;
+  roerendeVoorheffing: number;
+  withheldTaxNL: number;
+  daysWorkedOther: number;
+};
+
+const DEFAULT_INPUTS: TaxInputsWithRequiredBEDeductions = {
   year: 2025,
   residentCountry: "BE",
   civilStatus: "single",
@@ -30,7 +39,13 @@ const DEFAULT_INPUTS: TaxInputs = {
   grossSalary: 60000,
   daysWorkedNL: 200,
   daysWorkedBE: 20,
+  daysWorkedOther: 0,
   thirtyPercentRuling: false,
+  socialContributions: 0,
+  aanvullendPensioen: 0,
+  dienstencheques: 0,
+  roerendeVoorheffing: 0,
+  withheldTaxNL: 0,
 };
 
 const STORAGE_KEY = "grensarbeider-tax-inputs-v1";
@@ -44,6 +59,9 @@ function sanitizeInputs(raw: unknown): TaxInputs {
 
   const isOneOf = <T,>(value: unknown, options: readonly T[]): value is T =>
     options.includes(value as T);
+
+  const sanitizeNonNegative = (value: unknown, defaultValue: number): number =>
+    Number.isFinite(value) ? Math.max(0, Number(value)) : defaultValue;
 
   return {
     year: isOneOf(input.year, VALID_YEARS) ? input.year : DEFAULT_INPUTS.year,
@@ -73,10 +91,28 @@ function sanitizeInputs(raw: unknown): TaxInputs {
     daysWorkedBE: Number.isFinite(input.daysWorkedBE)
       ? Math.max(0, Number(input.daysWorkedBE))
       : DEFAULT_INPUTS.daysWorkedBE,
+    daysWorkedOther: sanitizeNonNegative(
+      input.daysWorkedOther,
+      DEFAULT_INPUTS.daysWorkedOther,
+    ),
     thirtyPercentRuling:
       typeof input.thirtyPercentRuling === "boolean"
         ? input.thirtyPercentRuling
         : DEFAULT_INPUTS.thirtyPercentRuling,
+    socialContributions: sanitizeNonNegative(
+      input.socialContributions,
+      DEFAULT_INPUTS.socialContributions,
+    ),
+    aanvullendPensioen: sanitizeNonNegative(
+      input.aanvullendPensioen,
+      DEFAULT_INPUTS.aanvullendPensioen,
+    ),
+    dienstencheques: sanitizeNonNegative(input.dienstencheques, DEFAULT_INPUTS.dienstencheques),
+    roerendeVoorheffing: sanitizeNonNegative(
+      input.roerendeVoorheffing,
+      DEFAULT_INPUTS.roerendeVoorheffing,
+    ),
+    withheldTaxNL: sanitizeNonNegative(input.withheldTaxNL, DEFAULT_INPUTS.withheldTaxNL),
   };
 }
 
@@ -177,7 +213,7 @@ export default function App() {
                   <SummaryResult result={result} onResetInputs={() => setInputs(DEFAULT_INPUTS)} />
                 </Tab.Pane>
                 <Tab.Pane eventKey="nl">
-                  <NLResult result={result.nl} />
+                  <NLResult result={result.nl} withheldTaxNL={inputs.withheldTaxNL} />
                 </Tab.Pane>
                 <Tab.Pane eventKey="be">
                   <BEResult result={result.be} residentCountry={inputs.residentCountry} />

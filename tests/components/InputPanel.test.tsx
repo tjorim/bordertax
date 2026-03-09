@@ -25,7 +25,7 @@ describe("InputPanel", () => {
     const selects = screen.getAllByRole("combobox");
     expect(selects.length).toBe(3);
     expect(screen.queryByText(/municipal tax|communal tax|gemeentebelasting/i)).toBeNull();
-    expect(screen.getAllByRole("spinbutton").length).toBe(4);
+    expect(screen.getAllByRole("spinbutton").length).toBe(6);
   });
 
   it("calls onChange when year dropdown is changed", () => {
@@ -85,7 +85,7 @@ describe("InputPanel", () => {
     const onChange = vi.fn();
     render(<InputPanel inputs={mockInputs} onChange={onChange} />);
     const inputs = screen.getAllByRole("spinbutton");
-    fireEvent.change(inputs[3]!, { target: { value: "150" } });
+    fireEvent.change(inputs[4]!, { target: { value: "150" } });
     expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ daysWorkedNL: 150 }));
   });
 
@@ -93,7 +93,7 @@ describe("InputPanel", () => {
     const onChange = vi.fn();
     render(<InputPanel inputs={mockInputs} onChange={onChange} />);
     const inputs = screen.getAllByRole("spinbutton");
-    fireEvent.change(inputs[4]!, { target: { value: "30" } });
+    fireEvent.change(inputs[5]!, { target: { value: "30" } });
     expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ daysWorkedBE: 30 }));
   });
 

@@ -4,7 +4,7 @@ import { calculateBETax } from "./be";
 
 export function calculate(inputs: TaxInputs): TaxResult {
   const nl = calculateNLTax(inputs);
-  const be = calculateBETax(inputs);
+  const be = calculateBETax(inputs, nl);
 
   const totalTax = nl.netTaxNL + (be?.netTaxBE ?? 0);
   const netIncome = inputs.grossSalary - totalTax;

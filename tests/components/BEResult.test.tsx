@@ -26,7 +26,7 @@ describe("BEResult", () => {
 
   it("shows the effective rate for BE", () => {
     render(<BEResult result={mockBEResult} residentCountry="BE" />);
-    expect(screen.getByText("2.80%")).toBeInTheDocument();
+    expect(screen.getByText("4.63%")).toBeInTheDocument();
   });
 
   it("shows a success alert when beIncome is 0", () => {

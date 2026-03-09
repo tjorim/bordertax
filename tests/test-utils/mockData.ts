@@ -12,6 +12,10 @@ export const mockInputs: TaxInputs = {
   daysWorkedNL: 200,
   daysWorkedBE: 20,
   thirtyPercentRuling: false,
+  socialContributions: 0,
+  aanvullendPensioen: 0,
+  dienstencheques: 0,
+  roerendeVoorheffing: 0,
 };
 
 export const mockNLResult: NLTaxResult = {
@@ -24,23 +28,36 @@ export const mockNLResult: NLTaxResult = {
   algemeneHeffingskorting: 0,
   arbeidskorting: 4500,
   totalCredits: 4500,
+  volksverzekeringen: 10000,
   netTaxNL: 15307.51,
   effectiveRateNL: 0.2806,
 };
 
 export const mockBEResult: BETaxResult = {
+  declaredIncome: 44692.49,
+  socialContributionsDeducted: 0,
   beIncome: 5454.55,
   nlExemptIncome: 54545.45,
+  vrijgesteld: 53057.85,
+  volTarief: 5305.79,
   professionalExpenses: 1636.36,
-  netTotalIncome: 58363.64,
-  taxOnTotalIncome: 20000,
+  netProfessionalIncome: 43056.13,
+  basisbelasting: 20000,
   belastingvrijeSomReduction: 2727.5,
-  taxAfterPersonalExemption: 17272.5,
+  omTeSlane: 17272.5,
+  vrijstellingReduction: 15702.4,
+  hoofdsom: 1570.1,
+  gereduceerde: 1178,
+  gewestelijke: 392.1,
+  saldoFederaal: 1178,
+  saldoGewestelijk: 392.1,
+  totaleBelasting: 1570.1,
   beFraction: 0.0909,
   federalTax: 1570.1,
   communalTax: 109.91,
-  netTaxBE: 1680.01,
-  effectiveRateBE: 0.028,
+  communalTaxOnVrijgesteld: 1099.17,
+  netTaxBE: 2779.18,
+  effectiveRateBE: 0.0463,
 };
 
 export const mockTaxResult: TaxResult = {
@@ -48,9 +65,9 @@ export const mockTaxResult: TaxResult = {
   nl: mockNLResult,
   be: mockBEResult,
   grossIncome: 60000,
-  totalTax: 16987.52,
-  netIncome: 43012.48,
-  effectiveRateTotal: 0.2831,
+  totalTax: 18086.69,
+  netIncome: 41913.31,
+  effectiveRateTotal: 0.3014,
 };
 
 export const mockTaxResultNLResident: TaxResult = {

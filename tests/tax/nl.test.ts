@@ -26,16 +26,18 @@ describe("calculateNLTax", () => {
   });
 
   it("returns zero taxable income when no NL workdays", () => {
+    // nlTaxableIncome is 0 (no NL income fraction), but volksverzekeringen still applies
+    // because social insurance covers the full employment relationship.
     const result = calculateNLTax({ ...base, daysWorkedNL: 0, daysWorkedBE: 220 });
     expect(result.nlTaxableIncome).toBe(0);
-    expect(result.netTaxNL).toBe(0);
-    expect(result.effectiveRateNL).toBe(0);
+    expect(result.taxBeforeCredits).toBe(0);
+    // netTaxNL may be > 0 due to volksverzekeringen net of AK credit
   });
 
   it("returns zero taxable income when total days are zero", () => {
     const result = calculateNLTax({ ...base, daysWorkedNL: 0, daysWorkedBE: 0 });
     expect(result.nlTaxableIncome).toBe(0);
-    expect(result.netTaxNL).toBe(0);
+    expect(result.taxBeforeCredits).toBe(0);
   });
 
   it("computes NL fraction correctly when working split days", () => {
@@ -50,10 +52,11 @@ describe("calculateNLTax", () => {
     expect(withRuling.netTaxNL).toBeLessThan(withoutRuling.netTaxNL);
   });
 
-  it("uses lower bracket rate for above-AOW-age taxpayers", () => {
+  it("uses lower netTaxNL for above-AOW-age taxpayers (lower social premium rate)", () => {
+    // Income-tax brackets are the same for both age groups; only volksverzekeringen differs
     const under = calculateNLTax({ ...base, belowAOWAge: true });
     const over = calculateNLTax({ ...base, belowAOWAge: false });
-    expect(over.taxBeforeCredits).toBeLessThan(under.taxBeforeCredits);
+    expect(over.netTaxNL).toBeLessThan(under.netTaxNL);
   });
 
   it("does not return negative netTaxNL", () => {
@@ -62,9 +65,11 @@ describe("calculateNLTax", () => {
     expect(result.netTaxNL).toBeGreaterThanOrEqual(0);
   });
 
-  it("totalCredits does not exceed taxBeforeCredits", () => {
+  it("totalCredits does not exceed taxBeforeCredits + volksverzekeringen", () => {
     const result = calculateNLTax({ ...base, grossSalary: 5000 });
-    expect(result.totalCredits).toBeLessThanOrEqual(result.taxBeforeCredits);
+    expect(result.totalCredits).toBeLessThanOrEqual(
+      result.taxBeforeCredits + result.volksverzekeringen,
+    );
   });
 
   it("brackets array is non-empty for positive income", () => {
@@ -119,6 +124,11 @@ describe("calculateNLTax", () => {
     expect(result.algemeneHeffingskorting).toBe(3068);
   });
 
+  it("AHK is 0 for Belgian residents", () => {
+    const result = calculateNLTax({ ...base, residentCountry: "BE" });
+    expect(result.algemeneHeffingskorting).toBe(0);
+  });
+
   it("returns correct structure", () => {
     const result = calculateNLTax({ ...base });
     expect(result).toHaveProperty("nlTaxableIncome");
@@ -127,6 +137,7 @@ describe("calculateNLTax", () => {
     expect(result).toHaveProperty("algemeneHeffingskorting");
     expect(result).toHaveProperty("arbeidskorting");
     expect(result).toHaveProperty("totalCredits");
+    expect(result).toHaveProperty("volksverzekeringen");
     expect(result).toHaveProperty("netTaxNL");
     expect(result).toHaveProperty("effectiveRateNL");
   });
