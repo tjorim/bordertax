@@ -131,7 +131,8 @@ function loadInitialInputs(): TaxInputs {
 
 export default function App() {
   const [inputs, setInputs] = useState<TaxInputs>(loadInitialInputs);
-  const nextLangLabel = getLocale() === "en" ? m.lang_nl() : m.lang_en();
+  const [locale, setCurrentLocale] = useState(getLocale());
+  const nextLangLabel = locale === "en" ? m.lang_nl() : m.lang_en();
 
   const result = useMemo(() => calculate(inputs), [inputs]);
   const comparisonResults = useMemo(
@@ -159,7 +160,11 @@ export default function App() {
             variant="outline-light"
             size="sm"
             className="ms-3"
-            onClick={() => setLocale(getLocale() === "en" ? "nl" : "en")}
+            onClick={() => {
+              const nextLocale = locale === "en" ? "nl" : "en";
+              setLocale(nextLocale, { reload: false });
+              setCurrentLocale(nextLocale);
+            }}
             aria-label={nextLangLabel}
           >
             {nextLangLabel}
@@ -185,7 +190,7 @@ export default function App() {
             <Tab.Container defaultActiveKey="summary">
               <Nav variant="tabs" className="mb-3">
                 <Nav.Item>
-                  <Nav.Link eventKey="summary">
+                  <Nav.Link eventKey="summary" aria-label={m.tabs_summary()}>
                     <i className="bi bi-pie-chart-fill me-1" />
                     {m.tabs_summary()}
                   </Nav.Link>
@@ -201,7 +206,7 @@ export default function App() {
                   </Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                  <Nav.Link eventKey="years">
+                  <Nav.Link eventKey="years" aria-label={m.tabs_year_comparison()}>
                     <i className="bi bi-bar-chart-line-fill me-1" />
                     {m.tabs_year_comparison()}
                   </Nav.Link>

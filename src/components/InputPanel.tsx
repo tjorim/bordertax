@@ -1,6 +1,7 @@
 import { Accordion, Badge, Col, Form, Row } from "react-bootstrap";
 import { VALID_YEARS } from "../tax/constants";
 import type { TaxInputs } from "../tax/types";
+import { getMaxDaysInYear, getTotalWorkdays } from "../tax/workdays";
 import * as m from "../paraglide/messages.js";
 
 interface Props {
@@ -14,10 +15,16 @@ type BelgianDeductionKey =
   | "dienstencheques"
   | "roerendeVoorheffing";
 
+const clampNumber = (value: string, min = 0, max = Number.POSITIVE_INFINITY) =>
+  Math.min(max, Math.max(min, Number(value) || 0));
+
 export default function InputPanel({ inputs, onChange }: Props) {
   function set<K extends keyof TaxInputs>(key: K, value: TaxInputs[K]) {
     onChange({ ...inputs, [key]: value });
   }
+
+  const totalWorkdays = getTotalWorkdays(inputs);
+  const maxWorkdaysInYear = getMaxDaysInYear(inputs.year);
 
   return (
     <Accordion defaultActiveKey={["0", "1", "2"]} alwaysOpen>
@@ -83,7 +90,7 @@ export default function InputPanel({ inputs, onChange }: Props) {
                 min={0}
                 max={10}
                 value={inputs.dependentChildren}
-                onChange={(e) => set("dependentChildren", Math.max(0, Number(e.target.value)))}
+                onChange={(e) => set("dependentChildren", clampNumber(e.target.value, 0, 10))}
               />
             </Col>
 
@@ -134,9 +141,12 @@ export default function InputPanel({ inputs, onChange }: Props) {
                     max={15}
                     step={0.1}
                     value={inputs.communalTaxRate}
-                    onChange={(e) => set("communalTaxRate", Number(e.target.value))}
+                    onChange={(e) => set("communalTaxRate", clampNumber(e.target.value, 0, 15))}
+                    aria-describedby="communal-tax-hint"
                   />
-                  <Form.Text className="text-muted">{m.input_municipal_tax_hint()}</Form.Text>
+                  <Form.Text id="communal-tax-hint" className="text-muted">
+                    {m.input_municipal_tax_hint()}
+                  </Form.Text>
                 </Col>
               </>
             )}
@@ -159,9 +169,12 @@ export default function InputPanel({ inputs, onChange }: Props) {
                 min={0}
                 step={100}
                 value={inputs.grossSalary}
-                onChange={(e) => set("grossSalary", Number(e.target.value))}
+                onChange={(e) => set("grossSalary", clampNumber(e.target.value))}
+                aria-describedby="gross-salary-hint"
               />
-              <Form.Text className="text-muted">{m.input_gross_salary_hint()}</Form.Text>
+              <Form.Text id="gross-salary-hint" className="text-muted">
+                {m.input_gross_salary_hint()}
+              </Form.Text>
             </Col>
 
             <Col xs={12}>
@@ -172,9 +185,12 @@ export default function InputPanel({ inputs, onChange }: Props) {
                   min={0}
                   step={100}
                   value={inputs.withheldTaxNL ?? 0}
-                  onChange={(e) => set("withheldTaxNL", Math.max(0, Number(e.target.value)))}
+                  onChange={(e) => set("withheldTaxNL", clampNumber(e.target.value))}
+                  aria-describedby="withheld-tax-nl-hint"
                 />
-                <Form.Text className="text-muted">{m.input_withheld_tax_nl_hint()}</Form.Text>
+                <Form.Text id="withheld-tax-nl-hint" className="text-muted">
+                  {m.input_withheld_tax_nl_hint()}
+                </Form.Text>
               </Form.Group>
             </Col>
 
@@ -184,7 +200,7 @@ export default function InputPanel({ inputs, onChange }: Props) {
                 type="number"
                 min={0}
                 value={inputs.daysWorkedNL}
-                onChange={(e) => set("daysWorkedNL", Math.max(0, Number(e.target.value)))}
+                onChange={(e) => set("daysWorkedNL", clampNumber(e.target.value))}
               />
             </Col>
 
@@ -194,7 +210,7 @@ export default function InputPanel({ inputs, onChange }: Props) {
                 type="number"
                 min={0}
                 value={inputs.daysWorkedBE}
-                onChange={(e) => set("daysWorkedBE", Math.max(0, Number(e.target.value)))}
+                onChange={(e) => set("daysWorkedBE", clampNumber(e.target.value))}
               />
             </Col>
 
@@ -205,10 +221,24 @@ export default function InputPanel({ inputs, onChange }: Props) {
                   type="number"
                   min={0}
                   value={inputs.daysWorkedOther ?? 0}
-                  onChange={(e) => set("daysWorkedOther", Math.max(0, Number(e.target.value)))}
+                  onChange={(e) => set("daysWorkedOther", clampNumber(e.target.value))}
+                  aria-describedby="days-other-hint"
                 />
-                <Form.Text className="text-muted">{m.input_workdays_other_hint()}</Form.Text>
+                <Form.Text id="days-other-hint" className="text-muted">
+                  {m.input_workdays_other_hint()}
+                </Form.Text>
               </Form.Group>
+            </Col>
+
+            <Col xs={12}>
+              <Form.Text
+                role="status"
+                className={totalWorkdays === 0 || totalWorkdays > maxWorkdaysInYear ? "text-warning" : "text-muted"}
+              >
+                {m.input_workdays_total()} {totalWorkdays}
+                {totalWorkdays === 0 && ` — ${m.input_workdays_total_zero_warning()}`}
+                {totalWorkdays > maxWorkdaysInYear && ` — ${m.input_workdays_total_high_warning()}`}
+              </Form.Text>
             </Col>
 
             <Col xs={12}>
@@ -217,8 +247,11 @@ export default function InputPanel({ inputs, onChange }: Props) {
                 label={m.input_thirty_percent_ruling()}
                 checked={inputs.thirtyPercentRuling}
                 onChange={(e) => set("thirtyPercentRuling", e.target.checked)}
+                aria-describedby="thirty-ruling-hint"
               />
-              <Form.Text className="text-muted">{m.input_thirty_percent_ruling_hint()}</Form.Text>
+              <Form.Text id="thirty-ruling-hint" className="text-muted">
+                {m.input_thirty_percent_ruling_hint()}
+              </Form.Text>
             </Col>
 
             {inputs.residentCountry === "BE" && (
@@ -254,7 +287,7 @@ export default function InputPanel({ inputs, onChange }: Props) {
                         onChange={(e) =>
                           set(
                             field.key,
-                            Math.max(0, Number(e.target.value)) as TaxInputs[BelgianDeductionKey],
+                            clampNumber(e.target.value) as TaxInputs[BelgianDeductionKey],
                           )
                         }
                       />

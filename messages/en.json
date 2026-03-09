@@ -116,5 +116,8 @@
   "years_net_income": "Net income",
   "years_effective_rate": "Effective rate",
   "years_active": "active",
-  "years_description": "This comparison uses the exact same input values (salary, workdays, family status), only the selected tax year changes."
+  "years_description": "This comparison uses the exact same input values (salary, workdays, family status), only the selected tax year changes.",
+  "input_workdays_total": "Total workdays:",
+  "input_workdays_total_zero_warning": "Enter at least one workday to calculate a realistic net/day amount.",
+  "input_workdays_total_high_warning": "This seems high; please double-check if all day counts are correct."
 }

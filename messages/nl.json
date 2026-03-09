@@ -116,5 +116,8 @@
   "years_net_income": "Netto inkomen",
   "years_effective_rate": "Effectief tarief",
   "years_active": "actief",
-  "years_description": "Vergelijking gebruikt exact dezelfde inputwaarden (salaris, werkdagen, gezinssituatie), enkel het gekozen belastingjaar wijzigt."
+  "years_description": "Vergelijking gebruikt exact dezelfde inputwaarden (salaris, werkdagen, gezinssituatie), enkel het gekozen belastingjaar wijzigt.",
+  "input_workdays_total": "Totaal aantal werkdagen:",
+  "input_workdays_total_zero_warning": "Vul minstens één werkdag in voor een realistische netto/dag berekening.",
+  "input_workdays_total_high_warning": "Dit lijkt hoog; controleer of alle dagtellingen correct zijn."
 }

@@ -1,10 +1,15 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import InputPanel from "@/components/InputPanel";
+import { setLocale } from "@/paraglide/runtime";
 import { mockInputs } from "../test-utils/mockData";
 
 describe("InputPanel", () => {
+  beforeEach(() => {
+    setLocale("en", { reload: false });
+  });
+
   it("renders without crashing", () => {
     const onChange = vi.fn();
     render(<InputPanel inputs={mockInputs} onChange={onChange} />);
@@ -120,5 +125,60 @@ describe("InputPanel", () => {
     const inputs = screen.getAllByRole("spinbutton");
     fireEvent.change(inputs[0]!, { target: { value: "2" } });
     expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ dependentChildren: 2 }));
+  });
+
+  it("clamps dependent children to the allowed maximum", () => {
+    const onChange = vi.fn();
+    render(<InputPanel inputs={mockInputs} onChange={onChange} />);
+    const inputs = screen.getAllByRole("spinbutton");
+    fireEvent.change(inputs[0]!, { target: { value: "99" } });
+    expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ dependentChildren: 10 }));
+  });
+
+  it("shows total workdays count", () => {
+    const onChange = vi.fn();
+    render(
+      <InputPanel
+        inputs={{ ...mockInputs, daysWorkedNL: 180, daysWorkedBE: 20, daysWorkedOther: 5 }}
+        onChange={onChange}
+      />,
+    );
+    // 180 + 20 + 5 = 205 — shown inline as "Total workdays: 205"
+    expect(screen.getByText(/205/)).toBeInTheDocument();
+  });
+
+
+  it("shows a warning when total workdays is zero", () => {
+    const onChange = vi.fn();
+    render(
+      <InputPanel
+        inputs={{ ...mockInputs, daysWorkedNL: 0, daysWorkedBE: 0, daysWorkedOther: 0 }}
+        onChange={onChange}
+      />,
+    );
+    expect(screen.getByText(/realistic net\/day|realistische netto\/dag/i)).toBeInTheDocument();
+  });
+
+  it("shows a warning when workdays total exceeds a typical yearly range", () => {
+    const onChange = vi.fn();
+    render(
+      <InputPanel
+        inputs={{ ...mockInputs, daysWorkedNL: 260, daysWorkedBE: 120, daysWorkedOther: 20 }}
+        onChange={onChange}
+      />,
+    );
+    expect(screen.getByText(/total workdays|totaal aantal werkdagen/i)).toBeInTheDocument();
+    expect(screen.getByText(/double-check|controleer/i)).toBeInTheDocument();
+  });
+
+  it("does not show high workdays warning when total is within normal range", () => {
+    const onChange = vi.fn();
+    render(
+      <InputPanel
+        inputs={{ ...mockInputs, daysWorkedNL: 200, daysWorkedBE: 20, daysWorkedOther: 0 }}
+        onChange={onChange}
+      />,
+    );
+    expect(screen.queryByText(/double-check|controleer/i)).toBeNull();
   });
 });

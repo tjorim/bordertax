@@ -1,17 +1,15 @@
-import { render, screen, within } from "@testing-library/react";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { fireEvent, render, screen, within } from "@testing-library/react";
+import { beforeEach, describe, expect, it } from "vitest";
 
 import App from "@/App";
+import { setLocale } from "@/paraglide/runtime";
 
 const STORAGE_KEY = "grensarbeider-tax-inputs-v1";
 
 describe("App", () => {
   beforeEach(() => {
     localStorage.clear();
-  });
-
-  afterEach(() => {
-    localStorage.clear();
+    setLocale("en", { reload: false });
   });
 
   it("renders without crashing", () => {
@@ -24,6 +22,20 @@ describe("App", () => {
     expect(
       screen.getByRole("button", { name: /english|nederlands|language|taal|^nl$|^en$/i }),
     ).toBeInTheDocument();
+  });
+
+  it("switches UI language immediately when toggled", () => {
+    render(<App />);
+    const initialSummaryTab = screen.getByRole("tab", { name: /summary|overzicht/i });
+    const initialLabel = initialSummaryTab.textContent;
+
+    const toggle = screen.getByRole("button", {
+      name: /english|nederlands|language|taal|^nl$|^en$/i,
+    });
+    fireEvent.click(toggle);
+
+    const toggledSummaryTab = screen.getByRole("tab", { name: /summary|overzicht/i });
+    expect(toggledSummaryTab.textContent).not.toEqual(initialLabel);
   });
 
   it("renders input panel and result tabs", () => {
