@@ -33,12 +33,17 @@ function applyBEBrackets(income: number, brackets: BEBracket[]): number {
 function belastingvrijeSomReduction(inputs: TaxInputs, p: BEYearParams): number {
   const n = Math.max(0, inputs.dependentChildren);
   const baseAmount = p.baseBelastingvrijeSom;
+
+  if (n > 4 && p.extraPerChildAbove4 == null) {
+    throw new Error(`Unsupported dependent children count for tax year ${inputs.year}: ${n} (>4)`);
+  }
+
   const childAmount =
     n === 0
       ? 0
       : n <= 4
         ? (p.childExtraAmounts[n] ?? 0)
-        : (p.childExtraAmounts[4] ?? 0) + (n - 4) * p.extraPerChildAbove4;
+        : (p.childExtraAmounts[4] ?? 0) + (n - 4) * (p.extraPerChildAbove4 ?? 0);
 
   return (baseAmount + childAmount) * 0.25;
 }
@@ -46,7 +51,11 @@ function belastingvrijeSomReduction(inputs: TaxInputs, p: BEYearParams): number 
 export function calculateBETax(inputs: TaxInputs, nl: NLTaxResult): BETaxResult | null {
   if (inputs.residentCountry !== "BE") return null;
 
-  const p = TAX_PARAMS[inputs.year]?.be ?? TAX_PARAMS[2025].be;
+  const yearParams = TAX_PARAMS[inputs.year];
+  if (!yearParams) {
+    throw new Error(`Unsupported tax year: ${inputs.year}`);
+  }
+  const p = yearParams.be;
 
   const daysOutsideNL = inputs.daysWorkedBE + (inputs.daysWorkedOther ?? 0);
   const totalDays = inputs.daysWorkedNL + daysOutsideNL;
@@ -71,11 +80,15 @@ export function calculateBETax(inputs: TaxInputs, nl: NLTaxResult): BETaxResult 
   // Net professional income
   const netProfessionalIncome = Math.max(0, declaredIncome - socialContributions - forfait);
 
-  // NL exempt net income = nlTaxableIncome − netTaxNL (the NL after-tax earnings)
-  const nlNetIncome = Math.max(0, nl.nlTaxableIncome - nl.netTaxNL);
+  // NL-source after-tax amount on the same base as nlTaxableIncome.
+  // nlTaxOnNLSource may be negative when credits exceed taxBeforeCredits; clamp at 0
+  // so nlNetFromNLSource and vrijgesteldFrac stay within a valid [0,1] ratio basis.
+  const nlTaxOnNLSource = nl.netTaxNL - nl.volksverzekeringen;
+  const nlNetFromNLSource = Math.max(0, nl.nlTaxableIncome - Math.max(0, nlTaxOnNLSource));
 
   // Vrijgesteld fraction: what share of declaredIncome is NL-sourced net income
-  const vrijgesteldFrac = declaredIncome > 0 ? Math.min(1, nlNetIncome / declaredIncome) : 0;
+  const vrijgesteldFrac =
+    declaredIncome > 0 ? Math.min(1, nlNetFromNLSource / declaredIncome) : 0;
 
   // Exempt and taxable portions of net professional income
   const vrijgesteld = vrijgesteldFrac * netProfessionalIncome;
@@ -113,8 +126,7 @@ export function calculateBETax(inputs: TaxInputs, nl: NLTaxResult): BETaxResult 
   const saldoGewestelijk = Math.max(0, gewestelijke - dienstchequesRed);
   const totaleBelasting = saldoFederaal + saldoGewestelijk;
 
-  // federalTax = combined saldo (saldoFederaal + saldoGewestelijk)
-  const federalTax = totaleBelasting;
+  const federalTax = saldoFederaal;
 
   // Communal tax — levied on BOTH taxable and exempt income
   const communalRate = inputs.communalTaxRate / 100;

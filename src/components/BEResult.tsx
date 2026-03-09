@@ -87,7 +87,7 @@ export default function BEResult({ result, residentCountry }: Props) {
             <td>
               × {m.be_belgian_fraction()} ({pct(result.beFraction)})
             </td>
-            <td className="text-end">{fmt(result.federalTax)}</td>
+            <td className="text-end">{fmt(result.totaleBelasting)}</td>
           </tr>
         </tbody>
       </Table>

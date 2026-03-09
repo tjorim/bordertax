@@ -1,4 +1,5 @@
 import "@testing-library/jest-dom/vitest";
+import { beforeEach } from "vitest";
 
 // happy-dom does not properly initialise localStorage, which causes the
 // paraglide locale runtime to throw. Provide a minimal in-memory stub.
@@ -21,4 +22,9 @@ Object.defineProperty(globalThis, "localStorage", {
     key: (i: number) => Object.keys(store)[i] ?? null,
   },
   writable: true,
+});
+
+
+beforeEach(() => {
+  localStorage.clear();
 });

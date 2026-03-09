@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import App from "@/App";
@@ -80,7 +80,12 @@ describe("App", () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(savedInputs));
     render(<App />);
     expect(screen.getByText(/Tax year.*2026/)).toBeInTheDocument();
-    expect(screen.getByText(/indexed amounts|AJ 2027/i)).toBeInTheDocument();
+    const alert = screen
+      .getAllByRole("alert")
+      .find((node) => /indexed amounts.*2026/i.test(node.textContent ?? ""));
+    expect(alert).toBeDefined();
+    expect(alert).toHaveTextContent(/indexed amounts.*2026/i);
+    expect(within(alert!).getByText(/indexed amounts.*2026/i)).toBeInTheDocument();
   });
 
   it("sanitizes invalid enum field values from localStorage", () => {

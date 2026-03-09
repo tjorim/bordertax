@@ -62,7 +62,7 @@ export interface BETaxResult {
   professionalExpenses: number;
   /** Net professional income: declaredIncome − socialContributions − forfait */
   netProfessionalIncome: number;
-  /** Belgian-sourced income (days in BE fraction of grossSalary) */
+  /** Non-NL-sourced income (BE + third-country days fraction of grossSalary). */
   beIncome: number;
   /** NL-sourced gross income (days in NL fraction of grossSalary), for display purposes. */
   nlExemptIncome: number;
@@ -70,7 +70,7 @@ export interface BETaxResult {
   vrijgesteld: number;
   /** Belgian-taxable portion of netProfessionalIncome */
   volTarief: number;
-  /** Fraction of days worked in BE */
+  /** Fraction of days worked outside NL (BE + third-country days). */
   beFraction: number;
   /** Belgian progressive tax on total netProfessionalIncome */
   basisbelasting: number;
@@ -96,7 +96,7 @@ export interface BETaxResult {
   communalTax: number;
   /** Communal tax levied on the exempt (vrijgesteld) portion */
   communalTaxOnVrijgesteld: number;
-  /** Federal + regional saldo combined */
+  /** Federal saldo after reductions (saldoFederaal). */
   federalTax: number;
   netTaxBE: number;
   /** Net tax as fraction of total gross salary */

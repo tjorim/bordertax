@@ -165,15 +165,17 @@ export default function InputPanel({ inputs, onChange }: Props) {
             </Col>
 
             <Col xs={12}>
-              <Form.Label>{m.input_withheld_tax_nl()}</Form.Label>
-              <Form.Control
-                type="number"
-                min={0}
-                step={100}
-                value={inputs.withheldTaxNL ?? 0}
-                onChange={(e) => set("withheldTaxNL", Math.max(0, Number(e.target.value)))}
-              />
-              <Form.Text className="text-muted">{m.input_withheld_tax_nl_hint()}</Form.Text>
+              <Form.Group controlId="withheldTaxNL">
+                <Form.Label>{m.input_withheld_tax_nl()}</Form.Label>
+                <Form.Control
+                  type="number"
+                  min={0}
+                  step={100}
+                  value={inputs.withheldTaxNL ?? 0}
+                  onChange={(e) => set("withheldTaxNL", Math.max(0, Number(e.target.value)))}
+                />
+                <Form.Text className="text-muted">{m.input_withheld_tax_nl_hint()}</Form.Text>
+              </Form.Group>
             </Col>
 
             <Col xs={12} sm={6}>
@@ -197,14 +199,16 @@ export default function InputPanel({ inputs, onChange }: Props) {
             </Col>
 
             <Col xs={12} sm={6}>
-              <Form.Label>{m.input_workdays_other()}</Form.Label>
-              <Form.Control
-                type="number"
-                min={0}
-                value={inputs.daysWorkedOther ?? 0}
-                onChange={(e) => set("daysWorkedOther", Math.max(0, Number(e.target.value)))}
-              />
-              <Form.Text className="text-muted">{m.input_workdays_other_hint()}</Form.Text>
+              <Form.Group controlId="daysWorkedOther">
+                <Form.Label>{m.input_workdays_other()}</Form.Label>
+                <Form.Control
+                  type="number"
+                  min={0}
+                  value={inputs.daysWorkedOther ?? 0}
+                  onChange={(e) => set("daysWorkedOther", Math.max(0, Number(e.target.value)))}
+                />
+                <Form.Text className="text-muted">{m.input_workdays_other_hint()}</Form.Text>
+              </Form.Group>
             </Col>
 
             <Col xs={12}>
@@ -240,19 +244,21 @@ export default function InputPanel({ inputs, onChange }: Props) {
                   ] as const satisfies readonly { key: BelgianDeductionKey; label: string }[]
                 ).map((field) => (
                   <Col key={field.key} xs={12} sm={6}>
-                    <Form.Label>{field.label}</Form.Label>
-                    <Form.Control
-                      type="number"
-                      min={0}
-                      step={100}
-                      value={inputs[field.key] ?? 0}
-                      onChange={(e) =>
-                        set(
-                          field.key,
-                          Math.max(0, Number(e.target.value)) as TaxInputs[BelgianDeductionKey],
-                        )
-                      }
-                    />
+                    <Form.Group controlId={field.key}>
+                      <Form.Label>{field.label}</Form.Label>
+                      <Form.Control
+                        type="number"
+                        min={0}
+                        step={100}
+                        value={inputs[field.key] ?? 0}
+                        onChange={(e) =>
+                          set(
+                            field.key,
+                            Math.max(0, Number(e.target.value)) as TaxInputs[BelgianDeductionKey],
+                          )
+                        }
+                      />
+                    </Form.Group>
                   </Col>
                 ))}
               </>
