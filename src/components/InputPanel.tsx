@@ -230,6 +230,8 @@ export default function InputPanel({ inputs, onChange }: Props) {
 
             <Col xs={12}>
               <Form.Text
+                role="status"
+                aria-live="polite"
                 className={totalWorkdays === 0 || totalWorkdays > 366 ? "text-warning" : "text-muted"}
               >
                 {m.input_workdays_total()} {totalWorkdays}

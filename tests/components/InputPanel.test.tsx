@@ -142,6 +142,18 @@ describe("InputPanel", () => {
     expect(screen.getByText(/205/)).toBeInTheDocument();
   });
 
+
+  it("shows a warning when total workdays is zero", () => {
+    const onChange = vi.fn();
+    render(
+      <InputPanel
+        inputs={{ ...mockInputs, daysWorkedNL: 0, daysWorkedBE: 0, daysWorkedOther: 0 }}
+        onChange={onChange}
+      />,
+    );
+    expect(screen.getByText(/realistic net\/day|realistische netto\/dag/i)).toBeInTheDocument();
+  });
+
   it("shows a warning when workdays total exceeds a typical yearly range", () => {
     const onChange = vi.fn();
     render(
