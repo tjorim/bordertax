@@ -60,7 +60,7 @@ export interface BEYearParams {
   baseBelastingvrijeSom: number;
   /** Cumulative extra allowance per number of dependent children; index = child count (0–4). */
   childExtraAmounts: number[];
-  extraPerChildAbove4: number;
+  extraPerChildAbove4: number | null;
   forfaitRate: number;
   forfaitMax: number;
   /** Federal reduction rate: hoofdsom × gereduceerdRate = gereduceerde belasting staat. */
@@ -130,7 +130,7 @@ export const TAX_PARAMS: Record<TaxYear, YearParams> = {
       ],
       baseBelastingvrijeSom: 8990,
       childExtraAmounts: [0, 1630, 4210, 9430, 15250],
-      extraPerChildAbove4: 5810, // estimated: childExtraAmounts[4] × 0.381
+      extraPerChildAbove4: null,
       forfaitRate: 0.3,
       forfaitMax: 4880,
       gereduceerdRate: 0.75043,
@@ -191,7 +191,7 @@ export const TAX_PARAMS: Record<TaxYear, YearParams> = {
       ],
       baseBelastingvrijeSom: 9050,
       childExtraAmounts: [0, 1650, 4240, 9500, 15360],
-      extraPerChildAbove4: 5850, // estimated: childExtraAmounts[4] × 0.381
+      extraPerChildAbove4: null,
       forfaitRate: 0.3,
       forfaitMax: 4920,
       gereduceerdRate: 0.75043,
@@ -252,7 +252,7 @@ export const TAX_PARAMS: Record<TaxYear, YearParams> = {
       ],
       baseBelastingvrijeSom: 9270,
       childExtraAmounts: [0, 1690, 4340, 9730, 15740],
-      extraPerChildAbove4: 6000, // estimated: childExtraAmounts[4] × 0.381
+      extraPerChildAbove4: null,
       forfaitRate: 0.3,
       forfaitMax: 5040,
       gereduceerdRate: 0.75043,

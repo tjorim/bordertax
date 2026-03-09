@@ -123,7 +123,10 @@ describe("calculateBETax", () => {
   it("netTaxBE equals federalTax + communalTax + communalTaxOnVrijgesteld", () => {
     const result = calculateBETax({ ...baseBE, daysWorkedNL: 200, daysWorkedBE: 20 }, mockNL());
     expect(result!.netTaxBE).toBeCloseTo(
-      result!.federalTax + result!.communalTax + result!.communalTaxOnVrijgesteld,
+      result!.saldoFederaal +
+        result!.saldoGewestelijk +
+        result!.communalTax +
+        result!.communalTaxOnVrijgesteld,
       5,
     );
   });
@@ -236,4 +239,22 @@ describe("calculateBETax", () => {
     );
     expect(result!.omTeSlane).toBeGreaterThanOrEqual(0);
   });
+
+
+  it("throws for >4 dependents in years with unknown extra child allowance", () => {
+    expect(() =>
+      calculateBETax(
+        { ...baseBE, year: 2020, daysWorkedNL: 200, daysWorkedBE: 20, dependentChildren: 5 },
+        mockNL(),
+      ),
+    ).toThrow(/Unsupported dependent children count/);
+  });
+
+
+
+  it("throws for unsupported tax year", () => {
+    const invalidYearInputs = { ...baseBE, year: 2030 as TaxInputs["year"] };
+    expect(() => calculateBETax(invalidYearInputs, mockNL())).toThrow(/Unsupported tax year/);
+  });
+
 });

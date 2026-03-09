@@ -24,6 +24,8 @@ type TaxInputsWithRequiredBEDeductions = TaxInputs & {
   aanvullendPensioen: number;
   dienstencheques: number;
   roerendeVoorheffing: number;
+  withheldTaxNL: number;
+  daysWorkedOther: number;
 };
 
 const DEFAULT_INPUTS: TaxInputsWithRequiredBEDeductions = {
@@ -37,11 +39,13 @@ const DEFAULT_INPUTS: TaxInputsWithRequiredBEDeductions = {
   grossSalary: 60000,
   daysWorkedNL: 200,
   daysWorkedBE: 20,
+  daysWorkedOther: 0,
   thirtyPercentRuling: false,
   socialContributions: 0,
   aanvullendPensioen: 0,
   dienstencheques: 0,
   roerendeVoorheffing: 0,
+  withheldTaxNL: 0,
 };
 
 const STORAGE_KEY = "grensarbeider-tax-inputs-v1";
@@ -87,6 +91,9 @@ function sanitizeInputs(raw: unknown): TaxInputs {
     daysWorkedBE: Number.isFinite(input.daysWorkedBE)
       ? Math.max(0, Number(input.daysWorkedBE))
       : DEFAULT_INPUTS.daysWorkedBE,
+    daysWorkedOther: Number.isFinite(input.daysWorkedOther)
+      ? Math.max(0, Number(input.daysWorkedOther))
+      : DEFAULT_INPUTS.daysWorkedOther,
     thirtyPercentRuling:
       typeof input.thirtyPercentRuling === "boolean"
         ? input.thirtyPercentRuling
@@ -104,7 +111,7 @@ function sanitizeInputs(raw: unknown): TaxInputs {
       input.roerendeVoorheffing,
       DEFAULT_INPUTS.roerendeVoorheffing,
     ),
-    withheldTaxNL: sanitizeNonNegative(input.withheldTaxNL, 0),
+    withheldTaxNL: sanitizeNonNegative(input.withheldTaxNL, DEFAULT_INPUTS.withheldTaxNL),
   };
 }
 
