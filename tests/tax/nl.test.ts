@@ -107,6 +107,11 @@ describe("calculateNLTax", () => {
     expect(result.brackets.length).toBeGreaterThan(0);
   });
 
+  it("throws for unsupported tax year", () => {
+    const invalidYearInputs = { ...base, year: 2030 as TaxInputs["year"] };
+    expect(() => calculateNLTax(invalidYearInputs)).toThrow(/Unsupported tax year/);
+  });
+
   it("reaches top bracket for very high salary", () => {
     const result = calculateNLTax({ ...base, grossSalary: 200000 });
     const topBracket = result.brackets.find((b) => b.rate === 0.495);

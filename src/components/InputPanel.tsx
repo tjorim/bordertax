@@ -19,7 +19,7 @@ const clampNumber = (value: string, min = 0, max = Number.POSITIVE_INFINITY) =>
   Math.min(max, Math.max(min, Number(value) || 0));
 
 export default function InputPanel({ inputs, onChange }: Props) {
-  function set<K extends keyof TaxInputs>(key: K, value: TaxInputs[K]) {
+  function updateInput<K extends keyof TaxInputs>(key: K, value: TaxInputs[K]) {
     onChange({ ...inputs, [key]: value });
   }
 
@@ -40,7 +40,7 @@ export default function InputPanel({ inputs, onChange }: Props) {
               <Form.Label>{m.input_tax_year()}</Form.Label>
               <Form.Select
                 value={inputs.year}
-                onChange={(e) => set("year", Number(e.target.value) as TaxInputs["year"])}
+                onChange={(e) => updateInput("year", Number(e.target.value) as TaxInputs["year"])}
               >
                 {VALID_YEARS.map((y) => (
                   <option key={y} value={y}>
@@ -55,7 +55,7 @@ export default function InputPanel({ inputs, onChange }: Props) {
               <Form.Select
                 value={inputs.residentCountry}
                 onChange={(e) =>
-                  set("residentCountry", e.target.value as TaxInputs["residentCountry"])
+                  updateInput("residentCountry", e.target.value as TaxInputs["residentCountry"])
                 }
               >
                 <option value="BE">🇧🇪 {m.input_resident_country_be()}</option>
@@ -76,7 +76,9 @@ export default function InputPanel({ inputs, onChange }: Props) {
               </Form.Label>
               <Form.Select
                 value={inputs.civilStatus}
-                onChange={(e) => set("civilStatus", e.target.value as TaxInputs["civilStatus"])}
+                onChange={(e) =>
+                  updateInput("civilStatus", e.target.value as TaxInputs["civilStatus"])
+                }
               >
                 <option value="single">{m.input_civil_status_single()}</option>
                 <option value="married">{m.input_civil_status_married()}</option>
@@ -90,7 +92,9 @@ export default function InputPanel({ inputs, onChange }: Props) {
                 min={0}
                 max={10}
                 value={inputs.dependentChildren}
-                onChange={(e) => set("dependentChildren", clampNumber(e.target.value, 0, 10))}
+                onChange={(e) =>
+                  updateInput("dependentChildren", clampNumber(e.target.value, 0, 10))
+                }
               />
             </Col>
 
@@ -99,7 +103,7 @@ export default function InputPanel({ inputs, onChange }: Props) {
                 id="aow-age"
                 label={m.input_below_aow_age()}
                 checked={inputs.belowAOWAge}
-                onChange={(e) => set("belowAOWAge", e.target.checked)}
+                onChange={(e) => updateInput("belowAOWAge", e.target.checked)}
               />
             </Col>
 
@@ -119,7 +123,7 @@ export default function InputPanel({ inputs, onChange }: Props) {
                   <Form.Select
                     value={inputs.belgianRegion}
                     onChange={(e) =>
-                      set("belgianRegion", e.target.value as TaxInputs["belgianRegion"])
+                      updateInput("belgianRegion", e.target.value as TaxInputs["belgianRegion"])
                     }
                   >
                     <option value="flemish">{m.input_belgian_region_flemish()}</option>
@@ -141,7 +145,9 @@ export default function InputPanel({ inputs, onChange }: Props) {
                     max={15}
                     step={0.1}
                     value={inputs.communalTaxRate}
-                    onChange={(e) => set("communalTaxRate", clampNumber(e.target.value, 0, 15))}
+                    onChange={(e) =>
+                      updateInput("communalTaxRate", clampNumber(e.target.value, 0, 15))
+                    }
                     aria-describedby="communal-tax-hint"
                   />
                   <Form.Text id="communal-tax-hint" className="text-muted">
@@ -169,7 +175,7 @@ export default function InputPanel({ inputs, onChange }: Props) {
                 min={0}
                 step={100}
                 value={inputs.grossSalary}
-                onChange={(e) => set("grossSalary", clampNumber(e.target.value))}
+                onChange={(e) => updateInput("grossSalary", clampNumber(e.target.value))}
                 aria-describedby="gross-salary-hint"
               />
               <Form.Text id="gross-salary-hint" className="text-muted">
@@ -185,7 +191,7 @@ export default function InputPanel({ inputs, onChange }: Props) {
                   min={0}
                   step={100}
                   value={inputs.withheldTaxNL ?? 0}
-                  onChange={(e) => set("withheldTaxNL", clampNumber(e.target.value))}
+                  onChange={(e) => updateInput("withheldTaxNL", clampNumber(e.target.value))}
                   aria-describedby="withheld-tax-nl-hint"
                 />
                 <Form.Text id="withheld-tax-nl-hint" className="text-muted">
@@ -200,7 +206,7 @@ export default function InputPanel({ inputs, onChange }: Props) {
                 type="number"
                 min={0}
                 value={inputs.daysWorkedNL}
-                onChange={(e) => set("daysWorkedNL", clampNumber(e.target.value))}
+                onChange={(e) => updateInput("daysWorkedNL", clampNumber(e.target.value))}
               />
             </Col>
 
@@ -210,7 +216,7 @@ export default function InputPanel({ inputs, onChange }: Props) {
                 type="number"
                 min={0}
                 value={inputs.daysWorkedBE}
-                onChange={(e) => set("daysWorkedBE", clampNumber(e.target.value))}
+                onChange={(e) => updateInput("daysWorkedBE", clampNumber(e.target.value))}
               />
             </Col>
 
@@ -221,7 +227,7 @@ export default function InputPanel({ inputs, onChange }: Props) {
                   type="number"
                   min={0}
                   value={inputs.daysWorkedOther ?? 0}
-                  onChange={(e) => set("daysWorkedOther", clampNumber(e.target.value))}
+                  onChange={(e) => updateInput("daysWorkedOther", clampNumber(e.target.value))}
                   aria-describedby="days-other-hint"
                 />
                 <Form.Text id="days-other-hint" className="text-muted">
@@ -246,7 +252,7 @@ export default function InputPanel({ inputs, onChange }: Props) {
                 id="thirty-ruling"
                 label={m.input_thirty_percent_ruling()}
                 checked={inputs.thirtyPercentRuling}
-                onChange={(e) => set("thirtyPercentRuling", e.target.checked)}
+                onChange={(e) => updateInput("thirtyPercentRuling", e.target.checked)}
                 aria-describedby="thirty-ruling-hint"
               />
               <Form.Text id="thirty-ruling-hint" className="text-muted">
@@ -285,7 +291,7 @@ export default function InputPanel({ inputs, onChange }: Props) {
                         step={100}
                         value={inputs[field.key] ?? 0}
                         onChange={(e) =>
-                          set(
+                          updateInput(
                             field.key,
                             clampNumber(e.target.value) as TaxInputs[BelgianDeductionKey],
                           )

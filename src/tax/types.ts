@@ -18,19 +18,19 @@ export interface TaxInputs {
   /** Days worked in a third country (e.g. customer installation in France).
    *  Belgium treats these identically to Belgian days (vol tarief) since the NL-BE treaty
    *  only covers NL-sourced income. Default 0. */
-  daysWorkedOther?: number;
+  daysWorkedOther: number;
   thirtyPercentRuling: boolean;
   /** Belgian social contributions (eigen bijdragen) — deductible from Belgian declared income. Default 0. */
-  socialContributions?: number;
+  socialContributions: number;
   /** Supplementary pension contributions (code 1285) — 30% reduction applies. Default 0. */
-  aanvullendPensioen?: number;
+  aanvullendPensioen: number;
   /** Diensten-cheques amount (code 3364) — 20% reduction applies. Default 0. */
-  dienstencheques?: number;
+  dienstencheques: number;
   /** Roerende voorheffing / withholding tax already paid (code 1437). Default 0. */
-  roerendeVoorheffing?: number;
+  roerendeVoorheffing: number;
   /** NL wage tax withheld by employer (ingehouden loonheffing from jaaropgave).
    *  Used to compute NL refund/payment and net eindafrekening. Default 0. */
-  withheldTaxNL?: number;
+  withheldTaxNL: number;
 }
 
 export interface BracketLine {

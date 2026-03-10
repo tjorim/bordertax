@@ -11,9 +11,9 @@ describe("BEResult", () => {
     expect(screen.getByRole("alert")).toBeInTheDocument();
   });
 
-  it("renders nothing when result is null for BE resident", () => {
-    const { container } = render(<BEResult result={null} residentCountry="BE" />);
-    expect(container.firstChild).toBeNull();
+  it("shows a warning when result is null for BE resident", () => {
+    render(<BEResult result={null} residentCountry="BE" />);
+    expect(screen.getByRole("alert")).toHaveTextContent(/belgian tax details are unavailable/i);
   });
 
   it("renders full result for BE resident with BE income", () => {

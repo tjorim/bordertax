@@ -16,62 +16,13 @@
  *   2026 note: proposed 40%→35% bracket reform was not enacted for income year 2026.
  */
 import type { TaxYear } from "./types";
+import type { BEYearParams, NLBracket, NLYearParams } from "./paramTypes";
 
-// ─── NL interfaces ────────────────────────────────────────────────────────────
-
-export interface NLBracket {
-  from: number;
-  to: number;
-  rate: number;
-}
-
-export interface AKStage {
-  from: number;
-  to: number;
-  baseAmount: number;
-  /** Rate applied to (income - from). Negative for phase-out. */
-  rate: number;
-}
-
-export interface NLYearParams {
-  /** Income-tax-only brackets (social premiums excluded). */
-  incomeTaxBrackets: NLBracket[];
-  /** Volksverzekeringen rate applied to min(grossSalary, socialPremiumMax). */
-  socialPremiumRate: number;
-  /** Maximum income subject to social premiums (equals bracket 1 ceiling). */
-  socialPremiumMax: number;
-  ahkMax: number;
-  ahkPhaseOutStart: number;
-  ahkPhaseOutRate: number;
-  ahkPhaseOutEnd: number;
-  akStages: AKStage[];
-}
-
-// ─── BE interfaces ────────────────────────────────────────────────────────────
-
-export interface BEBracket {
-  from: number;
-  to: number;
-  rate: number;
-}
-
-export interface BEYearParams {
-  brackets: BEBracket[];
-  baseBelastingvrijeSom: number;
-  /** Cumulative extra allowance per number of dependent children; index = child count (0–4). */
-  childExtraAmounts: number[];
-  extraPerChildAbove4: number | null;
-  forfaitRate: number;
-  forfaitMax: number;
-  /** Federal reduction rate: hoofdsom × gereduceerdRate = gereduceerde belasting staat. */
-  gereduceerdRate: number;
-  /** Regional supplement: gereduceerde × gewestelijkeRate = gewestelijke belasting. */
-  gewestelijkeRate: number;
-}
+export type { AKStage, BEBracket, BEYearParams, NLBracket, NLYearParams } from "./paramTypes";
 
 // ─── Combined params ──────────────────────────────────────────────────────────
 
-interface YearParams {
+export interface YearParams {
   nl: { under: NLYearParams; over: NLYearParams };
   be: BEYearParams;
 }
@@ -505,3 +456,21 @@ export const TAX_PARAMS: Record<TaxYear, YearParams> = {
     },
   },
 };
+
+export function getYearParams(year: TaxYear): YearParams {
+  const yearParams = TAX_PARAMS[year];
+  if (!yearParams) {
+    throw new Error(`Unsupported tax year: ${year}`);
+  }
+
+  return yearParams;
+}
+
+export function getNLYearParams(year: TaxYear, belowAOWAge: boolean): NLYearParams {
+  const yearParams = getYearParams(year);
+  return belowAOWAge ? yearParams.nl.under : yearParams.nl.over;
+}
+
+export function getBEYearParams(year: TaxYear): BEYearParams {
+  return getYearParams(year).be;
+}

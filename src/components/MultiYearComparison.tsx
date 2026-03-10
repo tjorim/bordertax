@@ -2,7 +2,7 @@ import { Badge, Table } from "react-bootstrap";
 import { VALID_YEARS } from "../tax/constants";
 import type { TaxResult, TaxYear } from "../tax/types";
 import * as m from "../paraglide/messages.js";
-import { getLocale } from "../paraglide/runtime.js";
+import { formatPercent, formatRoundedCurrency } from "./format";
 
 interface ComparisonRow {
   year: (typeof VALID_YEARS)[number];
@@ -13,11 +13,6 @@ interface Props {
   rows: ComparisonRow[];
   activeYear: TaxYear;
 }
-
-const fmt = (n: number) =>
-  n.toLocaleString(getLocale(), { style: "currency", currency: "EUR", maximumFractionDigits: 0 });
-
-const pct = (n: number) => `${(n * 100).toFixed(1)}%`;
 
 export default function MultiYearComparison({ rows, activeYear }: Props) {
   return (
@@ -41,12 +36,18 @@ export default function MultiYearComparison({ rows, activeYear }: Props) {
               <td>
                 {year} {year === activeYear && <Badge bg="primary">{m.years_active()}</Badge>}
               </td>
-              <td className="text-end">{fmt(result.grossIncome)}</td>
-              <td className="text-end text-danger">-{fmt(result.nl.netTaxNL)}</td>
-              <td className="text-end text-danger">-{fmt(result.be?.netTaxBE ?? 0)}</td>
-              <td className="text-end text-danger fw-semibold">-{fmt(result.totalTax)}</td>
-              <td className="text-end text-success fw-semibold">{fmt(result.netIncome)}</td>
-              <td className="text-end">{pct(result.effectiveRateTotal)}</td>
+              <td className="text-end">{formatRoundedCurrency(result.grossIncome)}</td>
+              <td className="text-end text-danger">-{formatRoundedCurrency(result.nl.netTaxNL)}</td>
+              <td className="text-end text-danger">
+                -{formatRoundedCurrency(result.be?.netTaxBE ?? 0)}
+              </td>
+              <td className="text-end text-danger fw-semibold">
+                -{formatRoundedCurrency(result.totalTax)}
+              </td>
+              <td className="text-end text-success fw-semibold">
+                {formatRoundedCurrency(result.netIncome)}
+              </td>
+              <td className="text-end">{formatPercent(result.effectiveRateTotal, 1)}</td>
             </tr>
           ))}
         </tbody>

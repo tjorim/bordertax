@@ -71,4 +71,9 @@ describe("calculate", () => {
     const result = calculate({ ...base });
     expect(result.inputs).toEqual(base);
   });
+
+  it("throws for unsupported tax year instead of silently reusing another year's data", () => {
+    const invalidYearInputs = { ...base, year: 2030 as TaxInputs["year"] };
+    expect(() => calculate(invalidYearInputs)).toThrow(/Unsupported tax year/);
+  });
 });

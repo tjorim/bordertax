@@ -1,16 +1,12 @@
 import { Alert, Table } from "react-bootstrap";
 import type { BETaxResult, TaxInputs } from "../tax/types";
 import * as m from "../paraglide/messages.js";
-import { getLocale } from "../paraglide/runtime.js";
+import { formatCurrency, formatPercent } from "./format";
 
 interface Props {
   result: BETaxResult | null;
   residentCountry: TaxInputs["residentCountry"];
 }
-
-const fmt = (n: number) =>
-  n.toLocaleString(getLocale(), { style: "currency", currency: "EUR", maximumFractionDigits: 2 });
-const pct = (n: number) => `${(n * 100).toFixed(2)}%`;
 
 export default function BEResult({ result, residentCountry }: Props) {
   if (residentCountry !== "BE") {
@@ -22,7 +18,14 @@ export default function BEResult({ result, residentCountry }: Props) {
     );
   }
 
-  if (!result) return null;
+  if (!result) {
+    return (
+      <Alert variant="warning" className="mb-0">
+        <i className="bi bi-exclamation-triangle me-2" />
+        Belgian tax details are unavailable for the current calculation.
+      </Alert>
+    );
+  }
 
   const hasBeIncome = result.beIncome > 0;
 
@@ -42,13 +45,13 @@ export default function BEResult({ result, residentCountry }: Props) {
         <tbody>
           <tr>
             <td>🇳🇱 {m.be_exempt_nl_income()}</td>
-            <td className="text-end">{fmt(result.nlExemptIncome)}</td>
-            <td className="text-end text-muted small">{pct(1 - result.beFraction)}</td>
+            <td className="text-end">{formatCurrency(result.nlExemptIncome)}</td>
+            <td className="text-end text-muted small">{formatPercent(1 - result.beFraction)}</td>
           </tr>
           <tr>
             <td>🇧🇪 {m.be_taxable_be_income()}</td>
-            <td className="text-end">{fmt(result.beIncome)}</td>
-            <td className="text-end text-muted small">{pct(result.beFraction)}</td>
+            <td className="text-end">{formatCurrency(result.beIncome)}</td>
+            <td className="text-end text-muted small">{formatPercent(result.beFraction)}</td>
           </tr>
         </tbody>
       </Table>
@@ -61,33 +64,35 @@ export default function BEResult({ result, residentCountry }: Props) {
         <tbody>
           <tr>
             <td>{m.be_total_gross_income()}</td>
-            <td className="text-end">{fmt(result.nlExemptIncome + result.beIncome)}</td>
+            <td className="text-end">{formatCurrency(result.nlExemptIncome + result.beIncome)}</td>
           </tr>
           <tr>
             <td>{m.be_professional_expenses()}</td>
-            <td className="text-end text-success">−{fmt(result.professionalExpenses)}</td>
+            <td className="text-end text-success">
+              −{formatCurrency(result.professionalExpenses)}
+            </td>
           </tr>
           <tr className="fw-semibold">
             <td>{m.be_net_taxable_income()}</td>
-            <td className="text-end">{fmt(result.netProfessionalIncome)}</td>
+            <td className="text-end">{formatCurrency(result.netProfessionalIncome)}</td>
           </tr>
           <tr>
             <td>{m.be_tax_on_total()}</td>
-            <td className="text-end">{fmt(result.basisbelasting)}</td>
+            <td className="text-end">{formatCurrency(result.basisbelasting)}</td>
           </tr>
           <tr>
             <td>{m.be_personal_allowance()}</td>
-            <td className="text-end text-success">−{fmt(result.belastingvrijeSomReduction)}</td>
+            <td className="text-end text-success">
+              −{formatCurrency(result.belastingvrijeSomReduction)}
+            </td>
           </tr>
           <tr className="fw-semibold">
             <td>{m.be_tax_after_allowance()}</td>
-            <td className="text-end">{fmt(result.omTeSlane)}</td>
+            <td className="text-end">{formatCurrency(result.omTeSlane)}</td>
           </tr>
           <tr>
-            <td>
-              × {m.be_belgian_fraction()} ({pct(result.beFraction)})
-            </td>
-            <td className="text-end">{fmt(result.totaleBelasting)}</td>
+            <td>× {m.be_belgian_fraction()} ({formatPercent(result.beFraction)})</td>
+            <td className="text-end">{formatCurrency(result.totaleBelasting)}</td>
           </tr>
         </tbody>
       </Table>
@@ -97,19 +102,19 @@ export default function BEResult({ result, residentCountry }: Props) {
         <tbody>
           <tr>
             <td>{m.be_federal_tax()}</td>
-            <td className="text-end">{fmt(result.federalTax)}</td>
+            <td className="text-end">{formatCurrency(result.federalTax)}</td>
           </tr>
           <tr>
             <td>{m.be_municipal_tax()}</td>
-            <td className="text-end">{fmt(result.communalTax)}</td>
+            <td className="text-end">{formatCurrency(result.communalTax)}</td>
           </tr>
           <tr className="table-primary fw-bold">
             <td>{m.be_tax_payable()}</td>
-            <td className="text-end">{fmt(result.netTaxBE)}</td>
+            <td className="text-end">{formatCurrency(result.netTaxBE)}</td>
           </tr>
           <tr>
             <td className="text-muted small">{m.be_effective_rate()}</td>
-            <td className="text-end text-muted small">{pct(result.effectiveRateBE)}</td>
+            <td className="text-end text-muted small">{formatPercent(result.effectiveRateBE)}</td>
           </tr>
         </tbody>
       </Table>

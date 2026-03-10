@@ -13,7 +13,7 @@
  * Year-specific rates are in params.ts — that is the only file that needs updating each year.
  */
 import type { TaxInputs, NLTaxResult, BracketLine } from "./types";
-import { TAX_PARAMS } from "./params";
+import { getNLYearParams } from "./params";
 import type { NLBracket, NLYearParams } from "./params";
 
 function applyBrackets(
@@ -60,8 +60,7 @@ function calcAK(income: number, p: NLYearParams): number {
 }
 
 export function calculateNLTax(inputs: TaxInputs): NLTaxResult {
-  const yearData = TAX_PARAMS[inputs.year]?.nl ?? TAX_PARAMS[2025].nl;
-  const p = inputs.belowAOWAge ? yearData.under : yearData.over;
+  const p = getNLYearParams(inputs.year, inputs.belowAOWAge);
 
   const totalDays = inputs.daysWorkedNL + inputs.daysWorkedBE + (inputs.daysWorkedOther ?? 0);
   const nlFraction = totalDays > 0 ? inputs.daysWorkedNL / totalDays : 0;

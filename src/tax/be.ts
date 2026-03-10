@@ -11,7 +11,7 @@
  * Year-specific rates are in params.ts — that is the only file that needs updating each year.
  */
 import type { TaxInputs, BETaxResult, NLTaxResult } from "./types";
-import { TAX_PARAMS } from "./params";
+import { getBEYearParams } from "./params";
 import type { BEBracket, BEYearParams } from "./params";
 
 function applyBEBrackets(income: number, brackets: BEBracket[]): number {
@@ -51,20 +51,16 @@ function belastingvrijeSomReduction(inputs: TaxInputs, p: BEYearParams): number 
 export function calculateBETax(inputs: TaxInputs, nl: NLTaxResult): BETaxResult | null {
   if (inputs.residentCountry !== "BE") return null;
 
-  const yearParams = TAX_PARAMS[inputs.year];
-  if (!yearParams) {
-    throw new Error(`Unsupported tax year: ${inputs.year}`);
-  }
-  const p = yearParams.be;
+  const p = getBEYearParams(inputs.year);
 
-  const daysOutsideNL = inputs.daysWorkedBE + (inputs.daysWorkedOther ?? 0);
+  const daysWorkedOther = inputs.daysWorkedOther ?? 0;
+  const daysOutsideNL = inputs.daysWorkedBE + daysWorkedOther;
   const totalDays = inputs.daysWorkedNL + daysOutsideNL;
   const beFraction = totalDays > 0 ? daysOutsideNL / totalDays : 0;
 
   // Gross split for reference fields
   const beIncome = inputs.grossSalary * beFraction;
 
-  // Optional deduction inputs (default to 0)
   const socialContributions = inputs.socialContributions ?? 0;
   const aanvullendPensioen = inputs.aanvullendPensioen ?? 0;
   const dienstencheques = inputs.dienstencheques ?? 0;

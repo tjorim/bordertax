@@ -2,9 +2,8 @@ import { fireEvent, render, screen, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 
 import App from "@/App";
+import { STORAGE_KEY } from "@/app/inputState";
 import { setLocale } from "@/paraglide/runtime";
-
-const STORAGE_KEY = "grensarbeider-tax-inputs-v1";
 
 describe("App", () => {
   beforeEach(() => {
@@ -73,6 +72,7 @@ describe("App", () => {
     localStorage.setItem(STORAGE_KEY, "not valid json{{");
     render(<App />);
     expect(screen.getByText(/Tax year.*2025/)).toBeInTheDocument();
+    expect(screen.getByText(/saved inputs could not be restored/i)).toBeInTheDocument();
   });
 
   it("shows 2026 provisional alert for year 2026", () => {
@@ -144,5 +144,30 @@ describe("App", () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(null));
     render(<App />);
     expect(screen.getByText(/Tax year.*2025/)).toBeInTheDocument();
+  });
+
+  it("shows a warning instead of crashing when comparison years cannot be calculated", () => {
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        year: 2025,
+        residentCountry: "BE",
+        civilStatus: "single",
+        dependentChildren: 5,
+        belowAOWAge: true,
+        belgianRegion: "flemish",
+        communalTaxRate: 7,
+        grossSalary: 60000,
+        daysWorkedNL: 200,
+        daysWorkedBE: 20,
+        thirtyPercentRuling: false,
+      }),
+    );
+
+    render(<App />);
+
+    expect(
+      screen.getByText(/some comparison years were skipped because they do not support/i),
+    ).toBeInTheDocument();
   });
 });
