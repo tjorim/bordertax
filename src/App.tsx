@@ -14,8 +14,6 @@ import type { TaxInputs, TaxResult, TaxYear } from "./tax/types";
 import { VALID_YEARS } from "./tax/constants";
 import * as m from "./paraglide/messages.js";
 import { getLocale, setLocale } from "./paraglide/runtime.js";
-const STORAGE_WARNING =
-  "Saved inputs could not be restored and were reset to the default example.";
 
 interface ComparisonRow {
   year: TaxYear;
@@ -23,11 +21,11 @@ interface ComparisonRow {
 }
 
 export default function App() {
-  const initialState = loadStoredInputs(localStorage);
-  const [inputs, setInputs] = useState<TaxInputs>(initialState.inputs);
-  const [storageWarning, setStorageWarning] = useState<string | null>(
-    initialState.resetCorruptStorage ? STORAGE_WARNING : null,
+  const [{ inputs: initialInputs, resetCorruptStorage }] = useState(() =>
+    loadStoredInputs(localStorage),
   );
+  const [inputs, setInputs] = useState<TaxInputs>(initialInputs);
+  const [storageWarning, setStorageWarning] = useState(resetCorruptStorage);
   const [locale, setCurrentLocale] = useState(getLocale());
   const nextLangLabel = locale === "en" ? m.lang_nl() : m.lang_en();
 
@@ -47,7 +45,7 @@ export default function App() {
         }
       } catch (error) {
         if (year === inputs.year) {
-          activeYearError = error instanceof Error ? error.message : "Calculation failed.";
+          activeYearError = error instanceof Error ? error.message : m.warning_calculation_failed();
         } else {
           comparisonFailures.push(year);
         }
@@ -56,10 +54,7 @@ export default function App() {
 
     return {
       comparisonResults: rows,
-      comparisonWarning:
-        comparisonFailures.length > 0
-          ? `Some comparison years were skipped because they do not support the current inputs: ${comparisonFailures.join(", ")}.`
-          : null,
+      comparisonWarning: comparisonFailures.length > 0 ? comparisonFailures : null,
       result: activeYearResult,
       resultError: activeYearError,
     };
@@ -105,14 +100,14 @@ export default function App() {
             {storageWarning && (
               <Alert variant="warning" className="small py-2">
                 <i className="bi bi-exclamation-triangle me-2" />
-                {storageWarning}
+                {m.warning_storage_reset()}
                 <Button
                   variant="link"
                   size="sm"
                   className="ms-2 p-0 align-baseline"
-                  onClick={() => setStorageWarning(null)}
+                  onClick={() => setStorageWarning(false)}
                 >
-                  Dismiss
+                  {m.action_dismiss()}
                 </Button>
               </Alert>
             )}
@@ -125,7 +120,7 @@ export default function App() {
             {comparisonWarning && (
               <Alert variant="warning" className="small py-2">
                 <i className="bi bi-exclamation-triangle me-2" />
-                {comparisonWarning}
+                {m.warning_comparison_years_skipped()} {comparisonWarning.join(", ")}.
               </Alert>
             )}
             {resultError && (
@@ -167,7 +162,7 @@ export default function App() {
                       result={result}
                       onResetInputs={() => {
                         setInputs(DEFAULT_INPUTS);
-                        setStorageWarning(null);
+                        setStorageWarning(false);
                       }}
                     />
                   )}
@@ -176,7 +171,14 @@ export default function App() {
                   {result && <NLResult result={result.nl} withheldTaxNL={inputs.withheldTaxNL} />}
                 </Tab.Pane>
                 <Tab.Pane eventKey="be">
-                  <BEResult result={result?.be ?? null} residentCountry={inputs.residentCountry} />
+                  {inputs.residentCountry !== "BE" ? (
+                    <Alert variant="info" className="mb-0">
+                      <i className="bi bi-info-circle me-2" />
+                      {m.be_only_residents()}
+                    </Alert>
+                  ) : (
+                    result && <BEResult result={result.be} />
+                  )}
                 </Tab.Pane>
                 <Tab.Pane eventKey="years">
                   <MultiYearComparison rows={comparisonResults} activeYear={inputs.year} />

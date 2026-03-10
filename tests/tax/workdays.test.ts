@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { getMaxDaysInYear, getTotalWorkdays } from "@/tax/workdays";
+import { DEFAULT_INPUTS } from "@/app/inputState";
 
 describe("getMaxDaysInYear", () => {
   it("returns 366 for leap years", () => {
@@ -18,18 +19,10 @@ describe("getTotalWorkdays", () => {
   it("includes NL, BE and optional other days", () => {
     expect(
       getTotalWorkdays({
-        year: 2025,
-        residentCountry: "NL",
-        civilStatus: "single",
-        dependentChildren: 0,
-        belowAOWAge: true,
-        belgianRegion: "flemish",
-        communalTaxRate: 7,
-        grossSalary: 60000,
+        ...DEFAULT_INPUTS,
         daysWorkedNL: 220,
         daysWorkedBE: 10,
         daysWorkedOther: 5,
-        thirtyPercentRuling: false,
       }),
     ).toBe(235);
   });

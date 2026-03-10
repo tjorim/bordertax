@@ -1,13 +1,12 @@
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 
-import {
-  DEFAULT_INPUTS,
-  loadStoredInputs,
-  sanitizeInputs,
-  STORAGE_KEY,
-} from "@/app/inputState";
+import { DEFAULT_INPUTS, loadStoredInputs, sanitizeInputs, STORAGE_KEY } from "@/app/inputState";
 
 describe("inputState", () => {
+  beforeEach(() => {
+    window.localStorage.clear();
+  });
+
   it("clamps invalid stored values back into supported ranges", () => {
     expect(
       sanitizeInputs({
@@ -47,7 +46,6 @@ describe("inputState", () => {
 
   it("loads sanitized inputs from storage without resetting valid JSON", () => {
     const storage = window.localStorage;
-    storage.clear();
     storage.setItem(
       STORAGE_KEY,
       JSON.stringify({
@@ -71,7 +69,6 @@ describe("inputState", () => {
 
   it("clears corrupt storage and falls back to defaults", () => {
     const storage = window.localStorage;
-    storage.clear();
     storage.setItem(STORAGE_KEY, "{broken");
 
     expect(loadStoredInputs(storage)).toEqual({

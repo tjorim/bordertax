@@ -48,6 +48,7 @@ describe("format helpers", () => {
         maximumFractionDigits: 0,
       })}`,
     );
+    // Note: Uses Unicode MINUS SIGN (U+2212), not ASCII hyphen-minus (U+002D)
     expect(formatSignedCurrency(-99.4)).toBe(
       `−${(99.4).toLocaleString("en", {
         style: "currency",
@@ -58,7 +59,26 @@ describe("format helpers", () => {
   });
 
   it("formats percentages with configurable precision", () => {
-    expect(formatPercent(0.1234)).toBe("12.34%");
-    expect(formatPercent(0.1234, 1)).toBe("12.3%");
+    expect(formatPercent(0.1234)).toBe(
+      (0.1234).toLocaleString("en", {
+        style: "percent",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }),
+    );
+    expect(formatPercent(0.1234, 0)).toBe(
+      (0.1234).toLocaleString("en", {
+        style: "percent",
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      }),
+    );
+    expect(formatPercent(0.1234, 1)).toBe(
+      (0.1234).toLocaleString("en", {
+        style: "percent",
+        minimumFractionDigits: 1,
+        maximumFractionDigits: 1,
+      }),
+    );
   });
 });

@@ -1,21 +1,12 @@
 import type { BETaxResult, NLTaxResult, TaxInputs, TaxResult } from "@/tax/types";
+import { DEFAULT_INPUTS } from "@/app/inputState";
 
 export const mockInputs: TaxInputs = {
-  year: 2025,
+  ...DEFAULT_INPUTS,
   residentCountry: "BE",
-  civilStatus: "single",
-  dependentChildren: 0,
-  belowAOWAge: true,
-  belgianRegion: "flemish",
-  communalTaxRate: 7,
   grossSalary: 60000,
   daysWorkedNL: 200,
   daysWorkedBE: 20,
-  thirtyPercentRuling: false,
-  socialContributions: 0,
-  aanvullendPensioen: 0,
-  dienstencheques: 0,
-  roerendeVoorheffing: 0,
 };
 
 export const mockNLResult: NLTaxResult = {

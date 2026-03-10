@@ -88,18 +88,22 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
             <td className="text-end fw-semibold">{formatRoundedCurrency(grossIncome)}</td>
           </tr>
           <tr>
-            <td>{"\uD83C\uDDF3\uD83C\uDDF1"} {m.summary_dutch_tax()}</td>
-            <td className="text-end text-danger">{"\u2212"}{formatRoundedCurrency(nl.netTaxNL)}</td>
+            <td>
+              {"\uD83C\uDDF3\uD83C\uDDF1"} {m.summary_dutch_tax()}
+            </td>
+            <td className="text-end text-danger">{formatSignedCurrency(-nl.netTaxNL)}</td>
           </tr>
           {be && be.netTaxBE > 0 && (
             <tr>
-              <td>{"\uD83C\uDDE7\uD83C\uDDEA"} {m.summary_belgian_tax()}</td>
-              <td className="text-end text-danger">{"\u2212"}{formatRoundedCurrency(be.netTaxBE)}</td>
+              <td>
+                {"\uD83C\uDDE7\uD83C\uDDEA"} {m.summary_belgian_tax()}
+              </td>
+              <td className="text-end text-danger">{formatSignedCurrency(-be.netTaxBE)}</td>
             </tr>
           )}
           <tr className="table-secondary fw-semibold">
             <td>{m.summary_total_tax()}</td>
-            <td className="text-end text-danger">{"\u2212"}{formatRoundedCurrency(totalTax)}</td>
+            <td className="text-end text-danger">{formatSignedCurrency(-totalTax)}</td>
           </tr>
           <tr className="table-success fw-bold fs-5">
             <td>{m.summary_net_income()}</td>
@@ -114,7 +118,7 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
 
       <p className="fw-semibold small mb-2">{m.summary_allocation()}</p>
       <ProgressBar className="mb-2" style={{ height: "1.5rem" }}>
-          <ProgressBar
+        <ProgressBar
           variant="success"
           now={netPct}
           key={1}
@@ -138,27 +142,25 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
 
       <Row className="mt-3 text-center g-3">
         <Col>
-            <div className="border rounded p-3">
-              <div className="text-muted small">{m.summary_net_monthly()}</div>
-              <div className="fs-5 fw-bold text-success">
-                {formatRoundedCurrency(netIncome / 12)}
-              </div>
+          <div className="border rounded p-3">
+            <div className="text-muted small">{m.summary_net_monthly()}</div>
+            <div className="fs-5 fw-bold text-success">{formatRoundedCurrency(netIncome / 12)}</div>
+          </div>
+        </Col>
+        <Col>
+          <div className="border rounded p-3">
+            <div className="text-muted small">{m.summary_effective_rate()}</div>
+            <div className="fs-5 fw-bold">{formatPercent(effectiveRateTotal, 1)}</div>
+          </div>
+        </Col>
+        <Col>
+          <div className="border rounded p-3">
+            <div className="text-muted small">{m.summary_net_daily()}</div>
+            <div className="fs-5 fw-bold text-success">
+              {totalWorkdays > 0 ? formatRoundedCurrency(netIncome / totalWorkdays) : "\u2014"}
             </div>
-          </Col>
-          <Col>
-            <div className="border rounded p-3">
-              <div className="text-muted small">{m.summary_effective_rate()}</div>
-              <div className="fs-5 fw-bold">{formatPercent(effectiveRateTotal, 1)}</div>
-            </div>
-          </Col>
-          <Col>
-            <div className="border rounded p-3">
-              <div className="text-muted small">{m.summary_net_daily()}</div>
-              <div className="fs-5 fw-bold text-success">
-                {totalWorkdays > 0 ? formatRoundedCurrency(netIncome / totalWorkdays) : "\u2014"}
-              </div>
-            </div>
-          </Col>
+          </div>
+        </Col>
       </Row>
 
       {withheldTaxNL > 0 && (
@@ -167,15 +169,21 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
           <Table bordered className="mb-0">
             <tbody>
               <tr>
-                <td>{"\uD83C\uDDF3\uD83C\uDDF1"} {m.summary_withheld_nl()}</td>
+                <td>
+                  {"\uD83C\uDDF3\uD83C\uDDF1"} {m.summary_withheld_nl()}
+                </td>
                 <td className="text-end">{formatRoundedCurrency(withheldTaxNL)}</td>
               </tr>
               <tr>
-                <td>{"\uD83C\uDDF3\uD83C\uDDF1"} {m.summary_nl_owed()}</td>
-                <td className="text-end text-danger">{"\u2212"}{formatRoundedCurrency(nl.netTaxNL)}</td>
+                <td>
+                  {"\uD83C\uDDF3\uD83C\uDDF1"} {m.summary_nl_owed()}
+                </td>
+                <td className="text-end text-danger">{formatSignedCurrency(-nl.netTaxNL)}</td>
               </tr>
               <tr className={nlBalance >= 0 ? "table-success" : "table-danger"}>
-                <td className="fw-semibold">{"\uD83C\uDDF3\uD83C\uDDF1"} {m.summary_nl_balance()}</td>
+                <td className="fw-semibold">
+                  {"\uD83C\uDDF3\uD83C\uDDF1"} {m.summary_nl_balance()}
+                </td>
                 <td
                   className={`text-end fw-semibold ${nlBalance >= 0 ? "text-success" : "text-danger"}`}
                 >
@@ -184,8 +192,10 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
               </tr>
               {be && be.netTaxBE > 0 && (
                 <tr>
-                  <td>{"\uD83C\uDDE7\uD83C\uDDEA"} {m.summary_be_owed()}</td>
-                  <td className="text-end text-danger">{"\u2212"}{formatRoundedCurrency(be.netTaxBE)}</td>
+                  <td>
+                    {"\uD83C\uDDE7\uD83C\uDDEA"} {m.summary_be_owed()}
+                  </td>
+                  <td className="text-end text-danger">{formatSignedCurrency(-be.netTaxBE)}</td>
                 </tr>
               )}
               <tr

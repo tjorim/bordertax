@@ -19,9 +19,13 @@ export interface NLYearParams {
   socialPremiumRate: number;
   /** Maximum income subject to social premiums (equals bracket 1 ceiling). */
   socialPremiumMax: number;
+  /** Algemene heffingskorting: maximum credit amount (applies up to ahkPhaseOutStart). */
   ahkMax: number;
+  /** Income level at which the algemene heffingskorting begins to phase out. */
   ahkPhaseOutStart: number;
+  /** Rate at which the credit reduces per euro above ahkPhaseOutStart. */
   ahkPhaseOutRate: number;
+  /** Income level at which the algemene heffingskorting has fully phased out (credit = 0). */
   ahkPhaseOutEnd: number;
   akStages: AKStage[];
 }
@@ -36,7 +40,7 @@ export interface BEYearParams {
   brackets: BEBracket[];
   baseBelastingvrijeSom: number;
   /** Cumulative extra allowance per number of dependent children; index = child count (0–4). */
-  childExtraAmounts: number[];
+  childExtraAmounts: [number, number, number, number, number];
   extraPerChildAbove4: number | null;
   forfaitRate: number;
   forfaitMax: number;

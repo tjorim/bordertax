@@ -6,39 +6,33 @@ import * as m from "@/paraglide/messages.js";
 import { mockBEResult } from "../test-utils/mockData";
 
 describe("BEResult", () => {
-  it("shows info alert for NL residents", () => {
-    render(<BEResult result={null} residentCountry="NL" />);
-    expect(screen.getByRole("alert")).toBeInTheDocument();
+  it("shows a warning when result is null", () => {
+    render(<BEResult result={null} />);
+    expect(screen.getByRole("alert")).toHaveTextContent(m.be_result_unavailable());
   });
 
-  it("shows a warning when result is null for BE resident", () => {
-    render(<BEResult result={null} residentCountry="BE" />);
-    expect(screen.getByRole("alert")).toHaveTextContent(/belgian tax details are unavailable/i);
-  });
-
-  it("renders full result for BE resident with BE income", () => {
-    render(<BEResult result={mockBEResult} residentCountry="BE" />);
+  it("renders full result with BE income", () => {
+    render(<BEResult result={mockBEResult} />);
     const alerts = screen.getAllByRole("alert");
     expect(alerts).toHaveLength(1);
     expect(alerts[0]).toHaveTextContent(m.be_warning_note());
-    expect(screen.queryByText(m.be_only_residents())).toBeNull();
   });
 
   it("shows the effective rate for BE", () => {
-    render(<BEResult result={mockBEResult} residentCountry="BE" />);
+    render(<BEResult result={mockBEResult} />);
     expect(screen.getByText("4.63%")).toBeInTheDocument();
   });
 
   it("shows a success alert when beIncome is 0", () => {
     const resultNoBeIncome = { ...mockBEResult, beIncome: 0 };
-    render(<BEResult result={resultNoBeIncome} residentCountry="BE" />);
+    render(<BEResult result={resultNoBeIncome} />);
     const alerts = screen.getAllByRole("alert");
     expect(alerts).toHaveLength(2);
     expect(screen.getByText(m.be_no_home_working())).toBeInTheDocument();
   });
 
   it("displays the beFraction as percentage", () => {
-    render(<BEResult result={mockBEResult} residentCountry="BE" />);
+    render(<BEResult result={mockBEResult} />);
     // beFraction of 0.0909 → "9.09%"
     expect(screen.getByText("9.09%")).toBeInTheDocument();
   });

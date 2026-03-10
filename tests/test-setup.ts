@@ -24,7 +24,6 @@ Object.defineProperty(globalThis, "localStorage", {
   writable: true,
 });
 
-
 beforeEach(() => {
   localStorage.clear();
 });

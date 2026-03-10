@@ -1,4 +1,6 @@
 import {
+  MAX_COMMUNAL_TAX_RATE,
+  MAX_DEPENDENT_CHILDREN,
   VALID_BELGIAN_REGIONS,
   VALID_CIVIL_STATUSES,
   VALID_RESIDENT_COUNTRIES,
@@ -40,7 +42,7 @@ export function sanitizeInputs(raw: unknown): TaxInputs {
 
   const input = raw as Partial<TaxInputs>;
 
-  const isOneOf = <T,>(value: unknown, options: readonly T[]): value is T =>
+  const isOneOf = <T>(value: unknown, options: readonly T[]): value is T =>
     options.includes(value as T);
 
   const sanitizeNonNegative = (value: unknown, defaultValue: number): number =>
@@ -55,7 +57,7 @@ export function sanitizeInputs(raw: unknown): TaxInputs {
       ? input.civilStatus
       : DEFAULT_INPUTS.civilStatus,
     dependentChildren: Number.isFinite(input.dependentChildren)
-      ? Math.min(10, Math.max(0, Number(input.dependentChildren)))
+      ? Math.min(MAX_DEPENDENT_CHILDREN, Math.max(0, Number(input.dependentChildren)))
       : DEFAULT_INPUTS.dependentChildren,
     belowAOWAge:
       typeof input.belowAOWAge === "boolean" ? input.belowAOWAge : DEFAULT_INPUTS.belowAOWAge,
@@ -63,17 +65,13 @@ export function sanitizeInputs(raw: unknown): TaxInputs {
       ? input.belgianRegion
       : DEFAULT_INPUTS.belgianRegion,
     communalTaxRate: Number.isFinite(input.communalTaxRate)
-      ? Math.min(15, Math.max(0, Number(input.communalTaxRate)))
+      ? Math.min(MAX_COMMUNAL_TAX_RATE, Math.max(0, Number(input.communalTaxRate)))
       : DEFAULT_INPUTS.communalTaxRate,
     grossSalary: Number.isFinite(input.grossSalary)
       ? Math.max(0, Number(input.grossSalary))
       : DEFAULT_INPUTS.grossSalary,
-    daysWorkedNL: Number.isFinite(input.daysWorkedNL)
-      ? Math.max(0, Number(input.daysWorkedNL))
-      : DEFAULT_INPUTS.daysWorkedNL,
-    daysWorkedBE: Number.isFinite(input.daysWorkedBE)
-      ? Math.max(0, Number(input.daysWorkedBE))
-      : DEFAULT_INPUTS.daysWorkedBE,
+    daysWorkedNL: sanitizeNonNegative(input.daysWorkedNL, DEFAULT_INPUTS.daysWorkedNL),
+    daysWorkedBE: sanitizeNonNegative(input.daysWorkedBE, DEFAULT_INPUTS.daysWorkedBE),
     daysWorkedOther: sanitizeNonNegative(input.daysWorkedOther, DEFAULT_INPUTS.daysWorkedOther),
     thirtyPercentRuling:
       typeof input.thirtyPercentRuling === "boolean"

@@ -1,28 +1,18 @@
 import { Alert, Table } from "react-bootstrap";
-import type { BETaxResult, TaxInputs } from "../tax/types";
+import type { BETaxResult } from "../tax/types";
 import * as m from "../paraglide/messages.js";
 import { formatCurrency, formatPercent } from "./format";
 
 interface Props {
   result: BETaxResult | null;
-  residentCountry: TaxInputs["residentCountry"];
 }
 
-export default function BEResult({ result, residentCountry }: Props) {
-  if (residentCountry !== "BE") {
-    return (
-      <Alert variant="info" className="mb-0">
-        <i className="bi bi-info-circle me-2" />
-        {m.be_only_residents()}
-      </Alert>
-    );
-  }
-
+export default function BEResult({ result }: Props) {
   if (!result) {
     return (
       <Alert variant="warning" className="mb-0">
         <i className="bi bi-exclamation-triangle me-2" />
-        Belgian tax details are unavailable for the current calculation.
+        {m.be_result_unavailable()}
       </Alert>
     );
   }
@@ -91,7 +81,9 @@ export default function BEResult({ result, residentCountry }: Props) {
             <td className="text-end">{formatCurrency(result.omTeSlane)}</td>
           </tr>
           <tr>
-            <td>× {m.be_belgian_fraction()} ({formatPercent(result.beFraction)})</td>
+            <td>
+              × {m.be_belgian_fraction()} ({formatPercent(result.beFraction)})
+            </td>
             <td className="text-end">{formatCurrency(result.totaleBelasting)}</td>
           </tr>
         </tbody>

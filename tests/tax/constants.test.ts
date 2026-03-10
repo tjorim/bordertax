@@ -10,6 +10,7 @@ import {
 describe("tax constants", () => {
   it("exports the supported tax years in ascending order", () => {
     expect(VALID_YEARS).toEqual([2020, 2021, 2022, 2023, 2024, 2025, 2026]);
+    expect(VALID_YEARS).toEqual([...VALID_YEARS].sort((a, b) => a - b));
   });
 
   it("exports the supported resident countries", () => {

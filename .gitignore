@@ -13,9 +13,10 @@ dist-ssr
 coverage
 *.local
 *.tsbuildinfo
+
+# desloppify tool directory and agent working directories
 .desloppify
 .agents
-scorecard.png
 
 # Editor directories and files
 .vscode/*

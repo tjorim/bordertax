@@ -1,5 +1,5 @@
 import { Accordion, Badge, Col, Form, Row } from "react-bootstrap";
-import { VALID_YEARS } from "../tax/constants";
+import { MAX_COMMUNAL_TAX_RATE, MAX_DEPENDENT_CHILDREN, VALID_YEARS } from "../tax/constants";
 import type { TaxInputs } from "../tax/types";
 import { getMaxDaysInYear, getTotalWorkdays } from "../tax/workdays";
 import * as m from "../paraglide/messages.js";
@@ -90,10 +90,13 @@ export default function InputPanel({ inputs, onChange }: Props) {
               <Form.Control
                 type="number"
                 min={0}
-                max={10}
+                max={MAX_DEPENDENT_CHILDREN}
                 value={inputs.dependentChildren}
                 onChange={(e) =>
-                  updateInput("dependentChildren", clampNumber(e.target.value, 0, 10))
+                  updateInput(
+                    "dependentChildren",
+                    clampNumber(e.target.value, 0, MAX_DEPENDENT_CHILDREN),
+                  )
                 }
               />
             </Col>
@@ -142,11 +145,14 @@ export default function InputPanel({ inputs, onChange }: Props) {
                   <Form.Control
                     type="number"
                     min={0}
-                    max={15}
+                    max={MAX_COMMUNAL_TAX_RATE}
                     step={0.1}
                     value={inputs.communalTaxRate}
                     onChange={(e) =>
-                      updateInput("communalTaxRate", clampNumber(e.target.value, 0, 15))
+                      updateInput(
+                        "communalTaxRate",
+                        clampNumber(e.target.value, 0, MAX_COMMUNAL_TAX_RATE),
+                      )
                     }
                     aria-describedby="communal-tax-hint"
                   />
@@ -239,7 +245,11 @@ export default function InputPanel({ inputs, onChange }: Props) {
             <Col xs={12}>
               <Form.Text
                 role="status"
-                className={totalWorkdays === 0 || totalWorkdays > maxWorkdaysInYear ? "text-warning" : "text-muted"}
+                className={
+                  totalWorkdays === 0 || totalWorkdays > maxWorkdaysInYear
+                    ? "text-warning"
+                    : "text-muted"
+                }
               >
                 {m.input_workdays_total()} {totalWorkdays}
                 {totalWorkdays === 0 && ` — ${m.input_workdays_total_zero_warning()}`}

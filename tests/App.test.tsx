@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 
 import App from "@/App";
 import { STORAGE_KEY } from "@/app/inputState";
+import * as m from "@/paraglide/messages.js";
 import { setLocale } from "@/paraglide/runtime";
 
 describe("App", () => {
@@ -147,6 +148,9 @@ describe("App", () => {
   });
 
   it("shows a warning instead of crashing when comparison years cannot be calculated", () => {
+    // dependentChildren: 5 triggers belastingvrijeSomReduction to throw for years 2020–2022,
+    // which have extraPerChildAbove4: null and don't support >4 dependent children.
+    // The app should skip those years with a warning rather than crashing.
     localStorage.setItem(
       STORAGE_KEY,
       JSON.stringify({
@@ -167,7 +171,7 @@ describe("App", () => {
     render(<App />);
 
     expect(
-      screen.getByText(/some comparison years were skipped because they do not support/i),
+      screen.getByText(m.warning_comparison_years_skipped(), { exact: false }),
     ).toBeInTheDocument();
   });
 });

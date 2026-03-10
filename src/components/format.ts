@@ -13,7 +13,11 @@ export function formatRoundedCurrency(value: number): string {
 }
 
 export function formatPercent(value: number, fractionDigits = 2): string {
-  return `${(value * 100).toFixed(fractionDigits)}%`;
+  return value.toLocaleString(getLocale(), {
+    style: "percent",
+    minimumFractionDigits: fractionDigits,
+    maximumFractionDigits: fractionDigits,
+  });
 }
 
 export function formatSignedCurrency(value: number, maximumFractionDigits = 0): string {

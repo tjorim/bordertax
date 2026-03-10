@@ -1,20 +1,15 @@
 import { describe, expect, it } from "vitest";
 
 import { calculateNLTax } from "@/tax/nl";
+import { DEFAULT_INPUTS } from "@/app/inputState";
 import type { TaxInputs } from "@/tax/types";
 
 const base: TaxInputs = {
-  year: 2025,
+  ...DEFAULT_INPUTS,
   residentCountry: "NL",
-  civilStatus: "single",
-  dependentChildren: 0,
-  belowAOWAge: true,
-  belgianRegion: "flemish",
-  communalTaxRate: 7,
   grossSalary: 60000,
   daysWorkedNL: 220,
   daysWorkedBE: 0,
-  thirtyPercentRuling: false,
 };
 
 describe("calculateNLTax", () => {

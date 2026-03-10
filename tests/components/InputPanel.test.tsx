@@ -147,7 +147,6 @@ describe("InputPanel", () => {
     expect(screen.getByText(/205/)).toBeInTheDocument();
   });
 
-
   it("shows a warning when total workdays is zero", () => {
     const onChange = vi.fn();
     render(

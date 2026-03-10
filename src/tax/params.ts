@@ -16,7 +16,7 @@
  *   2026 note: proposed 40%→35% bracket reform was not enacted for income year 2026.
  */
 import type { TaxYear } from "./types";
-import type { BEYearParams, NLBracket, NLYearParams } from "./paramTypes";
+import type { BEYearParams, NLYearParams } from "./paramTypes";
 
 export type { AKStage, BEBracket, BEYearParams, NLBracket, NLYearParams } from "./paramTypes";
 

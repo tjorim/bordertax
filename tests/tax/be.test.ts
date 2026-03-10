@@ -2,24 +2,15 @@ import { describe, expect, it } from "vitest";
 
 import { calculateBETax } from "@/tax/be";
 import { calculateNLTax } from "@/tax/nl";
+import { DEFAULT_INPUTS } from "@/app/inputState";
 import type { TaxInputs, NLTaxResult } from "@/tax/types";
 
 const baseNL: TaxInputs = {
-  year: 2025,
+  ...DEFAULT_INPUTS,
   residentCountry: "NL",
-  civilStatus: "single",
-  dependentChildren: 0,
-  belowAOWAge: true,
-  belgianRegion: "flemish",
-  communalTaxRate: 7,
   grossSalary: 60000,
   daysWorkedNL: 220,
   daysWorkedBE: 0,
-  thirtyPercentRuling: false,
-  socialContributions: 0,
-  aanvullendPensioen: 0,
-  dienstencheques: 0,
-  roerendeVoorheffing: 0,
 };
 
 const baseBE: TaxInputs = {
@@ -240,7 +231,6 @@ describe("calculateBETax", () => {
     expect(result!.omTeSlane).toBeGreaterThanOrEqual(0);
   });
 
-
   it("throws for >4 dependents in years with unknown extra child allowance", () => {
     expect(() =>
       calculateBETax(
@@ -250,11 +240,8 @@ describe("calculateBETax", () => {
     ).toThrow(/Unsupported dependent children count/);
   });
 
-
-
   it("throws for unsupported tax year", () => {
     const invalidYearInputs = { ...baseBE, year: 2030 as TaxInputs["year"] };
     expect(() => calculateBETax(invalidYearInputs, mockNL())).toThrow(/Unsupported tax year/);
   });
-
 });
