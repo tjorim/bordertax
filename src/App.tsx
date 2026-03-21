@@ -93,10 +93,7 @@ function sanitizeInputs(raw: unknown): TaxInputs {
     daysWorkedBE: Number.isFinite(input.daysWorkedBE)
       ? Math.max(0, Number(input.daysWorkedBE))
       : DEFAULT_INPUTS.daysWorkedBE,
-    daysWorkedOther: sanitizeNonNegative(
-      input.daysWorkedOther,
-      DEFAULT_INPUTS.daysWorkedOther,
-    ),
+    daysWorkedOther: sanitizeNonNegative(input.daysWorkedOther, DEFAULT_INPUTS.daysWorkedOther),
     thirtyPercentRuling:
       typeof input.thirtyPercentRuling === "boolean"
         ? input.thirtyPercentRuling
@@ -226,7 +223,11 @@ export default function App() {
                   <SummaryResult result={result} onResetInputs={() => setInputs(DEFAULT_INPUTS)} />
                 </Tab.Pane>
                 <Tab.Pane eventKey="nl" className="bt-nl-accent">
-                  <NLResult result={result.nl} withheldTaxNL={inputs.withheldTaxNL} thirtyPercentRuling={inputs.thirtyPercentRuling} />
+                  <NLResult
+                    result={result.nl}
+                    withheldTaxNL={inputs.withheldTaxNL}
+                    thirtyPercentRuling={inputs.thirtyPercentRuling}
+                  />
                 </Tab.Pane>
                 <Tab.Pane eventKey="be" className="bt-be-accent">
                   <BEResult result={result.be} residentCountry={inputs.residentCountry} />

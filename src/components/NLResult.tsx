@@ -9,7 +9,11 @@ interface Props {
   thirtyPercentRuling?: boolean;
 }
 
-export default function NLResult({ result, withheldTaxNL = 0, thirtyPercentRuling = false }: Props) {
+export default function NLResult({
+  result,
+  withheldTaxNL = 0,
+  thirtyPercentRuling = false,
+}: Props) {
   const nlBalance = withheldTaxNL - result.netTaxNL;
   return (
     <div>

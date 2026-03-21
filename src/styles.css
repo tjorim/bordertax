@@ -7,76 +7,76 @@
 
 :root {
   /* Surfaces */
-  --bt-bg:        #07090f;
-  --bt-surface:   #0d1220;
+  --bt-bg: #07090f;
+  --bt-surface: #0d1220;
   --bt-surface-2: #121829;
   --bt-surface-3: #1a2235;
   --bt-surface-4: #222c42;
 
   /* Borders */
-  --bt-border:       rgba(255, 255, 255, 0.065);
-  --bt-border-soft:  rgba(255, 255, 255, 0.045);
+  --bt-border: rgba(255, 255, 255, 0.065);
+  --bt-border-soft: rgba(255, 255, 255, 0.045);
   --bt-border-hover: rgba(255, 255, 255, 0.13);
 
   /* Text */
-  --bt-text:       #d4e4f5;
-  --bt-text-sub:   #8ba8c5;
+  --bt-text: #d4e4f5;
+  --bt-text-sub: #8ba8c5;
   --bt-text-muted: #4e6884;
-  --bt-text-dim:   #304458;
+  --bt-text-dim: #304458;
 
   /* Dutch Orange — the kingdom across the northern border */
-  --bt-nl:           #e05020;
-  --bt-nl-light:     #f07040;
-  --bt-nl-dim:       rgba(224, 80, 32, 0.12);
-  --bt-nl-glow:      rgba(224, 80, 32, 0.25);
-  --bt-nl-border:    rgba(224, 80, 32, 0.35);
+  --bt-nl: #e05020;
+  --bt-nl-light: #f07040;
+  --bt-nl-dim: rgba(224, 80, 32, 0.12);
+  --bt-nl-glow: rgba(224, 80, 32, 0.25);
+  --bt-nl-border: rgba(224, 80, 32, 0.35);
 
   /* Belgian Gold — land of beer, chocolate, and complex taxes */
-  --bt-be:           #c8901a;
-  --bt-be-light:     #e0a830;
-  --bt-be-dim:       rgba(200, 144, 26, 0.12);
-  --bt-be-glow:      rgba(200, 144, 26, 0.25);
-  --bt-be-border:    rgba(200, 144, 26, 0.35);
+  --bt-be: #c8901a;
+  --bt-be-light: #e0a830;
+  --bt-be-dim: rgba(200, 144, 26, 0.12);
+  --bt-be-glow: rgba(200, 144, 26, 0.25);
+  --bt-be-border: rgba(200, 144, 26, 0.35);
 
   /* Semantic */
-  --bt-success:      #22c55e;
-  --bt-success-dim:  rgba(34, 197, 94, 0.1);
-  --bt-danger:       #ef4444;
-  --bt-danger-dim:   rgba(239, 68, 68, 0.1);
-  --bt-warning:      #f59e0b;
-  --bt-warning-dim:  rgba(245, 158, 11, 0.1);
-  --bt-info:         #60a5fa;
-  --bt-info-dim:     rgba(96, 165, 250, 0.1);
+  --bt-success: #22c55e;
+  --bt-success-dim: rgba(34, 197, 94, 0.1);
+  --bt-danger: #ef4444;
+  --bt-danger-dim: rgba(239, 68, 68, 0.1);
+  --bt-warning: #f59e0b;
+  --bt-warning-dim: rgba(245, 158, 11, 0.1);
+  --bt-info: #60a5fa;
+  --bt-info-dim: rgba(96, 165, 250, 0.1);
 
   /* Typography */
-  --bt-font-display: 'Cormorant Garamond', 'Times New Roman', Georgia, serif;
-  --bt-font-body:    'Barlow Semi Condensed', system-ui, -apple-system, sans-serif;
-  --bt-font-mono:    'Space Mono', 'Courier New', monospace;
+  --bt-font-display: "Cormorant Garamond", "Times New Roman", Georgia, serif;
+  --bt-font-body: "Barlow Semi Condensed", system-ui, -apple-system, sans-serif;
+  --bt-font-mono: "Space Mono", "Courier New", monospace;
 
   /* Radii */
-  --bt-r:    8px;
+  --bt-r: 8px;
   --bt-r-sm: 5px;
   --bt-r-lg: 14px;
 
   /* ── Bootstrap CSS variable overrides ────────────────────── */
-  --bs-body-bg:             var(--bt-bg);
-  --bs-body-color:          var(--bt-text);
-  --bs-border-color:        var(--bt-border);
-  --bs-secondary-color:     var(--bt-text-sub);
-  --bs-font-sans-serif:     var(--bt-font-body);
-  --bs-font-monospace:      var(--bt-font-mono);
+  --bs-body-bg: var(--bt-bg);
+  --bs-body-color: var(--bt-text);
+  --bs-border-color: var(--bt-border);
+  --bs-secondary-color: var(--bt-text-sub);
+  --bs-font-sans-serif: var(--bt-font-body);
+  --bs-font-monospace: var(--bt-font-mono);
 
-  --bs-primary:             #4a8fd4;
-  --bs-primary-rgb:         74, 143, 212;
-  --bs-success-rgb:         34, 197, 94;
-  --bs-danger-rgb:          239, 68, 68;
-  --bs-warning-rgb:         245, 158, 11;
-  --bs-info-rgb:            96, 165, 250;
-  --bs-secondary-rgb:       78, 104, 132;
-  --bs-dark-rgb:            13, 18, 32;
+  --bs-primary: #4a8fd4;
+  --bs-primary-rgb: 74, 143, 212;
+  --bs-success-rgb: 34, 197, 94;
+  --bs-danger-rgb: 239, 68, 68;
+  --bs-warning-rgb: 245, 158, 11;
+  --bs-info-rgb: 96, 165, 250;
+  --bs-secondary-rgb: 78, 104, 132;
+  --bs-dark-rgb: 13, 18, 32;
 
-  --bs-link-color:          var(--bt-info);
-  --bs-link-hover-color:    var(--bt-text);
+  --bs-link-color: var(--bt-info);
+  --bs-link-hover-color: var(--bt-text);
 }
 
 /* ── Base ─────────────────────────────────────────────────────── */
@@ -95,9 +95,9 @@ html {
 body {
   background-color: var(--bt-bg);
   background-image:
-    radial-gradient(ellipse 70% 45% at 15% 0%,   rgba(224, 80, 32, 0.055) 0%, transparent 60%),
-    radial-gradient(ellipse 55% 40% at 85% 100%,  rgba(200, 144, 26, 0.055) 0%, transparent 60%),
-    radial-gradient(ellipse 40% 50% at 50% 50%,  rgba(7, 9, 15, 0) 0%, transparent 100%);
+    radial-gradient(ellipse 70% 45% at 15% 0%, rgba(224, 80, 32, 0.055) 0%, transparent 60%),
+    radial-gradient(ellipse 55% 40% at 85% 100%, rgba(200, 144, 26, 0.055) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 50% at 50% 50%, rgba(7, 9, 15, 0) 0%, transparent 100%);
   min-height: 100vh;
   color: var(--bt-text);
   font-family: var(--bt-font-body);
@@ -110,7 +110,11 @@ body {
 
 /* ── Typography ───────────────────────────────────────────────── */
 
-h1, h2, h3, h4, h5 {
+h1,
+h2,
+h3,
+h4,
+h5 {
   font-family: var(--bt-font-display);
   letter-spacing: -0.01em;
 }
@@ -150,13 +154,19 @@ h6 {
 }
 
 .navbar::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   height: 2px;
-  background: linear-gradient(90deg, var(--bt-nl) 0%, var(--bt-nl) 50%, var(--bt-be) 50%, var(--bt-be) 100%);
+  background: linear-gradient(
+    90deg,
+    var(--bt-nl) 0%,
+    var(--bt-nl) 50%,
+    var(--bt-be) 50%,
+    var(--bt-be) 100%
+  );
   opacity: 0.75;
 }
 
@@ -187,12 +197,12 @@ h6 {
 /* ── Accordion ────────────────────────────────────────────────── */
 
 .accordion {
-  --bs-accordion-bg:                  var(--bt-surface);
-  --bs-accordion-border-color:        var(--bt-border);
-  --bs-accordion-btn-color:           var(--bt-text);
-  --bs-accordion-btn-bg:              var(--bt-surface);
-  --bs-accordion-active-color:        var(--bt-text);
-  --bs-accordion-active-bg:           var(--bt-surface-2);
+  --bs-accordion-bg: var(--bt-surface);
+  --bs-accordion-border-color: var(--bt-border);
+  --bs-accordion-btn-color: var(--bt-text);
+  --bs-accordion-btn-bg: var(--bt-surface);
+  --bs-accordion-active-color: var(--bt-text);
+  --bs-accordion-active-bg: var(--bt-surface-2);
   --bs-accordion-btn-focus-box-shadow: 0 0 0 3px var(--bt-nl-dim);
   border-radius: var(--bt-r-lg);
   overflow: hidden;
@@ -301,7 +311,10 @@ h6 {
   font-family: var(--bt-font-mono);
   font-size: 0.85rem !important;
   padding: 0.45rem 0.7rem !important;
-  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s !important;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s,
+    background 0.15s !important;
   line-height: 1.4;
 }
 
@@ -349,7 +362,9 @@ h6 {
   border: 1px solid var(--bt-border-hover) !important;
   width: 1rem;
   height: 1rem;
-  transition: background-color 0.15s, border-color 0.15s !important;
+  transition:
+    background-color 0.15s,
+    border-color 0.15s !important;
 }
 
 .form-check-input:checked {
@@ -387,11 +402,11 @@ h6 {
 /* ── Tables ───────────────────────────────────────────────────── */
 
 .table {
-  --bs-table-bg:              transparent;
-  --bs-table-color:           var(--bt-text);
-  --bs-table-border-color:    var(--bt-border);
-  --bs-table-striped-bg:      rgba(255, 255, 255, 0.017);
-  --bs-table-hover-bg:        rgba(255, 255, 255, 0.028);
+  --bs-table-bg: transparent;
+  --bs-table-color: var(--bt-text);
+  --bs-table-border-color: var(--bt-border);
+  --bs-table-striped-bg: rgba(255, 255, 255, 0.017);
+  --bs-table-hover-bg: rgba(255, 255, 255, 0.028);
   margin-bottom: 0;
   font-size: 0.875rem;
 }
@@ -432,7 +447,7 @@ h6 {
 /* ── Table variants ───────────────────────────────────────────── */
 
 .table-secondary {
-  --bs-table-bg:    var(--bt-surface-3) !important;
+  --bs-table-bg: var(--bt-surface-3) !important;
   --bs-table-color: var(--bt-text) !important;
 }
 .table-secondary td,
@@ -550,9 +565,9 @@ h6 {
 /* ── Tab Navigation ───────────────────────────────────────────── */
 
 .nav-tabs {
-  --bs-nav-tabs-border-color:        var(--bt-border);
-  --bs-nav-tabs-link-active-bg:      var(--bt-surface);
-  --bs-nav-tabs-link-active-color:   var(--bt-text);
+  --bs-nav-tabs-border-color: var(--bt-border);
+  --bs-nav-tabs-link-active-bg: var(--bt-surface);
+  --bs-nav-tabs-link-active-color: var(--bt-text);
   --bs-nav-tabs-link-active-border-color: var(--bt-border) var(--bt-border) var(--bt-surface);
   border-bottom: 1px solid var(--bt-border) !important;
   gap: 0.2rem;
@@ -580,7 +595,10 @@ h6 {
   font-weight: 500 !important;
   letter-spacing: 0.03em;
   padding: 0.45rem 0.85rem !important;
-  transition: color 0.15s, background 0.15s, border-color 0.15s !important;
+  transition:
+    color 0.15s,
+    background 0.15s,
+    border-color 0.15s !important;
 }
 
 .nav-tabs .nav-link:hover {
@@ -692,11 +710,21 @@ h6 {
 
 /* ── Text colors ──────────────────────────────────────────────── */
 
-.text-success { color: var(--bt-success) !important; }
-.text-danger  { color: var(--bt-danger)  !important; }
-.text-warning { color: var(--bt-warning) !important; }
-.text-muted   { color: var(--bt-text-muted) !important; }
-.text-secondary { color: var(--bt-text-sub) !important; }
+.text-success {
+  color: var(--bt-success) !important;
+}
+.text-danger {
+  color: var(--bt-danger) !important;
+}
+.text-warning {
+  color: var(--bt-warning) !important;
+}
+.text-muted {
+  color: var(--bt-text-muted) !important;
+}
+.text-secondary {
+  color: var(--bt-text-sub) !important;
+}
 
 /* ── Summary Metric Cards ─────────────────────────────────────── */
 
@@ -705,13 +733,16 @@ h6 {
   border: 1px solid var(--bt-border);
   border-radius: var(--bt-r);
   padding: 0.9rem 0.75rem;
-  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
   position: relative;
   overflow: hidden;
 }
 
 .bt-stat-card::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -761,7 +792,9 @@ footer a {
   color: var(--bt-text-muted) !important;
   text-decoration: none;
   border-bottom: 1px solid var(--bt-border);
-  transition: color 0.15s, border-color 0.15s;
+  transition:
+    color 0.15s,
+    border-color 0.15s;
 }
 
 footer a:hover {
@@ -956,9 +989,15 @@ footer a:hover {
   flex-shrink: 0;
 }
 
-.bt-alloc__seg--net { background: var(--bt-success); }
-.bt-alloc__seg--nl  { background: var(--bt-nl); }
-.bt-alloc__seg--be  { background: var(--bt-be); }
+.bt-alloc__seg--net {
+  background: var(--bt-success);
+}
+.bt-alloc__seg--nl {
+  background: var(--bt-nl);
+}
+.bt-alloc__seg--be {
+  background: var(--bt-be);
+}
 
 .bt-alloc__seg-label {
   font-family: var(--bt-font-mono);
@@ -991,9 +1030,15 @@ footer a:hover {
   flex-shrink: 0;
 }
 
-.bt-alloc__legend-dot--net { background: var(--bt-success); }
-.bt-alloc__legend-dot--nl  { background: var(--bt-nl); }
-.bt-alloc__legend-dot--be  { background: var(--bt-be); }
+.bt-alloc__legend-dot--net {
+  background: var(--bt-success);
+}
+.bt-alloc__legend-dot--nl {
+  background: var(--bt-nl);
+}
+.bt-alloc__legend-dot--be {
+  background: var(--bt-be);
+}
 
 .bt-alloc__legend-label {
   color: var(--bt-text-muted);
@@ -1037,8 +1082,12 @@ footer a:hover {
   opacity: 0.7;
 }
 
-.bt-breakdown__row--ok   { background: var(--bt-success-dim); }
-.bt-breakdown__row--warn { background: var(--bt-danger-dim); }
+.bt-breakdown__row--ok {
+  background: var(--bt-success-dim);
+}
+.bt-breakdown__row--warn {
+  background: var(--bt-danger-dim);
+}
 
 .bt-breakdown__label {
   color: var(--bt-text-sub);
@@ -1099,8 +1148,12 @@ footer a:hover {
   flex-shrink: 0;
 }
 
-.bt-balance--refund .bt-balance__amount { color: var(--bt-success); }
-.bt-balance--owe    .bt-balance__amount { color: var(--bt-danger); }
+.bt-balance--refund .bt-balance__amount {
+  color: var(--bt-success);
+}
+.bt-balance--owe .bt-balance__amount {
+  color: var(--bt-danger);
+}
 
 /* ── Responsive ──────────────────────────────────────────────── */
 
@@ -1146,9 +1199,15 @@ footer a:hover {
   flex-shrink: 0;
 }
 
-.bt-workday-bar__seg--nl    { background: var(--bt-nl); }
-.bt-workday-bar__seg--be    { background: var(--bt-be); }
-.bt-workday-bar__seg--other { background: var(--bt-text-dim); }
+.bt-workday-bar__seg--nl {
+  background: var(--bt-nl);
+}
+.bt-workday-bar__seg--be {
+  background: var(--bt-be);
+}
+.bt-workday-bar__seg--other {
+  background: var(--bt-text-dim);
+}
 
 .bt-workday-bar__label {
   font-size: 0.6rem;
@@ -1177,10 +1236,18 @@ footer a:hover {
 }
 
 /* Background zones */
-.bt-wfh-zone { pointer-events: none; }
-.bt-wfh-zone--full   { fill: rgba(34, 197, 94, 0.06); }  /* 0–10%: full NL benefits */
-.bt-wfh-zone--hybrid { fill: rgba(96, 165, 250, 0.03); } /* 10–25%: hybrid-safe */
-.bt-wfh-zone--above  { fill: rgba(245, 158, 11, 0.03); } /* 25%+: Belgian tax territory */
+.bt-wfh-zone {
+  pointer-events: none;
+}
+.bt-wfh-zone--full {
+  fill: rgba(34, 197, 94, 0.06);
+} /* 0–10%: full NL benefits */
+.bt-wfh-zone--hybrid {
+  fill: rgba(96, 165, 250, 0.03);
+} /* 10–25%: hybrid-safe */
+.bt-wfh-zone--above {
+  fill: rgba(245, 158, 11, 0.03);
+} /* 25%+: Belgian tax territory */
 
 /* Grid lines */
 .bt-wfh-grid {
@@ -1210,8 +1277,12 @@ footer a:hover {
   pointer-events: none;
 }
 
-.bt-wfh-threshold--10 { stroke: rgba(96, 165, 250, 0.65); }  /* 90%-norm: blue */
-.bt-wfh-threshold--25 { stroke: rgba(245, 158, 11, 0.65); }  /* 25% rule: amber */
+.bt-wfh-threshold--10 {
+  stroke: rgba(96, 165, 250, 0.65);
+} /* 90%-norm: blue */
+.bt-wfh-threshold--25 {
+  stroke: rgba(245, 158, 11, 0.65);
+} /* 25% rule: amber */
 
 .bt-wfh-threshold-label {
   font-family: var(--bt-font-mono);
@@ -1221,8 +1292,12 @@ footer a:hover {
   pointer-events: none;
 }
 
-.bt-wfh-threshold-label--10 { fill: rgba(96, 165, 250, 0.75); }
-.bt-wfh-threshold-label--25 { fill: rgba(245, 158, 11, 0.75); }
+.bt-wfh-threshold-label--10 {
+  fill: rgba(96, 165, 250, 0.75);
+}
+.bt-wfh-threshold-label--25 {
+  fill: rgba(245, 158, 11, 0.75);
+}
 
 /* Current ratio marker */
 .bt-wfh-current {
@@ -1263,15 +1338,32 @@ footer a:hover {
   stroke-linejoin: round;
 }
 
-.bt-wfh-line--net { stroke: var(--bt-success); }
-.bt-wfh-line--nl  { stroke: var(--bt-nl); stroke-width: 2; }
-.bt-wfh-line--be  { stroke: var(--bt-be); stroke-width: 2; }
+.bt-wfh-line--net {
+  stroke: var(--bt-success);
+}
+.bt-wfh-line--nl {
+  stroke: var(--bt-nl);
+  stroke-width: 2;
+}
+.bt-wfh-line--be {
+  stroke: var(--bt-be);
+  stroke-width: 2;
+}
 
 /* Hover dots */
-.bt-wfh-dot { stroke: var(--bt-bg); stroke-width: 2; }
-.bt-wfh-dot--net { fill: var(--bt-success); }
-.bt-wfh-dot--nl  { fill: var(--bt-nl); }
-.bt-wfh-dot--be  { fill: var(--bt-be); }
+.bt-wfh-dot {
+  stroke: var(--bt-bg);
+  stroke-width: 2;
+}
+.bt-wfh-dot--net {
+  fill: var(--bt-success);
+}
+.bt-wfh-dot--nl {
+  fill: var(--bt-nl);
+}
+.bt-wfh-dot--be {
+  fill: var(--bt-be);
+}
 
 /* Readout bar below chart */
 .bt-wfh-readout {
@@ -1300,10 +1392,18 @@ footer a:hover {
   font-weight: 600;
 }
 
-.bt-wfh-readout__item { white-space: nowrap; }
-.bt-wfh-readout__item--net { color: var(--bt-success); }
-.bt-wfh-readout__item--nl  { color: var(--bt-nl-light); }
-.bt-wfh-readout__item--be  { color: var(--bt-be-light); }
+.bt-wfh-readout__item {
+  white-space: nowrap;
+}
+.bt-wfh-readout__item--net {
+  color: var(--bt-success);
+}
+.bt-wfh-readout__item--nl {
+  color: var(--bt-nl-light);
+}
+.bt-wfh-readout__item--be {
+  color: var(--bt-be-light);
+}
 
 /* Status badge in readout */
 .bt-wfh-readout__badge {
@@ -1400,8 +1500,13 @@ footer a:hover {
   border-top-style: dashed;
 }
 
-.bt-wfh-legend-dash--current { border-top-color: rgba(255, 255, 255, 0.45); }
-.bt-wfh-legend-dash--optimal { border-top-color: var(--bt-success); opacity: 0.7; }
+.bt-wfh-legend-dash--current {
+  border-top-color: rgba(255, 255, 255, 0.45);
+}
+.bt-wfh-legend-dash--optimal {
+  border-top-color: var(--bt-success);
+  opacity: 0.7;
+}
 
 /* Table ratio cell */
 .bt-wfh-table-ratio {
@@ -1516,9 +1621,18 @@ footer a:hover {
   flex-shrink: 0;
 }
 
-.bt-year-chart__seg--net { background: var(--bt-success); opacity: 0.7; }
-.bt-year-chart__seg--nl  { background: var(--bt-nl);      opacity: 0.65; }
-.bt-year-chart__seg--be  { background: var(--bt-be);      opacity: 0.65; }
+.bt-year-chart__seg--net {
+  background: var(--bt-success);
+  opacity: 0.7;
+}
+.bt-year-chart__seg--nl {
+  background: var(--bt-nl);
+  opacity: 0.65;
+}
+.bt-year-chart__seg--be {
+  background: var(--bt-be);
+  opacity: 0.65;
+}
 
 .bt-year-chart__row--active .bt-year-chart__seg--net,
 .bt-year-chart__row--active .bt-year-chart__seg--nl,

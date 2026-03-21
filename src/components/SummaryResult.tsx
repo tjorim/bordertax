@@ -29,8 +29,7 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
   }, [copyStatus]);
 
   async function copySummary() {
-    const pad = (label: string, value: string) =>
-      `  ${label.padEnd(28, ".")} ${value}`;
+    const pad = (label: string, value: string) => `  ${label.padEnd(28, ".")} ${value}`;
 
     const lines = [
       `━━━ ${m.app_title()} · ${result.inputs.year} ━━━`,
@@ -102,18 +101,14 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
             style={{ width: `${netPct}%` }}
             title={`${m.summary_net_label()} ${pct(netPct / 100)}`}
           >
-            {netPct > 18 && (
-              <span className="bt-alloc__seg-label">{pct(netPct / 100)}</span>
-            )}
+            {netPct > 18 && <span className="bt-alloc__seg-label">{pct(netPct / 100)}</span>}
           </div>
           <div
             className="bt-alloc__seg bt-alloc__seg--nl"
             style={{ width: `${nlPct}%` }}
             title={`🇳🇱 ${m.summary_dutch_tax()} ${pct(nlPct / 100)}`}
           >
-            {nlPct > 10 && (
-              <span className="bt-alloc__seg-label">{pct(nlPct / 100)}</span>
-            )}
+            {nlPct > 10 && <span className="bt-alloc__seg-label">{pct(nlPct / 100)}</span>}
           </div>
           {bePct > 0 && (
             <div
@@ -121,9 +116,7 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
               style={{ width: `${bePct}%` }}
               title={`🇧🇪 ${m.summary_belgian_tax()} ${pct(bePct / 100)}`}
             >
-              {bePct > 8 && (
-                <span className="bt-alloc__seg-label">{pct(bePct / 100)}</span>
-              )}
+              {bePct > 8 && <span className="bt-alloc__seg-label">{pct(bePct / 100)}</span>}
             </div>
           )}
         </div>
@@ -237,7 +230,9 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
             )}
           </div>
 
-          <div className={`bt-balance ${netResult >= 0 ? "bt-balance--refund" : "bt-balance--owe"}`}>
+          <div
+            className={`bt-balance ${netResult >= 0 ? "bt-balance--refund" : "bt-balance--owe"}`}
+          >
             <div className="bt-balance__label">
               <i
                 className={`bi bi-${netResult >= 0 ? "arrow-down-circle-fill" : "arrow-up-circle-fill"} me-2`}

@@ -240,7 +240,6 @@ describe("calculateBETax", () => {
     expect(result!.omTeSlane).toBeGreaterThanOrEqual(0);
   });
 
-
   it("throws for >4 dependents in years with unknown extra child allowance", () => {
     expect(() =>
       calculateBETax(
@@ -250,11 +249,8 @@ describe("calculateBETax", () => {
     ).toThrow(/Unsupported dependent children count/);
   });
 
-
-
   it("throws for unsupported tax year", () => {
     const invalidYearInputs = { ...baseBE, year: 2030 as TaxInputs["year"] };
     expect(() => calculateBETax(invalidYearInputs, mockNL())).toThrow(/Unsupported tax year/);
   });
-
 });

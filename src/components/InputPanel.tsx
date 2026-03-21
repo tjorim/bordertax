@@ -26,15 +26,16 @@ export default function InputPanel({ inputs, onChange }: Props) {
   const totalWorkdays = getTotalWorkdays(inputs);
   const maxWorkdaysInYear = getMaxDaysInYear(inputs.year);
 
-  const nlBarW = maxWorkdaysInYear > 0
-    ? Math.min(100, (inputs.daysWorkedNL / maxWorkdaysInYear) * 100)
-    : 0;
-  const beBarW = maxWorkdaysInYear > 0
-    ? Math.min(100 - nlBarW, (inputs.daysWorkedBE / maxWorkdaysInYear) * 100)
-    : 0;
-  const otherBarW = maxWorkdaysInYear > 0
-    ? Math.min(100 - nlBarW - beBarW, ((inputs.daysWorkedOther ?? 0) / maxWorkdaysInYear) * 100)
-    : 0;
+  const nlBarW =
+    maxWorkdaysInYear > 0 ? Math.min(100, (inputs.daysWorkedNL / maxWorkdaysInYear) * 100) : 0;
+  const beBarW =
+    maxWorkdaysInYear > 0
+      ? Math.min(100 - nlBarW, (inputs.daysWorkedBE / maxWorkdaysInYear) * 100)
+      : 0;
+  const otherBarW =
+    maxWorkdaysInYear > 0
+      ? Math.min(100 - nlBarW - beBarW, ((inputs.daysWorkedOther ?? 0) / maxWorkdaysInYear) * 100)
+      : 0;
 
   return (
     <Accordion defaultActiveKey={["0", "1", "2"]} alwaysOpen>
@@ -275,7 +276,11 @@ export default function InputPanel({ inputs, onChange }: Props) {
               </div>
               <Form.Text
                 role="status"
-                className={totalWorkdays === 0 || totalWorkdays > maxWorkdaysInYear ? "text-warning" : "text-muted"}
+                className={
+                  totalWorkdays === 0 || totalWorkdays > maxWorkdaysInYear
+                    ? "text-warning"
+                    : "text-muted"
+                }
               >
                 {m.input_workdays_total()} {totalWorkdays}
                 {totalWorkdays === 0 && ` — ${m.input_workdays_total_zero_warning()}`}

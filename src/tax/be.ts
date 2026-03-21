@@ -87,8 +87,7 @@ export function calculateBETax(inputs: TaxInputs, nl: NLTaxResult): BETaxResult 
   const nlNetFromNLSource = Math.max(0, nl.nlTaxableIncome - Math.max(0, nlTaxOnNLSource));
 
   // Vrijgesteld fraction: what share of declaredIncome is NL-sourced net income
-  const vrijgesteldFrac =
-    declaredIncome > 0 ? Math.min(1, nlNetFromNLSource / declaredIncome) : 0;
+  const vrijgesteldFrac = declaredIncome > 0 ? Math.min(1, nlNetFromNLSource / declaredIncome) : 0;
 
   // Exempt and taxable portions of net professional income
   const vrijgesteld = vrijgesteldFrac * netProfessionalIncome;
