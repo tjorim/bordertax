@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Alert, Button, Col, Container, Nav, Navbar, Row, Tab } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
+import "./styles.css";
 
 import InputPanel from "./components/InputPanel";
 import NLResult from "./components/NLResult";
@@ -217,10 +218,10 @@ export default function App() {
                 <Tab.Pane eventKey="summary">
                   <SummaryResult result={result} onResetInputs={() => setInputs(DEFAULT_INPUTS)} />
                 </Tab.Pane>
-                <Tab.Pane eventKey="nl">
+                <Tab.Pane eventKey="nl" className="bt-nl-accent">
                   <NLResult result={result.nl} withheldTaxNL={inputs.withheldTaxNL} />
                 </Tab.Pane>
-                <Tab.Pane eventKey="be">
+                <Tab.Pane eventKey="be" className="bt-be-accent">
                   <BEResult result={result.be} residentCountry={inputs.residentCountry} />
                 </Tab.Pane>
                 <Tab.Pane eventKey="years">
