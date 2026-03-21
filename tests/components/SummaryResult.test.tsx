@@ -62,11 +62,13 @@ describe("SummaryResult", () => {
     const dailyCell = screen.getByText(m.summary_net_daily()).closest("div")?.parentElement;
     expect(dailyCell?.textContent).toContain("—");
   });
-  it("displays the progress bar", () => {
+  it("displays the allocation bar", () => {
     const onReset = vi.fn();
     render(<SummaryResult result={mockTaxResult} onResetInputs={onReset} />);
-    const progressBars = document.querySelectorAll(".progress-bar");
-    expect(progressBars.length).toBeGreaterThan(0);
+    const allocBar = document.querySelector(".bt-alloc__bar");
+    expect(allocBar).toBeInTheDocument();
+    const segments = document.querySelectorAll(".bt-alloc__seg");
+    expect(segments.length).toBeGreaterThan(0);
   });
 
   it("shows success alert after copying to clipboard", async () => {

@@ -1,22 +1,33 @@
-import { Table } from "react-bootstrap";
+import { Badge, Table } from "react-bootstrap";
 import type { NLTaxResult } from "../tax/types";
 import * as m from "../paraglide/messages.js";
-import { getLocale } from "../paraglide/runtime.js";
+import { fmtExact as fmt, pctExact as pct } from "./format.js";
 
 interface Props {
   result: NLTaxResult;
   withheldTaxNL?: number;
+  thirtyPercentRuling?: boolean;
 }
 
-const fmt = (n: number) =>
-  n.toLocaleString(getLocale(), { style: "currency", currency: "EUR", maximumFractionDigits: 2 });
-const pct = (n: number) => `${(n * 100).toFixed(2)}%`;
-
-export default function NLResult({ result, withheldTaxNL = 0 }: Props) {
+export default function NLResult({ result, withheldTaxNL = 0, thirtyPercentRuling = false }: Props) {
   const nlBalance = withheldTaxNL - result.netTaxNL;
   return (
     <div>
-      <h6 className="text-muted mb-3">🇳🇱 {m.nl_title()}</h6>
+      <h6 className="text-muted mb-3">
+        🇳🇱 {m.nl_title()}
+        {thirtyPercentRuling && (
+          <Badge bg="warning" text="dark" className="ms-2 bt-ruling-badge">
+            30%
+          </Badge>
+        )}
+      </h6>
+
+      {thirtyPercentRuling && (
+        <div className="bt-ruling-notice mb-3">
+          <i className="bi bi-star-fill me-2" />
+          {m.input_thirty_percent_ruling_hint()}
+        </div>
+      )}
 
       <Table bordered size="sm" className="mb-3">
         <tbody>

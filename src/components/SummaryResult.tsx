@@ -3,25 +3,12 @@ import { Alert, Button, Col, Row, Stack } from "react-bootstrap";
 import type { TaxResult } from "../tax/types";
 import { getTotalWorkdays } from "../tax/workdays";
 import * as m from "../paraglide/messages.js";
-import { getLocale } from "../paraglide/runtime.js";
+import { fmt, fmtSigned, pct } from "./format.js";
 
 interface Props {
   result: TaxResult;
   onResetInputs: () => void;
 }
-
-const fmt = (n: number) =>
-  n.toLocaleString(getLocale(), { style: "currency", currency: "EUR", maximumFractionDigits: 0 });
-const pct = (n: number) => `${(n * 100).toFixed(1)}%`;
-
-const fmtSigned = (n: number) => {
-  const abs = Math.abs(n).toLocaleString(getLocale(), {
-    style: "currency",
-    currency: "EUR",
-    maximumFractionDigits: 0,
-  });
-  return n >= 0 ? `+${abs}` : `−${abs}`;
-};
 
 export default function SummaryResult({ result, onResetInputs }: Props) {
   const [copyStatus, setCopyStatus] = useState<"idle" | "success" | "error">("idle");
@@ -42,14 +29,22 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
   }, [copyStatus]);
 
   async function copySummary() {
+    const pad = (label: string, value: string) =>
+      `  ${label.padEnd(28, ".")} ${value}`;
+
     const lines = [
-      `${m.app_title()} (${result.inputs.year})`,
-      `${m.summary_gross_income()} ${fmt(grossIncome)}`,
-      `${m.summary_dutch_tax()} ${fmt(nl.netTaxNL)}`,
-      `${m.summary_belgian_tax()} ${fmt(be?.netTaxBE ?? 0)}`,
-      `${m.summary_total_tax()} ${fmt(totalTax)}`,
-      `${m.summary_net_income()} ${fmt(netIncome)}`,
-      `${m.summary_effective_rate_total()} ${pct(effectiveRateTotal)}`,
+      `━━━ ${m.app_title()} · ${result.inputs.year} ━━━`,
+      "",
+      pad(m.summary_gross_income(), fmt(grossIncome)),
+      pad(`🇳🇱 ${m.summary_dutch_tax()}`, `−${fmt(nl.netTaxNL)}`),
+      ...(be && be.netTaxBE > 0
+        ? [pad(`🇧🇪 ${m.summary_belgian_tax()}`, `−${fmt(be.netTaxBE)}`)]
+        : []),
+      pad(m.summary_total_tax(), `−${fmt(totalTax)}`),
+      "  " + "─".repeat(38),
+      pad(m.summary_net_income(), fmt(netIncome)),
+      pad(m.summary_effective_rate_total(), pct(effectiveRateTotal)),
+      pad(m.summary_net_monthly(), fmt(netIncome / 12)),
     ].join("\n");
 
     try {

@@ -17,14 +17,18 @@ describe("MultiYearComparison", () => {
 
   it("renders a row for each year", () => {
     render(<MultiYearComparison rows={rows} activeYear={2025} />);
-    expect(screen.getByText("2024")).toBeInTheDocument();
-    expect(screen.getByText("2025")).toBeInTheDocument();
-    expect(screen.getByText("2026")).toBeInTheDocument();
+    expect(screen.getAllByText("2024").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("2025").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("2026").length).toBeGreaterThan(0);
   });
 
   it("marks the active year with a badge", () => {
     render(<MultiYearComparison rows={rows} activeYear={2025} />);
-    const activeYearCell = screen.getByText("2025").closest("td");
+    // Year appears in both the chart label and the table cell; find the table cell specifically
+    const activeYearCell = screen
+      .getAllByText("2025")
+      .map((el) => el.closest("td"))
+      .find((el) => el !== null);
     const activeRow = activeYearCell?.closest("tr");
     expect(activeRow).toHaveClass("table-primary");
   });

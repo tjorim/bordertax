@@ -1,16 +1,12 @@
 import { Alert, Table } from "react-bootstrap";
 import type { BETaxResult, TaxInputs } from "../tax/types";
 import * as m from "../paraglide/messages.js";
-import { getLocale } from "../paraglide/runtime.js";
+import { fmtExact as fmt, pctExact as pct } from "./format.js";
 
 interface Props {
   result: BETaxResult | null;
   residentCountry: TaxInputs["residentCountry"];
 }
-
-const fmt = (n: number) =>
-  n.toLocaleString(getLocale(), { style: "currency", currency: "EUR", maximumFractionDigits: 2 });
-const pct = (n: number) => `${(n * 100).toFixed(2)}%`;
 
 export default function BEResult({ result, residentCountry }: Props) {
   if (residentCountry !== "BE") {

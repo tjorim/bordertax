@@ -2,7 +2,7 @@ import { Badge, Table } from "react-bootstrap";
 import { VALID_YEARS } from "../tax/constants";
 import type { TaxResult, TaxYear } from "../tax/types";
 import * as m from "../paraglide/messages.js";
-import { getLocale } from "../paraglide/runtime.js";
+import { fmt, pct } from "./format.js";
 
 interface ComparisonRow {
   year: (typeof VALID_YEARS)[number];
@@ -13,11 +13,6 @@ interface Props {
   rows: ComparisonRow[];
   activeYear: TaxYear;
 }
-
-const fmt = (n: number) =>
-  n.toLocaleString(getLocale(), { style: "currency", currency: "EUR", maximumFractionDigits: 0 });
-
-const pct = (n: number) => `${(n * 100).toFixed(1)}%`;
 
 export default function MultiYearComparison({ rows, activeYear }: Props) {
   return (
@@ -63,6 +58,22 @@ export default function MultiYearComparison({ rows, activeYear }: Props) {
             </div>
           );
         })}
+      </div>
+
+      {/* Chart legend */}
+      <div className="bt-year-chart__legend">
+        <span className="bt-year-chart__legend-item">
+          <span className="bt-year-chart__legend-dot bt-year-chart__seg--net" />
+          {m.summary_net_label()}
+        </span>
+        <span className="bt-year-chart__legend-item">
+          <span className="bt-year-chart__legend-dot bt-year-chart__seg--nl" />
+          🇳🇱 {m.summary_dutch_tax()}
+        </span>
+        <span className="bt-year-chart__legend-item">
+          <span className="bt-year-chart__legend-dot bt-year-chart__seg--be" />
+          🇧🇪 {m.summary_belgian_tax()}
+        </span>
       </div>
 
       {/* Detail table */}

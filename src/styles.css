@@ -228,10 +228,30 @@ h6 {
   color: var(--bt-text) !important;
 }
 
+/* ── Unified focus ring ───────────────────────────────────────── */
+/* Single definition; applied consistently to every focusable element */
+
+:focus-visible {
+  outline: 2px solid var(--bt-nl-border) !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 4px var(--bt-nl-dim) !important;
+}
+
+/* Suppress the default :focus ring (only show on keyboard nav) */
+:focus:not(:focus-visible) {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
 .accordion-button:focus {
   box-shadow: none !important;
+  outline: none !important;
+}
+
+.accordion-button:focus-visible {
   outline: 2px solid var(--bt-nl-border) !important;
-  outline-offset: -2px;
+  outline-offset: -2px !important;
+  box-shadow: 0 0 0 4px var(--bt-nl-dim) !important;
 }
 
 .accordion-button::after {
@@ -248,6 +268,20 @@ h6 {
 }
 
 /* ── Form Controls ────────────────────────────────────────────── */
+
+/* "Not used yet" badge in form labels — looks like an outline tag, not a solid badge */
+.form-label .badge.bg-secondary {
+  background: transparent !important;
+  border: 1px solid var(--bt-border-hover);
+  color: var(--bt-text-dim) !important;
+  font-family: var(--bt-font-mono);
+  font-size: 0.58rem;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.12em 0.45em;
+  vertical-align: middle;
+}
 
 .form-label {
   font-size: 0.7rem !important;
@@ -277,6 +311,7 @@ h6 {
   border-color: var(--bt-nl-border) !important;
   box-shadow: 0 0 0 3px var(--bt-nl-dim) !important;
   color: var(--bt-text) !important;
+  /* outline handled by :focus-visible above */
   outline: none !important;
 }
 
@@ -322,7 +357,7 @@ h6 {
   border-color: var(--bt-nl) !important;
 }
 
-.form-check-input:focus {
+.form-check-input:focus-visible {
   box-shadow: 0 0 0 3px var(--bt-nl-dim) !important;
   border-color: var(--bt-nl-border) !important;
 }
@@ -454,6 +489,12 @@ h6 {
   background: var(--bt-surface);
 }
 
+/* Bordered table inside a responsive wrapper — drop the outer table border to avoid double-border */
+.table-responsive > .table-bordered,
+.table-responsive > .table.border {
+  border: 0 !important;
+}
+
 /* ── Buttons ──────────────────────────────────────────────────── */
 
 .btn {
@@ -515,6 +556,20 @@ h6 {
   --bs-nav-tabs-link-active-border-color: var(--bt-border) var(--bt-border) var(--bt-surface);
   border-bottom: 1px solid var(--bt-border) !important;
   gap: 0.2rem;
+  /* Scroll horizontally on narrow screens instead of wrapping */
+  flex-wrap: nowrap !important;
+  overflow-x: auto;
+  overflow-y: visible;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Firefox */
+}
+
+.nav-tabs::-webkit-scrollbar {
+  display: none; /* Chrome/Safari — tabs scroll silently */
+}
+
+.nav-tabs .nav-item {
+  flex-shrink: 0;
 }
 
 .nav-tabs .nav-link {
@@ -669,6 +724,16 @@ h6 {
   border-color: var(--bt-border-hover);
   transform: translateY(-2px);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.bt-stat-card .small,
+.bt-stat-card .text-muted.small {
+  font-family: var(--bt-font-body) !important;
+  font-size: 0.7rem !important;
+  color: var(--bt-text-muted) !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .bt-stat-card .fs-5 {
@@ -1187,14 +1252,82 @@ footer a:hover {
   color: var(--bt-success);
 }
 
+.bt-year-chart__legend {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  padding: 0 0.5rem;
+  flex-wrap: wrap;
+}
+
+.bt-year-chart__legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.72rem;
+  color: var(--bt-text-muted);
+}
+
+.bt-year-chart__legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  flex-shrink: 0;
+  opacity: 1;
+}
+
 /* ═══════════════════════════════════════════════════════════════
    TABLE HIERARCHY — NL/BE result tabs
    ═══════════════════════════════════════════════════════════════ */
+
+/* ── Subsection labels (p.fw-semibold.small) in result tabs ──── */
+
+.tab-content p.fw-semibold.small,
+.tab-content p.mb-1.fw-semibold.small {
+  font-family: var(--bt-font-body) !important;
+  font-size: 0.68rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.09em !important;
+  text-transform: uppercase !important;
+  color: var(--bt-text-muted) !important;
+  margin-bottom: 0.4rem !important;
+}
+
+.bt-nl-accent p.fw-semibold.small,
+.bt-nl-accent p.mb-1.fw-semibold.small {
+  color: rgba(224, 80, 32, 0.55) !important;
+}
+
+.bt-be-accent p.fw-semibold.small,
+.bt-be-accent p.mb-1.fw-semibold.small {
+  color: rgba(200, 144, 26, 0.55) !important;
+}
 
 /* Dim working-calculation rows in the bracket table */
 .bt-table-brackets tbody tr:not(.table-secondary) td {
   color: var(--bt-text-muted) !important;
   font-size: 0.8rem;
+}
+
+/* 30% ruling notice */
+.bt-ruling-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--bt-r-sm);
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  color: var(--bt-warning);
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+.bt-ruling-badge {
+  font-family: var(--bt-font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.02em;
+  vertical-align: middle;
 }
 
 /* NL result: orange left border + larger amount on final row */
@@ -1213,4 +1346,29 @@ footer a:hover {
 .bt-be-accent .bt-table-result .table-primary td:last-child {
   font-size: 1rem !important;
   color: var(--bt-be-light) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ACCESSIBILITY — prefers-reduced-motion
+   Cuts all transitions and animations to instant for users who
+   have enabled "Reduce motion" in their OS accessibility settings.
+   ═══════════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Specifically zero out the named animations */
+  .bt-summary-hero__amount,
+  .tab-pane.active,
+  .bt-main-row > .col-lg-5,
+  .bt-main-row > .col-lg-7 {
+    animation: none !important;
+  }
 }

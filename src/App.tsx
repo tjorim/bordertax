@@ -219,7 +219,7 @@ export default function App() {
                   <SummaryResult result={result} onResetInputs={() => setInputs(DEFAULT_INPUTS)} />
                 </Tab.Pane>
                 <Tab.Pane eventKey="nl" className="bt-nl-accent">
-                  <NLResult result={result.nl} withheldTaxNL={inputs.withheldTaxNL} />
+                  <NLResult result={result.nl} withheldTaxNL={inputs.withheldTaxNL} thirtyPercentRuling={inputs.thirtyPercentRuling} />
                 </Tab.Pane>
                 <Tab.Pane eventKey="be" className="bt-be-accent">
                   <BEResult result={result.be} residentCountry={inputs.residentCountry} />
