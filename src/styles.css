@@ -1159,6 +1159,294 @@ footer a:hover {
 }
 
 /* ═══════════════════════════════════════════════════════════════
+   WFH RATIO CHART — WFHRatioChart
+   ═══════════════════════════════════════════════════════════════ */
+
+.bt-wfh-wrap {
+  position: relative;
+}
+
+.bt-wfh-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  cursor: crosshair;
+  border-radius: var(--bt-r);
+  background: var(--bt-surface-2);
+  border: 1px solid var(--bt-border);
+}
+
+/* Background zones */
+.bt-wfh-zone { pointer-events: none; }
+.bt-wfh-zone--full   { fill: rgba(34, 197, 94, 0.06); }  /* 0–10%: full NL benefits */
+.bt-wfh-zone--hybrid { fill: rgba(96, 165, 250, 0.03); } /* 10–25%: hybrid-safe */
+.bt-wfh-zone--above  { fill: rgba(245, 158, 11, 0.03); } /* 25%+: Belgian tax territory */
+
+/* Grid lines */
+.bt-wfh-grid {
+  stroke: var(--bt-border-soft);
+  stroke-width: 1;
+}
+
+/* Axis labels */
+.bt-wfh-axis-label {
+  font-family: var(--bt-font-mono);
+  font-size: 10px;
+  fill: var(--bt-text-muted);
+}
+
+.bt-wfh-axis-title {
+  font-family: var(--bt-font-body);
+  font-size: 10px;
+  fill: var(--bt-text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* Threshold lines */
+.bt-wfh-threshold {
+  stroke-width: 1.5;
+  stroke-dasharray: 5 3;
+  pointer-events: none;
+}
+
+.bt-wfh-threshold--10 { stroke: rgba(96, 165, 250, 0.65); }  /* 90%-norm: blue */
+.bt-wfh-threshold--25 { stroke: rgba(245, 158, 11, 0.65); }  /* 25% rule: amber */
+
+.bt-wfh-threshold-label {
+  font-family: var(--bt-font-mono);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  pointer-events: none;
+}
+
+.bt-wfh-threshold-label--10 { fill: rgba(96, 165, 250, 0.75); }
+.bt-wfh-threshold-label--25 { fill: rgba(245, 158, 11, 0.75); }
+
+/* Current ratio marker */
+.bt-wfh-current {
+  stroke: rgba(255, 255, 255, 0.5);
+  stroke-width: 1.5;
+  stroke-dasharray: 6 4;
+}
+
+.bt-wfh-current-dot {
+  fill: var(--bt-bg);
+  stroke: rgba(255, 255, 255, 0.7);
+  stroke-width: 2;
+}
+
+/* Optimal marker */
+.bt-wfh-optimal {
+  stroke: var(--bt-success);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+  opacity: 0.6;
+}
+
+.bt-wfh-optimal-diamond {
+  fill: var(--bt-success);
+  opacity: 0.8;
+}
+
+/* Hover scrubber */
+.bt-wfh-scrubber {
+  stroke: rgba(255, 255, 255, 0.35);
+  stroke-width: 1;
+}
+
+/* Data lines */
+.bt-wfh-line {
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.bt-wfh-line--net { stroke: var(--bt-success); }
+.bt-wfh-line--nl  { stroke: var(--bt-nl); stroke-width: 2; }
+.bt-wfh-line--be  { stroke: var(--bt-be); stroke-width: 2; }
+
+/* Hover dots */
+.bt-wfh-dot { stroke: var(--bt-bg); stroke-width: 2; }
+.bt-wfh-dot--net { fill: var(--bt-success); }
+.bt-wfh-dot--nl  { fill: var(--bt-nl); }
+.bt-wfh-dot--be  { fill: var(--bt-be); }
+
+/* Readout bar below chart */
+.bt-wfh-readout {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  min-height: 2.4rem;
+  margin-top: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--bt-r-sm);
+  background: var(--bt-surface-3);
+  border: 1px solid var(--bt-border);
+  font-family: var(--bt-font-mono);
+  font-size: 0.78rem;
+  color: var(--bt-text-muted);
+  transition: border-color 0.15s;
+}
+
+.bt-wfh-readout--visible {
+  border-color: var(--bt-border-hover);
+}
+
+.bt-wfh-readout__ratio {
+  color: var(--bt-text);
+  font-weight: 600;
+}
+
+.bt-wfh-readout__item { white-space: nowrap; }
+.bt-wfh-readout__item--net { color: var(--bt-success); }
+.bt-wfh-readout__item--nl  { color: var(--bt-nl-light); }
+.bt-wfh-readout__item--be  { color: var(--bt-be-light); }
+
+/* Status badge in readout */
+.bt-wfh-readout__badge {
+  padding: 0.1em 0.5em;
+  border-radius: 3px;
+  font-size: 0.7rem;
+  font-family: var(--bt-font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.bt-wfh-readout__badge--full {
+  background: rgba(34, 197, 94, 0.12);
+  color: var(--bt-success);
+  border: 1px solid rgba(34, 197, 94, 0.25);
+}
+
+.bt-wfh-readout__badge--hybrid {
+  background: rgba(96, 165, 250, 0.1);
+  color: var(--bt-info);
+  border: 1px solid rgba(96, 165, 250, 0.25);
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 0.72rem;
+}
+
+.bt-wfh-readout__badge--above {
+  background: rgba(245, 158, 11, 0.1);
+  color: var(--bt-warning);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 0.72rem;
+}
+
+/* Current position status pill */
+.bt-wfh-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 1rem;
+  margin-top: 0.6rem;
+  padding: 0.45rem 0.75rem;
+  border-radius: var(--bt-r-sm);
+  font-size: 0.78rem;
+  font-family: var(--bt-font-mono);
+  border: 1px solid;
+}
+
+.bt-wfh-status--full-benefits {
+  background: rgba(34, 197, 94, 0.07);
+  border-color: rgba(34, 197, 94, 0.2);
+  color: var(--bt-success);
+}
+
+.bt-wfh-status--hybrid-safe {
+  background: rgba(96, 165, 250, 0.06);
+  border-color: rgba(96, 165, 250, 0.2);
+  color: var(--bt-info);
+}
+
+.bt-wfh-status--above-hybrid {
+  background: rgba(245, 158, 11, 0.07);
+  border-color: rgba(245, 158, 11, 0.2);
+  color: var(--bt-warning);
+}
+
+.bt-wfh-status__ratio {
+  font-weight: 600;
+  color: var(--bt-text);
+  white-space: nowrap;
+}
+
+/* Delta callout */
+.bt-wfh-delta {
+  margin-top: 0.6rem;
+  padding: 0.45rem 0.75rem;
+  border-radius: var(--bt-r-sm);
+  background: rgba(34, 197, 94, 0.06);
+  border: 1px solid rgba(34, 197, 94, 0.18);
+  color: var(--bt-success);
+  font-size: 0.8rem;
+}
+
+/* Legend dash for reference lines */
+.bt-wfh-legend-dash {
+  display: inline-block;
+  width: 18px;
+  height: 0;
+  margin-right: 6px;
+  vertical-align: middle;
+  border-top-width: 2px;
+  border-top-style: dashed;
+}
+
+.bt-wfh-legend-dash--current { border-top-color: rgba(255, 255, 255, 0.45); }
+.bt-wfh-legend-dash--optimal { border-top-color: var(--bt-success); opacity: 0.7; }
+
+/* Table ratio cell */
+.bt-wfh-table-ratio {
+  font-family: var(--bt-font-mono);
+  font-size: 0.85rem;
+}
+
+/* Threshold badges in the table */
+.bt-wfh-badge-10 {
+  background: rgba(96, 165, 250, 0.2) !important;
+  color: var(--bt-info) !important;
+  font-size: 0.65rem;
+  font-family: var(--bt-font-mono);
+  border: 1px solid rgba(96, 165, 250, 0.35);
+}
+
+.bt-wfh-badge-25 {
+  background: rgba(245, 158, 11, 0.15) !important;
+  color: var(--bt-warning) !important;
+  font-size: 0.65rem;
+  font-family: var(--bt-font-mono);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+/* Legend zone swatches */
+.bt-wfh-legend-zone {
+  display: inline-block;
+  width: 14px;
+  height: 10px;
+  margin-right: 6px;
+  vertical-align: middle;
+  border-radius: 2px;
+}
+
+.bt-wfh-legend-zone--full {
+  background: rgba(34, 197, 94, 0.2);
+  border: 1px solid rgba(34, 197, 94, 0.4);
+}
+
+.bt-wfh-legend-zone--hybrid {
+  background: rgba(96, 165, 250, 0.15);
+  border: 1px solid rgba(96, 165, 250, 0.3);
+}
+
+/* ═══════════════════════════════════════════════════════════════
    YEAR CHART — MultiYearComparison
    ═══════════════════════════════════════════════════════════════ */
 

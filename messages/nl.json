@@ -119,5 +119,17 @@
   "years_description": "Vergelijking gebruikt exact dezelfde inputwaarden (salaris, werkdagen, gezinssituatie), enkel het gekozen belastingjaar wijzigt.",
   "input_workdays_total": "Totaal aantal werkdagen:",
   "input_workdays_total_zero_warning": "Vul minstens één werkdag in voor een realistische netto/dag berekening.",
-  "input_workdays_total_high_warning": "Dit lijkt hoog; controleer of alle dagtellingen correct zijn."
+  "input_workdays_total_high_warning": "Dit lijkt hoog; controleer of alle dagtellingen correct zijn.",
+  "tabs_wfh_ratio": "Thuisratio",
+  "wfh_title": "Netto inkomen vs. thuiswerk-ratio",
+  "wfh_description": "Beweegt de NL ↔ BE dag-verdeling terwijl het totaal werkdagen gelijk blijft. Hover om elk scenario te bekijken.",
+  "wfh_x_label": "Werkdagen thuis in 🇧🇪 BE (%)",
+  "wfh_current_ratio": "Huidige verhouding",
+  "wfh_optimal": "Optimaal (max netto)",
+  "wfh_zone_full_benefits": "Volledige NL-voordelen (≤10% BE)",
+  "wfh_zone_hybrid_safe": "Hybride-werk veilige zone (≤25% BE)",
+  "wfh_threshold_10_label": "90%-norm",
+  "wfh_threshold_10_hint": "Hierboven: geen hypotheekrenteaftrek",
+  "wfh_threshold_25_label": "25%-regel",
+  "wfh_threshold_25_hint": "Hierboven: Belgische inkomstenbelasting van toepassing"
 }

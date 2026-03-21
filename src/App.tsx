@@ -9,6 +9,7 @@ import NLResult from "./components/NLResult";
 import BEResult from "./components/BEResult";
 import SummaryResult from "./components/SummaryResult";
 import MultiYearComparison from "./components/MultiYearComparison";
+import WFHRatioChart from "./components/WFHRatioChart";
 import { calculate } from "./tax";
 import type { TaxInputs } from "./tax/types";
 import {
@@ -212,6 +213,12 @@ export default function App() {
                     {m.tabs_year_comparison()}
                   </Nav.Link>
                 </Nav.Item>
+                <Nav.Item>
+                  <Nav.Link eventKey="wfh" aria-label={m.tabs_wfh_ratio()}>
+                    <i className="bi bi-house-fill me-1" />
+                    {m.tabs_wfh_ratio()}
+                  </Nav.Link>
+                </Nav.Item>
               </Nav>
 
               <Tab.Content>
@@ -226,6 +233,9 @@ export default function App() {
                 </Tab.Pane>
                 <Tab.Pane eventKey="years">
                   <MultiYearComparison rows={comparisonResults} activeYear={inputs.year} />
+                </Tab.Pane>
+                <Tab.Pane eventKey="wfh">
+                  <WFHRatioChart inputs={inputs} />
                 </Tab.Pane>
               </Tab.Content>
             </Tab.Container>

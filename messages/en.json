@@ -119,5 +119,17 @@
   "years_description": "This comparison uses the exact same input values (salary, workdays, family status), only the selected tax year changes.",
   "input_workdays_total": "Total workdays:",
   "input_workdays_total_zero_warning": "Enter at least one workday to calculate a realistic net/day amount.",
-  "input_workdays_total_high_warning": "This seems high; please double-check if all day counts are correct."
+  "input_workdays_total_high_warning": "This seems high; please double-check if all day counts are correct.",
+  "tabs_wfh_ratio": "Home ratio",
+  "wfh_title": "Net income vs. work-from-home ratio",
+  "wfh_description": "Sweeps the NL ↔ BE day split while keeping total workdays fixed. Hover to inspect each scenario.",
+  "wfh_x_label": "Days worked from home in 🇧🇪 BE (%)",
+  "wfh_current_ratio": "Current ratio",
+  "wfh_optimal": "Optimal (max net)",
+  "wfh_zone_full_benefits": "Full NL benefits (≤10% BE)",
+  "wfh_zone_hybrid_safe": "Hybrid-work safe zone (≤25% BE)",
+  "wfh_threshold_10_label": "90% rule",
+  "wfh_threshold_10_hint": "Above this: no hypotheekrenteaftrek",
+  "wfh_threshold_25_label": "25% rule",
+  "wfh_threshold_25_hint": "Above this: Belgian income tax applies"
 }
