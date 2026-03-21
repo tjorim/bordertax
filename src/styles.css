@@ -816,3 +816,401 @@ footer a:hover {
     padding: 0.45rem 0.5rem !important;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   SUMMARY COMPONENT — Redesigned visual layout
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Hero number ─────────────────────────────────────────────── */
+
+.bt-summary-hero {
+  text-align: center;
+  padding: 1.5rem 1rem 1rem;
+}
+
+.bt-summary-hero__eyebrow {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--bt-text-muted);
+  margin-bottom: 0.5rem;
+}
+
+@keyframes heroReveal {
+  from {
+    opacity: 0.3;
+    transform: translateY(4px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.bt-summary-hero__amount {
+  font-family: var(--bt-font-mono);
+  font-size: clamp(2.2rem, 7vw, 3.2rem);
+  font-weight: 400;
+  color: var(--bt-success);
+  letter-spacing: -0.04em;
+  line-height: 1;
+  animation: heroReveal 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bt-summary-hero__sub {
+  font-family: var(--bt-font-mono);
+  font-size: 0.72rem;
+  color: var(--bt-text-muted);
+  letter-spacing: 0.04em;
+  margin-top: 0.5rem;
+}
+
+/* ── Allocation bar ──────────────────────────────────────────── */
+
+.bt-alloc {
+  margin: 0.75rem 0 1.25rem;
+}
+
+.bt-alloc__bar {
+  display: flex;
+  height: 44px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--bt-surface-3);
+  gap: 2px;
+}
+
+.bt-alloc__seg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  min-width: 0;
+  flex-shrink: 0;
+}
+
+.bt-alloc__seg--net { background: var(--bt-success); }
+.bt-alloc__seg--nl  { background: var(--bt-nl); }
+.bt-alloc__seg--be  { background: var(--bt-be); }
+
+.bt-alloc__seg-label {
+  font-family: var(--bt-font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: rgba(0, 0, 0, 0.65);
+  white-space: nowrap;
+  padding: 0 0.45rem;
+}
+
+.bt-alloc__legend {
+  display: flex;
+  gap: 1.1rem;
+  margin-top: 0.65rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.bt-alloc__legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.78rem;
+}
+
+.bt-alloc__legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.bt-alloc__legend-dot--net { background: var(--bt-success); }
+.bt-alloc__legend-dot--nl  { background: var(--bt-nl); }
+.bt-alloc__legend-dot--be  { background: var(--bt-be); }
+
+.bt-alloc__legend-label {
+  color: var(--bt-text-muted);
+  margin-right: 0.1rem;
+}
+
+.bt-alloc__legend-value {
+  font-family: var(--bt-font-mono);
+  font-size: 0.78rem;
+  letter-spacing: -0.02em;
+}
+
+/* ── Compact breakdown rows ──────────────────────────────────── */
+
+.bt-breakdown {
+  border: 1px solid var(--bt-border);
+  border-radius: var(--bt-r-sm);
+  overflow: hidden;
+}
+
+.bt-breakdown__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0.85rem;
+  border-bottom: 1px solid var(--bt-border);
+  font-size: 0.875rem;
+  gap: 1rem;
+}
+
+.bt-breakdown__row:last-child {
+  border-bottom: none;
+}
+
+.bt-breakdown__row--total {
+  background: var(--bt-surface-2);
+}
+
+.bt-breakdown__row--muted {
+  background: var(--bt-surface-2);
+  opacity: 0.7;
+}
+
+.bt-breakdown__row--ok   { background: var(--bt-success-dim); }
+.bt-breakdown__row--warn { background: var(--bt-danger-dim); }
+
+.bt-breakdown__label {
+  color: var(--bt-text-sub);
+  flex: 1;
+  min-width: 0;
+}
+
+.bt-breakdown__label--strong {
+  font-weight: 600;
+  color: var(--bt-text);
+}
+
+.bt-breakdown__value {
+  font-family: var(--bt-font-mono);
+  font-size: 0.85rem;
+  letter-spacing: -0.02em;
+  flex-shrink: 0;
+  color: var(--bt-text);
+}
+
+/* ── Fiscal balance card ─────────────────────────────────────── */
+
+.bt-balance {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.9rem 1rem;
+  border-radius: var(--bt-r-sm);
+  margin-top: 0.5rem;
+  gap: 1rem;
+}
+
+.bt-balance--refund {
+  background: var(--bt-success-dim);
+  border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+.bt-balance--owe {
+  background: var(--bt-danger-dim);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.bt-balance__label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--bt-text-sub);
+  display: flex;
+  align-items: center;
+}
+
+.bt-balance__amount {
+  font-family: var(--bt-font-mono);
+  font-size: 1.4rem;
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  flex-shrink: 0;
+}
+
+.bt-balance--refund .bt-balance__amount { color: var(--bt-success); }
+.bt-balance--owe    .bt-balance__amount { color: var(--bt-danger); }
+
+/* ── Responsive ──────────────────────────────────────────────── */
+
+@media (max-width: 576px) {
+  .bt-summary-hero {
+    padding: 1.25rem 0.5rem 0.75rem;
+  }
+  .bt-alloc__legend {
+    gap: 0.75rem;
+  }
+  .bt-alloc__bar {
+    height: 36px;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   WORKDAY VISUALIZER — InputPanel
+   ═══════════════════════════════════════════════════════════════ */
+
+.bt-workday-bar {
+  height: 26px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--bt-surface-3);
+  display: flex;
+  gap: 1px;
+  margin-bottom: 0.4rem;
+  border: 1px solid var(--bt-border);
+}
+
+.bt-workday-bar--over {
+  border-color: rgba(239, 68, 68, 0.4);
+  box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.15);
+}
+
+.bt-workday-bar__seg {
+  height: 100%;
+  transition: width 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.bt-workday-bar__seg--nl    { background: var(--bt-nl); }
+.bt-workday-bar__seg--be    { background: var(--bt-be); }
+.bt-workday-bar__seg--other { background: var(--bt-text-dim); }
+
+.bt-workday-bar__label {
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: rgba(0, 0, 0, 0.6);
+  white-space: nowrap;
+  padding: 0 0.3rem;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   YEAR CHART — MultiYearComparison
+   ═══════════════════════════════════════════════════════════════ */
+
+.bt-year-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 1.25rem;
+}
+
+.bt-year-chart__row {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.35rem 0.5rem;
+  border-radius: var(--bt-r-sm);
+  transition: background 0.15s;
+  cursor: default;
+}
+
+.bt-year-chart__row:hover {
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.bt-year-chart__row--active {
+  background: var(--bt-surface-2);
+  outline: 1px solid var(--bt-border-hover);
+}
+
+.bt-year-chart__label {
+  font-family: var(--bt-font-mono);
+  font-size: 0.75rem;
+  color: var(--bt-text-muted);
+  width: 3.25rem;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.bt-year-chart__row--active .bt-year-chart__label {
+  color: var(--bt-text);
+  font-weight: 700;
+}
+
+.bt-year-chart__active-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--bt-info);
+  flex-shrink: 0;
+}
+
+.bt-year-chart__bar {
+  flex: 1;
+  height: 22px;
+  border-radius: 3px;
+  overflow: hidden;
+  background: var(--bt-surface-3);
+  display: flex;
+  gap: 1px;
+}
+
+.bt-year-chart__seg {
+  height: 100%;
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+}
+
+.bt-year-chart__seg--net { background: var(--bt-success); opacity: 0.7; }
+.bt-year-chart__seg--nl  { background: var(--bt-nl);      opacity: 0.65; }
+.bt-year-chart__seg--be  { background: var(--bt-be);      opacity: 0.65; }
+
+.bt-year-chart__row--active .bt-year-chart__seg--net,
+.bt-year-chart__row--active .bt-year-chart__seg--nl,
+.bt-year-chart__row--active .bt-year-chart__seg--be {
+  opacity: 1;
+}
+
+.bt-year-chart__value {
+  font-family: var(--bt-font-mono);
+  font-size: 0.75rem;
+  color: var(--bt-text-muted);
+  width: 5.5rem;
+  text-align: right;
+  flex-shrink: 0;
+  letter-spacing: -0.02em;
+}
+
+.bt-year-chart__row--active .bt-year-chart__value {
+  color: var(--bt-success);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TABLE HIERARCHY — NL/BE result tabs
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Dim working-calculation rows in the bracket table */
+.bt-table-brackets tbody tr:not(.table-secondary) td {
+  color: var(--bt-text-muted) !important;
+  font-size: 0.8rem;
+}
+
+/* NL result: orange left border + larger amount on final row */
+.bt-nl-accent .bt-table-result .table-primary td {
+  border-left: 3px solid var(--bt-nl) !important;
+}
+.bt-nl-accent .bt-table-result .table-primary td:last-child {
+  font-size: 1rem !important;
+  color: var(--bt-nl-light) !important;
+}
+
+/* BE result: gold left border + larger amount on final row */
+.bt-be-accent .bt-table-result .table-primary td {
+  border-left: 3px solid var(--bt-be) !important;
+}
+.bt-be-accent .bt-table-result .table-primary td:last-child {
+  font-size: 1rem !important;
+  color: var(--bt-be-light) !important;
+}

@@ -23,6 +23,49 @@ export default function MultiYearComparison({ rows, activeYear }: Props) {
   return (
     <div>
       <h6 className="text-muted mb-3">{m.years_title()}</h6>
+
+      {/* Visual year chart */}
+      <div className="bt-year-chart">
+        {rows.map(({ year, result }) => {
+          const gross = result.grossIncome;
+          if (gross === 0) return null;
+          const nlPct = (result.nl.netTaxNL / gross) * 100;
+          const bePct = ((result.be?.netTaxBE ?? 0) / gross) * 100;
+          const netPct = 100 - nlPct - bePct;
+          const isActive = year === activeYear;
+
+          return (
+            <div
+              key={year}
+              className={`bt-year-chart__row${isActive ? " bt-year-chart__row--active" : ""}`}
+            >
+              <div className="bt-year-chart__label">
+                {year}
+                {isActive && <span className="bt-year-chart__active-dot" />}
+              </div>
+              <div className="bt-year-chart__bar">
+                <div
+                  className="bt-year-chart__seg bt-year-chart__seg--net"
+                  style={{ width: `${netPct}%` }}
+                />
+                <div
+                  className="bt-year-chart__seg bt-year-chart__seg--nl"
+                  style={{ width: `${nlPct}%` }}
+                />
+                {bePct > 0 && (
+                  <div
+                    className="bt-year-chart__seg bt-year-chart__seg--be"
+                    style={{ width: `${bePct}%` }}
+                  />
+                )}
+              </div>
+              <div className="bt-year-chart__value">{fmt(result.netIncome)}</div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Detail table */}
       <Table bordered hover responsive>
         <thead>
           <tr>

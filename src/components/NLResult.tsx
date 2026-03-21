@@ -28,7 +28,7 @@ export default function NLResult({ result, withheldTaxNL = 0 }: Props) {
       </Table>
 
       <p className="mb-1 fw-semibold small">{m.nl_bracket_calculation()}</p>
-      <Table bordered size="sm" className="mb-3">
+      <Table bordered size="sm" className="mb-3 bt-table-brackets">
         <thead className="table-light">
           <tr>
             <th>{m.nl_bracket()}</th>
@@ -79,7 +79,7 @@ export default function NLResult({ result, withheldTaxNL = 0 }: Props) {
         </tbody>
       </Table>
 
-      <Table bordered size="sm">
+      <Table bordered size="sm" className="bt-table-result">
         <tbody>
           <tr className="table-primary fw-bold">
             <td>{m.nl_tax_payable()}</td>

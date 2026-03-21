@@ -26,6 +26,16 @@ export default function InputPanel({ inputs, onChange }: Props) {
   const totalWorkdays = getTotalWorkdays(inputs);
   const maxWorkdaysInYear = getMaxDaysInYear(inputs.year);
 
+  const nlBarW = maxWorkdaysInYear > 0
+    ? Math.min(100, (inputs.daysWorkedNL / maxWorkdaysInYear) * 100)
+    : 0;
+  const beBarW = maxWorkdaysInYear > 0
+    ? Math.min(100 - nlBarW, (inputs.daysWorkedBE / maxWorkdaysInYear) * 100)
+    : 0;
+  const otherBarW = maxWorkdaysInYear > 0
+    ? Math.min(100 - nlBarW - beBarW, ((inputs.daysWorkedOther ?? 0) / maxWorkdaysInYear) * 100)
+    : 0;
+
   return (
     <Accordion defaultActiveKey={["0", "1", "2"]} alwaysOpen>
       {/* ── Section 1: Situation ─────────────────────────────── */}
@@ -231,6 +241,38 @@ export default function InputPanel({ inputs, onChange }: Props) {
             </Col>
 
             <Col xs={12}>
+              <div
+                className={`bt-workday-bar${totalWorkdays > maxWorkdaysInYear ? " bt-workday-bar--over" : ""}`}
+                role="img"
+                aria-label={`${m.input_workdays_total()} ${totalWorkdays}`}
+              >
+                {nlBarW > 0 && (
+                  <div
+                    className="bt-workday-bar__seg bt-workday-bar__seg--nl"
+                    style={{ width: `${nlBarW}%` }}
+                  >
+                    {nlBarW > 14 && (
+                      <span className="bt-workday-bar__label">{inputs.daysWorkedNL}</span>
+                    )}
+                  </div>
+                )}
+                {beBarW > 0 && (
+                  <div
+                    className="bt-workday-bar__seg bt-workday-bar__seg--be"
+                    style={{ width: `${beBarW}%` }}
+                  >
+                    {beBarW > 10 && (
+                      <span className="bt-workday-bar__label">{inputs.daysWorkedBE}</span>
+                    )}
+                  </div>
+                )}
+                {otherBarW > 0 && (
+                  <div
+                    className="bt-workday-bar__seg bt-workday-bar__seg--other"
+                    style={{ width: `${otherBarW}%` }}
+                  />
+                )}
+              </div>
               <Form.Text
                 role="status"
                 className={totalWorkdays === 0 || totalWorkdays > maxWorkdaysInYear ? "text-warning" : "text-muted"}

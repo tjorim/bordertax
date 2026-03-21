@@ -93,7 +93,7 @@ export default function BEResult({ result, residentCountry }: Props) {
       </Table>
 
       <p className="mb-1 fw-semibold small">{m.be_final_calculation()}</p>
-      <Table bordered size="sm">
+      <Table bordered size="sm" className="bt-table-result">
         <tbody>
           <tr>
             <td>{m.be_federal_tax()}</td>
