@@ -174,7 +174,7 @@ export default function App() {
       </Navbar>
 
       <Container fluid="lg" className="pb-5">
-        <Row className="g-4">
+        <Row className="g-4 bt-main-row">
           {/* ── Left column: inputs ────────────────────────────── */}
           <Col lg={5}>
             <InputPanel inputs={inputs} onChange={setInputs} />

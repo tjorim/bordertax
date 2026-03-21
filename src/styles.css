@@ -645,17 +645,17 @@ h6 {
 
 /* ── Summary Metric Cards ─────────────────────────────────────── */
 
-/* The three .border.rounded.p-3 stat cards */
-.border.rounded.p-3 {
-  background: var(--bt-surface-2) !important;
-  border-color: var(--bt-border) !important;
-  border-radius: var(--bt-r) !important;
-  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease !important;
+.bt-stat-card {
+  background: var(--bt-surface-2);
+  border: 1px solid var(--bt-border);
+  border-radius: var(--bt-r);
+  padding: 0.9rem 0.75rem;
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
   position: relative;
   overflow: hidden;
 }
 
-.border.rounded.p-3::before {
+.bt-stat-card::before {
   content: '';
   position: absolute;
   top: 0;
@@ -665,13 +665,13 @@ h6 {
   background: linear-gradient(90deg, transparent, var(--bt-border-hover), transparent);
 }
 
-.border.rounded.p-3:hover {
-  border-color: var(--bt-border-hover) !important;
+.bt-stat-card:hover {
+  border-color: var(--bt-border-hover);
   transform: translateY(-2px);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
 }
 
-.border.rounded.p-3 .fs-5 {
+.bt-stat-card .fs-5 {
   font-family: var(--bt-font-mono);
   font-size: 1.15rem !important;
   letter-spacing: -0.03em;
@@ -748,14 +748,10 @@ footer a:hover {
   border-left: 2px solid var(--bt-be-border) !important;
 }
 
-/* ── Input panel section accent borders ──────────────────────── */
+/* ── Accordion open-state accent (neutral, both sections) ────── */
 
-.accordion-item:first-child .accordion-button:not(.collapsed) {
-  border-left: 2px solid var(--bt-nl);
-}
-
-.accordion-item:nth-child(2) .accordion-button:not(.collapsed) {
-  border-left: 2px solid var(--bt-be);
+.accordion-button:not(.collapsed) {
+  border-left: 2px solid var(--bt-border-hover);
 }
 
 /* ── Year comparison active row ──────────────────────────────── */
@@ -772,7 +768,7 @@ footer a:hover {
   letter-spacing: -0.02em;
 }
 
-/* ── Loading / entrance animation ────────────────────────────── */
+/* ── Loading / entrance animation (scoped to main layout) ────── */
 
 @keyframes slideUp {
   from {
@@ -785,11 +781,11 @@ footer a:hover {
   }
 }
 
-.col-lg-5 {
+.bt-main-row > .col-lg-5 {
   animation: slideUp 0.35s ease-out 0.05s both;
 }
 
-.col-lg-7 {
+.bt-main-row > .col-lg-7 {
   animation: slideUp 0.35s ease-out 0.15s both;
 }
 
@@ -802,8 +798,8 @@ footer a:hover {
   .accordion-body {
     padding: 0.9rem !important;
   }
-  .col-lg-5,
-  .col-lg-7 {
+  .bt-main-row > .col-lg-5,
+  .bt-main-row > .col-lg-7 {
     animation: none;
   }
 }

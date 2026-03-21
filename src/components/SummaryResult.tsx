@@ -141,19 +141,19 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
 
       <Row className="mt-3 text-center g-3">
         <Col>
-          <div className="border rounded p-3">
+          <div className="bt-stat-card">
             <div className="text-muted small">{m.summary_net_monthly()}</div>
             <div className="fs-5 fw-bold text-success">{fmt(netIncome / 12)}</div>
           </div>
         </Col>
         <Col>
-          <div className="border rounded p-3">
+          <div className="bt-stat-card">
             <div className="text-muted small">{m.summary_effective_rate()}</div>
             <div className="fs-5 fw-bold">{pct(effectiveRateTotal)}</div>
           </div>
         </Col>
         <Col>
-          <div className="border rounded p-3">
+          <div className="bt-stat-card">
             <div className="text-muted small">{m.summary_net_daily()}</div>
             <div className="fs-5 fw-bold text-success">
               {totalWorkdays > 0 ? fmt(netIncome / totalWorkdays) : "—"}
