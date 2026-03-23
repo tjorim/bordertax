@@ -47,7 +47,7 @@ describe("App", () => {
   it("renders a tab for NL, BE and year comparison", () => {
     render(<App />);
     const tabs = screen.getAllByRole("tab");
-    expect(tabs.length).toBe(4); // summary, NL, BE, years
+    expect(tabs.length).toBe(5); // summary, NL, BE, years, wfh
   });
 
   it("loads saved inputs from localStorage", () => {
