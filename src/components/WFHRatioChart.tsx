@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Badge, Table } from "react-bootstrap";
 import { calculate } from "../tax";
 import type { TaxInputs } from "../tax/types";
@@ -46,6 +46,7 @@ function getZone(ratio: number): Zone {
 
 export default function WFHRatioChart({ inputs }: Props) {
   const [hovered, setHovered] = useState<number | null>(null);
+  const [tableOpen, setTableOpen] = useState(false);
   const svgRef = useRef<SVGSVGElement>(null);
 
   const nlbeDays = inputs.daysWorkedNL + inputs.daysWorkedBE;
@@ -103,7 +104,6 @@ export default function WFHRatioChart({ inputs }: Props) {
       )
       .join(" ");
 
-  // Closed area path under the net income curve
   const areaPath = data.length
     ? `${polyline("netIncome")} L${xIdx(STEPS - 1).toFixed(1)},${(PAD.top + CH).toFixed(1)} L${xIdx(0).toFixed(1)},${(PAD.top + CH).toFixed(1)} Z`
     : "";
@@ -116,6 +116,8 @@ export default function WFHRatioChart({ inputs }: Props) {
 
   const showBE = inputs.residentCountry === "BE";
   const hp = hovered !== null ? (data[hovered] ?? null) : null;
+  const displayPoint = hp ?? data[currentIdx] ?? null;
+  const isHovering = hp !== null;
 
   const currentNet = data[currentIdx]?.netIncome ?? 0;
   const optimalNet = data[optimalIdx]?.netIncome ?? 0;
@@ -127,14 +129,41 @@ export default function WFHRatioChart({ inputs }: Props) {
   const xCur = xIdx(currentIdx);
   const xOpt = xIdx(optimalIdx);
 
-  function handleMouseMove(e: React.MouseEvent<SVGSVGElement>) {
+  // Unified pointer handler — shared by mouse and touch
+  function scrubTo(clientX: number) {
     const rect = svgRef.current?.getBoundingClientRect();
     if (!rect) return;
     const idx = Math.round(
-      (((e.clientX - rect.left) * (W / rect.width) - PAD.left) / CW) * (STEPS - 1),
+      (((clientX - rect.left) * (W / rect.width) - PAD.left) / CW) * (STEPS - 1),
     );
     setHovered(Math.max(0, Math.min(STEPS - 1, idx)));
   }
+
+  function handleMouseMove(e: React.MouseEvent<SVGSVGElement>) {
+    scrubTo(e.clientX);
+  }
+
+  // Attach touch listener non-passively so preventDefault() suppresses scroll
+  useEffect(() => {
+    const el = svgRef.current;
+    if (!el) return;
+    function onTouchMove(e: TouchEvent) {
+      e.preventDefault();
+      const touch = e.touches[0];
+      if (touch) scrubTo(touch.clientX);
+    }
+    function onTouchEnd() {
+      setHovered(null);
+    }
+    el.addEventListener("touchmove", onTouchMove, { passive: false });
+    el.addEventListener("touchend", onTouchEnd);
+    return () => {
+      el.removeEventListener("touchmove", onTouchMove);
+      el.removeEventListener("touchend", onTouchEnd);
+    };
+    // scrubTo reads svgRef which is stable; eslint-disable not needed here
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (nlbeDays === 0) {
     return (
@@ -144,12 +173,6 @@ export default function WFHRatioChart({ inputs }: Props) {
       </div>
     );
   }
-
-  const zoneLabel: Record<Zone, string> = {
-    full: `✓ ${m.wfh_zone_full_benefits()}`,
-    hybrid: `✓ ${m.wfh_threshold_25_label()} · ✗ ${m.wfh_threshold_10_hint()}`,
-    above: `✗ ${m.wfh_threshold_25_hint()}`,
-  };
 
   return (
     <div className="bt-wfh-root">
@@ -161,10 +184,11 @@ export default function WFHRatioChart({ inputs }: Props) {
         </div>
         <div className={`bt-wfh-zone-pill bt-wfh-zone-pill--${currentZone}`}>
           🏠 {Math.round(currentBeRatio * 100)}% BE
-          <span className="bt-wfh-zone-pill__sep" />
-          {currentZone === "full" && m.wfh_threshold_10_label()}
-          {currentZone === "hybrid" && m.wfh_threshold_25_label()}
-          {currentZone === "above" && ">" + m.wfh_threshold_25_label()}
+          <span className="bt-wfh-zone-pill__rule">
+            {currentZone === "full" && m.wfh_threshold_10_label()}
+            {currentZone === "hybrid" && m.wfh_threshold_25_label()}
+            {currentZone === "above" && `>${m.wfh_threshold_25_label()}`}
+          </span>
         </div>
       </div>
 
@@ -179,12 +203,10 @@ export default function WFHRatioChart({ inputs }: Props) {
           aria-label={m.wfh_title()}
         >
           <defs>
-            {/* Area fill gradient under net income curve */}
             <linearGradient id="wfh-net-grad" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor="var(--bt-success)" stopOpacity="0.18" />
               <stop offset="100%" stopColor="var(--bt-success)" stopOpacity="0.01" />
             </linearGradient>
-            {/* Glow filter for net income line */}
             <filter id="wfh-glow" x="-20%" y="-50%" width="140%" height="200%">
               <feGaussianBlur stdDeviation="2.5" result="blur" />
               <feMerge>
@@ -192,7 +214,6 @@ export default function WFHRatioChart({ inputs }: Props) {
                 <feMergeNode in="SourceGraphic" />
               </feMerge>
             </filter>
-            {/* Clip to chart area */}
             <clipPath id="wfh-clip">
               <rect x={PAD.left} y={PAD.top} width={CW} height={CH} />
             </clipPath>
@@ -221,7 +242,7 @@ export default function WFHRatioChart({ inputs }: Props) {
             className="bt-wfh-zone bt-wfh-zone--above"
           />
 
-          {/* ── Zone top-edge accent lines ────────────────────────────── */}
+          {/* Zone top-edge accents */}
           <line
             x1={PAD.left}
             x2={x90}
@@ -266,7 +287,7 @@ export default function WFHRatioChart({ inputs }: Props) {
             </g>
           ))}
 
-          {/* ── X axis labels ─────────────────────────────────────────── */}
+          {/* ── X axis ────────────────────────────────────────────────── */}
           {[0, 10, 25, 50, 75, 100].map((p) => (
             <text
               key={p}
@@ -278,13 +299,11 @@ export default function WFHRatioChart({ inputs }: Props) {
               {p}%
             </text>
           ))}
-
-          {/* ── X axis title ──────────────────────────────────────────── */}
           <text x={PAD.left + CW / 2} y={H - 6} textAnchor="middle" className="bt-wfh-axis-title">
             {m.wfh_x_label()}
           </text>
 
-          {/* ── Threshold lines ───────────────────────────────────────── */}
+          {/* ── Threshold lines + chips ────────────────────────────────── */}
           <line
             x1={x90}
             x2={x90}
@@ -300,7 +319,6 @@ export default function WFHRatioChart({ inputs }: Props) {
             className="bt-wfh-threshold bt-wfh-threshold--25"
           />
 
-          {/* Floating threshold chips */}
           <g transform={`translate(${x90 + 4}, ${PAD.top + 4})`}>
             <rect
               rx="3"
@@ -338,7 +356,7 @@ export default function WFHRatioChart({ inputs }: Props) {
             </text>
           </g>
 
-          {/* ── Area fill + data lines (clipped) ─────────────────────── */}
+          {/* ── Area fill + data lines ─────────────────────────────────── */}
           <g clipPath="url(#wfh-clip)">
             <path d={areaPath} fill="url(#wfh-net-grad)" />
             <path
@@ -374,7 +392,6 @@ export default function WFHRatioChart({ inputs }: Props) {
           <line x1={xCur} x2={xCur} y1={PAD.top} y2={H - PAD.bottom} className="bt-wfh-current" />
           {data[currentIdx] && (
             <>
-              {/* Pulse rings */}
               <circle
                 cx={xCur}
                 cy={yOf(data[currentIdx]!.netIncome)}
@@ -424,99 +441,108 @@ export default function WFHRatioChart({ inputs }: Props) {
           )}
         </svg>
 
-        {/* ── Hover readout overlay ─────────────────────────────────── */}
-        <div className={`bt-wfh-readout${hp ? " bt-wfh-readout--visible" : ""}`}>
-          {hp ? (
+        {/* ── Legend — directly below chart, above readout ──────────── */}
+        <div className="bt-year-chart__legend bt-wfh-legend">
+          <span className="bt-year-chart__legend-item">
+            <span
+              className="bt-year-chart__legend-dot"
+              style={{ background: "var(--bt-success)" }}
+            />
+            {m.summary_net_income()}
+          </span>
+          <span className="bt-year-chart__legend-item">
+            <span className="bt-year-chart__legend-dot" style={{ background: "var(--bt-nl)" }} />
+            🇳🇱 {m.summary_dutch_tax()}
+          </span>
+          {showBE && (
+            <span className="bt-year-chart__legend-item">
+              <span className="bt-year-chart__legend-dot" style={{ background: "var(--bt-be)" }} />
+              🇧🇪 {m.summary_belgian_tax()}
+            </span>
+          )}
+          <span className="bt-year-chart__legend-item">
+            <span className="bt-wfh-legend-zone bt-wfh-legend-zone--full" />
+            {m.wfh_zone_full_benefits()}
+          </span>
+          <span className="bt-year-chart__legend-item">
+            <span className="bt-wfh-legend-zone bt-wfh-legend-zone--hybrid" />
+            {m.wfh_zone_hybrid_safe()}
+          </span>
+          <span className="bt-year-chart__legend-item">
+            <span className="bt-wfh-legend-dash bt-wfh-legend-dash--current" />
+            {m.wfh_current_ratio()}
+          </span>
+          {optimalIdx !== currentIdx && (
+            <span className="bt-year-chart__legend-item">
+              <span className="bt-wfh-legend-dash bt-wfh-legend-dash--optimal" />
+              {m.wfh_optimal()}
+            </span>
+          )}
+        </div>
+
+        {/* ── Readout bar ───────────────────────────────────────────── */}
+        <div className={`bt-wfh-readout${isHovering ? " bt-wfh-readout--visible" : ""}`}>
+          {displayPoint ? (
             <>
-              <span className="bt-wfh-readout__ratio">
-                🏢 {Math.round((1 - hp.beRatio) * 100)}% NL · 🏠 {Math.round(hp.beRatio * 100)}% BE
-                <span className="text-muted ms-2">
-                  ({hp.nlDays}d / {hp.beDays}d)
+              <span
+                className={`bt-wfh-readout__label${isHovering ? "" : " bt-wfh-readout__label--current"}`}
+              >
+                {!isHovering && (
+                  <span className="bt-wfh-readout__tag">{m.wfh_current_ratio()}</span>
+                )}
+                🏢 {Math.round((1 - displayPoint.beRatio) * 100)}% NL · 🏠{" "}
+                {Math.round(displayPoint.beRatio * 100)}% BE
+                <span className="text-muted bt-wfh-readout__days">
+                  ({displayPoint.nlDays}d / {displayPoint.beDays}d)
                 </span>
               </span>
               <span className="bt-wfh-readout__item bt-wfh-readout__item--net">
-                {m.summary_net_income()} {fmt(hp.netIncome)}
+                {m.summary_net_income()} {fmt(displayPoint.netIncome)}
               </span>
               <span className="bt-wfh-readout__item bt-wfh-readout__item--nl">
-                🇳🇱 −{fmt(hp.nlTax)}
+                🇳🇱 −{fmt(displayPoint.nlTax)}
               </span>
               {showBE && (
                 <span className="bt-wfh-readout__item bt-wfh-readout__item--be">
-                  🇧🇪 −{fmt(hp.beTax)}
+                  🇧🇪 −{fmt(displayPoint.beTax)}
                 </span>
               )}
               <span
-                className={`bt-wfh-readout__badge bt-wfh-readout__badge--${getZone(hp.beRatio)}`}
+                className={`bt-wfh-readout__badge bt-wfh-readout__badge--${getZone(displayPoint.beRatio)}`}
               >
-                {getZone(hp.beRatio) === "full" && `✓ ${m.wfh_threshold_10_label()}`}
-                {getZone(hp.beRatio) === "hybrid" && `✓ ${m.wfh_threshold_25_label()} · ✗ hypo`}
-                {getZone(hp.beRatio) === "above" && `✗ ${m.wfh_threshold_25_label()}`}
+                {getZone(displayPoint.beRatio) === "full" && `✓ ${m.wfh_threshold_10_label()}`}
+                {getZone(displayPoint.beRatio) === "hybrid" &&
+                  `✓ ${m.wfh_threshold_25_label()} · ✗ hypo`}
+                {getZone(displayPoint.beRatio) === "above" && `✗ ${m.wfh_threshold_25_label()}`}
               </span>
             </>
           ) : (
-            <span className="text-muted small">{m.wfh_description()}</span>
+            <span className="text-muted small">{m.wfh_hover_hint()}</span>
           )}
         </div>
-      </div>
 
-      {/* ── Status + delta row ──────────────────────────────────────── */}
-      <div className="bt-wfh-footer-row">
-        <div className={`bt-wfh-status bt-wfh-status--${currentZone}`}>
-          {zoneLabel[currentZone]}
-        </div>
+        {/* ── Delta callout — only shown when there's meaningful gain ── */}
         {delta > 50 && data[optimalIdx] && (
           <div className="bt-wfh-delta">
-            <i className="bi bi-arrow-up-circle me-1" />
-            {m.wfh_optimal()} ({Math.round(data[optimalIdx]!.beRatio * 100)}% BE) +
-            <strong>{fmt(delta)}</strong>/yr
+            <i className="bi bi-arrow-up-circle-fill me-1" />↑ <strong>{fmt(delta)}</strong>/yr more
+            at {Math.round(data[optimalIdx]!.beRatio * 100)}% BE
           </div>
         )}
       </div>
 
-      {/* ── Legend ──────────────────────────────────────────────────── */}
-      <div className="bt-year-chart__legend mt-2 mb-3">
-        <span className="bt-year-chart__legend-item">
-          <span className="bt-year-chart__legend-dot" style={{ background: "var(--bt-success)" }} />
-          {m.summary_net_income()}
-        </span>
-        <span className="bt-year-chart__legend-item">
-          <span className="bt-year-chart__legend-dot" style={{ background: "var(--bt-nl)" }} />
-          🇳🇱 {m.summary_dutch_tax()}
-        </span>
-        {showBE && (
-          <span className="bt-year-chart__legend-item">
-            <span className="bt-year-chart__legend-dot" style={{ background: "var(--bt-be)" }} />
-            🇧🇪 {m.summary_belgian_tax()}
-          </span>
-        )}
-        <span className="bt-year-chart__legend-item">
-          <span className="bt-wfh-legend-zone bt-wfh-legend-zone--full" />
-          {m.wfh_zone_full_benefits()}
-        </span>
-        <span className="bt-year-chart__legend-item">
-          <span className="bt-wfh-legend-zone bt-wfh-legend-zone--hybrid" />
-          {m.wfh_zone_hybrid_safe()}
-        </span>
-        <span className="bt-year-chart__legend-item">
-          <span className="bt-wfh-legend-dash bt-wfh-legend-dash--current" />
-          {m.wfh_current_ratio()}
-        </span>
-        {optimalIdx !== currentIdx && (
-          <span className="bt-year-chart__legend-item">
-            <span className="bt-wfh-legend-dash bt-wfh-legend-dash--optimal" />
-            {m.wfh_optimal()}
-          </span>
-        )}
-      </div>
+      {/* ── Table toggle ────────────────────────────────────────────── */}
+      <button
+        className="bt-wfh-table-toggle"
+        onClick={() => setTableOpen((v) => !v)}
+        aria-expanded={tableOpen}
+      >
+        <i className={`bi bi-chevron-${tableOpen ? "up" : "down"} me-1`} />
+        {tableOpen ? m.wfh_table_hide() : m.wfh_table_show()}
+      </button>
 
-      {/* ── Detail table ────────────────────────────────────────────── */}
-      <RatioTable
-        data={data}
-        currentIdx={currentIdx}
-        optimalIdx={optimalIdx}
-        showBE={showBE}
-        nlbeDays={nlbeDays}
-      />
+      {tableOpen && (
+        <RatioTable data={data} currentIdx={currentIdx} optimalIdx={optimalIdx} showBE={showBE} />
+      )}
     </div>
   );
 }
@@ -528,10 +554,9 @@ interface RatioTableProps {
   currentIdx: number;
   optimalIdx: number;
   showBE: boolean;
-  nlbeDays: number;
 }
 
-function RatioTable({ data, currentIdx, optimalIdx, showBE, nlbeDays }: RatioTableProps) {
+function RatioTable({ data, currentIdx, optimalIdx, showBE }: RatioTableProps) {
   if (data.length === 0) return null;
 
   interface RowMeta {
@@ -568,7 +593,7 @@ function RatioTable({ data, currentIdx, optimalIdx, showBE, nlbeDays }: RatioTab
     <Table bordered hover responsive className="bt-wfh-table">
       <thead>
         <tr>
-          <th>{m.years_year().replace("Year", "🏠 BE %")}</th>
+          <th>{m.wfh_be_split()}</th>
           <th className="text-end">{m.years_nl_tax()}</th>
           {showBE && <th className="text-end">{m.years_be_tax()}</th>}
           <th className="text-end">{m.years_total_tax()}</th>
@@ -585,7 +610,6 @@ function RatioTable({ data, currentIdx, optimalIdx, showBE, nlbeDays }: RatioTab
           const gross = d.netIncome + totalTax;
           const rate = gross > 0 ? totalTax / gross : 0;
           const zone = getZone(d.beRatio);
-
           const rowClass = isCurrent ? "table-primary" : isOptimal ? "table-success" : undefined;
 
           return (
