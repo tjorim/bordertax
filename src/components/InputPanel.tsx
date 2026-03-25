@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Accordion, Badge, Button, Col, Form, Row } from "react-bootstrap";
+import { Accordion, Alert, Badge, Button, Col, Form, Row } from "react-bootstrap";
 import { VALID_YEARS } from "../tax/constants";
 import type { TaxInputs } from "../tax/types";
 import { getMaxDaysInYear, getTotalWorkdays } from "../tax/workdays";
@@ -28,6 +28,7 @@ export default function InputPanel({ inputs, onChange }: Props) {
 
   const totalWorkdays = getTotalWorkdays(inputs);
   const maxWorkdaysInYear = getMaxDaysInYear(inputs.year);
+  const beFraction = totalWorkdays > 0 ? inputs.daysWorkedBE / totalWorkdays : 0;
 
   const nlBarW =
     maxWorkdaysInYear > 0 ? Math.min(100, (inputs.daysWorkedNL / maxWorkdaysInYear) * 100) : 0;
@@ -215,7 +216,11 @@ export default function InputPanel({ inputs, onChange }: Props) {
                 min={0}
                 value={inputs.daysWorkedNL}
                 onChange={(e) => set("daysWorkedNL", clampNumber(e.target.value))}
+                aria-describedby="workdays-nl-hint"
               />
+              <Form.Text id="workdays-nl-hint" className="text-muted">
+                {m.input_workdays_nl_hint()}
+              </Form.Text>
             </Col>
 
             <Col xs={12} sm={6}>
@@ -305,6 +310,19 @@ export default function InputPanel({ inputs, onChange }: Props) {
                 {totalWorkdays === 0 && ` — ${m.input_workdays_total_zero_warning()}`}
                 {totalWorkdays > maxWorkdaysInYear && ` — ${m.input_workdays_total_high_warning()}`}
               </Form.Text>
+              <Form.Text className="text-muted d-block mt-1">
+                {m.input_workdays_typical()}
+              </Form.Text>
+              {inputs.residentCountry === "BE" && totalWorkdays > 0 && beFraction >= 0.5 && (
+                <Alert variant="warning" className="mt-2 py-2 small mb-0">
+                  {m.input_social_security_above_50()}
+                </Alert>
+              )}
+              {inputs.residentCountry === "BE" && totalWorkdays > 0 && beFraction >= 0.25 && beFraction < 0.5 && (
+                <Alert variant="info" className="mt-2 py-2 small mb-0">
+                  {m.input_social_security_kaderakkoord()}
+                </Alert>
+              )}
             </Col>
 
             <Col xs={12}>
@@ -378,17 +396,11 @@ export default function InputPanel({ inputs, onChange }: Props) {
                 <div
                   id="formulas-panel"
                   role="region"
-                  aria-label={m.show_formulas()}
+                  aria-label={m.formulas_panel_label()}
                   className="mt-2 small text-muted border rounded p-2"
                 >
-                  <p className="mb-1">
-                    <strong>🇳🇱 {m.summary_sourcing_nl_method()}:</strong>{" "}
-                    {m.summary_sourcing_nl_formula()}
-                  </p>
-                  <p className="mb-0">
-                    <strong>🇧🇪 {m.summary_sourcing_be_method()}:</strong>{" "}
-                    {m.summary_sourcing_be_formula()}
-                  </p>
+                  <p className="mb-1">{m.summary_sourcing_nl_formula()}</p>
+                  <p className="mb-0">{m.summary_sourcing_be_formula()}</p>
                 </div>
               )}
             </Col>

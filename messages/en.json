@@ -152,5 +152,11 @@
   "wfh_threshold_49_label": "49% rule",
   "wfh_threshold_49_hint": "Above this: Dutch social security no longer applies. Request kaderakkoord at SVB to stay covered (applies up to 49%).",
   "wfh_zone_kaderakkoord": "Kaderakkoord zone (25–49% BE, A1 required)",
-  "wfh_kaderakkoord_note": "Working 25–49% of your days from Belgium (telework): Dutch social security remains applicable if you apply for the kaderakkoord at SVB (requires an A1 document). Above 49%, Belgian social security applies."
+  "wfh_kaderakkoord_note": "Working 25–49% of your days from Belgium (telework): Dutch social security remains applicable if you apply for the kaderakkoord at SVB (requires an A1 document). Above 49%, Belgian social security applies.",
+  "input_workdays_nl_hint": "Include: office days, training days, offsites, and business travel days. Exclude: vacation, ADV/compensation days, national holidays, and sick leave (enter sick days separately below). Overtime and commuting do not count.",
+  "input_workdays_typical": "Tip: start from 260 days (52 × 5), then subtract vacation days, ADV/compensation days, and public holidays that fall on weekdays.",
+  "input_social_security_kaderakkoord": "Kaderakkoord zone (25–49% BE days): Dutch social security remains applicable if you hold an A1 certificate. Request this jointly with your employer at SVB.",
+  "input_social_security_above_50": "Above 49% BE days: Belgian social security would apply. Review your working arrangement.",
+  "summary_sourcing_method_col": "Method",
+  "formulas_panel_label": "Calculation formulas"
 }

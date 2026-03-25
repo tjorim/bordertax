@@ -152,5 +152,11 @@
   "wfh_threshold_49_label": "49%-regel",
   "wfh_threshold_49_hint": "Hierboven: Nederlandse sociale zekerheid is niet meer van toepassing. Vraag kaderakkoord aan bij SVB om gedekt te blijven (geldt t/m 49%).",
   "wfh_zone_kaderakkoord": "Kaderakkoord-zone (25–49% BE, A1-document vereist)",
-  "wfh_kaderakkoord_note": "25–49% van uw dagen werken vanuit België (telewerk): Nederlandse sociale zekerheid blijft van toepassing als u het kaderakkoord aanvraagt bij de SVB (vereist een A1-document). Boven 49% is de Belgische sociale zekerheid van toepassing."
+  "wfh_kaderakkoord_note": "25–49% van uw dagen werken vanuit België (telewerk): Nederlandse sociale zekerheid blijft van toepassing als u het kaderakkoord aanvraagt bij de SVB (vereist een A1-document). Boven 49% is de Belgische sociale zekerheid van toepassing.",
+  "input_workdays_nl_hint": "Meerekenen: kantoorwerk, trainingen, offsites en zakelijke reisdagen. Niet meerekenen: vakantiedagen, ADV/compensatiedagen, feestdagen en ziekteverlof (ziektedagen hieronder apart invullen). Overuren en woon-werkverkeer tellen niet mee.",
+  "input_workdays_typical": "Tip: begin met 260 dagen (52 × 5) en trek vakantiedagen, ADV/compensatiedagen en feestdagen op weekdagen af.",
+  "input_social_security_kaderakkoord": "Kaderakkoord-zone (25–49% BE-dagen): Nederlandse sociale zekerheid geldt als u een A1-document heeft. Vraag dit samen met uw werkgever aan bij de SVB.",
+  "input_social_security_above_50": "Meer dan 49% BE-dagen: Belgische sociale zekerheid is van toepassing. Controleer uw werkregeling.",
+  "summary_sourcing_method_col": "Methode",
+  "formulas_panel_label": "Berekeningsformules"
 }

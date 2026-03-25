@@ -202,9 +202,9 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
         <table className="table table-sm table-bordered mb-1 small">
           <thead>
             <tr>
-              <th />
-              <th className="text-center">{m.summary_sourcing_nl_fraction()}</th>
-              <th className="text-center">{m.summary_sourcing_be_fraction()}</th>
+              <th scope="col">{m.summary_sourcing_method_col()}</th>
+              <th scope="col" className="text-center">{m.summary_sourcing_nl_fraction()}</th>
+              <th scope="col" className="text-center">{m.summary_sourcing_be_fraction()}</th>
             </tr>
           </thead>
           <tbody>
@@ -222,19 +222,19 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
                   <tr>
                     <td>🇳🇱 {m.summary_sourcing_nl_method()}</td>
                     <td className="text-center">
-                      {totalForNLMethod > 0 ? pct(result.nlFractionNL) : "—"}
+                      {totalForNLMethod > 0 ? pct(result.nlFractionDutchMethod) : "—"}
                     </td>
                     <td className="text-center">
-                      {totalForNLMethod > 0 ? pct(1 - result.nlFractionNL) : "—"}
+                      {totalForNLMethod > 0 ? pct(1 - result.nlFractionDutchMethod) : "—"}
                     </td>
                   </tr>
                   <tr>
                     <td>🇧🇪 {m.summary_sourcing_be_method()}</td>
                     <td className="text-center">
-                      {totalForBEMethod > 0 ? pct(result.nlFractionBE) : "—"}
+                      {totalForBEMethod > 0 ? pct(result.nlFractionBelgianMethod) : "—"}
                     </td>
                     <td className="text-center">
-                      {totalForBEMethod > 0 ? pct(1 - result.nlFractionBE) : "—"}
+                      {totalForBEMethod > 0 ? pct(1 - result.nlFractionBelgianMethod) : "—"}
                     </td>
                   </tr>
                 </>
