@@ -68,6 +68,8 @@ export const mockTaxResult: TaxResult = {
   totalTax: 18086.69,
   netIncome: 41913.31,
   effectiveRateTotal: 0.3014,
+  nlFractionNL: 200 / 220,
+  nlFractionBE: 200 / 220,
 };
 
 export const mockTaxResultNLResident: TaxResult = {
@@ -78,4 +80,6 @@ export const mockTaxResultNLResident: TaxResult = {
   totalTax: 15307.51,
   netIncome: 44692.49,
   effectiveRateTotal: 0.2551,
+  nlFractionNL: 200 / 220,
+  nlFractionBE: 200 / 220,
 };

@@ -9,6 +9,18 @@ export function calculate(inputs: TaxInputs): TaxResult {
   const totalTax = nl.netTaxNL + (be?.netTaxBE ?? 0);
   const netIncome = inputs.grossSalary - totalTax;
 
+  const daysNL = inputs.daysWorkedNL;
+  const daysOther = (inputs.daysWorkedBE ?? 0) + (inputs.daysWorkedOther ?? 0);
+  const sickDays = inputs.sickDays ?? 0;
+
+  // NL method: sick days are excluded from the denominator entirely
+  const totalDaysNL = daysNL + daysOther;
+  const nlFractionNL = totalDaysNL > 0 ? daysNL / totalDaysNL : 0;
+
+  // BE method: sick days are added to the denominator, reducing the NL fraction
+  const totalDaysBE = daysNL + daysOther + sickDays;
+  const nlFractionBE = totalDaysBE > 0 ? daysNL / totalDaysBE : 0;
+
   return {
     inputs,
     nl,
@@ -17,6 +29,8 @@ export function calculate(inputs: TaxInputs): TaxResult {
     totalTax,
     netIncome,
     effectiveRateTotal: inputs.grossSalary > 0 ? totalTax / inputs.grossSalary : 0,
+    nlFractionNL,
+    nlFractionBE,
   };
 }
 

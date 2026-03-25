@@ -44,6 +44,8 @@
   "input_roerende_voorheffing": "Withholding tax already paid (€)",
   "input_withheld_tax_nl": "NL wage tax withheld by employer (€)",
   "input_withheld_tax_nl_hint": "From your annual statement (jaaropgave). Leave 0 to skip eindafrekening.",
+  "input_sick_days": "Sick days",
+  "input_sick_days_hint": "Days of sick leave during the year. NL and BE calculate the sourcing ratio differently for sick days.",
   "summary_title": "Net income summary",
   "summary_copy": "Copy summary",
   "summary_reset": "Reset defaults",
@@ -135,5 +137,14 @@
   "wfh_be_split": "🏠 BE split",
   "wfh_hover_hint": "Hover the chart to explore scenarios",
   "wfh_table_show": "Show detail table",
-  "wfh_table_hide": "Hide detail table"
+  "wfh_table_hide": "Hide detail table",
+  "summary_sourcing_title": "Income sourcing ratio",
+  "summary_sourcing_nl_method": "NL method",
+  "summary_sourcing_be_method": "BE method",
+  "summary_sourcing_nl_fraction": "🇳🇱 NL-sourced",
+  "summary_sourcing_be_fraction": "🇧🇪 BE-sourced",
+  "summary_sourcing_nl_formula": "NL method: NL days ÷ (NL + BE + other days) — sick days excluded",
+  "summary_sourcing_be_formula": "BE method: NL days ÷ (NL + BE + other + sick days) — sick days included in denominator",
+  "show_formulas": "Show formulas",
+  "hide_formulas": "Hide formulas"
 }

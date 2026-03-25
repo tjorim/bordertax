@@ -30,7 +30,7 @@ describe("InputPanel", () => {
     const selects = screen.getAllByRole("combobox");
     expect(selects.length).toBe(3);
     expect(screen.queryByText(/municipal tax|communal tax|gemeentebelasting/i)).toBeNull();
-    expect(screen.getAllByRole("spinbutton").length).toBe(6);
+    expect(screen.getAllByRole("spinbutton").length).toBe(7);
   });
 
   it("calls onChange when year dropdown is changed", () => {

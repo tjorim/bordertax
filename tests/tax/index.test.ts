@@ -71,4 +71,42 @@ describe("calculate", () => {
     const result = calculate({ ...base });
     expect(result.inputs).toEqual(base);
   });
+
+  describe("sick days sourcing fractions", () => {
+    it("nlFractionNL equals NL days / (NL + BE + other) ignoring sick days", () => {
+      const result = calculate({ ...base, daysWorkedNL: 200, daysWorkedBE: 20, sickDays: 10 });
+      expect(result.nlFractionNL).toBeCloseTo(200 / 220, 10);
+    });
+
+    it("nlFractionBE equals NL days / (NL + BE + other + sick days)", () => {
+      const result = calculate({ ...base, daysWorkedNL: 200, daysWorkedBE: 20, sickDays: 10 });
+      expect(result.nlFractionBE).toBeCloseTo(200 / 230, 10);
+    });
+
+    it("nlFractionNL and nlFractionBE are equal when sickDays is 0", () => {
+      const result = calculate({ ...base, daysWorkedNL: 200, daysWorkedBE: 20, sickDays: 0 });
+      expect(result.nlFractionNL).toBeCloseTo(result.nlFractionBE, 10);
+    });
+
+    it("nlFractionBE is less than nlFractionNL when sickDays > 0", () => {
+      const result = calculate({ ...base, daysWorkedNL: 200, daysWorkedBE: 20, sickDays: 10 });
+      expect(result.nlFractionBE).toBeLessThan(result.nlFractionNL);
+    });
+
+    it("both fractions are 0 when all days are 0", () => {
+      const result = calculate({ ...base, daysWorkedNL: 0, daysWorkedBE: 0, sickDays: 0 });
+      expect(result.nlFractionNL).toBe(0);
+      expect(result.nlFractionBE).toBe(0);
+    });
+
+    it("nlFractionBE is 0 when NL days are 0 but there are sick days", () => {
+      const result = calculate({ ...base, daysWorkedNL: 0, daysWorkedBE: 20, sickDays: 5 });
+      expect(result.nlFractionBE).toBe(0);
+    });
+
+    it("nlFractionNL is 1 when all worked days are NL days", () => {
+      const result = calculate({ ...base, daysWorkedNL: 220, daysWorkedBE: 0, sickDays: 0 });
+      expect(result.nlFractionNL).toBe(1);
+    });
+  });
 });

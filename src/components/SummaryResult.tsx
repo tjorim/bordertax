@@ -196,6 +196,34 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
         </Col>
       </Row>
 
+      {/* Income sourcing ratio (4 percentages) */}
+      <div className="mt-4">
+        <h6 className="mb-2">{m.summary_sourcing_title()}</h6>
+        <table className="table table-sm table-bordered mb-1 small">
+          <thead>
+            <tr>
+              <th />
+              <th className="text-center">{m.summary_sourcing_nl_fraction()}</th>
+              <th className="text-center">{m.summary_sourcing_be_fraction()}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>🇳🇱 {m.summary_sourcing_nl_method()}</td>
+              <td className="text-center">{pct(result.nlFractionNL)}</td>
+              <td className="text-center">{pct(1 - result.nlFractionNL)}</td>
+            </tr>
+            <tr>
+              <td>🇧🇪 {m.summary_sourcing_be_method()}</td>
+              <td className="text-center">{pct(result.nlFractionBE)}</td>
+              <td className="text-center">{pct(1 - result.nlFractionBE)}</td>
+            </tr>
+          </tbody>
+        </table>
+        <p className="text-muted small mb-0">{m.summary_sourcing_nl_formula()}</p>
+        <p className="text-muted small mb-0">{m.summary_sourcing_be_formula()}</p>
+      </div>
+
       {/* Fiscal balance (if NL tax was withheld) */}
       {withheldTaxNL > 0 && (
         <div className="mt-4">
