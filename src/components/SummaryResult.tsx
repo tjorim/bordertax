@@ -197,61 +197,56 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
       </Row>
 
       {/* Income sourcing ratio (4 percentages) */}
-      <div className="mt-4">
-        <h6 className="mb-2">{m.summary_sourcing_title()}</h6>
-        <table className="table table-sm table-bordered mb-1 small">
-          <thead>
-            <tr>
-              <th scope="col">{m.summary_sourcing_method_col()}</th>
-              <th scope="col" className="text-center">{m.summary_sourcing_nl_fraction()}</th>
-              <th scope="col" className="text-center">{m.summary_sourcing_be_fraction()}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {(() => {
-              const daysNL = Math.max(0, result.inputs.daysWorkedNL);
-              const daysOther =
-                Math.max(0, result.inputs.daysWorkedBE ?? 0) +
-                Math.max(0, result.inputs.daysWorkedOther ?? 0);
-              const sickDays = Math.max(0, result.inputs.sickDays ?? 0);
-              // NL method denominator: NL + other + sick; BE method denominator: NL + other
-              const totalForNLMethod = daysNL + daysOther + sickDays;
-              const totalForBEMethod = daysNL + daysOther;
-              return (
-                <>
-                  <tr>
-                    <td>🇳🇱 {m.summary_sourcing_nl_method()}</td>
-                    <td className="text-center">
-                      {totalForNLMethod > 0 ? pct(result.nlFractionDutchMethod) : "—"}
-                    </td>
-                    <td className="text-center">
-                      {totalForNLMethod > 0 ? pct(1 - result.nlFractionDutchMethod) : "—"}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>🇧🇪 {m.summary_sourcing_be_method()}</td>
-                    <td className="text-center">
-                      {totalForBEMethod > 0 ? pct(result.nlFractionBelgianMethod) : "—"}
-                    </td>
-                    <td className="text-center">
-                      {totalForBEMethod > 0 ? pct(1 - result.nlFractionBelgianMethod) : "—"}
-                    </td>
-                  </tr>
-                </>
-              );
-            })()}
-          </tbody>
-        </table>
-        <p className="text-muted small mb-0">{m.summary_sourcing_nl_formula()}</p>
-        <p className="text-muted small mb-0">{m.summary_sourcing_be_formula()}</p>
-        {(() => {
-          const sickDays = Math.max(0, result.inputs.sickDays ?? 0);
-          const daysWorkedBE = Math.max(0, result.inputs.daysWorkedBE ?? 0);
-          return sickDays > 0 && daysWorkedBE > 0 ? (
-            <p className="text-warning small mb-0 mt-1">{m.summary_sourcing_overlap_note()}</p>
-          ) : null;
-        })()}
-      </div>
+      {(() => {
+        const daysNL = Math.max(0, result.inputs.daysWorkedNL);
+        const daysOther =
+          Math.max(0, result.inputs.daysWorkedBE ?? 0) +
+          Math.max(0, result.inputs.daysWorkedOther ?? 0);
+        const sickDays = Math.max(0, result.inputs.sickDays ?? 0);
+        // NL method denominator: NL + other + sick; BE method denominator: NL + other
+        const totalForNLMethod = daysNL + daysOther + sickDays;
+        const totalForBEMethod = daysNL + daysOther;
+        const showOverlapNote = sickDays > 0 && (result.inputs.daysWorkedBE ?? 0) > 0;
+        return (
+          <div className="mt-4">
+            <h6 className="mb-2">{m.summary_sourcing_title()}</h6>
+            <table className="table table-sm table-bordered mb-1 small">
+              <thead>
+                <tr>
+                  <th scope="col">{m.summary_sourcing_method_col()}</th>
+                  <th scope="col" className="text-center">{m.summary_sourcing_nl_fraction()}</th>
+                  <th scope="col" className="text-center">{m.summary_sourcing_be_fraction()}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>🇳🇱 {m.summary_sourcing_nl_method()}</td>
+                  <td className="text-center">
+                    {totalForNLMethod > 0 ? pct(result.nlFractionDutchMethod) : "—"}
+                  </td>
+                  <td className="text-center">
+                    {totalForNLMethod > 0 ? pct(1 - result.nlFractionDutchMethod) : "—"}
+                  </td>
+                </tr>
+                <tr>
+                  <td>🇧🇪 {m.summary_sourcing_be_method()}</td>
+                  <td className="text-center">
+                    {totalForBEMethod > 0 ? pct(result.nlFractionBelgianMethod) : "—"}
+                  </td>
+                  <td className="text-center">
+                    {totalForBEMethod > 0 ? pct(1 - result.nlFractionBelgianMethod) : "—"}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <p className="text-muted small mb-0">{m.summary_sourcing_nl_formula()}</p>
+            <p className="text-muted small mb-0">{m.summary_sourcing_be_formula()}</p>
+            {showOverlapNote && (
+              <p className="text-warning small mb-0 mt-1">{m.summary_sourcing_overlap_note()}</p>
+            )}
+          </div>
+        );
+      })()}
 
       {/* Fiscal balance (if NL tax was withheld) */}
       {withheldTaxNL > 0 && (
