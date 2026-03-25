@@ -19,8 +19,9 @@ export function calculate(inputs: TaxInputs): TaxResult {
   const totalDaysNL = daysNL + daysOther + sickDays;
   const nlFractionNL = totalDaysNL > 0 ? (daysNL + sickDays) / totalDaysNL : 0;
 
-  // BE method (Belgian FOD Financiën): sick days are excluded entirely from both numerator
-  // and denominator, effectively reducing the denominator and lowering the NL fraction.
+  // BE method (Belgian FOD Financiën): sick days are excluded entirely from both the numerator
+  // and the denominator. Compared to the NL method (where sick days are treated as NL workdays),
+  // this means sick days are not attributed to NL at all, so the resulting NL fraction can be lower.
   // Formula: NL days / (NL days + other days)
   const totalDaysBE = daysNL + daysOther;
   const nlFractionBE = totalDaysBE > 0 ? daysNL / totalDaysBE : 0;

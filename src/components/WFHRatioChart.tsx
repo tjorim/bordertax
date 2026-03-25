@@ -596,6 +596,12 @@ export default function WFHRatioChart({ inputs }: Props) {
         {m.wfh_kaderakkoord_note()}
       </p>
 
+      {/* ── Qualifying taxpayer note ─────────────────────────────────── */}
+      <p className="text-muted small mt-1 mb-0">
+        <i className="bi bi-info-circle me-1" />
+        {m.wfh_qualifying_taxpayer_note()}
+      </p>
+
       {tableOpen && (
         <RatioTable data={data} currentIdx={currentIdx} optimalIdx={optimalIdx} showBE={showBE} />
       )}

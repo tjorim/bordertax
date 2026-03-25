@@ -132,6 +132,7 @@
   "wfh_zone_hybrid_safe": "Hybrid-work safe zone (≤25% BE)",
   "wfh_threshold_10_label": "90% rule",
   "wfh_threshold_10_hint": "Above this: no hypotheekrenteaftrek",
+  "wfh_qualifying_taxpayer_note": "≤10% BE (≥90% NL): you qualify as a 'kwalificerend buitenlands belastingplichtige'. Benefits: hypotheekrenteaftrek (mortgage interest deduction), aftrek ziektekosten (medical expenses), and heffingskorting niet-werkende partner (non-working partner credit). Requires an inkomensverklaring validated by Belgian tax authorities and sent to the Dutch Belastingdienst.",
   "wfh_threshold_25_label": "25% rule",
   "wfh_threshold_25_hint": "Above this: Belgian income tax applies",
   "wfh_be_split": "🏠 BE split",
