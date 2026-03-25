@@ -208,16 +208,37 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>🇳🇱 {m.summary_sourcing_nl_method()}</td>
-              <td className="text-center">{pct(result.nlFractionNL)}</td>
-              <td className="text-center">{pct(1 - result.nlFractionNL)}</td>
-            </tr>
-            <tr>
-              <td>🇧🇪 {m.summary_sourcing_be_method()}</td>
-              <td className="text-center">{pct(result.nlFractionBE)}</td>
-              <td className="text-center">{pct(1 - result.nlFractionBE)}</td>
-            </tr>
+            {(() => {
+              const daysNL = Math.max(0, result.inputs.daysWorkedNL);
+              const daysOther =
+                Math.max(0, result.inputs.daysWorkedBE ?? 0) +
+                Math.max(0, result.inputs.daysWorkedOther ?? 0);
+              const sickDays = Math.max(0, result.inputs.sickDays ?? 0);
+              const totalNL = daysNL + daysOther;
+              const totalBE = daysNL + daysOther + sickDays;
+              return (
+                <>
+                  <tr>
+                    <td>🇳🇱 {m.summary_sourcing_nl_method()}</td>
+                    <td className="text-center">
+                      {totalNL > 0 ? pct(result.nlFractionNL) : "—"}
+                    </td>
+                    <td className="text-center">
+                      {totalNL > 0 ? pct(1 - result.nlFractionNL) : "—"}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>🇧🇪 {m.summary_sourcing_be_method()}</td>
+                    <td className="text-center">
+                      {totalBE > 0 ? pct(result.nlFractionBE) : "—"}
+                    </td>
+                    <td className="text-center">
+                      {totalBE > 0 ? pct(1 - result.nlFractionBE) : "—"}
+                    </td>
+                  </tr>
+                </>
+              );
+            })()}
           </tbody>
         </table>
         <p className="text-muted small mb-0">{m.summary_sourcing_nl_formula()}</p>

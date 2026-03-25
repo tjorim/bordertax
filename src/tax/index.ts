@@ -9,9 +9,9 @@ export function calculate(inputs: TaxInputs): TaxResult {
   const totalTax = nl.netTaxNL + (be?.netTaxBE ?? 0);
   const netIncome = inputs.grossSalary - totalTax;
 
-  const daysNL = inputs.daysWorkedNL;
-  const daysOther = (inputs.daysWorkedBE ?? 0) + (inputs.daysWorkedOther ?? 0);
-  const sickDays = inputs.sickDays ?? 0;
+  const daysNL = Math.max(0, inputs.daysWorkedNL);
+  const daysOther = Math.max(0, inputs.daysWorkedBE ?? 0) + Math.max(0, inputs.daysWorkedOther ?? 0);
+  const sickDays = Math.max(0, inputs.sickDays ?? 0);
 
   // NL method: sick days are excluded from the denominator entirely
   const totalDaysNL = daysNL + daysOther;

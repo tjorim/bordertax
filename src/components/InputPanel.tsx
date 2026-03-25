@@ -369,12 +369,18 @@ export default function InputPanel({ inputs, onChange }: Props) {
                 size="sm"
                 onClick={() => setShowFormulas((v) => !v)}
                 aria-expanded={showFormulas}
+                aria-controls="formulas-panel"
               >
                 <i className={`bi bi-${showFormulas ? "eye-slash" : "info-circle"} me-1`} />
                 {showFormulas ? m.hide_formulas() : m.show_formulas()}
               </Button>
               {showFormulas && (
-                <div className="mt-2 small text-muted border rounded p-2">
+                <div
+                  id="formulas-panel"
+                  role="region"
+                  aria-label={m.show_formulas()}
+                  className="mt-2 small text-muted border rounded p-2"
+                >
                   <p className="mb-1">
                     <strong>🇳🇱 {m.summary_sourcing_nl_method()}:</strong>{" "}
                     {m.summary_sourcing_nl_formula()}
