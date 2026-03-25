@@ -108,5 +108,31 @@ describe("calculate", () => {
       const result = calculate({ ...base, daysWorkedNL: 220, daysWorkedBE: 0, sickDays: 0 });
       expect(result.nlFractionNL).toBe(1);
     });
+
+    it("nlFractionNL denominator includes daysWorkedOther", () => {
+      // 200 NL + 20 BE + 10 other = 230; sick days excluded from NL method
+      const result = calculate({
+        ...base,
+        daysWorkedNL: 200,
+        daysWorkedBE: 20,
+        daysWorkedOther: 10,
+        sickDays: 0,
+      });
+      expect(result.nlFractionNL).toBeCloseTo(200 / 230, 10);
+      expect(result.nlFractionBE).toBeCloseTo(200 / 230, 10);
+    });
+
+    it("nlFractionBE denominator includes daysWorkedOther and sickDays", () => {
+      // NL method: 200/(200+20+10)=200/230; BE method: 200/(200+20+10+5)=200/235
+      const result = calculate({
+        ...base,
+        daysWorkedNL: 200,
+        daysWorkedBE: 20,
+        daysWorkedOther: 10,
+        sickDays: 5,
+      });
+      expect(result.nlFractionNL).toBeCloseTo(200 / 230, 10);
+      expect(result.nlFractionBE).toBeCloseTo(200 / 235, 10);
+    });
   });
 });

@@ -30,7 +30,10 @@ describe("InputPanel", () => {
     const selects = screen.getAllByRole("combobox");
     expect(selects.length).toBe(3);
     expect(screen.queryByText(/municipal tax|communal tax|gemeentebelasting/i)).toBeNull();
-    expect(screen.getAllByRole("spinbutton").length).toBe(7);
+    // Sick days field should be present for NL residents
+    expect(screen.getByRole("spinbutton", { name: /sick days/i })).toBeInTheDocument();
+    // Municipal/communal tax spinbutton should not be rendered for NL residents
+    expect(screen.queryByRole("spinbutton", { name: /municipal tax|communal tax/i })).toBeNull();
   });
 
   it("calls onChange when year dropdown is changed", () => {
