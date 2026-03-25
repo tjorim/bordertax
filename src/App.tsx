@@ -28,6 +28,7 @@ type TaxInputsWithRequiredBEDeductions = TaxInputs & {
   roerendeVoorheffing: number;
   withheldTaxNL: number;
   daysWorkedOther: number;
+  sickDays: number;
 };
 
 const DEFAULT_INPUTS: TaxInputsWithRequiredBEDeductions = {
@@ -48,6 +49,7 @@ const DEFAULT_INPUTS: TaxInputsWithRequiredBEDeductions = {
   dienstencheques: 0,
   roerendeVoorheffing: 0,
   withheldTaxNL: 0,
+  sickDays: 0,
 };
 
 const STORAGE_KEY = "grensarbeider-tax-inputs-v1";
@@ -112,6 +114,7 @@ function sanitizeInputs(raw: unknown): TaxInputs {
       DEFAULT_INPUTS.roerendeVoorheffing,
     ),
     withheldTaxNL: sanitizeNonNegative(input.withheldTaxNL, DEFAULT_INPUTS.withheldTaxNL),
+    sickDays: sanitizeNonNegative(input.sickDays, DEFAULT_INPUTS.sickDays),
   };
 }
 

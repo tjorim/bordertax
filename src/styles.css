@@ -1277,6 +1277,12 @@ footer a:hover {
   border-color: rgba(96, 165, 250, 0.3);
 }
 
+.bt-wfh-zone-pill--kaderakkoord {
+  background: rgba(168, 85, 247, 0.1);
+  color: #a855f7;
+  border-color: rgba(168, 85, 247, 0.3);
+}
+
 .bt-wfh-zone-pill--above {
   background: rgba(245, 158, 11, 0.1);
   color: var(--bt-warning);
@@ -1309,6 +1315,9 @@ footer a:hover {
 .bt-wfh-zone--hybrid {
   fill: rgba(96, 165, 250, 0.025);
 }
+.bt-wfh-zone--kaderakkoord {
+  fill: rgba(168, 85, 247, 0.025);
+}
 .bt-wfh-zone--above {
   fill: rgba(245, 158, 11, 0.025);
 }
@@ -1323,6 +1332,9 @@ footer a:hover {
 }
 .bt-wfh-zone-edge--hybrid {
   stroke: rgba(96, 165, 250, 0.35);
+}
+.bt-wfh-zone-edge--kaderakkoord {
+  stroke: rgba(168, 85, 247, 0.35);
 }
 .bt-wfh-zone-edge--above {
   stroke: rgba(245, 158, 11, 0.35);
@@ -1360,6 +1372,9 @@ footer a:hover {
 .bt-wfh-threshold--25 {
   stroke: rgba(245, 158, 11, 0.7);
 }
+.bt-wfh-threshold--49 {
+  stroke: rgba(168, 85, 247, 0.7);
+}
 
 /* Floating chip labels inside SVG */
 .bt-wfh-chip-bg--10 {
@@ -1367,6 +1382,9 @@ footer a:hover {
 }
 .bt-wfh-chip-bg--25 {
   fill: rgba(245, 158, 11, 0.12);
+}
+.bt-wfh-chip-bg--49 {
+  fill: rgba(168, 85, 247, 0.12);
 }
 
 .bt-wfh-chip-text {
@@ -1381,6 +1399,9 @@ footer a:hover {
 }
 .bt-wfh-chip-text--25 {
   fill: rgba(245, 158, 11, 0.9);
+}
+.bt-wfh-chip-text--49 {
+  fill: rgba(168, 85, 247, 0.9);
 }
 
 /* ── Data lines ───────────────────────────────────────────────── */
@@ -1548,6 +1569,11 @@ footer a:hover {
   color: var(--bt-info);
   border: 1px solid rgba(96, 165, 250, 0.25);
 }
+.bt-wfh-readout__badge--kaderakkoord {
+  background: rgba(168, 85, 247, 0.1);
+  color: #a855f7;
+  border: 1px solid rgba(168, 85, 247, 0.25);
+}
 .bt-wfh-readout__badge--above {
   background: rgba(245, 158, 11, 0.1);
   color: var(--bt-warning);
@@ -1608,6 +1634,10 @@ footer a:hover {
   background: rgba(96, 165, 250, 0.2);
   border: 1px solid rgba(96, 165, 250, 0.35);
 }
+.bt-wfh-legend-zone--kaderakkoord {
+  background: rgba(168, 85, 247, 0.2);
+  border: 1px solid rgba(168, 85, 247, 0.35);
+}
 
 /* ── Table toggle button ──────────────────────────────────────── */
 .bt-wfh-table-toggle {
@@ -1649,6 +1679,9 @@ footer a:hover {
 .bt-wfh-table-cell--hybrid {
   border-left: 3px solid rgba(96, 165, 250, 0.4) !important;
 }
+.bt-wfh-table-cell--kaderakkoord {
+  border-left: 3px solid rgba(168, 85, 247, 0.4) !important;
+}
 .bt-wfh-table-cell--above {
   border-left: 3px solid rgba(245, 158, 11, 0.35) !important;
 }
@@ -1674,6 +1707,14 @@ footer a:hover {
   font-size: 0.62rem;
   font-family: var(--bt-font-mono);
   border: 1px solid rgba(245, 158, 11, 0.28);
+}
+
+.bt-wfh-badge-49 {
+  background: rgba(168, 85, 247, 0.12) !important;
+  color: #a855f7 !important;
+  font-size: 0.62rem;
+  font-family: var(--bt-font-mono);
+  border: 1px solid rgba(168, 85, 247, 0.28);
 }
 
 /* ═══════════════════════════════════════════════════════════════

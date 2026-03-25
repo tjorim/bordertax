@@ -31,6 +31,9 @@ export interface TaxInputs {
   /** NL wage tax withheld by employer (ingehouden loonheffing from jaaropgave).
    *  Used to compute NL refund/payment and net eindafrekening. Default 0. */
   withheldTaxNL?: number;
+  /** Sick days during the year. NL and BE use different methods to account for sick days
+   *  when calculating the income sourcing fraction. Default 0. */
+  sickDays?: number;
 }
 
 export interface BracketLine {
@@ -111,4 +114,13 @@ export interface TaxResult {
   totalTax: number;
   netIncome: number;
   effectiveRateTotal: number;
+  /** NL income fraction according to the Dutch (NL) method: sick days count as NL workdays
+   *  (added to both numerator and denominator).
+   *  Formula: (NL days + sick days) / (NL days + other days + sick days) */
+  nlFractionDutchMethod: number;
+  /** NL income fraction according to the Belgian (BE) method: sick days excluded entirely from
+   *  both numerator and denominator, typically yielding a lower NL fraction than the NL method
+   *  (because sick days are not counted as NL workdays here).
+   *  Formula: NL days / (NL days + other days) */
+  nlFractionBelgianMethod: number;
 }
