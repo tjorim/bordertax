@@ -114,8 +114,13 @@ export interface TaxResult {
   totalTax: number;
   netIncome: number;
   effectiveRateTotal: number;
-  /** NL income fraction according to the Dutch (NL) method: sick days excluded from the denominator. */
+  /** NL income fraction according to the Dutch (NL) method: sick days count as NL workdays
+   *  (added to both numerator and denominator).
+   *  Formula: (NL days + sick days) / (NL days + other days + sick days) */
   nlFractionNL: number;
-  /** NL income fraction according to the Belgian (BE) method: sick days included in the denominator. */
+  /** NL income fraction according to the Belgian (BE) method: sick days excluded entirely from
+   *  both numerator and denominator, typically yielding a lower NL fraction than the NL method
+   *  (because sick days are not counted as NL workdays here).
+   *  Formula: NL days / (NL days + other days) */
   nlFractionBE: number;
 }

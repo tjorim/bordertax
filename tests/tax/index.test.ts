@@ -73,14 +73,18 @@ describe("calculate", () => {
   });
 
   describe("sick days sourcing fractions", () => {
-    it("nlFractionNL equals NL days / (NL + BE + other) ignoring sick days", () => {
+    it("nlFractionNL adds sick days to numerator and includes them in denominator", () => {
+      // NL method: sick days count as NL workdays
+      // (200 + 10) / (200 + 20 + 10) = 210/230
       const result = calculate({ ...base, daysWorkedNL: 200, daysWorkedBE: 20, sickDays: 10 });
-      expect(result.nlFractionNL).toBeCloseTo(200 / 220, 10);
+      expect(result.nlFractionNL).toBeCloseTo(210 / 230, 10);
     });
 
-    it("nlFractionBE equals NL days / (NL + BE + other + sick days)", () => {
+    it("nlFractionBE excludes sick days from both numerator and denominator", () => {
+      // BE method: sick days excluded entirely
+      // 200 / (200 + 20) = 200/220
       const result = calculate({ ...base, daysWorkedNL: 200, daysWorkedBE: 20, sickDays: 10 });
-      expect(result.nlFractionBE).toBeCloseTo(200 / 230, 10);
+      expect(result.nlFractionBE).toBeCloseTo(200 / 220, 10);
     });
 
     it("nlFractionNL and nlFractionBE are equal when sickDays is 0", () => {
@@ -88,9 +92,10 @@ describe("calculate", () => {
       expect(result.nlFractionNL).toBeCloseTo(result.nlFractionBE, 10);
     });
 
-    it("nlFractionBE is less than nlFractionNL when sickDays > 0", () => {
+    it("nlFractionNL is greater than nlFractionBE when sickDays > 0", () => {
+      // NL method gives sick days to NL, so NL fraction is higher than BE method
       const result = calculate({ ...base, daysWorkedNL: 200, daysWorkedBE: 20, sickDays: 10 });
-      expect(result.nlFractionBE).toBeLessThan(result.nlFractionNL);
+      expect(result.nlFractionNL).toBeGreaterThan(result.nlFractionBE);
     });
 
     it("both fractions are 0 when all days are 0", () => {
@@ -100,6 +105,7 @@ describe("calculate", () => {
     });
 
     it("nlFractionBE is 0 when NL days are 0 but there are sick days", () => {
+      // BE method: 0 / (0 + 20) = 0
       const result = calculate({ ...base, daysWorkedNL: 0, daysWorkedBE: 20, sickDays: 5 });
       expect(result.nlFractionBE).toBe(0);
     });
@@ -109,8 +115,8 @@ describe("calculate", () => {
       expect(result.nlFractionNL).toBe(1);
     });
 
-    it("nlFractionNL denominator includes daysWorkedOther", () => {
-      // 200 NL + 20 BE + 10 other = 230; sick days excluded from NL method
+    it("nlFractionNL denominator includes daysWorkedOther and sickDays", () => {
+      // NL method: (200 + 0) / (200 + 20 + 10 + 0) = 200/230 (no sick)
       const result = calculate({
         ...base,
         daysWorkedNL: 200,
@@ -122,8 +128,9 @@ describe("calculate", () => {
       expect(result.nlFractionBE).toBeCloseTo(200 / 230, 10);
     });
 
-    it("nlFractionBE denominator includes daysWorkedOther and sickDays", () => {
-      // NL method: 200/(200+20+10)=200/230; BE method: 200/(200+20+10+5)=200/235
+    it("nlFractionNL adds sick days to NL numerator; nlFractionBE excludes sick days", () => {
+      // NL method: (200 + 5) / (200 + 20 + 10 + 5) = 205/235
+      // BE method: 200 / (200 + 20 + 10) = 200/230
       const result = calculate({
         ...base,
         daysWorkedNL: 200,
@@ -131,8 +138,8 @@ describe("calculate", () => {
         daysWorkedOther: 10,
         sickDays: 5,
       });
-      expect(result.nlFractionNL).toBeCloseTo(200 / 230, 10);
-      expect(result.nlFractionBE).toBeCloseTo(200 / 235, 10);
+      expect(result.nlFractionNL).toBeCloseTo(205 / 235, 10);
+      expect(result.nlFractionBE).toBeCloseTo(200 / 230, 10);
     });
   });
 });

@@ -24,6 +24,8 @@ const STEPS = 101;
 const T_90 = 0.1;
 /** ≤25 % BE → NL retains sole tax & social-security sourcing (NL-BE 2023 agreement) */
 const T_25 = 0.25;
+/** ≤49 % BE → Dutch social security remains applicable via kaderakkoord (apply at SVB; A1 document required) */
+const T_49 = 0.49;
 
 const W = 600;
 const H = 300;
@@ -36,11 +38,12 @@ function fmtK(n: number): string {
   return `€${Math.round(n)}`;
 }
 
-type Zone = "full" | "hybrid" | "above";
+type Zone = "full" | "hybrid" | "kaderakkoord" | "above";
 
 function getZone(ratio: number): Zone {
   if (ratio <= T_90) return "full";
   if (ratio <= T_25) return "hybrid";
+  if (ratio <= T_49) return "kaderakkoord";
   return "above";
 }
 
@@ -126,6 +129,7 @@ export default function WFHRatioChart({ inputs }: Props) {
 
   const x90 = xOf(T_90);
   const x25 = xOf(T_25);
+  const x49 = xOf(T_49);
   const xCur = xIdx(currentIdx);
   const xOpt = xIdx(optimalIdx);
 
@@ -187,7 +191,8 @@ export default function WFHRatioChart({ inputs }: Props) {
           <span className="bt-wfh-zone-pill__rule">
             {currentZone === "full" && m.wfh_threshold_10_label()}
             {currentZone === "hybrid" && m.wfh_threshold_25_label()}
-            {currentZone === "above" && `>${m.wfh_threshold_25_label()}`}
+            {currentZone === "kaderakkoord" && m.wfh_threshold_49_label()}
+            {currentZone === "above" && `>${m.wfh_threshold_49_label()}`}
           </span>
         </div>
       </div>
@@ -237,7 +242,14 @@ export default function WFHRatioChart({ inputs }: Props) {
           <rect
             x={x25}
             y={PAD.top}
-            width={W - PAD.right - x25}
+            width={x49 - x25}
+            height={CH}
+            className="bt-wfh-zone bt-wfh-zone--kaderakkoord"
+          />
+          <rect
+            x={x49}
+            y={PAD.top}
+            width={W - PAD.right - x49}
             height={CH}
             className="bt-wfh-zone bt-wfh-zone--above"
           />
@@ -259,6 +271,13 @@ export default function WFHRatioChart({ inputs }: Props) {
           />
           <line
             x1={x25}
+            x2={x49}
+            y1={PAD.top}
+            y2={PAD.top}
+            className="bt-wfh-zone-edge bt-wfh-zone-edge--kaderakkoord"
+          />
+          <line
+            x1={x49}
             x2={W - PAD.right}
             y1={PAD.top}
             y2={PAD.top}
@@ -318,6 +337,13 @@ export default function WFHRatioChart({ inputs }: Props) {
             y2={H - PAD.bottom}
             className="bt-wfh-threshold bt-wfh-threshold--25"
           />
+          <line
+            x1={x49}
+            x2={x49}
+            y1={PAD.top}
+            y2={H - PAD.bottom}
+            className="bt-wfh-threshold bt-wfh-threshold--49"
+          />
 
           <g transform={`translate(${x90 + 4}, ${PAD.top + 4})`}>
             <rect
@@ -353,6 +379,24 @@ export default function WFHRatioChart({ inputs }: Props) {
               className="bt-wfh-chip-text bt-wfh-chip-text--25"
             >
               {m.wfh_threshold_25_label()}
+            </text>
+          </g>
+          <g transform={`translate(${x49 + 4}, ${PAD.top + 4})`}>
+            <rect
+              rx="3"
+              ry="3"
+              width="44"
+              height="14"
+              className="bt-wfh-chip-bg bt-wfh-chip-bg--49"
+            />
+            <text
+              x="22"
+              y="7"
+              textAnchor="middle"
+              dominantBaseline="middle"
+              className="bt-wfh-chip-text bt-wfh-chip-text--49"
+            >
+              {m.wfh_threshold_49_label()}
             </text>
           </g>
 
@@ -469,6 +513,10 @@ export default function WFHRatioChart({ inputs }: Props) {
             {m.wfh_zone_hybrid_safe()}
           </span>
           <span className="bt-year-chart__legend-item">
+            <span className="bt-wfh-legend-zone bt-wfh-legend-zone--kaderakkoord" />
+            {m.wfh_zone_kaderakkoord()}
+          </span>
+          <span className="bt-year-chart__legend-item">
             <span className="bt-wfh-legend-dash bt-wfh-legend-dash--current" />
             {m.wfh_current_ratio()}
           </span>
@@ -513,7 +561,9 @@ export default function WFHRatioChart({ inputs }: Props) {
                 {getZone(displayPoint.beRatio) === "full" && `✓ ${m.wfh_threshold_10_label()}`}
                 {getZone(displayPoint.beRatio) === "hybrid" &&
                   `✓ ${m.wfh_threshold_25_label()} · ✗ hypo`}
-                {getZone(displayPoint.beRatio) === "above" && `✗ ${m.wfh_threshold_25_label()}`}
+                {getZone(displayPoint.beRatio) === "kaderakkoord" &&
+                  `✓ ${m.wfh_threshold_49_label()} · A1`}
+                {getZone(displayPoint.beRatio) === "above" && `✗ ${m.wfh_threshold_49_label()}`}
               </span>
             </>
           ) : (
@@ -540,6 +590,18 @@ export default function WFHRatioChart({ inputs }: Props) {
         {tableOpen ? m.wfh_table_hide() : m.wfh_table_show()}
       </button>
 
+      {/* ── Kaderakkoord note ────────────────────────────────────────── */}
+      <p className="text-muted small mt-2 mb-0">
+        <i className="bi bi-info-circle me-1" />
+        {m.wfh_kaderakkoord_note()}
+      </p>
+
+      {/* ── Qualifying taxpayer note ─────────────────────────────────── */}
+      <p className="text-muted small mt-1 mb-0">
+        <i className="bi bi-info-circle me-1" />
+        {m.wfh_qualifying_taxpayer_note()}
+      </p>
+
       {tableOpen && (
         <RatioTable data={data} currentIdx={currentIdx} optimalIdx={optimalIdx} showBE={showBE} />
       )}
@@ -561,7 +623,7 @@ function RatioTable({ data, currentIdx, optimalIdx, showBE }: RatioTableProps) {
 
   interface RowMeta {
     idx: number;
-    threshold?: "90-norm" | "hybrid";
+    threshold?: "90-norm" | "hybrid" | "kaderakkoord";
     isCurrent?: boolean;
     isOptimal?: boolean;
   }
@@ -581,6 +643,7 @@ function RatioTable({ data, currentIdx, optimalIdx, showBE }: RatioTableProps) {
   add(0);
   add(Math.round(T_90 * (STEPS - 1)), { threshold: "90-norm" });
   add(Math.round(T_25 * (STEPS - 1)), { threshold: "hybrid" });
+  add(Math.round(T_49 * (STEPS - 1)), { threshold: "kaderakkoord" });
   add(currentIdx, { isCurrent: true });
   add(optimalIdx, { isOptimal: true });
   add(Math.round(0.5 * (STEPS - 1)));
@@ -634,6 +697,9 @@ function RatioTable({ data, currentIdx, optimalIdx, showBE }: RatioTableProps) {
                 )}
                 {threshold === "hybrid" && (
                   <Badge className="ms-2 bt-wfh-badge-25">{m.wfh_threshold_25_label()}</Badge>
+                )}
+                {threshold === "kaderakkoord" && (
+                  <Badge className="ms-2 bt-wfh-badge-49">{m.wfh_threshold_49_label()}</Badge>
                 )}
               </td>
               <td className="text-end text-danger small">−{fmt(d.nlTax)}</td>

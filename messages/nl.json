@@ -132,6 +132,7 @@
   "wfh_zone_hybrid_safe": "Hybride-werk veilige zone (≤25% BE)",
   "wfh_threshold_10_label": "90%-norm",
   "wfh_threshold_10_hint": "Hierboven: geen hypotheekrenteaftrek",
+  "wfh_qualifying_taxpayer_note": "≤10% BE (≥90% NL): u kwalificeert als 'kwalificerend buitenlands belastingplichtige'. Voordelen: hypotheekrenteaftrek, aftrek ziektekosten en heffingskorting niet-werkende partner. Vereist een inkomensverklaring gevalideerd door de Belgische belastingdienst en doorgestuurd naar de Nederlandse Belastingdienst.",
   "wfh_threshold_25_label": "25%-regel",
   "wfh_threshold_25_hint": "Hierboven: Belgische inkomstenbelasting van toepassing",
   "wfh_be_split": "🏠 BE-verdeling",
@@ -143,8 +144,13 @@
   "summary_sourcing_be_method": "BE methode",
   "summary_sourcing_nl_fraction": "🇳🇱 NL-bron",
   "summary_sourcing_be_fraction": "🇧🇪 BE-bron",
-  "summary_sourcing_nl_formula": "NL methode: NL-dagen ÷ (NL + BE + overige dagen) — ziektedagen uitgesloten",
-  "summary_sourcing_be_formula": "BE methode: NL-dagen ÷ (NL + BE + overige + ziektedagen) — ziektedagen inbegrepen in de noemer",
+  "summary_sourcing_nl_formula": "NL methode: (NL + ziektedagen) ÷ (NL + BE + overige + ziektedagen) — ziektedagen tellen als NL werkdagen",
+  "summary_sourcing_be_formula": "BE methode: NL-dagen ÷ (NL + BE + overige dagen) — ziektedagen volledig uitgesloten van teller en noemer",
+  "summary_sourcing_overlap_note": "⚠️ Met ziektedagen én Belgische werkdagen kan de som van de NL- en BE-bronfracties meer dan 100% zijn: NL telt ziektedagen als NL-werkdagen, terwijl BE ze volledig buiten beschouwing laat — waardoor de BE-fractie iets hoger uitvalt dan anders het geval zou zijn. De overlap bedraagt ziektedagen × BE-dagen ÷ [(NL + BE + ziek) × (NL + BE)], wat kan leiden tot dubbele belasting over een klein deel van het ziektedaginkomen.",
   "show_formulas": "Toon formules",
-  "hide_formulas": "Verberg formules"
+  "hide_formulas": "Verberg formules",
+  "wfh_threshold_49_label": "49%-regel",
+  "wfh_threshold_49_hint": "Hierboven: Nederlandse sociale zekerheid is niet meer van toepassing. Vraag kaderakkoord aan bij SVB om gedekt te blijven (geldt t/m 49%).",
+  "wfh_zone_kaderakkoord": "Kaderakkoord-zone (25–49% BE, A1-document vereist)",
+  "wfh_kaderakkoord_note": "25–49% van uw dagen werken vanuit België (telewerk): Nederlandse sociale zekerheid blijft van toepassing als u het kaderakkoord aanvraagt bij de SVB (vereist een A1-document). Boven 49% is de Belgische sociale zekerheid van toepassing."
 }

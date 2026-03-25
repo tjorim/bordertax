@@ -132,6 +132,7 @@
   "wfh_zone_hybrid_safe": "Hybrid-work safe zone (≤25% BE)",
   "wfh_threshold_10_label": "90% rule",
   "wfh_threshold_10_hint": "Above this: no hypotheekrenteaftrek",
+  "wfh_qualifying_taxpayer_note": "≤10% BE (≥90% NL): you qualify as a 'kwalificerend buitenlands belastingplichtige'. Benefits: hypotheekrenteaftrek (mortgage interest deduction), aftrek ziektekosten (medical expenses), and heffingskorting niet-werkende partner (non-working partner credit). Requires an inkomensverklaring validated by Belgian tax authorities and sent to the Dutch Belastingdienst.",
   "wfh_threshold_25_label": "25% rule",
   "wfh_threshold_25_hint": "Above this: Belgian income tax applies",
   "wfh_be_split": "🏠 BE split",
@@ -143,8 +144,13 @@
   "summary_sourcing_be_method": "BE method",
   "summary_sourcing_nl_fraction": "🇳🇱 NL-sourced",
   "summary_sourcing_be_fraction": "🇧🇪 BE-sourced",
-  "summary_sourcing_nl_formula": "NL method: NL days ÷ (NL + BE + other days) — sick days excluded",
-  "summary_sourcing_be_formula": "BE method: NL days ÷ (NL + BE + other + sick days) — sick days included in denominator",
+  "summary_sourcing_nl_formula": "NL method: (NL + sick days) ÷ (NL + BE + other + sick days) — sick days count as NL workdays",
+  "summary_sourcing_be_formula": "BE method: NL days ÷ (NL + BE + other days) — sick days excluded from both numerator and denominator",
+  "summary_sourcing_overlap_note": "⚠️ With sick days and Belgian workdays recorded, the NL and BE sourcing fractions can sum to more than 100%: NL counts sick days as NL-sourced workdays, while BE excludes them entirely — making the BE fraction slightly larger than it would be otherwise. The overlap equals sick days × BE days ÷ [(NL + BE + sick) × (NL + BE)], which may result in a small portion of sick-day income being taxed by both countries (double taxation).",
   "show_formulas": "Show formulas",
-  "hide_formulas": "Hide formulas"
+  "hide_formulas": "Hide formulas",
+  "wfh_threshold_49_label": "49% rule",
+  "wfh_threshold_49_hint": "Above this: Dutch social security no longer applies. Request kaderakkoord at SVB to stay covered (applies up to 49%).",
+  "wfh_zone_kaderakkoord": "Kaderakkoord zone (25–49% BE, A1 required)",
+  "wfh_kaderakkoord_note": "Working 25–49% of your days from Belgium (telework): Dutch social security remains applicable if you apply for the kaderakkoord at SVB (requires an A1 document). Above 49%, Belgian social security applies."
 }
