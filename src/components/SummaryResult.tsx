@@ -244,6 +244,13 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
         </table>
         <p className="text-muted small mb-0">{m.summary_sourcing_nl_formula()}</p>
         <p className="text-muted small mb-0">{m.summary_sourcing_be_formula()}</p>
+        {(() => {
+          const sickDays = Math.max(0, result.inputs.sickDays ?? 0);
+          const daysWorkedBE = Math.max(0, result.inputs.daysWorkedBE ?? 0);
+          return sickDays > 0 && daysWorkedBE > 0 ? (
+            <p className="text-warning small mb-0 mt-1">{m.summary_sourcing_overlap_note()}</p>
+          ) : null;
+        })()}
       </div>
 
       {/* Fiscal balance (if NL tax was withheld) */}

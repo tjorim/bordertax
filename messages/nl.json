@@ -146,6 +146,7 @@
   "summary_sourcing_be_fraction": "🇧🇪 BE-bron",
   "summary_sourcing_nl_formula": "NL methode: (NL + ziektedagen) ÷ (NL + BE + overige + ziektedagen) — ziektedagen tellen als NL werkdagen",
   "summary_sourcing_be_formula": "BE methode: NL-dagen ÷ (NL + BE + overige dagen) — ziektedagen volledig uitgesloten van teller en noemer",
+  "summary_sourcing_overlap_note": "⚠️ Met ziektedagen én Belgische werkdagen kan de som van de NL- en BE-bronfracties meer dan 100% zijn: NL telt ziektedagen als NL-werkdagen, terwijl BE ze volledig buiten beschouwing laat — waardoor de BE-fractie iets hoger uitvalt dan anders het geval zou zijn. De overlap bedraagt ziektedagen × BE-dagen ÷ [(NL + BE + ziek) × (NL + BE)], wat kan leiden tot dubbele belasting over een klein deel van het ziektedaginkomen.",
   "show_formulas": "Toon formules",
   "hide_formulas": "Verberg formules",
   "wfh_threshold_49_label": "49%-regel",

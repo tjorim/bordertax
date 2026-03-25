@@ -146,6 +146,7 @@
   "summary_sourcing_be_fraction": "🇧🇪 BE-sourced",
   "summary_sourcing_nl_formula": "NL method: (NL + sick days) ÷ (NL + BE + other + sick days) — sick days count as NL workdays",
   "summary_sourcing_be_formula": "BE method: NL days ÷ (NL + BE + other days) — sick days excluded from both numerator and denominator",
+  "summary_sourcing_overlap_note": "⚠️ With sick days and Belgian workdays recorded, the NL and BE sourcing fractions can sum to more than 100%: NL counts sick days as NL-sourced workdays, while BE excludes them entirely — making the BE fraction slightly larger than it would be otherwise. The overlap equals sick days × BE days ÷ [(NL + BE + sick) × (NL + BE)], which may result in a small portion of sick-day income being taxed by both countries (double taxation).",
   "show_formulas": "Show formulas",
   "hide_formulas": "Hide formulas",
   "wfh_threshold_49_label": "49% rule",
