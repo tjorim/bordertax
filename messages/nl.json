@@ -143,8 +143,12 @@
   "summary_sourcing_be_method": "BE methode",
   "summary_sourcing_nl_fraction": "🇳🇱 NL-bron",
   "summary_sourcing_be_fraction": "🇧🇪 BE-bron",
-  "summary_sourcing_nl_formula": "NL methode: NL-dagen ÷ (NL + BE + overige dagen) — ziektedagen uitgesloten",
-  "summary_sourcing_be_formula": "BE methode: NL-dagen ÷ (NL + BE + overige + ziektedagen) — ziektedagen inbegrepen in de noemer",
+  "summary_sourcing_nl_formula": "NL methode: (NL + ziektedagen) ÷ (NL + BE + overige + ziektedagen) — ziektedagen tellen als NL werkdagen",
+  "summary_sourcing_be_formula": "BE methode: NL-dagen ÷ (NL + BE + overige dagen) — ziektedagen volledig uitgesloten van teller en noemer",
   "show_formulas": "Toon formules",
-  "hide_formulas": "Verberg formules"
+  "hide_formulas": "Verberg formules",
+  "wfh_threshold_49_label": "49%-regel",
+  "wfh_threshold_49_hint": "Hierboven: Nederlandse sociale zekerheid is niet meer van toepassing. Vraag kaderakkoord aan bij SVB om gedekt te blijven (geldt t/m 49%).",
+  "wfh_zone_kaderakkoord": "Kaderakkoord-zone (25–49% BE, A1-document vereist)",
+  "wfh_kaderakkoord_note": "25–49% van uw dagen werken vanuit België (telewerk): Nederlandse sociale zekerheid blijft van toepassing als u het kaderakkoord aanvraagt bij de SVB (vereist een A1-document). Boven 49% is de Belgische sociale zekerheid van toepassing."
 }

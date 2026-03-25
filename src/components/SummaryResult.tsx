@@ -214,26 +214,27 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
                 Math.max(0, result.inputs.daysWorkedBE ?? 0) +
                 Math.max(0, result.inputs.daysWorkedOther ?? 0);
               const sickDays = Math.max(0, result.inputs.sickDays ?? 0);
-              const totalNL = daysNL + daysOther;
-              const totalBE = daysNL + daysOther + sickDays;
+              // NL method denominator: NL + other + sick; BE method denominator: NL + other
+              const totalForNLMethod = daysNL + daysOther + sickDays;
+              const totalForBEMethod = daysNL + daysOther;
               return (
                 <>
                   <tr>
                     <td>🇳🇱 {m.summary_sourcing_nl_method()}</td>
                     <td className="text-center">
-                      {totalNL > 0 ? pct(result.nlFractionNL) : "—"}
+                      {totalForNLMethod > 0 ? pct(result.nlFractionNL) : "—"}
                     </td>
                     <td className="text-center">
-                      {totalNL > 0 ? pct(1 - result.nlFractionNL) : "—"}
+                      {totalForNLMethod > 0 ? pct(1 - result.nlFractionNL) : "—"}
                     </td>
                   </tr>
                   <tr>
                     <td>🇧🇪 {m.summary_sourcing_be_method()}</td>
                     <td className="text-center">
-                      {totalBE > 0 ? pct(result.nlFractionBE) : "—"}
+                      {totalForBEMethod > 0 ? pct(result.nlFractionBE) : "—"}
                     </td>
                     <td className="text-center">
-                      {totalBE > 0 ? pct(1 - result.nlFractionBE) : "—"}
+                      {totalForBEMethod > 0 ? pct(1 - result.nlFractionBE) : "—"}
                     </td>
                   </tr>
                 </>

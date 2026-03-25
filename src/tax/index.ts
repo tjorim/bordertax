@@ -13,12 +13,16 @@ export function calculate(inputs: TaxInputs): TaxResult {
   const daysOther = Math.max(0, inputs.daysWorkedBE ?? 0) + Math.max(0, inputs.daysWorkedOther ?? 0);
   const sickDays = Math.max(0, inputs.sickDays ?? 0);
 
-  // NL method: sick days are excluded from the denominator entirely
-  const totalDaysNL = daysNL + daysOther;
-  const nlFractionNL = totalDaysNL > 0 ? daysNL / totalDaysNL : 0;
+  // NL method (Dutch Belastingdienst): sick days count as NL workdays, so they are added to
+  // both the numerator and denominator. The denominator therefore includes sick days.
+  // Formula: (NL days + sick days) / (NL days + other days + sick days)
+  const totalDaysNL = daysNL + daysOther + sickDays;
+  const nlFractionNL = totalDaysNL > 0 ? (daysNL + sickDays) / totalDaysNL : 0;
 
-  // BE method: sick days are added to the denominator, reducing the NL fraction
-  const totalDaysBE = daysNL + daysOther + sickDays;
+  // BE method (Belgian FOD Financiën): sick days are excluded entirely from both numerator
+  // and denominator, effectively reducing the denominator and lowering the NL fraction.
+  // Formula: NL days / (NL days + other days)
+  const totalDaysBE = daysNL + daysOther;
   const nlFractionBE = totalDaysBE > 0 ? daysNL / totalDaysBE : 0;
 
   return {
