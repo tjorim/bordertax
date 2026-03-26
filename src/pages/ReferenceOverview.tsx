@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { useState } from "react";
 import { Button, Card, Col, Container, Navbar, Row } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
@@ -7,7 +8,8 @@ import * as m from "../paraglide/messages.js";
 import { getLocale, setLocale } from "../paraglide/runtime.js";
 
 export default function ReferenceOverview() {
-  const nextLangLabel = getLocale() === "en" ? m.lang_nl() : m.lang_en();
+  const [locale, setLocaleState] = useState(getLocale());
+  const nextLangLabel = locale === "en" ? m.lang_nl() : m.lang_en();
 
   return (
     <>
@@ -28,7 +30,9 @@ export default function ReferenceOverview() {
             size="sm"
             className="ms-3"
             onClick={() => {
-              setLocale(getLocale() === "en" ? "nl" : "en");
+              const nextLocale = locale === "en" ? "nl" : "en";
+              setLocale(nextLocale, { reload: false });
+              setLocaleState(nextLocale);
             }}
             aria-label={nextLangLabel}
           >
