@@ -127,12 +127,8 @@ export default function SalarySplitReference() {
 
         {/* ── Alert: geen neutralisatieregeling ─────────────────── */}
         <WarnBox>
-          <strong>
-            {locale === "en" ? "Tax ≠ Social security:" : "Belasting ≠ Sociale zekerheid:"}
-          </strong>{" "}
-          {locale === "en"
-            ? "For social security there is a framework agreement that neutralises remote work (up to 49%). For tax there is no comparable rule. Every day working from home in Belgium is a day on which Belgium levies tax."
-            : "Voor sociale zekerheid bestaat een kaderovereenkomst die thuiswerk neutraliseert (tot 49%). Voor belasting bestaat géén vergelijkbare regeling. Elke dag thuiswerken in België is een dag waarover België belasting heft."}
+          <strong>{m.ref_ss_tax_vs_ss_title()}</strong>{" "}
+          {m.ref_ss_tax_vs_ss_body()}
         </WarnBox>
 
         <Row className="g-4">
