@@ -10,7 +10,8 @@ export function calculate(inputs: TaxInputs): TaxResult {
   const netIncome = inputs.grossSalary - totalTax;
 
   const daysNL = Math.max(0, inputs.daysWorkedNL);
-  const daysOther = Math.max(0, inputs.daysWorkedBE ?? 0) + Math.max(0, inputs.daysWorkedOther ?? 0);
+  const daysOther =
+    Math.max(0, inputs.daysWorkedBE ?? 0) + Math.max(0, inputs.daysWorkedOther ?? 0);
   const sickDays = Math.max(0, inputs.sickDays ?? 0);
 
   // NL method (Dutch Belastingdienst): sick days count as NL workdays, so they are added to

@@ -318,11 +318,14 @@ export default function InputPanel({ inputs, onChange }: Props) {
                   {m.input_social_security_above_50()}
                 </Alert>
               )}
-              {inputs.residentCountry === "BE" && totalWorkdays > 0 && beFraction >= 0.25 && beFraction < 0.5 && (
-                <Alert variant="info" className="mt-2 py-2 small mb-0">
-                  {m.input_social_security_kaderakkoord()}
-                </Alert>
-              )}
+              {inputs.residentCountry === "BE" &&
+                totalWorkdays > 0 &&
+                beFraction >= 0.25 &&
+                beFraction < 0.5 && (
+                  <Alert variant="info" className="mt-2 py-2 small mb-0">
+                    {m.input_social_security_kaderakkoord()}
+                  </Alert>
+                )}
             </Col>
 
             <Col xs={12}>

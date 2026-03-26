@@ -14,6 +14,53 @@ export default defineConfig({
       project: "./project.inlang",
       outdir: "./src/paraglide",
       strategy: ["localStorage", "preferredLanguage", "baseLocale"],
+      routeStrategies: [
+        {
+          match: "/reference/:path(.*)?",
+          strategy: ["url", "localStorage", "preferredLanguage", "baseLocale"],
+        },
+        {
+          match: "/naslagwerk/:path(.*)?",
+          strategy: ["url", "localStorage", "preferredLanguage", "baseLocale"],
+        },
+      ],
+      urlPatterns: [
+        {
+          pattern: "/",
+          localized: [
+            ["en", "/"],
+            ["nl", "/"],
+          ],
+        },
+        {
+          pattern: "/reference/salary-split",
+          localized: [
+            ["en", "/reference/salary-split"],
+            ["nl", "/naslagwerk/salary-split"],
+          ],
+        },
+        {
+          pattern: "/reference/pension",
+          localized: [
+            ["en", "/reference/pension"],
+            ["nl", "/naslagwerk/pensioen"],
+          ],
+        },
+        {
+          pattern: "/reference",
+          localized: [
+            ["en", "/reference"],
+            ["nl", "/naslagwerk"],
+          ],
+        },
+        {
+          pattern: "/:path(.*)?",
+          localized: [
+            ["en", "/:path(.*)?"],
+            ["nl", "/:path(.*)?"],
+          ],
+        },
+      ],
     }),
     reactPlugin(),
   ],
