@@ -191,6 +191,8 @@
   "ref_ss_be_codes_title": "Aangifte-codes Belgische personenbelasting:",
   "ref_ss_heffingskortingen_title": "Heffingskortingen (inkomensafhankelijk):",
   "ref_ss_conditions": "Voorwaarden:",
+  "ref_ss_tax_vs_ss_title": "Belasting ≠ Sociale zekerheid:",
+  "ref_ss_tax_vs_ss_body": "Voor sociale zekerheid bestaat een kaderovereenkomst die thuiswerk neutraliseert (tot 49%). Voor belasting bestaat géén vergelijkbare regeling. Elke dag thuiswerken in België is een dag waarover België belasting heft.",
   "ref_ss_footer": "Gebaseerd op ACV Grensarbeiders Checklist 2026 & Infosessie 24 maart 2026 (Pelt). Geen rechten te ontlenen. Raadpleeg ACV Grensarbeiders of een fiscalist voor uw persoonlijke situatie.",
 
   "ref_table_component": "Component",
@@ -246,5 +248,7 @@
   "ref_pension_conditions": "Voorwaarden",
   "ref_pension_special_situations": "Bijzondere situaties",
   "ref_pension_exception_nl": "Uitzondering: belastbaar in Nederland",
+  "ref_pension_term_confusion_title": "Begripsverwarring:",
+  "ref_pension_term_confusion_body": "\"Pensioen\" in Nederland = aanvullend op AOW (2e pijler). \"Pensioen\" in België = het wettelijk pensioen. Niet verwarren bij gesprekken met HR of pensioenfondsen.",
   "ref_pension_footer": "Gebaseerd op ACV Grensarbeiders Infosessie 24 maart 2026 (Pelt). Geen rechten te ontlenen. Raadpleeg ACV Grensarbeiders of een pensioenspecialist."
 }

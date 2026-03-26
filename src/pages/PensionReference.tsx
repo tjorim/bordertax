@@ -1,9 +1,8 @@
 import { Link } from "@tanstack/react-router";
+import { useState } from "react";
 import {
   Accordion,
-  Badge,
   Button,
-  Card,
   Col,
   Container,
   Navbar,
@@ -15,113 +14,7 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import "../styles.css";
 import * as m from "../paraglide/messages.js";
 import { getLocale, setLocale } from "../paraglide/runtime.js";
-
-// ── Shared styled sub-components ────────────────────────────────
-
-function SectionCard({
-  title,
-  icon,
-  accent,
-  children,
-}: {
-  title: string;
-  icon: string;
-  accent?: "nl" | "be" | "neutral";
-  children: React.ReactNode;
-}) {
-  const borderColor =
-    accent === "nl"
-      ? "var(--bt-nl-border)"
-      : accent === "be"
-        ? "var(--bt-be-border)"
-        : "var(--bt-border)";
-  return (
-    <Card
-      className="mb-4"
-      style={{
-        background: "var(--bt-surface-2)",
-        border: `1px solid ${borderColor}`,
-        borderRadius: "var(--bt-r-lg)",
-      }}
-    >
-      <Card.Header
-        style={{
-          background: "var(--bt-surface-3)",
-          borderBottom: `1px solid ${borderColor}`,
-          borderRadius: "var(--bt-r-lg) var(--bt-r-lg) 0 0",
-        }}
-      >
-        <h5 className="mb-0 fw-semibold">
-          <i className={`bi ${icon} me-2`} style={{ color: borderColor }} />
-          {title}
-        </h5>
-      </Card.Header>
-      <Card.Body className="pt-3">{children}</Card.Body>
-    </Card>
-  );
-}
-
-function NlBadge({ children }: { children: React.ReactNode }) {
-  return (
-    <Badge
-      style={{
-        background: "var(--bt-nl-dim)",
-        color: "var(--bt-nl-light)",
-        border: "1px solid var(--bt-nl-border)",
-        fontWeight: 500,
-      }}
-    >
-      {children}
-    </Badge>
-  );
-}
-
-function BeBadge({ children }: { children: React.ReactNode }) {
-  return (
-    <Badge
-      style={{
-        background: "var(--bt-be-dim)",
-        color: "var(--bt-be-light)",
-        border: "1px solid var(--bt-be-border)",
-        fontWeight: 500,
-      }}
-    >
-      {children}
-    </Badge>
-  );
-}
-
-function TipBox({ children }: { children: React.ReactNode }) {
-  return (
-    <div
-      className="p-3 rounded mb-3"
-      style={{
-        background: "var(--bt-info-dim)",
-        border: "1px solid rgba(96,165,250,0.25)",
-        fontSize: "0.9rem",
-      }}
-    >
-      <i className="bi bi-lightbulb-fill me-2" style={{ color: "var(--bt-info)" }} />
-      {children}
-    </div>
-  );
-}
-
-function WarnBox({ children }: { children: React.ReactNode }) {
-  return (
-    <div
-      className="p-3 rounded mb-3"
-      style={{
-        background: "var(--bt-warning-dim)",
-        border: "1px solid rgba(245,158,11,0.3)",
-        fontSize: "0.9rem",
-      }}
-    >
-      <i className="bi bi-exclamation-triangle-fill me-2" style={{ color: "var(--bt-warning)" }} />
-      {children}
-    </div>
-  );
-}
+import { BeBadge, NlBadge, SectionCard, TipBox, WarnBox } from "./reference/components.js";
 
 function StatRow({
   label,
@@ -164,7 +57,8 @@ function StatRow({
 // ── Main page ────────────────────────────────────────────────────
 
 export default function PensionReference() {
-  const nextLangLabel = getLocale() === "en" ? m.lang_nl() : m.lang_en();
+  const [locale, setLocaleState] = useState(getLocale());
+  const nextLangLabel = locale === "en" ? m.lang_nl() : m.lang_en();
 
   return (
     <>
@@ -191,7 +85,9 @@ export default function PensionReference() {
             size="sm"
             className="ms-3"
             onClick={() => {
-              setLocale(getLocale() === "en" ? "nl" : "en");
+              const nextLocale = locale === "en" ? "nl" : "en";
+              setLocale(nextLocale, { reload: false });
+              setLocaleState(nextLocale);
             }}
             aria-label={nextLangLabel}
           >
@@ -265,9 +161,8 @@ export default function PensionReference() {
             ))}
           </Row>
           <WarnBox>
-            <strong>Begripsverwarring:</strong> "Pensioen" in Nederland = aanvullend op AOW (2e
-            pijler). "Pensioen" in België = het wettelijk pensioen. Niet verwarren bij gesprekken
-            met HR of pensioenfondsen.
+            <strong>{m.ref_pension_term_confusion_title()}</strong>{" "}
+            {m.ref_pension_term_confusion_body()}
           </WarnBox>
         </SectionCard>
 
