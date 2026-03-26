@@ -79,6 +79,7 @@ export function BeBadge({ children }: { children: React.ReactNode }) {
 export function TipBox({ children }: { children: React.ReactNode }) {
   return (
     <div
+      role="note"
       className="p-3 rounded mb-3"
       style={{
         background: "var(--bt-info-dim)",
@@ -95,6 +96,7 @@ export function TipBox({ children }: { children: React.ReactNode }) {
 export function WarnBox({ children }: { children: React.ReactNode }) {
   return (
     <div
+      role="alert"
       className="p-3 rounded mb-3"
       style={{
         background: "var(--bt-warning-dim)",

@@ -246,5 +246,7 @@
   "ref_pension_conditions": "Voorwaarden",
   "ref_pension_special_situations": "Bijzondere situaties",
   "ref_pension_exception_nl": "Uitzondering: belastbaar in Nederland",
+  "ref_pension_term_confusion_title": "Begripsverwarring:",
+  "ref_pension_term_confusion_body": "\"Pensioen\" in Nederland = aanvullend op AOW (2e pijler). \"Pensioen\" in België = het wettelijk pensioen. Niet verwarren bij gesprekken met HR of pensioenfondsen.",
   "ref_pension_footer": "Gebaseerd op ACV Grensarbeiders Infosessie 24 maart 2026 (Pelt). Geen rechten te ontlenen. Raadpleeg ACV Grensarbeiders of een pensioenspecialist."
 }

@@ -161,12 +161,8 @@ export default function PensionReference() {
             ))}
           </Row>
           <WarnBox>
-            <strong>
-              {locale === "en" ? "Term confusion:" : "Begripsverwarring:"}
-            </strong>{" "}
-            {locale === "en"
-              ? `"Pension" in the Netherlands = supplementary to AOW (2nd pillar). "Pension" in Belgium = the statutory pension. Don't confuse this when talking to HR or pension funds.`
-              : `"Pensioen" in Nederland = aanvullend op AOW (2e pijler). "Pensioen" in België = het wettelijk pensioen. Niet verwarren bij gesprekken met HR of pensioenfondsen.`}
+            <strong>{m.ref_pension_term_confusion_title()}</strong>{" "}
+            {m.ref_pension_term_confusion_body()}
           </WarnBox>
         </SectionCard>
 
