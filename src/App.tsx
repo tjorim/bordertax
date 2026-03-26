@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { Alert, Button, Col, Container, Nav, Navbar, Row, Tab } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -158,6 +159,16 @@ export default function App() {
           <Navbar.Text className="text-secondary small">
             {m.app_tax_year()} {inputs.year}
           </Navbar.Text>
+          <Link
+            to="/naslagwerk"
+            style={{ textDecoration: "none" }}
+            className="ms-3"
+          >
+            <span className="text-light small opacity-75">
+              <i className="bi bi-book me-1" />
+              Salary Split
+            </span>
+          </Link>
           <Button
             variant="outline-light"
             size="sm"
