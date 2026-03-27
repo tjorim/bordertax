@@ -50,8 +50,8 @@
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.1",
-    "@vitest/coverage-v8": "^4.1.0",
-    "@vitest/ui": "^4.0.18",
+    "@vitest/coverage-v8": "^4.1.2",
+    "@vitest/ui": "^4.1.2",
     "happy-dom": "^20.8.8",
     "lightningcss": "^1.31.0",
     "oxfmt": "^0.42.0",
@@ -59,7 +59,7 @@
     "terser": "^5.46.1",
     "typescript": "~5.9.3",
     "vite": "^8.0.3",
-    "vitest": "^4.0.18"
+    "vitest": "^4.1.2"
   },
   "engines": {
     "node": ">=24.0.0"
