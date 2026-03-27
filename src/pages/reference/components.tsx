@@ -1,4 +1,7 @@
-import { Badge, Card } from "react-bootstrap";
+import { useState } from "react";
+import { Badge, Button, Card } from "react-bootstrap";
+import { getLocale, setLocale } from "../../paraglide/runtime.js";
+import * as m from "../../paraglide/messages.js";
 
 // ── Shared styled sub-components for reference pages ────────────
 
@@ -22,19 +25,12 @@ export function SectionCard({
 
   return (
     <Card
-      className="mb-4"
-      style={{
-        background: "var(--bt-surface-2)",
-        border: `1px solid ${borderColor}`,
-        borderRadius: "var(--bt-r-lg)",
-      }}
+      className="mb-4 ref-section-card"
+      style={{ border: `1px solid ${borderColor}` }}
     >
       <Card.Header
-        style={{
-          background: "var(--bt-surface-3)",
-          borderBottom: `1px solid ${borderColor}`,
-          borderRadius: "var(--bt-r-lg) var(--bt-r-lg) 0 0",
-        }}
+        className="ref-section-card__header"
+        style={{ borderBottom: `1px solid ${borderColor}` }}
       >
         <h5 className="mb-0 fw-semibold">
           <i className={`bi ${icon} me-2`} style={{ color: borderColor }} />
@@ -46,47 +42,57 @@ export function SectionCard({
   );
 }
 
+function CountryBadge({
+  variant,
+  children,
+}: {
+  variant: "nl" | "be";
+  children: React.ReactNode;
+}) {
+  const className = variant === "nl" ? "ref-badge-nl" : "ref-badge-be";
+  return <Badge className={className}>{children}</Badge>;
+}
+
 export function NlBadge({ children }: { children: React.ReactNode }) {
-  return (
-    <Badge
-      style={{
-        background: "var(--bt-nl-dim)",
-        color: "var(--bt-nl-light)",
-        border: "1px solid var(--bt-nl-border)",
-        fontWeight: 500,
-      }}
-    >
-      {children}
-    </Badge>
-  );
+  return <CountryBadge variant="nl">{children}</CountryBadge>;
 }
 
 export function BeBadge({ children }: { children: React.ReactNode }) {
+  return <CountryBadge variant="be">{children}</CountryBadge>;
+}
+
+export function StatRow({
+  label,
+  value,
+  sub,
+  highlight,
+}: {
+  label: string;
+  value: string;
+  sub?: string;
+  highlight?: boolean;
+}) {
   return (
-    <Badge
-      style={{
-        background: "var(--bt-be-dim)",
-        color: "var(--bt-be-light)",
-        border: "1px solid var(--bt-be-border)",
-        fontWeight: 500,
-      }}
+    <div
+      className={`d-flex justify-content-between align-items-baseline py-2 px-3 ref-stat-row${highlight ? " ref-stat-row--highlight" : ""}`}
     >
-      {children}
-    </Badge>
+      <span className="ref-stat-row__label">{label}</span>
+      <div className="text-end">
+        <span
+          className={`ref-stat-row__value${highlight ? " ref-stat-row__value--highlight" : ""}`}
+          style={highlight ? undefined : { fontWeight: 500 }}
+        >
+          {value}
+        </span>
+        {sub && <div className="ref-stat-row__sub">{sub}</div>}
+      </div>
+    </div>
   );
 }
 
 export function TipBox({ children }: { children: React.ReactNode }) {
   return (
-    <div
-      role="note"
-      className="p-3 rounded mb-3"
-      style={{
-        background: "var(--bt-info-dim)",
-        border: "1px solid rgba(96,165,250,0.25)",
-        fontSize: "0.9rem",
-      }}
-    >
+    <div role="note" className="p-3 rounded mb-3 ref-tip-box">
       <i className="bi bi-lightbulb-fill me-2" style={{ color: "var(--bt-info)" }} />
       {children}
     </div>
@@ -95,17 +101,30 @@ export function TipBox({ children }: { children: React.ReactNode }) {
 
 export function WarnBox({ children }: { children: React.ReactNode }) {
   return (
-    <div
-      role="alert"
-      className="p-3 rounded mb-3"
-      style={{
-        background: "var(--bt-warning-dim)",
-        border: "1px solid rgba(245,158,11,0.3)",
-        fontSize: "0.9rem",
-      }}
-    >
+    <div role="alert" className="p-3 rounded mb-3 ref-warn-box">
       <i className="bi bi-exclamation-triangle-fill me-2" style={{ color: "var(--bt-warning)" }} />
       {children}
     </div>
+  );
+}
+
+export function LanguageToggleButton() {
+  const [locale, setLocaleState] = useState(getLocale());
+  const nextLangLabel = locale === "en" ? m.lang_nl() : m.lang_en();
+
+  return (
+    <Button
+      variant="outline-light"
+      size="sm"
+      className="ms-3"
+      onClick={() => {
+        const nextLocale = locale === "en" ? "nl" : "en";
+        setLocale(nextLocale, { reload: false });
+        setLocaleState(nextLocale);
+      }}
+      aria-label={nextLangLabel}
+    >
+      {nextLangLabel}
+    </Button>
   );
 }

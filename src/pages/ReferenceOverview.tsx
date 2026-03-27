@@ -1,43 +1,58 @@
 import { Link } from "@tanstack/react-router";
-import { useState } from "react";
-import { Button, Card, Col, Container, Navbar, Row } from "react-bootstrap";
+import { Card, Col, Container, Navbar, Row } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "../styles.css";
 import * as m from "../paraglide/messages.js";
-import { getLocale, setLocale } from "../paraglide/runtime.js";
+import { LanguageToggleButton } from "./reference/components.js";
+
+interface ReferenceCard {
+  route: string;
+  icon: string;
+  iconColor: string;
+  borderColor: string;
+  titleFn: () => string;
+  descFn: () => string;
+  accentColor: string;
+}
+
+const cards: ReferenceCard[] = [
+  {
+    route: "/reference/salary-split",
+    icon: "bi-calculator-fill",
+    iconColor: "var(--bt-nl-light)",
+    borderColor: "var(--bt-nl-border)",
+    titleFn: m.ref_overview_ss_title,
+    descFn: m.ref_overview_ss_desc,
+    accentColor: "var(--bt-nl-light)",
+  },
+  {
+    route: "/reference/pension",
+    icon: "bi-piggy-bank-fill",
+    iconColor: "var(--bt-be-light)",
+    borderColor: "var(--bt-be-border)",
+    titleFn: m.ref_overview_pension_title,
+    descFn: m.ref_overview_pension_desc,
+    accentColor: "var(--bt-be-light)",
+  },
+];
 
 export default function ReferenceOverview() {
-  const [locale, setLocaleState] = useState(getLocale());
-  const nextLangLabel = locale === "en" ? m.lang_nl() : m.lang_en();
-
   return (
     <>
       <Navbar bg="dark" variant="dark" expand="lg" className="mb-4">
         <Container>
-          <Link to="/" style={{ textDecoration: "none" }}>
-            <Navbar.Brand style={{ fontSize: "0.95rem", opacity: 0.8 }}>
+          <Link to="/" className="text-decoration-none">
+            <Navbar.Brand className="ref-nav-brand">
               <i className="bi bi-arrow-left me-2" />
               {m.ref_nav_back_to_calculator()}
             </Navbar.Brand>
           </Link>
-          <Navbar.Text className="fw-semibold" style={{ color: "var(--bt-text)" }}>
+          <Navbar.Text className="fw-semibold ref-nav-text">
             <i className="bi bi-journals me-2" style={{ color: "var(--bt-be-light)" }} />
             {m.ref_overview_hub_title()}
           </Navbar.Text>
-          <Button
-            variant="outline-light"
-            size="sm"
-            className="ms-3"
-            onClick={() => {
-              const nextLocale = locale === "en" ? "nl" : "en";
-              setLocale(nextLocale, { reload: false });
-              setLocaleState(nextLocale);
-            }}
-            aria-label={nextLangLabel}
-          >
-            {nextLangLabel}
-          </Button>
+          <LanguageToggleButton />
         </Container>
       </Navbar>
 
@@ -52,77 +67,34 @@ export default function ReferenceOverview() {
         </div>
 
         <Row className="g-4 justify-content-center">
-          <Col xs={12} md={5}>
-            <Link to="/reference/salary-split" style={{ textDecoration: "none" }}>
-              <Card
-                className="h-100"
-                style={{
-                  background: "var(--bt-surface-2)",
-                  border: "1px solid var(--bt-nl-border)",
-                  borderRadius: "var(--bt-r-lg)",
-                  cursor: "pointer",
-                  transition: "border-color 0.15s",
-                }}
-              >
-                <Card.Body className="p-4">
-                  <div className="mb-3">
-                    <i
-                      className="bi bi-calculator-fill"
-                      style={{ fontSize: "2rem", color: "var(--bt-nl-light)" }}
-                    />
-                  </div>
-                  <Card.Title
-                    className="fw-bold mb-2"
-                    style={{ color: "var(--bt-text)", fontSize: "1.15rem" }}
-                  >
-                    {m.ref_overview_ss_title()}
-                  </Card.Title>
-                  <Card.Text style={{ color: "var(--bt-text-sub)", fontSize: "0.92rem" }}>
-                    {m.ref_overview_ss_desc()}
-                  </Card.Text>
-                  <span className="small fw-semibold" style={{ color: "var(--bt-nl-light)" }}>
-                    {m.ref_nav_read_more()} <i className="bi bi-arrow-right ms-1" />
-                  </span>
-                </Card.Body>
-              </Card>
-            </Link>
-          </Col>
-
-          <Col xs={12} md={5}>
-            <Link to="/reference/pension" style={{ textDecoration: "none" }}>
-              <Card
-                className="h-100"
-                style={{
-                  background: "var(--bt-surface-2)",
-                  border: "1px solid var(--bt-be-border)",
-                  borderRadius: "var(--bt-r-lg)",
-                  cursor: "pointer",
-                  transition: "border-color 0.15s",
-                }}
-              >
-                <Card.Body className="p-4">
-                  <div className="mb-3">
-                    <i
-                      className="bi bi-piggy-bank-fill"
-                      style={{ fontSize: "2rem", color: "var(--bt-be-light)" }}
-                    />
-                  </div>
-                  <Card.Title
-                    className="fw-bold mb-2"
-                    style={{ color: "var(--bt-text)", fontSize: "1.15rem" }}
-                  >
-                    {m.ref_overview_pension_title()}
-                  </Card.Title>
-                  <Card.Text style={{ color: "var(--bt-text-sub)", fontSize: "0.92rem" }}>
-                    {m.ref_overview_pension_desc()}
-                  </Card.Text>
-                  <span className="small fw-semibold" style={{ color: "var(--bt-be-light)" }}>
-                    {m.ref_nav_read_more()} <i className="bi bi-arrow-right ms-1" />
-                  </span>
-                </Card.Body>
-              </Card>
-            </Link>
-          </Col>
+          {cards.map((card) => (
+            <Col key={card.route} xs={12} md={5}>
+              <Link to={card.route} className="text-decoration-none">
+                <Card
+                  className="h-100 ref-overview-card"
+                  style={{ border: `1px solid ${card.borderColor}` }}
+                >
+                  <Card.Body className="p-4">
+                    <div className="mb-3">
+                      <i
+                        className={`bi ${card.icon}`}
+                        style={{ fontSize: "2rem", color: card.iconColor }}
+                      />
+                    </div>
+                    <Card.Title className="fw-bold mb-2 ref-overview-card__title">
+                      {card.titleFn()}
+                    </Card.Title>
+                    <Card.Text className="ref-overview-card__text">
+                      {card.descFn()}
+                    </Card.Text>
+                    <span className="small fw-semibold" style={{ color: card.accentColor }}>
+                      {m.ref_nav_read_more()} <i className="bi bi-arrow-right ms-1" />
+                    </span>
+                  </Card.Body>
+                </Card>
+              </Link>
+            </Col>
+          ))}
         </Row>
       </Container>
     </>

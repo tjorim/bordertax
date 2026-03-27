@@ -159,7 +159,7 @@ export default function App() {
           <Navbar.Text className="text-secondary small">
             {m.app_tax_year()} {inputs.year}
           </Navbar.Text>
-          <Link to="/reference" style={{ textDecoration: "none" }} className="ms-3">
+          <Link to="/reference" className="ms-3 text-decoration-none">
             <span className="text-light small opacity-75">
               <i className="bi bi-book me-1" />
               {m.ref_overview_hub_title()}

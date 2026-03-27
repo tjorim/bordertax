@@ -1,8 +1,6 @@
 import { Link } from "@tanstack/react-router";
-import { useState } from "react";
 import {
   Accordion,
-  Button,
   Col,
   Container,
   Navbar,
@@ -13,96 +11,42 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "../styles.css";
 import * as m from "../paraglide/messages.js";
-import { getLocale, setLocale } from "../paraglide/runtime.js";
-import { BeBadge, NlBadge, SectionCard, TipBox, WarnBox } from "./reference/components.js";
-
-function StatRow({
-  label,
-  value,
-  sub,
-  highlight,
-}: {
-  label: string;
-  value: string;
-  sub?: string;
-  highlight?: boolean;
-}) {
-  return (
-    <div
-      className="d-flex justify-content-between align-items-baseline py-2 px-3"
-      style={{
-        borderBottom: "1px solid var(--bt-border-soft)",
-        background: highlight ? "var(--bt-surface-4)" : "transparent",
-        borderRadius: highlight ? "var(--bt-r-sm)" : undefined,
-      }}
-    >
-      <span style={{ color: "var(--bt-text-sub)", fontSize: "0.875rem" }}>{label}</span>
-      <div className="text-end">
-        <span
-          style={{
-            fontFamily: "var(--bt-font-mono)",
-            fontWeight: highlight ? 700 : 500,
-            color: highlight ? "var(--bt-text)" : "var(--bt-text-sub)",
-            fontSize: "0.9rem",
-          }}
-        >
-          {value}
-        </span>
-        {sub && <div style={{ color: "var(--bt-text-muted)", fontSize: "0.75rem" }}>{sub}</div>}
-      </div>
-    </div>
-  );
-}
+import { BeBadge, LanguageToggleButton, NlBadge, SectionCard, StatRow, TipBox, WarnBox } from "./reference/components.js";
 
 // ── Main page ────────────────────────────────────────────────────
 
 export default function PensionReference() {
-  const [locale, setLocaleState] = useState(getLocale());
-  const nextLangLabel = locale === "en" ? m.lang_nl() : m.lang_en();
-
   return (
     <>
       <Navbar bg="dark" variant="dark" expand="lg" className="mb-4">
         <Container>
-          <Link to="/" style={{ textDecoration: "none" }}>
-            <Navbar.Brand style={{ fontSize: "0.95rem", opacity: 0.8 }}>
+          <Link to="/" className="text-decoration-none">
+            <Navbar.Brand className="ref-nav-brand">
               <i className="bi bi-arrow-left me-2" />
               {m.ref_nav_back_to_calculator()}
             </Navbar.Brand>
           </Link>
-          <Navbar.Text className="fw-semibold" style={{ color: "var(--bt-text)" }}>
+          <Navbar.Text className="fw-semibold ref-nav-text">
             <i className="bi bi-piggy-bank-fill me-2" style={{ color: "var(--bt-be-light)" }} />
             {m.ref_pension_nav_title()}
           </Navbar.Text>
-          <Link to="/reference/salary-split" style={{ textDecoration: "none" }} className="ms-3">
+          <Link to="/reference/salary-split" className="ms-3 text-decoration-none">
             <span className="text-light small opacity-75">
               <i className="bi bi-book me-1" />
               {m.ref_pension_nav_ss_link()}
             </span>
           </Link>
-          <Button
-            variant="outline-light"
-            size="sm"
-            className="ms-3"
-            onClick={() => {
-              const nextLocale = locale === "en" ? "nl" : "en";
-              setLocale(nextLocale, { reload: false });
-              setLocaleState(nextLocale);
-            }}
-            aria-label={nextLangLabel}
-          >
-            {nextLangLabel}
-          </Button>
+          <LanguageToggleButton />
         </Container>
       </Navbar>
 
       <Container fluid="lg" className="pb-5">
         {/* ── Hero ──────────────────────────────────────────────── */}
         <div className="text-center mb-5 mt-2">
-          <h1 className="mb-2" style={{ fontFamily: "var(--bt-font-display)", fontSize: "2.4rem" }}>
+          <h1 className="mb-2 ref-hero-title">
             🇧🇪&thinsp;🇳🇱&nbsp; {m.ref_pension_hero_title()}
           </h1>
-          <p style={{ color: "var(--bt-text-sub)", maxWidth: 640, margin: "0 auto" }}>
+          <p className="ref-hero-subtitle">
             {m.ref_pension_hero_subtitle()}
           </p>
         </div>
@@ -112,47 +56,44 @@ export default function PensionReference() {
           <Row className="g-3">
             {[
               {
-                pijler: "1e pijler",
-                nl: "AOW (ouderdom) + ANW (overlijden)",
-                be: "Wettelijk rustpensioen + overlevingspensioen",
+                pijler: m.ref_pension_p1_pillar(),
+                nl: m.ref_pension_p1_nl(),
+                be: m.ref_pension_p1_be(),
                 color: "var(--bt-info)",
               },
               {
-                pijler: "2e pijler",
-                nl: "Aanvullend pensioen via werkgever / bedrijfstak",
-                be: "Aanvullend pensioen (groepsverzekering, IPT…)",
+                pijler: m.ref_pension_p2_pillar(),
+                nl: m.ref_pension_p2_nl(),
+                be: m.ref_pension_p2_be(),
                 color: "var(--bt-success)",
               },
               {
-                pijler: "3e pijler",
-                nl: "Eigen voorziening (lijfrente, pensioensparen)",
-                be: "Pensioensparen, levensverzekering",
+                pijler: m.ref_pension_p3_pillar(),
+                nl: m.ref_pension_p3_nl(),
+                be: m.ref_pension_p3_be(),
                 color: "var(--bt-warning)",
               },
             ].map(({ pijler, nl, be, color }) => (
               <Col md={4} key={pijler}>
                 <div
-                  className="p-3 rounded h-100"
-                  style={{
-                    background: "var(--bt-surface-3)",
-                    border: `1px solid ${color}40`,
-                  }}
+                  className="p-3 rounded h-100 ref-pillar-card"
+                  style={{ border: `1px solid ${color}40` }}
                 >
                   <div
-                    className="fw-bold mb-2 small"
-                    style={{ color, textTransform: "uppercase", letterSpacing: "0.05em" }}
+                    className="fw-bold mb-2 small ref-pillar-label"
+                    style={{ color }}
                   >
                     {pijler}
                   </div>
                   <div className="mb-2">
                     <NlBadge>🇳🇱 NL</NlBadge>{" "}
-                    <span className="small" style={{ color: "var(--bt-text-sub)" }}>
+                    <span className="small ref-text-sub">
                       {nl}
                     </span>
                   </div>
                   <div>
                     <BeBadge>🇧🇪 BE</BeBadge>{" "}
-                    <span className="small" style={{ color: "var(--bt-text-sub)" }}>
+                    <span className="small ref-text-sub">
                       {be}
                     </span>
                   </div>
@@ -170,31 +111,24 @@ export default function PensionReference() {
           <Col lg={6}>
             {/* ── AOW ────────────────────────────────────────────── */}
             <SectionCard title={m.ref_pension_s_aow()} icon="bi-flag-fill" accent="nl">
-              <StatRow label="Opbouw per verzekerd jaar" value="2%" />
-              <StatRow label="Volledige AOW" value="50 jaar = 100%" />
+              <StatRow label={m.ref_pension_aow_opbouw()} value="2%" />
+              <StatRow label={m.ref_pension_aow_volledig()} value="50 jaar = 100%" />
               <StatRow
-                label="Premie 2026"
+                label={m.ref_pension_aow_premie()}
                 value="17,9%"
-                sub="over max €38.883, vervat in loonheffing"
+                sub={m.ref_pension_aow_premie_sub()}
               />
-              <StatRow label="AOW-leeftijd 2024–2027" value="67 jaar" highlight />
-              <StatRow label="AOW-leeftijd 2028–2031" value="67 jaar 3 maanden" />
-              <StatRow label="Regeerakkoord (toekomst)" value="70 jaar…" />
-              <StatRow label="Uitvoering" value="Sociale Verzekeringsbank (SVB)" />
-              <StatRow label="Betaling" value="24e van de maand" />
+              <StatRow label={m.ref_pension_aow_age_2024()} value="67 jaar" highlight />
+              <StatRow label={m.ref_pension_aow_age_2028()} value="67 jaar 3 maanden" />
+              <StatRow label={m.ref_pension_aow_age_future()} value="70 jaar…" />
+              <StatRow label={m.ref_pension_aow_uitvoering()} value="Sociale Verzekeringsbank (SVB)" />
+              <StatRow label={m.ref_pension_aow_betaling()} value="24e van de maand" />
 
-              <div
-                className="mt-4 mb-2 small fw-semibold"
-                style={{
-                  color: "var(--bt-text-muted)",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.05em",
-                }}
-              >
+              <div className="mt-4 mb-2 small fw-semibold ref-subsection-label">
                 {m.ref_pension_max_amounts()}
               </div>
-              <Table size="sm" style={{ fontSize: "0.8rem", color: "var(--bt-text)" }}>
-                <thead style={{ background: "var(--bt-surface-3)" }}>
+              <Table size="sm" className="ref-table-sm">
+                <thead className="ref-thead">
                   <tr>
                     <th>{m.ref_table_type()}</th>
                     <th>{m.ref_table_pct()}</th>
@@ -203,64 +137,50 @@ export default function PensionReference() {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr style={{ borderColor: "var(--bt-border)" }}>
-                    <td>Ongehuwd / alleenstaand</td>
-                    <td style={{ fontFamily: "var(--bt-font-mono)", color: "var(--bt-nl-light)" }}>
+                  <tr className="ref-tr">
+                    <td>{m.ref_pension_aow_ongehuwd()}</td>
+                    <td className="ref-td-mono-nl">
                       70%
                     </td>
-                    <td style={{ fontFamily: "var(--bt-font-mono)" }}>€1.637,57</td>
-                    <td style={{ fontFamily: "var(--bt-font-mono)" }}>€106,55 × 12</td>
+                    <td className="ref-td-mono">€1.637,57</td>
+                    <td className="ref-td-mono">€106,55 × 12</td>
                   </tr>
-                  <tr style={{ borderColor: "var(--bt-border)" }}>
-                    <td>Gehuwd / samenwonend</td>
-                    <td style={{ fontFamily: "var(--bt-font-mono)", color: "var(--bt-nl-light)" }}>
+                  <tr className="ref-tr">
+                    <td>{m.ref_pension_aow_gehuwd()}</td>
+                    <td className="ref-td-mono-nl">
                       50%
                     </td>
-                    <td style={{ fontFamily: "var(--bt-font-mono)" }}>€1.122,12</td>
-                    <td style={{ fontFamily: "var(--bt-font-mono)" }}>€76,10 × 12</td>
+                    <td className="ref-td-mono">€1.122,12</td>
+                    <td className="ref-td-mono">€76,10 × 12</td>
                   </tr>
                 </tbody>
               </Table>
 
-              <div
-                className="mt-3 p-3 rounded"
-                style={{ background: "var(--bt-surface-3)", border: "1px solid var(--bt-border)" }}
-              >
-                <div className="small fw-semibold mb-2" style={{ color: "var(--bt-text-muted)" }}>
+              <div className="mt-3 p-3 rounded ref-example-block">
+                <div className="small fw-semibold mb-2 ref-text-muted">
                   {m.ref_pension_example_30yr()}
                 </div>
-                <StatRow label="Opgebouwde AOW" value="60%" sub="30 × 2%" />
-                <StatRow label="Alleenstaand" value="±€982/mnd" sub="+ vakantiegeld mei" />
-                <StatRow label="Gehuwd" value="±€673/mnd" sub="+ vakantiegeld mei" />
+                <StatRow label={m.ref_pension_ex_opgebouwd()} value="60%" sub="30 × 2%" />
+                <StatRow label={m.ref_pension_ex_alleenstaand()} value="±€982/mnd" sub="+ vakantiegeld mei" />
+                <StatRow label={m.ref_pension_ex_gehuwd()} value="±€673/mnd" sub="+ vakantiegeld mei" />
               </div>
 
               <div className="mt-3">
                 <TipBox>
-                  <strong>Partner meeverzekeren:</strong> Echtgeno(o)t(e) zonder inkomen bouwt mee
-                  AOW op — aanmelden bij SVB <strong>binnen het jaar</strong> na aanvang arbeid in
-                  Nederland.
+                  {m.ref_pension_tip_partner()}
                 </TipBox>
                 <TipBox>
-                  AOW aanvragen: via gemeente → FPD → SVB, of via{" "}
-                  <strong>pensioenaanvraag.be</strong> of tel. 1765. Uiterlijk{" "}
-                  <strong>8 maanden</strong> voor ingangsdatum. Tijdvakken controleren op{" "}
-                  <strong>mijnsvb.nl</strong> (DigiD of Belgische eID).
+                  {m.ref_pension_tip_aanvragen()}
                 </TipBox>
               </div>
 
               <Accordion flush className="mt-2">
-                <Accordion.Item
-                  eventKey="aow-history"
-                  style={{
-                    background: "var(--bt-surface-3)",
-                    border: "1px solid var(--bt-border)",
-                  }}
-                >
+                <Accordion.Item eventKey="aow-history" className="ref-accordion-item">
                   <Accordion.Header>
                     <span className="small fw-semibold">{m.ref_pension_aow_history()}</span>
                   </Accordion.Header>
-                  <Accordion.Body style={{ background: "var(--bt-surface-3)" }}>
-                    <Table size="sm" style={{ fontSize: "0.78rem", color: "var(--bt-text-sub)" }}>
+                  <Accordion.Body className="ref-accordion-body">
+                    <Table size="sm" className="ref-table-sub">
                       <tbody>
                         {[
                           ["2012", "65 jaar"],
@@ -275,9 +195,9 @@ export default function PensionReference() {
                           ["2024–2027", "67 jaar"],
                           ["2028–2031", "67 jaar + 3 maanden"],
                         ].map(([yr, age]) => (
-                          <tr key={yr} style={{ borderColor: "var(--bt-border)" }}>
+                          <tr key={yr} className="ref-tr">
                             <td>{yr}</td>
-                            <td style={{ fontFamily: "var(--bt-font-mono)" }}>{age}</td>
+                            <td className="ref-td-mono">{age}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -289,37 +209,29 @@ export default function PensionReference() {
 
             {/* ── ANW ────────────────────────────────────────────── */}
             <SectionCard title={m.ref_pension_s_anw()} icon="bi-heart-pulse-fill" accent="nl">
-              <StatRow label="Uitkering bruto/mnd" value="€1.668,49" sub="70% netto minimumloon" />
-              <StatRow label="Vakantiegeld" value="€128,18/mnd" />
-              <StatRow label="Voorwaarden" value="< AOW-leeftijd + kind < 18j of ≥ 45% AO" />
+              <StatRow label={m.ref_pension_anw_uitkering()} value="€1.668,49" sub={m.ref_pension_anw_uitkering_sub()} />
+              <StatRow label={m.ref_pension_anw_vakantiegeld()} value="€128,18/mnd" />
+              <StatRow label={m.ref_pension_anw_voorwaarden()} value="< AOW-leeftijd + kind < 18j of ≥ 45% AO" />
               <StatRow
-                label="Wezenuitkering"
+                label={m.ref_pension_anw_wezen()}
                 value="kind < 21 jaar"
-                sub="bij overlijden beide ouders"
+                sub={m.ref_pension_anw_wezen_sub()}
               />
 
-              <div
-                className="mt-3 small fw-semibold mb-2"
-                style={{
-                  color: "var(--bt-text-muted)",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.05em",
-                }}
-              >
+              <div className="mt-3 small fw-semibold mb-2 ref-subsection-label">
                 {m.ref_pension_extra_earnings_anw()}
               </div>
-              <StatRow label="Vrijgesteld" value="eerste €1.147/mnd" />
-              <StatRow label="Daarboven meegerekend" value="voor 2/3" />
-              <StatRow label="Geen recht meer bij inkomsten >" value="€3.617/mnd" />
+              <StatRow label={m.ref_pension_anw_vrijgesteld()} value="eerste €1.147/mnd" />
+              <StatRow label={m.ref_pension_anw_daarboven()} value="voor 2/3" />
+              <StatRow label={m.ref_pension_anw_geen_recht()} value="€3.617/mnd" />
               <StatRow
-                label="Geen ANW bij uitkeringen >"
+                label={m.ref_pension_anw_geen_anw()}
                 value="€1.646/mnd"
-                sub="WW, ZW, buitenlands pensioen enz."
+                sub={m.ref_pension_anw_geen_anw_sub()}
               />
 
               <WarnBox>
-                ANW eindigt bij samenwonen met een partner of als niet meer voldaan wordt aan de
-                basisvoorwaarden (bijv. kind wordt 18).
+                {m.ref_pension_anw_warn()}
               </WarnBox>
             </SectionCard>
 
@@ -330,19 +242,16 @@ export default function PensionReference() {
               accent="nl"
             >
               <WarnBox>
-                <strong>Knipperlichtsituatie:</strong> wie AOW + Belgisch pensioen + NL 2e
-                pijlerpensioen ontvangt én gaat bijverdienen in Nederland, wordt opnieuw{" "}
-                <strong>ziekenfondsverzekerde in NL</strong>. Gevolg:
+                {m.ref_pension_aow_work_warn()}
               </WarnBox>
               <ul
-                className="small mb-0"
-                style={{ color: "var(--bt-text-sub)", paddingLeft: "1.2rem" }}
+                className="small mb-0 ref-list-sub"
               >
-                <li>Wereldinkomen telt mee voor inkomensafhankelijke bijdrage ZVW</li>
-                <li>Premie volksverzekeringen opnieuw verschuldigd</li>
-                <li>Belastingdruk op Belgisch pensioen stijgt door progressievoorbehoud</li>
+                <li>{m.ref_pension_aow_work_li1()}</li>
+                <li>{m.ref_pension_aow_work_li2()}</li>
+                <li>{m.ref_pension_aow_work_li3()}</li>
               </ul>
-              <TipBox>Bijverdienen bij AOW is op zich onbeperkt toegestaan.</TipBox>
+              <TipBox>{m.ref_pension_aow_work_tip()}</TipBox>
             </SectionCard>
           </Col>
 
@@ -353,101 +262,69 @@ export default function PensionReference() {
               icon="bi-building-fill"
               accent="nl"
             >
-              <p className="small mb-3" style={{ color: "var(--bt-text-sub)" }}>
-                Nederland verkozen tot{" "}
-                <strong style={{ color: "var(--bt-nl-light)" }}>
-                  beste pensioenstelsel ter wereld
-                </strong>{" "}
-                (Mercer 2025, NL #1 — BE #20).
+              <p className="small mb-3 ref-text-sub">
+                {m.ref_pension_sup_intro()}
               </p>
-              <StatRow label="Pensioenpot" value="€1.300 miljard" />
-              <StatRow label="Bedrijfstakpensioenfondsen" value="±200 actief" />
-              <StatRow label="Afkoop mogelijk als pensioen <" value="€632/jaar" />
+              <StatRow label={m.ref_pension_sup_pensioenpot()} value="€1.300 miljard" />
+              <StatRow label={m.ref_pension_sup_fondsen()} value="±200 actief" />
+              <StatRow label={m.ref_pension_sup_afkoop()} value="€632/jaar" />
               <StatRow
-                label="Partnerpensioen"
+                label={m.ref_pension_sup_partner()}
                 value="70% van ouderdomspensioen"
-                sub="kan worden uitgeruild"
+                sub={m.ref_pension_sup_partner_sub()}
               />
               <StatRow
-                label="UPO (pensioenoverzicht)"
+                label={m.ref_pension_sup_upo()}
                 value="jaarlijks"
-                sub="aanvragen bij uitvoerder, ≥ 4 mnd op voorhand"
+                sub={m.ref_pension_sup_upo_sub()}
               />
 
               <TipBox>
-                Pensioenopbouw raadplegen op <strong>mijnpensioenoverzicht.nl</strong> (DigiD of
-                Belgische eID / Itsme). Oudere BSN? Laat sofinummer omzetten.
+                {m.ref_pension_sup_tip()}
               </TipBox>
 
-              <div
-                className="mt-2 mb-2 small fw-semibold"
-                style={{
-                  color: "var(--bt-text-muted)",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.05em",
-                }}
-              >
+              <div className="mt-2 mb-2 small fw-semibold ref-subsection-label">
                 {m.ref_pension_wtp_title()}
               </div>
               <ul
-                className="small mb-3"
-                style={{ color: "var(--bt-text-sub)", paddingLeft: "1.2rem" }}
+                className="small mb-3 ref-list-sub"
               >
-                <li>Eindloon- en middelloonregelingen worden afgeschaft</li>
-                <li>
-                  Alle regelingen worden <strong>premieregelingen</strong>
-                </li>
-                <li>Gelijke, leeftijdsonafhankelijke premie voor iedereen</li>
-                <li>Partnerpensioen als vast percentage verzekerd</li>
-                <li>
-                  10% van de waarde kan als <strong>bedrag ineens</strong> opgenomen worden
-                </li>
+                <li>{m.ref_pension_wtp_li1()}</li>
+                <li>{m.ref_pension_wtp_li2()}</li>
+                <li>{m.ref_pension_wtp_li3()}</li>
+                <li>{m.ref_pension_wtp_li4()}</li>
+                <li>{m.ref_pension_wtp_li5()}</li>
               </ul>
 
-              <div
-                className="mt-2 mb-2 small fw-semibold"
-                style={{
-                  color: "var(--bt-text-muted)",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.05em",
-                }}
-              >
+              <div className="mt-2 mb-2 small fw-semibold ref-subsection-label">
                 {m.ref_pension_divorce()}
               </div>
-              <p className="small mb-1" style={{ color: "var(--bt-text-sub)" }}>
-                Wet verevening pensioen bij scheiding: ex-partner heeft wettelijk recht op de helft
-                van het opgebouwde pensioen tijdens het huwelijk.
+              <p className="small mb-1 ref-text-sub">
+                {m.ref_pension_divorce_p()}
               </p>
               <WarnBox>
-                Doorgeven aan pensioenuitvoerder binnen <strong>2 jaar</strong> via
-                "Mededelingsformulier verdeling ouderdomspensioen bij echtscheiding". Niet doorgeven
-                = aanspraak ex-partner blijft bestaan!
+                {m.ref_pension_divorce_warn()}
               </WarnBox>
             </SectionCard>
 
             {/* ── RVU ────────────────────────────────────────────── */}
             <SectionCard title={m.ref_pension_s_rvu()} icon="bi-door-open-fill" accent="nl">
-              <p className="small mb-3" style={{ color: "var(--bt-text-sub)" }}>
-                Opvolger van de VUT, voor zware/fysiek belastende beroepen.
+              <p className="small mb-3 ref-text-sub">
+                {m.ref_pension_rvu_intro()}
               </p>
-              <StatRow label="Maximum RVU-bedrag 2026" value="€2.357/mnd" highlight />
-              <StatRow label="Vroegst mogelijk" value="36 maanden voor AOW-leeftijd" />
-              <StatRow label="Uitbetaling" value="periodiek of bedrag ineens" />
+              <StatRow label={m.ref_pension_rvu_max()} value="€2.357/mnd" highlight />
+              <StatRow label={m.ref_pension_rvu_vroegst()} value="36 maanden voor AOW-leeftijd" />
+              <StatRow label={m.ref_pension_rvu_uitbetaling()} value="periodiek of bedrag ineens" />
               <ul
-                className="small mt-3 mb-0"
-                style={{ color: "var(--bt-text-sub)", paddingLeft: "1.2rem" }}
+                className="small mt-3 mb-0 ref-list-sub"
               >
-                <li>
-                  Werknemer neemt zelf ontslag → <strong>geen recht op WW</strong>
-                </li>
-                <li>Combinatie met Belgisch rustpensioen toegestaan</li>
-                <li>Combinatie met naar voren gehaald 2e pijlerpensioen toegestaan</li>
-                <li>Terugkeren naar werk in principe verboden</li>
+                <li>{m.ref_pension_rvu_li1()}</li>
+                <li>{m.ref_pension_rvu_li2()}</li>
+                <li>{m.ref_pension_rvu_li3()}</li>
+                <li>{m.ref_pension_rvu_li4()}</li>
               </ul>
               <TipBox>
-                <strong>Belasting RVU:</strong> belastbaar in België (woonland), tenzij je ambtenaar
-                bent geweest met NL nationaliteit. Niet vergeten: vrijstelling loonbelasting
-                aanvragen!
+                {m.ref_pension_rvu_tip()}
               </TipBox>
             </SectionCard>
 
@@ -457,15 +334,15 @@ export default function PensionReference() {
               icon="bi-dash-circle-fill"
               accent="nl"
             >
-              <p className="small mb-3" style={{ color: "var(--bt-text-sub)" }}>
-                Als postactief grensarbeider (wonen BE, pensioen uit NL):
+              <p className="small mb-3 ref-text-sub">
+                {m.ref_pension_ded_intro()}
               </p>
-              <StatRow label="Zorgverzekering" value="via CAK (niet meer zorgverzekeraar)" />
-              <StatRow label="Verdragsbijdrage woonlandfactor 2026" value="0,8165" />
-              <StatRow label="Inkomensafh. bijdrage ZVW" value="4,85%" sub="over max €79.409" />
-              <StatRow label="Nominale bijdrage" value="€128,19/mnd" />
-              <StatRow label="WLZ-premie" value="9,65%" sub="over max €38.883" />
-              <TipBox>Recht op zorg in zowel Nederland als België blijft behouden.</TipBox>
+              <StatRow label={m.ref_pension_ded_zorg()} value="via CAK (niet meer zorgverzekeraar)" />
+              <StatRow label={m.ref_pension_ded_verdrag()} value="0,8165" />
+              <StatRow label={m.ref_pension_ded_zvw()} value="4,85%" sub={m.ref_pension_ded_zvw_sub()} />
+              <StatRow label={m.ref_pension_ded_nominaal()} value="€128,19/mnd" />
+              <StatRow label={m.ref_pension_ded_wlz()} value="9,65%" sub={m.ref_pension_ded_wlz_sub()} />
+              <TipBox>{m.ref_pension_ded_tip()}</TipBox>
             </SectionCard>
           </Col>
         </Row>
@@ -474,53 +351,38 @@ export default function PensionReference() {
         <SectionCard title={m.ref_pension_s_be()} icon="bi-flag-fill" accent="be">
           <Row className="g-4">
             <Col md={4}>
-              <div
-                className="small fw-semibold mb-2"
-                style={{
-                  color: "var(--bt-text-muted)",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.05em",
-                }}
-              >
+              <div className="small fw-semibold mb-2 ref-subsection-label">
                 {m.ref_pension_be_params()}
               </div>
               <StatRow
-                label="Wettelijke pensioenleeftijd"
+                label={m.ref_pension_be_wet_pensioen()}
                 value="66 jaar"
-                sub="vanaf 2030: 67 jaar"
+                sub={m.ref_pension_be_wet_pensioen_sub()}
                 highlight
               />
               <StatRow
-                label="Volledige loopbaan"
+                label={m.ref_pension_be_volledig()}
                 value="14.040 dagen"
-                sub="104 dagen = 1 loopbaanjaar"
+                sub={m.ref_pension_be_volledig_sub()}
               />
-              <StatRow label="Vroegst mogelijk" value="60 jaar" sub="bij 44 loopbaanjaren" />
-              <StatRow label="Loonplafond opbouw" value="€82.608/jaar" />
-              <StatRow label="Max. bruto pensioen gezin" value="€4.077/mnd" highlight />
-              <StatRow label="Max. bruto pensioen alleenstaand" value="€3.262/mnd" highlight />
-              <StatRow label="Aanvraag mogelijk" value="12 mnd op voorhand" />
-              <StatRow label="Geen terugwerkende kracht" value="= dag van aanvraag" />
+              <StatRow label={m.ref_pension_be_vroegst()} value="60 jaar" sub={m.ref_pension_be_vroegst_sub()} />
+              <StatRow label={m.ref_pension_be_loonplafond()} value="€82.608/jaar" />
+              <StatRow label={m.ref_pension_be_max_gezin()} value="€4.077/mnd" highlight />
+              <StatRow label={m.ref_pension_be_max_alleenst()} value="€3.262/mnd" highlight />
+              <StatRow label={m.ref_pension_be_aanvraag()} value="12 mnd op voorhand" />
+              <StatRow label={m.ref_pension_be_geen_terugw()} value="= dag van aanvraag" />
 
               <WarnBox>
-                Geen automatisch onderzoek bij einde loopbaan in Nederland. Aanvraag doen is
-                verplicht als je vóór 66 jaar wil gaan.
+                {m.ref_pension_be_warn_aanvraag()}
               </WarnBox>
             </Col>
 
             <Col md={4}>
-              <div
-                className="small fw-semibold mb-2"
-                style={{
-                  color: "var(--bt-text-muted)",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.05em",
-                }}
-              >
+              <div className="small fw-semibold mb-2 ref-subsection-label">
                 {m.ref_pension_be_earliest()}
               </div>
-              <Table size="sm" style={{ fontSize: "0.8rem", color: "var(--bt-text)" }}>
-                <thead style={{ background: "var(--bt-surface-3)" }}>
+              <Table size="sm" className="ref-table-sm">
+                <thead className="ref-thead">
                   <tr>
                     <th>{m.ref_table_age()}</th>
                     <th>{m.ref_table_career()}</th>
@@ -528,92 +390,68 @@ export default function PensionReference() {
                 </thead>
                 <tbody>
                   {[
-                    ["60 jaar", "44 loopbaanjaren"],
-                    ["61 of 62 jaar", "43 loopbaanjaren"],
-                    ["63 of 64 jaar", "42 loopbaanjaren"],
+                    ["60 jaar", m.ref_pension_be_career_60()],
+                    ["61 of 62 jaar", m.ref_pension_be_career_61_62()],
+                    ["63 of 64 jaar", m.ref_pension_be_career_63_64()],
                   ].map(([age, career]) => (
-                    <tr key={age} style={{ borderColor: "var(--bt-border)" }}>
-                      <td
-                        style={{ fontFamily: "var(--bt-font-mono)", color: "var(--bt-be-light)" }}
-                      >
+                    <tr key={age} className="ref-tr">
+                      <td className="ref-td-mono-be">
                         {age}
                       </td>
-                      <td style={{ color: "var(--bt-text-sub)" }}>{career}</td>
+                      <td className="ref-td-sub">{career}</td>
                     </tr>
                   ))}
                 </tbody>
               </Table>
               <TipBox>
-                NL gewerkte jaren tellen mee voor de Belgische loopbaaneis.{" "}
-                <strong>104 dagen in 1 jaar</strong> = 1 volledig loopbaanjaar (t/m 2026).
+                {m.ref_pension_be_tip_nl_years()}
               </TipBox>
             </Col>
 
             <Col md={4}>
-              <div
-                className="small fw-semibold mb-2"
-                style={{
-                  color: "var(--bt-text-muted)",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.05em",
-                }}
-              >
+              <div className="small fw-semibold mb-2 ref-subsection-label">
                 {m.ref_pension_be_ziv()}
               </div>
-              <p className="small mb-2" style={{ color: "var(--bt-text-sub)" }}>
-                <strong>Alleenstaande</strong> (3,55% inhouding):
+              <p className="small mb-2 ref-text-sub">
+                <strong>{m.ref_pension_ziv_alleenstaand()}</strong>
               </p>
-              <Table size="sm" style={{ fontSize: "0.78rem", color: "var(--bt-text)" }}>
+              <Table size="sm" className="ref-table-xs">
                 <tbody>
                   {[
-                    ["< €2.078,46/mnd", "Geen inhouding"],
-                    ["€2.078,46 – €2.154,94", "Progressief (bruto − €2.078,45)"],
-                    ["> €2.154,94/mnd", "3,55% van brutobedrag"],
+                    ["< €2.078,46/mnd", m.ref_pension_ziv_rule_geen1()],
+                    ["€2.078,46 – €2.154,94", m.ref_pension_ziv_rule_prog1()],
+                    ["> €2.154,94/mnd", m.ref_pension_ziv_rule_355_1()],
                   ].map(([range, rule]) => (
-                    <tr key={range} style={{ borderColor: "var(--bt-border)" }}>
-                      <td
-                        style={{
-                          fontFamily: "var(--bt-font-mono)",
-                          fontSize: "0.75rem",
-                          color: "var(--bt-be-light)",
-                        }}
-                      >
+                    <tr key={range} className="ref-tr">
+                      <td className="ref-td-mono-be-xs">
                         {range}
                       </td>
-                      <td style={{ color: "var(--bt-text-sub)" }}>{rule}</td>
+                      <td className="ref-td-sub">{rule}</td>
                     </tr>
                   ))}
                 </tbody>
               </Table>
-              <p className="small mt-3 mb-2" style={{ color: "var(--bt-text-sub)" }}>
-                <strong>Gezinshoofd</strong> (3,55% inhouding):
+              <p className="small mt-3 mb-2 ref-text-sub">
+                <strong>{m.ref_pension_ziv_gezin()}</strong>
               </p>
-              <Table size="sm" style={{ fontSize: "0.78rem", color: "var(--bt-text)" }}>
+              <Table size="sm" className="ref-table-xs">
                 <tbody>
                   {[
-                    ["< €2.463,25/mnd", "Geen inhouding"],
-                    ["€2.463,25 – €2.553,89", "Progressief (bruto − €2.463,24)"],
-                    ["> €2.553,89/mnd", "3,55% van brutobedrag"],
+                    ["< €2.463,25/mnd", m.ref_pension_ziv_rule_geen2()],
+                    ["€2.463,25 – €2.553,89", m.ref_pension_ziv_rule_prog2()],
+                    ["> €2.553,89/mnd", m.ref_pension_ziv_rule_355_2()],
                   ].map(([range, rule]) => (
-                    <tr key={range} style={{ borderColor: "var(--bt-border)" }}>
-                      <td
-                        style={{
-                          fontFamily: "var(--bt-font-mono)",
-                          fontSize: "0.75rem",
-                          color: "var(--bt-be-light)",
-                        }}
-                      >
+                    <tr key={range} className="ref-tr">
+                      <td className="ref-td-mono-be-xs">
                         {range}
                       </td>
-                      <td style={{ color: "var(--bt-text-sub)" }}>{rule}</td>
+                      <td className="ref-td-sub">{rule}</td>
                     </tr>
                   ))}
                 </tbody>
               </Table>
               <WarnBox>
-                AOW + Belgisch pensioen worden <strong>samengeteld</strong> voor de ZIV-drempel. Ook
-                solidariteitsbijdrage: 0,5–2% bij pensioen &gt; €3.682 (alleenstaand) / €4.212
-                (gezin).
+                {m.ref_pension_ziv_warn()}
               </WarnBox>
             </Col>
           </Row>
@@ -627,12 +465,11 @@ export default function PensionReference() {
               icon="bi-calendar-check-fill"
               accent="be"
             >
-              <p className="small mb-3" style={{ color: "var(--bt-text-sub)" }}>
-                Loopbaaneis per jaar stijgt van <strong>104 → 156 effectieve werkdagen</strong>{" "}
-                (uitzondering: 1e loopbaanjaar + 5 reservedagen).
+              <p className="small mb-3 ref-text-sub">
+                {m.ref_pension_be2027_intro()}
               </p>
-              <Table size="sm" style={{ fontSize: "0.8rem", color: "var(--bt-text)" }}>
-                <thead style={{ background: "var(--bt-surface-3)" }}>
+              <Table size="sm" className="ref-table-sm">
+                <thead className="ref-thead">
                   <tr>
                     <th>{m.ref_table_age()}</th>
                     <th>{m.ref_table_career_156()}</th>
@@ -640,26 +477,24 @@ export default function PensionReference() {
                 </thead>
                 <tbody>
                   {[
-                    ["60 jaar", "44 loopbaanjaren"],
-                    ["60 jaar", "42 jr + 234 eff. werkdagen"],
-                    ["61 jaar", "43 loopbaanjaren"],
-                    ["62 jaar", "43 loopbaanjaren"],
-                    ["63 jaar", "42 loopbaanjaren"],
-                    ["64 jaar", "42 loopbaanjaren"],
-                    ["65 jaar", "42 loopbaanjaren"],
+                    ["60 jaar", m.ref_pension_be2027_row_60_a()],
+                    ["60 jaar", m.ref_pension_be2027_row_60_b()],
+                    ["61 jaar", m.ref_pension_be2027_row_61()],
+                    ["62 jaar", m.ref_pension_be2027_row_62()],
+                    ["63 jaar", m.ref_pension_be2027_row_63()],
+                    ["64 jaar", m.ref_pension_be2027_row_64()],
+                    ["65 jaar", m.ref_pension_be2027_row_65()],
                   ].map((row) => {
                     const [age, career] = row;
                     return (
                       <tr
                         key={String(age) + String(career)}
-                        style={{ borderColor: "var(--bt-border)" }}
+                        className="ref-tr"
                       >
-                        <td
-                          style={{ fontFamily: "var(--bt-font-mono)", color: "var(--bt-be-light)" }}
-                        >
+                        <td className="ref-td-mono-be">
                           {age}
                         </td>
-                        <td style={{ color: "var(--bt-text-sub)" }}>{career}</td>
+                        <td className="ref-td-sub">{career}</td>
                       </tr>
                     );
                   })}
@@ -674,12 +509,11 @@ export default function PensionReference() {
               icon="bi-arrow-down-circle-fill"
               accent="be"
             >
-              <p className="small mb-3" style={{ color: "var(--bt-text-sub)" }}>
-                Van toepassing als <strong>niet voldaan</strong> aan: 35 jaar × minstens 156 dagen +
-                totaal 7.020 gepresteerde/gelijkgestelde dagen.
+              <p className="small mb-3 ref-text-sub">
+                {m.ref_pension_malus_intro()}
               </p>
-              <Table size="sm" style={{ fontSize: "0.85rem", color: "var(--bt-text)" }}>
-                <thead style={{ background: "var(--bt-surface-3)" }}>
+              <Table size="sm" className="ref-table-ref">
+                <thead className="ref-thead">
                   <tr>
                     <th>{m.ref_table_birth_year()}</th>
                     <th>{m.ref_table_malus_per_year()}</th>
@@ -687,18 +521,14 @@ export default function PensionReference() {
                 </thead>
                 <tbody>
                   {[
-                    ["1961–1965", "2%"],
-                    ["1966–1974", "4%"],
-                    ["1975 en later", "5%"],
+                    [m.ref_pension_malus_1961(), "2%"],
+                    [m.ref_pension_malus_1966(), "4%"],
+                    [m.ref_pension_malus_1975(), "5%"],
                   ].map(([yr, malus]) => (
-                    <tr key={yr} style={{ borderColor: "var(--bt-border)" }}>
-                      <td style={{ color: "var(--bt-text-sub)" }}>{yr}</td>
+                    <tr key={yr} className="ref-tr">
+                      <td className="ref-td-sub">{yr}</td>
                       <td
-                        style={{
-                          fontFamily: "var(--bt-font-mono)",
-                          color: "var(--bt-danger)",
-                          fontWeight: 700,
-                        }}
+                        className="ref-td-mono-danger"
                       >
                         {malus}
                       </td>
@@ -711,12 +541,11 @@ export default function PensionReference() {
 
           <Col md={4}>
             <SectionCard title={m.ref_pension_s_bonus()} icon="bi-arrow-up-circle-fill" accent="be">
-              <p className="small mb-3" style={{ color: "var(--bt-text-sub)" }}>
-                Voor wie <strong>langer werkt</strong> dan wettelijke pensioenleeftijd. Vereist:
-                loopbaan ≥ 35 jaar + 7.020 dagen.
+              <p className="small mb-3 ref-text-sub">
+                {m.ref_pension_bonus_intro()}
               </p>
-              <Table size="sm" style={{ fontSize: "0.85rem", color: "var(--bt-text)" }}>
-                <thead style={{ background: "var(--bt-surface-3)" }}>
+              <Table size="sm" className="ref-table-ref">
+                <thead className="ref-thead">
                   <tr>
                     <th>{m.ref_table_birth_year()}</th>
                     <th>{m.ref_table_bonus_per_year()}</th>
@@ -724,19 +553,13 @@ export default function PensionReference() {
                 </thead>
                 <tbody>
                   {[
-                    ["1962 of vroeger", "2%"],
-                    ["1963–1972", "4%"],
-                    ["1973 en later", "5%"],
+                    [m.ref_pension_bonus_1962(), "2%"],
+                    [m.ref_pension_bonus_1963(), "4%"],
+                    [m.ref_pension_bonus_1973(), "5%"],
                   ].map(([yr, bonus]) => (
-                    <tr key={yr} style={{ borderColor: "var(--bt-border)" }}>
-                      <td style={{ color: "var(--bt-text-sub)" }}>{yr}</td>
-                      <td
-                        style={{
-                          fontFamily: "var(--bt-font-mono)",
-                          color: "var(--bt-success)",
-                          fontWeight: 700,
-                        }}
-                      >
+                    <tr key={yr} className="ref-tr">
+                      <td className="ref-td-sub">{yr}</td>
+                      <td className="ref-td-mono-success fw-bold">
                         {bonus}
                       </td>
                     </tr>
@@ -751,85 +574,51 @@ export default function PensionReference() {
         <Row className="g-4">
           <Col md={6}>
             <SectionCard title={m.ref_pension_s_gap()} icon="bi-hourglass-split" accent="neutral">
-              <p className="small mb-3" style={{ color: "var(--bt-text-sub)" }}>
-                Wie lang in Nederland heeft gewerkt, staat voor een specifiek probleem:
+              <p className="small mb-3 ref-text-sub">
+                {m.ref_pension_gap_intro()}
               </p>
               <ul
-                className="small mb-3"
-                style={{ color: "var(--bt-text-sub)", paddingLeft: "1.2rem" }}
+                className="small mb-3 ref-list-sub"
               >
-                <li>
-                  Belgische pensioenleeftijd: <strong>66 jaar</strong> (2026), maar AOW-leeftijd:{" "}
-                  <strong>67 jaar</strong>
-                </li>
-                <li>Lange NL-loopbaan → gering Belgisch pensioen, vervroeging AOW onmogelijk</li>
-                <li>Belgische werkloosheidsuitkering stopt in principe op 66 jaar</li>
+                <li>{m.ref_pension_gap_li1()}</li>
+                <li>{m.ref_pension_gap_li2()}</li>
+                <li>{m.ref_pension_gap_li3()}</li>
               </ul>
 
-              <div
-                className="small fw-semibold mb-2"
-                style={{
-                  color: "var(--bt-text-muted)",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.05em",
-                }}
-              >
+              <div className="small fw-semibold mb-2 ref-subsection-label">
                 {m.ref_pension_art64()}
               </div>
-              <p className="small mb-2" style={{ color: "var(--bt-text-sub)" }}>
-                Werkloosheidsuitkering kan doorlopen tot AOW-leeftijd als:
+              <p className="small mb-2 ref-text-sub">
+                {m.ref_pension_art64_intro()}
               </p>
               <ol
-                className="small mb-0"
-                style={{ color: "var(--bt-text-sub)", paddingLeft: "1.2rem" }}
+                className="small mb-0 ref-list-sub"
               >
-                <li>
-                  Minstens <strong>15 jaar grensarbeid</strong> bewezen
-                </li>
-                <li>
-                  Géén pensioen ontvangen: tijdelijk afzien van Belgisch rustpensioen <em>én</em> 2e
-                  pijlerpensioen niet laten ingaan
-                </li>
+                <li>{m.ref_pension_art64_li1()}</li>
+                <li>{m.ref_pension_art64_li2()}</li>
               </ol>
               <WarnBox>
-                Regeling dekt niet alle gevallen: wie geen 15 jaar grensarbeid bewijst, of wiens 2e
-                pijlerpensioen niet uitgesteld kan worden, valt buiten de regeling.
+                {m.ref_pension_art64_warn()}
               </WarnBox>
             </SectionCard>
           </Col>
 
           <Col md={6}>
             <SectionCard title={m.ref_pension_s_border()} icon="bi-archive-fill" accent="be">
-              <p className="small mb-3" style={{ color: "var(--bt-text-sub)" }}>
-                Het "grensarbeiderspensioen" berekende een Belgisch pensioen alsof men in België had
-                gewerkt en paste het verschil bij. Inmiddels sterk ingeperkt:
+              <p className="small mb-3 ref-text-sub">
+                {m.ref_pension_border_intro()}
               </p>
               <ul
-                className="small mb-3"
-                style={{ color: "var(--bt-text-sub)", paddingLeft: "1.2rem" }}
+                className="small mb-3 ref-list-sub"
               >
-                <li>
-                  <strong>Geen nieuwe instroom</strong> meer voor grensarbeiders die na{" "}
-                  <strong>1 januari 2015</strong> voor het eerst grensarbeider worden
-                </li>
-                <li>
-                  Vervroegde ingangsdatum niet meer mogelijk — onderzoek gelijk met wettelijke
-                  pensioenleeftijd werkland
-                </li>
-                <li>
-                  Niet alleen wettelijk NL pensioen (AOW) wordt afgetrokken, ook{" "}
-                  <strong>bovenwettelijk (2e pijler)</strong>
-                </li>
-                <li>
-                  Overlevingspensioen t.l.v. BE blijft, maar ook met aftrek ANW en 2e pijlerpensioen
-                </li>
-                <li>
-                  <strong>Bestaande rechten (vóór 2015) zijn vastgeklikt</strong>
-                </li>
+                <li>{m.ref_pension_border_li1()}</li>
+                <li>{m.ref_pension_border_li2()}</li>
+                <li>{m.ref_pension_border_li3()}</li>
+                <li>{m.ref_pension_border_li4()}</li>
+                <li>{m.ref_pension_border_li5()}</li>
               </ul>
               <TipBox>
-                Begon je met grensarbeid vóór 1/1/2015? Controleer bij FPD of je rechten op het
-                grensarbeiderspensioen behouden zijn.
+                {m.ref_pension_border_tip()}
               </TipBox>
             </SectionCard>
           </Col>
@@ -839,53 +628,29 @@ export default function PensionReference() {
         <SectionCard title={m.ref_pension_s_survivor()} icon="bi-heart-fill" accent="be">
           <Row className="g-3">
             <Col md={6}>
-              <div
-                className="small fw-semibold mb-2"
-                style={{
-                  color: "var(--bt-text-muted)",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.05em",
-                }}
-              >
+              <div className="small fw-semibold mb-2 ref-subsection-label">
                 {m.ref_pension_conditions()}
               </div>
-              <ul className="small" style={{ color: "var(--bt-text-sub)", paddingLeft: "1.2rem" }}>
-                <li>
-                  Rechthebbende in 2026: minstens <strong>51 jaar</strong>
-                </li>
-                <li>
-                  Minstens <strong>1 jaar gehuwd</strong>
-                </li>
-                <li>Automatische berekening als overledene al met pensioen was</li>
-                <li>Zo niet: aanvraag doen</li>
-                <li>
-                  Recht vervalt bij <strong>nieuw huwelijk</strong>
-                </li>
-                <li>Combinatie met NL ANW / 2e pijlerpensioen is mogelijk</li>
+              <ul className="small ref-list-sub">
+                <li>{m.ref_pension_survivor_li1()}</li>
+                <li>{m.ref_pension_survivor_li2()}</li>
+                <li>{m.ref_pension_survivor_li3()}</li>
+                <li>{m.ref_pension_survivor_li4()}</li>
+                <li>{m.ref_pension_survivor_li5()}</li>
+                <li>{m.ref_pension_survivor_li6()}</li>
               </ul>
             </Col>
             <Col md={6}>
               <div
-                className="small fw-semibold mb-2"
-                style={{
-                  color: "var(--bt-text-muted)",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.05em",
-                }}
+                className="small fw-semibold mb-2 ref-subsection-label"
               >
                 {m.ref_pension_special_situations()}
               </div>
               <ul
-                className="small mb-0"
-                style={{ color: "var(--bt-text-sub)", paddingLeft: "1.2rem" }}
+                className="small mb-0 ref-list-sub"
               >
-                <li>
-                  Jonger dan 51: <strong>overgangsuitkering</strong> (beperkt in tijd)
-                </li>
-                <li>
-                  Gedurende max <strong>12 maanden</strong>: combinatie met vervangingsinkomen
-                  mogelijk
-                </li>
+                <li>{m.ref_pension_survivor_sp_li1()}</li>
+                <li>{m.ref_pension_survivor_sp_li2()}</li>
               </ul>
             </Col>
           </Row>
@@ -895,32 +660,24 @@ export default function PensionReference() {
         <SectionCard title={m.ref_pension_s_disability()} icon="bi-bandaid-fill" accent="nl">
           <Row className="g-3">
             <Col md={6}>
-              <p className="small mb-2" style={{ color: "var(--bt-text-sub)" }}>
-                Bij <strong>WAO/WIA uitkering</strong>: niet meer automatisch verzekerd voor
-                ouderdom &amp; overlijden.
+              <p className="small mb-2 ref-text-sub">
+                {m.ref_pension_disability_intro1()}
               </p>
-              <ul className="small" style={{ color: "var(--bt-text-sub)", paddingLeft: "1.2rem" }}>
-                <li>
-                  <strong>AOW vrijwillige verzekering</strong> afsluiten bij SVB —{" "}
-                  <strong>binnen het jaar</strong> na toekenning WIA/WAO
-                </li>
-                <li>
-                  Of: <strong>regularisatiebijdragen</strong> betalen aan Federale Pensioendienst
-                  (BE) — af te sluiten <strong>binnen 3 jaar</strong>
-                </li>
+              <ul className="small ref-list-sub">
+                <li>{m.ref_pension_disability_li1()}</li>
+                <li>{m.ref_pension_disability_li2()}</li>
               </ul>
             </Col>
             <Col md={6}>
-              <p className="small mb-2" style={{ color: "var(--bt-text-sub)" }}>
-                Bij <strong>pro rata uitkering</strong> (gewerkt in meerdere landen):
+              <p className="small mb-2 ref-text-sub">
+                {m.ref_pension_disability_intro2()}
               </p>
               <ul
-                className="small mb-0"
-                style={{ color: "var(--bt-text-sub)", paddingLeft: "1.2rem" }}
+                className="small mb-0 ref-list-sub"
               >
-                <li>Belgische wachttijd: 180 dagen gewerkt in 12 mnd vóór 1e ziektedag</li>
-                <li>Bij pro rata uitkering: Belgische pensioenopbouw loopt gewoon door</li>
-                <li>Samenloop BE invaliditeitsuitkering: Belgisch recht primeert</li>
+                <li>{m.ref_pension_disability_li3()}</li>
+                <li>{m.ref_pension_disability_li4()}</li>
+                <li>{m.ref_pension_disability_li5()}</li>
               </ul>
             </Col>
           </Row>
@@ -928,41 +685,29 @@ export default function PensionReference() {
 
         {/* ── Belasting op pensioen ────────────────────────────────── */}
         <SectionCard title={m.ref_pension_s_tax()} icon="bi-receipt-cutoff" accent="neutral">
-          <p className="small mb-3" style={{ color: "var(--bt-text-sub)" }}>
-            Hoofdregel verdrag BE–NL voor postactieve grensarbeiders: belasting in het{" "}
-            <strong>woonland (België)</strong>.
+          <p className="small mb-3 ref-text-sub">
+            {m.ref_pension_tax_intro()}
           </p>
           <Row className="g-3">
             <Col md={6}>
-              <div
-                className="small fw-semibold mb-2"
-                style={{
-                  color: "var(--bt-text-muted)",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.05em",
-                }}
-              >
+              <div className="small fw-semibold mb-2 ref-subsection-label">
                 {m.ref_pension_exception_nl()}
               </div>
               <ul
-                className="small mb-0"
-                style={{ color: "var(--bt-text-sub)", paddingLeft: "1.2rem" }}
+                className="small mb-0 ref-list-sub"
               >
-                <li>ABP-pensioen (ambtenaar) mits NL nationaliteit</li>
-                <li>WAO/WIA in samenloop met nog uitgeoefende dienstbetrekking</li>
-                <li>Nawerking 1 jaar bij gedeeltelijke AO (WGA) + dienstbetrekking loopt nog</li>
-                <li>Bovenwettelijke aanvullingen die geen overbrugging naar pensioen zijn</li>
+                <li>{m.ref_pension_tax_exc_li1()}</li>
+                <li>{m.ref_pension_tax_exc_li2()}</li>
+                <li>{m.ref_pension_tax_exc_li3()}</li>
+                <li>{m.ref_pension_tax_exc_li4()}</li>
               </ul>
             </Col>
             <Col md={6}>
               <TipBox>
-                <strong>RVU:</strong> belastbaar in België tenzij ambtenaar met NL nationaliteit. In
-                aangifte op te geven als "opzegvergoeding". Vrijstelling loonbelasting niet vergeten
-                aan te vragen!
+                {m.ref_pension_tax_tip1()}
               </TipBox>
               <TipBox>
-                <strong>AOW altijd belastbaar in België</strong> (woonland). 2e pijlerpensioen ook,
-                tenzij ambtenaar met uitsluitend NL nationaliteit.
+                {m.ref_pension_tax_tip2()}
               </TipBox>
             </Col>
           </Row>
@@ -978,55 +723,40 @@ export default function PensionReference() {
             href="/docs/ACV-Pensioen-Infosessie-2026.pdf"
             target="_blank"
             rel="noreferrer"
-            style={{ textDecoration: "none" }}
+            className="text-decoration-none"
           >
             <div
-              className="p-3 rounded d-flex align-items-center gap-3"
-              style={{
-                background: "var(--bt-surface-3)",
-                border: "1px solid var(--bt-border)",
-                transition: "border-color 0.15s",
-                cursor: "pointer",
-                maxWidth: 480,
-              }}
-              onMouseEnter={(e) =>
-                ((e.currentTarget as HTMLDivElement).style.borderColor = "var(--bt-border-hover)")
-              }
-              onMouseLeave={(e) =>
-                ((e.currentTarget as HTMLDivElement).style.borderColor = "var(--bt-border)")
-              }
+              className="ref-link-card ref-link-card-body p-3 rounded d-flex align-items-center gap-3"
+              style={{ maxWidth: 480 }}
             >
               <i
                 className="bi bi-file-earmark-pdf-fill fs-2"
                 style={{ color: "#e74c3c", flexShrink: 0 }}
               />
               <div>
-                <div className="fw-semibold small" style={{ color: "var(--bt-text)" }}>
-                  ACV Infosessie Grensarbeiders &amp; Pensioen
+                <div className="fw-semibold small ref-text">
+                  {m.ref_pension_source_doc_title()}
                 </div>
-                <div style={{ color: "var(--bt-text-muted)", fontSize: "0.75rem" }}>
-                  Presentatie 24 maart 2026, Pelt · 47 slides
+                <div className="ref-footnote">
+                  {m.ref_pension_source_doc_sub()}
                 </div>
               </div>
               <i
                 className="bi bi-box-arrow-up-right ms-auto"
-                style={{ color: "var(--bt-text-muted)", fontSize: "0.8rem" }}
+                className="ref-icon-muted-sm"
               />
             </div>
           </a>
         </SectionCard>
 
         {/* ── Footer ──────────────────────────────────────────────── */}
-        <footer
-          className="text-center small py-3 mt-2"
-          style={{ color: "var(--bt-text-muted)", borderTop: "1px solid var(--bt-border)" }}
-        >
+        <footer className="text-center small py-3 mt-2 ref-page-footer">
           {m.ref_pension_footer()}&nbsp;|&nbsp;
           <a
             href="https://www.acvgrensarbeiders.be"
             target="_blank"
             rel="noreferrer"
-            style={{ color: "var(--bt-info)" }}
+            className="ref-text-info"
           >
             acvgrensarbeiders.be
           </a>
