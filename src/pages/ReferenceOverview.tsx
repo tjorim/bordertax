@@ -1,9 +1,11 @@
+import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Card, Col, Container, Navbar, Row } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "../styles.css";
 import * as m from "../paraglide/messages.js";
+import { getLocale } from "../paraglide/runtime.js";
 import { LanguageToggleButton } from "./reference/components.js";
 
 interface ReferenceCard {
@@ -38,6 +40,7 @@ const cards: ReferenceCard[] = [
 ];
 
 export default function ReferenceOverview() {
+  const [, setCurrentLocale] = useState(getLocale());
   return (
     <>
       <Navbar bg="dark" variant="dark" expand="lg" className="mb-4">
@@ -50,7 +53,7 @@ export default function ReferenceOverview() {
             <i className="bi bi-journals me-2" style={{ color: "var(--bt-be-light)" }} />
             {m.ref_overview_hub_title()}
           </Navbar.Text>
-          <LanguageToggleButton />
+          <LanguageToggleButton onToggle={() => setCurrentLocale(getLocale())} />
         </Container>
       </Navbar>
 
@@ -82,9 +85,7 @@ export default function ReferenceOverview() {
                     <Card.Title className="fw-bold mb-2 ref-overview-card__title">
                       {card.titleFn()}
                     </Card.Title>
-                    <Card.Text className="ref-overview-card__text">
-                      {card.descFn()}
-                    </Card.Text>
+                    <Card.Text className="ref-overview-card__text">{card.descFn()}</Card.Text>
                     <span className="small fw-semibold" style={{ color: card.accentColor }}>
                       {m.ref_nav_read_more()} <i className="bi bi-arrow-right ms-1" />
                     </span>

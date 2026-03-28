@@ -1,4 +1,10 @@
-import { Outlet, createRootRoute, createRoute, createRouter, redirect } from "@tanstack/react-router";
+import {
+  Outlet,
+  createRootRoute,
+  createRoute,
+  createRouter,
+  redirect,
+} from "@tanstack/react-router";
 import App from "./App";
 import PensionReference from "./pages/PensionReference";
 import ReferenceOverview from "./pages/ReferenceOverview";

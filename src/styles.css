@@ -1943,7 +1943,6 @@ footer a:hover {
   }
 }
 
-
 /* ── Document link cards (source file links) ────────────────── */
 
 .ref-link-card {
@@ -2123,75 +2122,175 @@ footer a:hover {
 }
 
 /* Text colour utilities */
-.ref-text-sub   { color: var(--bt-text-sub); }
-.ref-text-muted { color: var(--bt-text-muted); }
-.ref-text-info  { color: var(--bt-info); }
+.ref-text-sub {
+  color: var(--bt-text-sub);
+}
+.ref-text-muted {
+  color: var(--bt-text-muted);
+}
+.ref-text-info {
+  color: var(--bt-info);
+}
 
 /* Navbar accent text */
-.ref-nav-text { color: var(--bt-text); }
+.ref-nav-text {
+  color: var(--bt-text);
+}
 
 /* Small reference tables (font-size + base colour) */
-.ref-table-sm { font-size: 0.8rem;   color: var(--bt-text); }
-.ref-table-xs { font-size: 0.78rem;  color: var(--bt-text); }
+.ref-table-sm {
+  font-size: 0.8rem;
+  color: var(--bt-text);
+}
+.ref-table-xs {
+  font-size: 0.78rem;
+  color: var(--bt-text);
+}
 
 /* Table structure */
-.ref-thead { background: var(--bt-surface-3); }
-.ref-tr    { border-color: var(--bt-border) !important; }
+.ref-thead {
+  background: var(--bt-surface-3);
+}
+.ref-tr {
+  border-color: var(--bt-border) !important;
+}
 
 /* Table cell mono values */
-.ref-td-mono    { font-family: var(--bt-font-mono); }
-.ref-td-mono-nl { font-family: var(--bt-font-mono); color: var(--bt-nl-light); }
-.ref-td-mono-be { font-family: var(--bt-font-mono); color: var(--bt-be-light); }
-.ref-td-mono-success { font-family: var(--bt-font-mono); color: var(--bt-success); }
-.ref-td-mono-warning { font-family: var(--bt-font-mono); color: var(--bt-warning); font-weight: 700; }
+.ref-td-mono {
+  font-family: var(--bt-font-mono);
+}
+.ref-td-mono-nl {
+  font-family: var(--bt-font-mono);
+  color: var(--bt-nl-light);
+}
+.ref-td-mono-be {
+  font-family: var(--bt-font-mono);
+  color: var(--bt-be-light);
+}
+.ref-td-mono-success {
+  font-family: var(--bt-font-mono);
+  color: var(--bt-success);
+}
+.ref-td-mono-warning {
+  font-family: var(--bt-font-mono);
+  color: var(--bt-warning);
+  font-weight: 700;
+}
 
 /* Table cell text styles */
-.ref-td-sub   { color: var(--bt-text-sub); }
-.ref-td-label { color: var(--bt-text-sub); font-weight: 500; }
-.ref-td-muted { color: var(--bt-text-muted); font-size: 0.75rem; }
+.ref-td-sub {
+  color: var(--bt-text-sub);
+}
+.ref-td-label {
+  color: var(--bt-text-sub);
+  font-weight: 500;
+}
+.ref-td-muted {
+  color: var(--bt-text-muted);
+  font-size: 0.75rem;
+}
 
 /* Section intro paragraph */
-.ref-section-intro    { color: var(--bt-text-sub); font-size: 0.875rem; }
-.ref-section-intro-sm { color: var(--bt-text-sub); font-size: 0.8rem; }
+.ref-section-intro {
+  color: var(--bt-text-sub);
+  font-size: 0.875rem;
+}
+.ref-section-intro-sm {
+  color: var(--bt-text-sub);
+  font-size: 0.8rem;
+}
 
 /* Inline list styles */
-.ref-list-sub   { color: var(--bt-text-sub); padding-left: 1.2rem; }
-.ref-list-muted { color: var(--bt-text-muted); padding-left: 1.2rem; }
+.ref-list-sub {
+  color: var(--bt-text-sub);
+  padding-left: 1.2rem;
+}
+.ref-list-muted {
+  color: var(--bt-text-muted);
+  padding-left: 1.2rem;
+}
 
 /* Scenario divider (separator inside worked-example cards) */
-.ref-scenario-divider { border-top: 1px solid var(--bt-border); padding-top: 0.75rem; }
+.ref-scenario-divider {
+  border-top: 1px solid var(--bt-border);
+  padding-top: 0.75rem;
+}
 
 /* Footnote / source note */
-.ref-footnote { color: var(--bt-text-muted); font-size: 0.75rem; }
+.ref-footnote {
+  color: var(--bt-text-muted);
+  font-size: 0.75rem;
+}
 
 /* Accent text colours */
-.ref-text    { color: var(--bt-text); }
-.ref-text-nl { color: var(--bt-nl-light); }
-.ref-text-be { color: var(--bt-be-light); }
-.ref-text-warning { color: var(--bt-warning); }
+.ref-text {
+  color: var(--bt-text);
+}
+.ref-text-nl {
+  color: var(--bt-nl-light);
+}
+.ref-text-be {
+  color: var(--bt-be-light);
+}
+.ref-text-warning {
+  color: var(--bt-warning);
+}
 
 /* Medium-size reference table (0.85 rem) */
-.ref-table-ref { font-size: 0.85rem; color: var(--bt-text); }
+.ref-table-ref {
+  font-size: 0.85rem;
+  color: var(--bt-text);
+}
 
 /* Indented sub-note table cell */
-.ref-td-indent { color: var(--bt-text-sub); padding-left: 1rem; font-size: 0.75rem; }
+.ref-td-indent {
+  color: var(--bt-text-sub);
+  padding-left: 1rem;
+  font-size: 0.75rem;
+}
 
 /* Scenario panels */
-.ref-scenario-panel-nl { background: var(--bt-surface-3); border: 1px solid var(--bt-nl-border); }
-.ref-scenario-panel-be { background: var(--bt-surface-3); border: 1px solid var(--bt-be-border); }
+.ref-scenario-panel-nl {
+  background: var(--bt-surface-3);
+  border: 1px solid var(--bt-nl-border);
+}
+.ref-scenario-panel-be {
+  background: var(--bt-surface-3);
+  border: 1px solid var(--bt-be-border);
+}
 
 /* Scenario result summary boxes */
-.ref-scenario-result-success { background: var(--bt-success-dim); border: 1px solid rgba(34, 197, 94, 0.25); }
-.ref-scenario-result-warning  { background: var(--bt-warning-dim); border: 1px solid var(--bt-warning-border); }
+.ref-scenario-result-success {
+  background: var(--bt-success-dim);
+  border: 1px solid rgba(34, 197, 94, 0.25);
+}
+.ref-scenario-result-warning {
+  background: var(--bt-warning-dim);
+  border: 1px solid var(--bt-warning-border);
+}
 
 /* Small external-link icon */
-.ref-icon-muted-sm { color: var(--bt-text-muted); font-size: 0.8rem; }
+.ref-icon-muted-sm {
+  color: var(--bt-text-muted);
+  font-size: 0.8rem;
+}
 
 /* Extra-small table with sub-text colour (AOW history, ZIV) */
-.ref-table-sub { font-size: 0.78rem; color: var(--bt-text-sub); }
+.ref-table-sub {
+  font-size: 0.78rem;
+  color: var(--bt-text-sub);
+}
 
 /* Mono range cell — BE accent, extra-small */
-.ref-td-mono-be-xs { font-family: var(--bt-font-mono); color: var(--bt-be-light); font-size: 0.75rem; }
+.ref-td-mono-be-xs {
+  font-family: var(--bt-font-mono);
+  color: var(--bt-be-light);
+  font-size: 0.75rem;
+}
 
 /* Malus percentage cell */
-.ref-td-mono-danger { font-family: var(--bt-font-mono); color: var(--bt-danger); font-weight: 700; }
+.ref-td-mono-danger {
+  font-family: var(--bt-font-mono);
+  color: var(--bt-danger);
+  font-weight: 700;
+}

@@ -24,10 +24,7 @@ export function SectionCard({
         : "var(--bt-border)";
 
   return (
-    <Card
-      className="mb-4 ref-section-card"
-      style={{ border: `1px solid ${borderColor}` }}
-    >
+    <Card className="mb-4 ref-section-card" style={{ border: `1px solid ${borderColor}` }}>
       <Card.Header
         className="ref-section-card__header"
         style={{ borderBottom: `1px solid ${borderColor}` }}
@@ -42,13 +39,7 @@ export function SectionCard({
   );
 }
 
-function CountryBadge({
-  variant,
-  children,
-}: {
-  variant: "nl" | "be";
-  children: React.ReactNode;
-}) {
+function CountryBadge({ variant, children }: { variant: "nl" | "be"; children: React.ReactNode }) {
   const className = variant === "nl" ? "ref-badge-nl" : "ref-badge-be";
   return <Badge className={className}>{children}</Badge>;
 }
@@ -108,7 +99,7 @@ export function WarnBox({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function LanguageToggleButton() {
+export function LanguageToggleButton({ onToggle }: { onToggle?: () => void } = {}) {
   const [locale, setLocaleState] = useState(getLocale());
   const nextLangLabel = locale === "en" ? m.lang_nl() : m.lang_en();
 
@@ -122,6 +113,7 @@ export function LanguageToggleButton() {
         setLocale(nextLocale, { reload: false });
         setLocaleState(nextLocale);
         document.documentElement.lang = nextLocale;
+        onToggle?.();
       }}
       aria-label={nextLangLabel}
     >

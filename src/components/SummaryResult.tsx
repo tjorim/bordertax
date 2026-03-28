@@ -213,9 +213,7 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
             <table className="table table-sm table-bordered mb-1 small">
               <thead>
                 <tr>
-                  <th scope="col">
-                    {m.summary_sourcing_method_col()}
-                  </th>
+                  <th scope="col">{m.summary_sourcing_method_col()}</th>
                   <th scope="col" className="text-center">
                     {m.summary_sourcing_nl_fraction()}
                   </th>
