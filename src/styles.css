@@ -47,6 +47,8 @@
   --bt-warning-dim: rgba(245, 158, 11, 0.1);
   --bt-info: #60a5fa;
   --bt-info-dim: rgba(96, 165, 250, 0.1);
+  --bt-info-border: rgba(96, 165, 250, 0.25);
+  --bt-warning-border: rgba(245, 158, 11, 0.3);
 
   /* Typography */
   --bt-font-display: "Cormorant Garamond", "Times New Roman", Georgia, serif;
@@ -1939,4 +1941,356 @@ footer a:hover {
   .bt-main-row > .col-lg-7 {
     animation: none !important;
   }
+}
+
+/* ── Document link cards (source file links) ────────────────── */
+
+.ref-link-card {
+  transition: border-color 0.15s;
+  cursor: pointer;
+}
+
+.ref-link-card:hover {
+  border-color: var(--bt-border-hover) !important;
+}
+
+/* ── Reference pages ──────────────────────────────────────────── */
+
+/* SectionCard */
+.ref-section-card {
+  background: var(--bt-surface-2);
+  border-radius: var(--bt-r-lg);
+}
+
+.ref-section-card__header {
+  background: var(--bt-surface-3);
+  border-radius: var(--bt-r-lg) var(--bt-r-lg) 0 0;
+}
+
+/* TipBox / WarnBox */
+.ref-tip-box {
+  background: var(--bt-info-dim);
+  border: 1px solid var(--bt-info-border);
+  font-size: 0.9rem;
+}
+
+.ref-warn-box {
+  background: var(--bt-warning-dim);
+  border: 1px solid var(--bt-warning-border);
+  font-size: 0.9rem;
+}
+
+/* StatRow */
+.ref-stat-row {
+  border-bottom: 1px solid var(--bt-border-soft);
+}
+
+.ref-stat-row--highlight {
+  background: var(--bt-surface-4);
+  border-radius: var(--bt-r-sm);
+}
+
+.ref-stat-row__label {
+  color: var(--bt-text-sub);
+  font-size: 0.875rem;
+}
+
+.ref-stat-row__value {
+  font-family: var(--bt-font-mono);
+  font-size: 0.9rem;
+  color: var(--bt-text-sub);
+}
+
+.ref-stat-row__value--highlight {
+  color: var(--bt-text);
+  font-weight: 700;
+}
+
+.ref-stat-row__sub {
+  color: var(--bt-text-muted);
+  font-size: 0.75rem;
+}
+
+/* Country badges */
+.ref-badge-nl {
+  background: var(--bt-nl-dim) !important;
+  color: var(--bt-nl-light) !important;
+  border: 1px solid var(--bt-nl-border) !important;
+  font-weight: 500;
+}
+
+.ref-badge-be {
+  background: var(--bt-be-dim) !important;
+  color: var(--bt-be-light) !important;
+  border: 1px solid var(--bt-be-border) !important;
+  font-weight: 500;
+}
+
+/* Navbar brand */
+.ref-nav-brand {
+  font-size: 0.95rem;
+  opacity: 0.8;
+}
+
+/* Hero section */
+.ref-hero-title {
+  font-family: var(--bt-font-display);
+  font-size: 2.4rem;
+}
+
+.ref-hero-subtitle {
+  color: var(--bt-text-sub);
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+/* Sub-section label (uppercase small labels) */
+.ref-subsection-label {
+  color: var(--bt-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Accordion */
+.ref-accordion-item {
+  background: var(--bt-surface-3);
+  border: 1px solid var(--bt-border);
+}
+
+.ref-accordion-body {
+  background: var(--bt-surface-3);
+  font-size: 0.8rem;
+}
+
+/* Formula block */
+.ref-formula {
+  background: var(--bt-surface-4);
+  border: 1px solid var(--bt-border);
+  font-family: var(--bt-font-mono);
+  font-size: 0.85rem;
+  color: var(--bt-text);
+  overflow-x: auto;
+}
+
+/* Pillar card */
+.ref-pillar-card {
+  background: var(--bt-surface-3);
+  border-radius: var(--bt-r-sm);
+}
+
+.ref-pillar-label {
+  font-weight: 700;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Example / stat block */
+.ref-example-block {
+  background: var(--bt-surface-3);
+  border: 1px solid var(--bt-border);
+}
+
+/* Page footer */
+.ref-page-footer {
+  color: var(--bt-text-muted);
+  border-top: 1px solid var(--bt-border);
+}
+
+/* Link card body */
+.ref-link-card-body {
+  background: var(--bt-surface-3);
+  border: 1px solid var(--bt-border);
+}
+
+/* Overview card */
+.ref-overview-card {
+  background: var(--bt-surface-2);
+  border-radius: var(--bt-r-lg);
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.ref-overview-card__title {
+  color: var(--bt-text);
+  font-size: 1.15rem;
+}
+
+.ref-overview-card__text {
+  color: var(--bt-text-sub);
+  font-size: 0.92rem;
+}
+
+/* Text colour utilities */
+.ref-text-sub {
+  color: var(--bt-text-sub);
+}
+.ref-text-muted {
+  color: var(--bt-text-muted);
+}
+.ref-text-info {
+  color: var(--bt-info);
+}
+
+/* Navbar accent text */
+.ref-nav-text {
+  color: var(--bt-text);
+}
+
+/* Small reference tables (font-size + base colour) */
+.ref-table-sm {
+  font-size: 0.8rem;
+  color: var(--bt-text);
+}
+.ref-table-xs {
+  font-size: 0.78rem;
+  color: var(--bt-text);
+}
+
+/* Table structure */
+.ref-thead {
+  background: var(--bt-surface-3);
+}
+.ref-tr {
+  border-color: var(--bt-border) !important;
+}
+
+/* Table cell mono values */
+.ref-td-mono {
+  font-family: var(--bt-font-mono);
+}
+.ref-td-mono-nl {
+  font-family: var(--bt-font-mono);
+  color: var(--bt-nl-light);
+}
+.ref-td-mono-be {
+  font-family: var(--bt-font-mono);
+  color: var(--bt-be-light);
+}
+.ref-td-mono-success {
+  font-family: var(--bt-font-mono);
+  color: var(--bt-success);
+}
+.ref-td-mono-warning {
+  font-family: var(--bt-font-mono);
+  color: var(--bt-warning);
+  font-weight: 700;
+}
+
+/* Table cell text styles */
+.ref-td-sub {
+  color: var(--bt-text-sub);
+}
+.ref-td-label {
+  color: var(--bt-text-sub);
+  font-weight: 500;
+}
+.ref-td-muted {
+  color: var(--bt-text-muted);
+  font-size: 0.75rem;
+}
+
+/* Section intro paragraph */
+.ref-section-intro {
+  color: var(--bt-text-sub);
+  font-size: 0.875rem;
+}
+.ref-section-intro-sm {
+  color: var(--bt-text-sub);
+  font-size: 0.8rem;
+}
+
+/* Inline list styles */
+.ref-list-sub {
+  color: var(--bt-text-sub);
+  padding-left: 1.2rem;
+}
+.ref-list-muted {
+  color: var(--bt-text-muted);
+  padding-left: 1.2rem;
+}
+
+/* Scenario divider (separator inside worked-example cards) */
+.ref-scenario-divider {
+  border-top: 1px solid var(--bt-border);
+  padding-top: 0.75rem;
+}
+
+/* Footnote / source note */
+.ref-footnote {
+  color: var(--bt-text-muted);
+  font-size: 0.75rem;
+}
+
+/* Accent text colours */
+.ref-text {
+  color: var(--bt-text);
+}
+.ref-text-nl {
+  color: var(--bt-nl-light);
+}
+.ref-text-be {
+  color: var(--bt-be-light);
+}
+.ref-text-warning {
+  color: var(--bt-warning);
+}
+
+/* Medium-size reference table (0.85 rem) */
+.ref-table-ref {
+  font-size: 0.85rem;
+  color: var(--bt-text);
+}
+
+/* Indented sub-note table cell */
+.ref-td-indent {
+  color: var(--bt-text-sub);
+  padding-left: 1rem;
+  font-size: 0.75rem;
+}
+
+/* Scenario panels */
+.ref-scenario-panel-nl {
+  background: var(--bt-surface-3);
+  border: 1px solid var(--bt-nl-border);
+}
+.ref-scenario-panel-be {
+  background: var(--bt-surface-3);
+  border: 1px solid var(--bt-be-border);
+}
+
+/* Scenario result summary boxes */
+.ref-scenario-result-success {
+  background: var(--bt-success-dim);
+  border: 1px solid rgba(34, 197, 94, 0.25);
+}
+.ref-scenario-result-warning {
+  background: var(--bt-warning-dim);
+  border: 1px solid var(--bt-warning-border);
+}
+
+/* Small external-link icon */
+.ref-icon-muted-sm {
+  color: var(--bt-text-muted);
+  font-size: 0.8rem;
+}
+
+/* Extra-small table with sub-text colour (AOW history, ZIV) */
+.ref-table-sub {
+  font-size: 0.78rem;
+  color: var(--bt-text-sub);
+}
+
+/* Mono range cell — BE accent, extra-small */
+.ref-td-mono-be-xs {
+  font-family: var(--bt-font-mono);
+  color: var(--bt-be-light);
+  font-size: 0.75rem;
+}
+
+/* Malus percentage cell */
+.ref-td-mono-danger {
+  font-family: var(--bt-font-mono);
+  color: var(--bt-danger);
+  font-weight: 700;
 }

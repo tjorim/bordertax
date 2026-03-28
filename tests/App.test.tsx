@@ -1,5 +1,25 @@
 import { fireEvent, render, screen, within } from "@testing-library/react";
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+
+vi.mock("@tanstack/react-router", async (importOriginal) => {
+  const actual = (await importOriginal()) as Record<string, unknown>;
+  return {
+    ...actual,
+    Link: ({
+      children,
+      to,
+      ...props
+    }: {
+      children: React.ReactNode;
+      to: string;
+      [key: string]: unknown;
+    }) => (
+      <a href={to} {...props}>
+        {children}
+      </a>
+    ),
+  };
+});
 
 import App from "@/App";
 import { setLocale } from "@/paraglide/runtime";
