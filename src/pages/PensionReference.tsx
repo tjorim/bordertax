@@ -110,17 +110,17 @@ export default function PensionReference() {
             {/* ── AOW ────────────────────────────────────────────── */}
             <SectionCard title={m.ref_pension_s_aow()} icon="bi-flag-fill" accent="nl">
               <StatRow label={m.ref_pension_aow_opbouw()} value="2%" />
-              <StatRow label={m.ref_pension_aow_volledig()} value="50 jaar = 100%" />
+              <StatRow label={m.ref_pension_aow_volledig()} value={m.ref_pension_aow_volledig_value()} />
               <StatRow
                 label={m.ref_pension_aow_premie()}
-                value="17,9%"
+                value={m.ref_pension_aow_premie_value()}
                 sub={m.ref_pension_aow_premie_sub()}
               />
-              <StatRow label={m.ref_pension_aow_age_2024()} value="67 jaar" highlight />
-              <StatRow label={m.ref_pension_aow_age_2028()} value="67 jaar 3 maanden" />
-              <StatRow label={m.ref_pension_aow_age_future()} value="70 jaar…" />
-              <StatRow label={m.ref_pension_aow_uitvoering()} value="Sociale Verzekeringsbank (SVB)" />
-              <StatRow label={m.ref_pension_aow_betaling()} value="24e van de maand" />
+              <StatRow label={m.ref_pension_aow_age_2024()} value={m.ref_pension_aow_age_2024_value()} highlight />
+              <StatRow label={m.ref_pension_aow_age_2028()} value={m.ref_pension_aow_age_2028_value()} />
+              <StatRow label={m.ref_pension_aow_age_future()} value={m.ref_pension_aow_age_future_value()} />
+              <StatRow label={m.ref_pension_aow_uitvoering()} value={m.ref_pension_aow_uitvoering_value()} />
+              <StatRow label={m.ref_pension_aow_betaling()} value={m.ref_pension_aow_betaling_value()} />
 
               <div className="mt-4 mb-2 small fw-semibold ref-subsection-label">
                 {m.ref_pension_max_amounts()}
@@ -137,19 +137,15 @@ export default function PensionReference() {
                 <tbody>
                   <tr className="ref-tr">
                     <td>{m.ref_pension_aow_ongehuwd()}</td>
-                    <td className="ref-td-mono-nl">
-                      70%
-                    </td>
-                    <td className="ref-td-mono">€1.637,57</td>
-                    <td className="ref-td-mono">€106,55 × 12</td>
+                    <td className="ref-td-mono-nl">70%</td>
+                    <td className="ref-td-mono">{m.ref_pension_aow_ongehuwd_monthly()}</td>
+                    <td className="ref-td-mono">{m.ref_pension_aow_ongehuwd_holiday()}</td>
                   </tr>
                   <tr className="ref-tr">
                     <td>{m.ref_pension_aow_gehuwd()}</td>
-                    <td className="ref-td-mono-nl">
-                      50%
-                    </td>
-                    <td className="ref-td-mono">€1.122,12</td>
-                    <td className="ref-td-mono">€76,10 × 12</td>
+                    <td className="ref-td-mono-nl">50%</td>
+                    <td className="ref-td-mono">{m.ref_pension_aow_gehuwd_monthly()}</td>
+                    <td className="ref-td-mono">{m.ref_pension_aow_gehuwd_holiday()}</td>
                   </tr>
                 </tbody>
               </Table>
@@ -158,9 +154,9 @@ export default function PensionReference() {
                 <div className="small fw-semibold mb-2 ref-text-muted">
                   {m.ref_pension_example_30yr()}
                 </div>
-                <StatRow label={m.ref_pension_ex_opgebouwd()} value="60%" sub="30 × 2%" />
-                <StatRow label={m.ref_pension_ex_alleenstaand()} value="±€982/mnd" sub="+ vakantiegeld mei" />
-                <StatRow label={m.ref_pension_ex_gehuwd()} value="±€673/mnd" sub="+ vakantiegeld mei" />
+                <StatRow label={m.ref_pension_ex_opgebouwd()} value="60%" sub={m.ref_pension_ex_opgebouwd_sub()} />
+                <StatRow label={m.ref_pension_ex_alleenstaand()} value={m.ref_pension_ex_alleenstaand_value()} sub={m.ref_pension_ex_alleenstaand_sub()} />
+                <StatRow label={m.ref_pension_ex_gehuwd()} value={m.ref_pension_ex_gehuwd_value()} sub={m.ref_pension_ex_alleenstaand_sub()} />
               </div>
 
               <div className="mt-3">
@@ -181,17 +177,17 @@ export default function PensionReference() {
                     <Table size="sm" className="ref-table-sub">
                       <tbody>
                         {[
-                          ["2012", "65 jaar"],
-                          ["2013", "65 jaar + 1 maand"],
-                          ["2014–2015", "65j + 2–3 maanden"],
-                          ["2016", "65 jaar + 6 maanden"],
-                          ["2017", "65 jaar + 9 maanden"],
-                          ["2018", "66 jaar"],
-                          ["2019–2021", "66 jaar + 4 maanden"],
-                          ["2022", "66 jaar + 7 maanden"],
-                          ["2023", "66 jaar + 10 maanden"],
-                          ["2024–2027", "67 jaar"],
-                          ["2028–2031", "67 jaar + 3 maanden"],
+                          ["2012", m.ref_pension_aow_h2012()],
+                          ["2013", m.ref_pension_aow_h2013()],
+                          ["2014–2015", m.ref_pension_aow_h2014_2015()],
+                          ["2016", m.ref_pension_aow_h2016()],
+                          ["2017", m.ref_pension_aow_h2017()],
+                          ["2018", m.ref_pension_aow_h2018()],
+                          ["2019–2021", m.ref_pension_aow_h2019_2021()],
+                          ["2022", m.ref_pension_aow_h2022()],
+                          ["2023", m.ref_pension_aow_h2023()],
+                          ["2024–2027", m.ref_pension_aow_h2024_2027()],
+                          ["2028–2031", m.ref_pension_aow_h2028_2031()],
                         ].map(([yr, age]) => (
                           <tr key={yr} className="ref-tr">
                             <td>{yr}</td>
@@ -207,24 +203,24 @@ export default function PensionReference() {
 
             {/* ── ANW ────────────────────────────────────────────── */}
             <SectionCard title={m.ref_pension_s_anw()} icon="bi-heart-pulse-fill" accent="nl">
-              <StatRow label={m.ref_pension_anw_uitkering()} value="€1.668,49" sub={m.ref_pension_anw_uitkering_sub()} />
-              <StatRow label={m.ref_pension_anw_vakantiegeld()} value="€128,18/mnd" />
-              <StatRow label={m.ref_pension_anw_voorwaarden()} value="< AOW-leeftijd + kind < 18j of ≥ 45% AO" />
+              <StatRow label={m.ref_pension_anw_uitkering()} value={m.ref_pension_anw_uitkering_value()} sub={m.ref_pension_anw_uitkering_sub()} />
+              <StatRow label={m.ref_pension_anw_vakantiegeld()} value={m.ref_pension_anw_vakantiegeld_value()} />
+              <StatRow label={m.ref_pension_anw_voorwaarden()} value={m.ref_pension_anw_voorwaarden_value()} />
               <StatRow
                 label={m.ref_pension_anw_wezen()}
-                value="kind < 21 jaar"
+                value={m.ref_pension_anw_wezen_value()}
                 sub={m.ref_pension_anw_wezen_sub()}
               />
 
               <div className="mt-3 small fw-semibold mb-2 ref-subsection-label">
                 {m.ref_pension_extra_earnings_anw()}
               </div>
-              <StatRow label={m.ref_pension_anw_vrijgesteld()} value="eerste €1.147/mnd" />
-              <StatRow label={m.ref_pension_anw_daarboven()} value="voor 2/3" />
-              <StatRow label={m.ref_pension_anw_geen_recht()} value="€3.617/mnd" />
+              <StatRow label={m.ref_pension_anw_vrijgesteld()} value={m.ref_pension_anw_vrijgesteld_value()} />
+              <StatRow label={m.ref_pension_anw_daarboven()} value={m.ref_pension_anw_daarboven_value()} />
+              <StatRow label={m.ref_pension_anw_geen_recht()} value={m.ref_pension_anw_geen_recht_value()} />
               <StatRow
                 label={m.ref_pension_anw_geen_anw()}
-                value="€1.646/mnd"
+                value={m.ref_pension_anw_geen_anw_value()}
                 sub={m.ref_pension_anw_geen_anw_sub()}
               />
 
@@ -263,17 +259,17 @@ export default function PensionReference() {
               <p className="small mb-3 ref-text-sub">
                 {m.ref_pension_sup_intro()}
               </p>
-              <StatRow label={m.ref_pension_sup_pensioenpot()} value="€1.300 miljard" />
-              <StatRow label={m.ref_pension_sup_fondsen()} value="±200 actief" />
-              <StatRow label={m.ref_pension_sup_afkoop()} value="€632/jaar" />
+              <StatRow label={m.ref_pension_sup_pensioenpot()} value={m.ref_pension_sup_pensioenpot_value()} />
+              <StatRow label={m.ref_pension_sup_fondsen()} value={m.ref_pension_sup_fondsen_value()} />
+              <StatRow label={m.ref_pension_sup_afkoop()} value={m.ref_pension_sup_afkoop_value()} />
               <StatRow
                 label={m.ref_pension_sup_partner()}
-                value="70% van ouderdomspensioen"
+                value={m.ref_pension_sup_partner_value()}
                 sub={m.ref_pension_sup_partner_sub()}
               />
               <StatRow
                 label={m.ref_pension_sup_upo()}
-                value="jaarlijks"
+                value={m.ref_pension_sup_upo_value()}
                 sub={m.ref_pension_sup_upo_sub()}
               />
 
@@ -310,9 +306,9 @@ export default function PensionReference() {
               <p className="small mb-3 ref-text-sub">
                 {m.ref_pension_rvu_intro()}
               </p>
-              <StatRow label={m.ref_pension_rvu_max()} value="€2.357/mnd" highlight />
-              <StatRow label={m.ref_pension_rvu_vroegst()} value="36 maanden voor AOW-leeftijd" />
-              <StatRow label={m.ref_pension_rvu_uitbetaling()} value="periodiek of bedrag ineens" />
+              <StatRow label={m.ref_pension_rvu_max()} value={m.ref_pension_rvu_max_value()} highlight />
+              <StatRow label={m.ref_pension_rvu_vroegst()} value={m.ref_pension_rvu_vroegst_value()} />
+              <StatRow label={m.ref_pension_rvu_uitbetaling()} value={m.ref_pension_rvu_uitbetaling_value()} />
               <ul
                 className="small mt-3 mb-0 ref-list-sub"
               >
@@ -335,11 +331,11 @@ export default function PensionReference() {
               <p className="small mb-3 ref-text-sub">
                 {m.ref_pension_ded_intro()}
               </p>
-              <StatRow label={m.ref_pension_ded_zorg()} value="via CAK (niet meer zorgverzekeraar)" />
-              <StatRow label={m.ref_pension_ded_verdrag()} value="0,8165" />
-              <StatRow label={m.ref_pension_ded_zvw()} value="4,85%" sub={m.ref_pension_ded_zvw_sub()} />
-              <StatRow label={m.ref_pension_ded_nominaal()} value="€128,19/mnd" />
-              <StatRow label={m.ref_pension_ded_wlz()} value="9,65%" sub={m.ref_pension_ded_wlz_sub()} />
+              <StatRow label={m.ref_pension_ded_zorg()} value={m.ref_pension_ded_zorg_value()} />
+              <StatRow label={m.ref_pension_ded_verdrag()} value={m.ref_pension_ded_verdrag_value()} />
+              <StatRow label={m.ref_pension_ded_zvw()} value={m.ref_pension_ded_zvw_value()} sub={m.ref_pension_ded_zvw_sub()} />
+              <StatRow label={m.ref_pension_ded_nominaal()} value={m.ref_pension_ded_nominaal_value()} />
+              <StatRow label={m.ref_pension_ded_wlz()} value={m.ref_pension_ded_wlz_value()} sub={m.ref_pension_ded_wlz_sub()} />
               <TipBox>{m.ref_pension_ded_tip()}</TipBox>
             </SectionCard>
           </Col>
@@ -354,21 +350,21 @@ export default function PensionReference() {
               </div>
               <StatRow
                 label={m.ref_pension_be_wet_pensioen()}
-                value="66 jaar"
+                value={m.ref_pension_be_wet_pensioen_value()}
                 sub={m.ref_pension_be_wet_pensioen_sub()}
                 highlight
               />
               <StatRow
                 label={m.ref_pension_be_volledig()}
-                value="14.040 dagen"
+                value={m.ref_pension_be_volledig_value()}
                 sub={m.ref_pension_be_volledig_sub()}
               />
-              <StatRow label={m.ref_pension_be_vroegst()} value="60 jaar" sub={m.ref_pension_be_vroegst_sub()} />
-              <StatRow label={m.ref_pension_be_loonplafond()} value="€82.608/jaar" />
-              <StatRow label={m.ref_pension_be_max_gezin()} value="€4.077/mnd" highlight />
-              <StatRow label={m.ref_pension_be_max_alleenst()} value="€3.262/mnd" highlight />
-              <StatRow label={m.ref_pension_be_aanvraag()} value="12 mnd op voorhand" />
-              <StatRow label={m.ref_pension_be_geen_terugw()} value="= dag van aanvraag" />
+              <StatRow label={m.ref_pension_be_vroegst()} value={m.ref_pension_be_vroegst_value()} sub={m.ref_pension_be_vroegst_sub()} />
+              <StatRow label={m.ref_pension_be_loonplafond()} value={m.ref_pension_be_loonplafond_value()} />
+              <StatRow label={m.ref_pension_be_max_gezin()} value={m.ref_pension_be_max_gezin_value()} highlight />
+              <StatRow label={m.ref_pension_be_max_alleenst()} value={m.ref_pension_be_max_alleenst_value()} highlight />
+              <StatRow label={m.ref_pension_be_aanvraag()} value={m.ref_pension_be_aanvraag_value()} />
+              <StatRow label={m.ref_pension_be_geen_terugw()} value={m.ref_pension_be_geen_terugw_value()} />
 
               <WarnBox>
                 {m.ref_pension_be_warn_aanvraag()}
@@ -388,9 +384,9 @@ export default function PensionReference() {
                 </thead>
                 <tbody>
                   {[
-                    ["60 jaar", m.ref_pension_be_career_60()],
-                    ["61 of 62 jaar", m.ref_pension_be_career_61_62()],
-                    ["63 of 64 jaar", m.ref_pension_be_career_63_64()],
+                    [m.ref_pension_be_age_60(), m.ref_pension_be_career_60()],
+                    [m.ref_pension_be_age_61_62(), m.ref_pension_be_career_61_62()],
+                    [m.ref_pension_be_age_63_64(), m.ref_pension_be_career_63_64()],
                   ].map(([age, career]) => (
                     <tr key={age} className="ref-tr">
                       <td className="ref-td-mono-be">
@@ -475,13 +471,13 @@ export default function PensionReference() {
                 </thead>
                 <tbody>
                   {[
-                    ["60 jaar", m.ref_pension_be2027_row_60_a()],
-                    ["60 jaar", m.ref_pension_be2027_row_60_b()],
-                    ["61 jaar", m.ref_pension_be2027_row_61()],
-                    ["62 jaar", m.ref_pension_be2027_row_62()],
-                    ["63 jaar", m.ref_pension_be2027_row_63()],
-                    ["64 jaar", m.ref_pension_be2027_row_64()],
-                    ["65 jaar", m.ref_pension_be2027_row_65()],
+                    [m.ref_pension_be2027_age_60(), m.ref_pension_be2027_row_60_a()],
+                    [m.ref_pension_be2027_age_60(), m.ref_pension_be2027_row_60_b()],
+                    [m.ref_pension_be2027_age_61(), m.ref_pension_be2027_row_61()],
+                    [m.ref_pension_be2027_age_62(), m.ref_pension_be2027_row_62()],
+                    [m.ref_pension_be2027_age_63(), m.ref_pension_be2027_row_63()],
+                    [m.ref_pension_be2027_age_64(), m.ref_pension_be2027_row_64()],
+                    [m.ref_pension_be2027_age_65(), m.ref_pension_be2027_row_65()],
                   ].map((row) => {
                     const [age, career] = row;
                     return (

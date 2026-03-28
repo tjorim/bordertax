@@ -99,10 +99,10 @@ export default function SalarySplitReference() {
                   <tr>
                     <th>{m.ref_table_component()}</th>
                     <th>
-                      <NlBadge>🇳🇱 Nederland</NlBadge>
+                      <NlBadge>{m.ref_ss_col_nl()}</NlBadge>
                     </th>
                     <th>
-                      <BeBadge>🇧🇪 België</BeBadge>
+                      <BeBadge>{m.ref_ss_col_be()}</BeBadge>
                     </th>
                   </tr>
                 </thead>
@@ -186,7 +186,7 @@ export default function SalarySplitReference() {
                 >
                   MOTIV (fgov.be)
                 </a>
-                . Overweeg een fiscalist.
+                {" "}{m.ref_ss_s3_consult_specialist()}
               </WarnBox>
             </SectionCard>
           </Col>
@@ -204,23 +204,23 @@ export default function SalarySplitReference() {
                 </thead>
                 <tbody>
                   <tr className="ref-tr">
-                    <td>€0 – €38.883</td>
+                    <td>{m.ref_ss_s4_bracket1()}</td>
                     <td className="ref-td-mono-nl">
-                      35,75%
+                      {m.ref_ss_s4_rate1()}
                     </td>
-                    <td className="ref-td-sub">27,65% VV + 8,10% LB</td>
+                    <td className="ref-td-sub">{m.ref_ss_s4_buildup1()}</td>
                   </tr>
                   <tr className="ref-tr">
-                    <td>€38.883 – €78.426</td>
+                    <td>{m.ref_ss_s4_bracket2()}</td>
                     <td className="ref-td-mono-nl">
-                      37,56%
+                      {m.ref_ss_s4_rate2()}
                     </td>
                     <td className="ref-td-sub">{m.ref_ss_s4_enkel_lb()}</td>
                   </tr>
                   <tr className="ref-tr">
-                    <td>boven €78.426</td>
+                    <td>{m.ref_ss_s4_bracket3()}</td>
                     <td className="ref-td-mono-nl">
-                      49,50%
+                      {m.ref_ss_s4_rate3()}
                     </td>
                     <td className="ref-td-sub">{m.ref_ss_s4_enkel_lb()}</td>
                   </tr>
@@ -234,7 +234,7 @@ export default function SalarySplitReference() {
                   <tr className="ref-tr">
                     <td>{m.ref_ss_ahk()}</td>
                     <td className="ref-td-mono-success text-end">
-                      max €3.115
+                      {m.ref_ss_s4_ahk_max()}
                     </td>
                   </tr>
                   <tr className="ref-tr">
@@ -246,7 +246,7 @@ export default function SalarySplitReference() {
                   <tr className="ref-tr">
                     <td>{m.ref_ss_arbeidskorting()}</td>
                     <td className="ref-td-mono-success text-end">
-                      max €5.685
+                      {m.ref_ss_s4_arbeidskorting_max()}
                     </td>
                   </tr>
                   <tr className="ref-tr">
@@ -258,7 +258,7 @@ export default function SalarySplitReference() {
                   <tr className="ref-tr">
                     <td>{m.ref_ss_combinatiekorting()}</td>
                     <td className="ref-td-mono-success text-end">
-                      max €3.032
+                      {m.ref_ss_s4_combinatiekorting_max()}
                     </td>
                   </tr>
                 </tbody>
@@ -277,7 +277,7 @@ export default function SalarySplitReference() {
                 <tbody>
                   <tr className="ref-tr">
                     <td>{m.ref_ss_s5_row_effective()}</td>
-                    <td className="ref-td-mono">1 juli 2023</td>
+                    <td className="ref-td-mono">{m.ref_ss_s5_effective_date_value()}</td>
                   </tr>
                   <tr className="ref-tr">
                     <td>{m.ref_ss_s5_row_max_telework()}</td>
@@ -287,15 +287,15 @@ export default function SalarySplitReference() {
                   </tr>
                   <tr className="ref-tr">
                     <td>{m.ref_ss_s5_row_a1_validity()}</td>
-                    <td className="ref-td-mono">3 jaar (verlengbaar)</td>
+                    <td className="ref-td-mono">{m.ref_ss_s5_a1_validity_value()}</td>
                   </tr>
                   <tr className="ref-tr">
                     <td>{m.ref_ss_s5_row_apply_at()}</td>
-                    <td>SVB (Nederland)</td>
+                    <td>{m.ref_ss_s5_apply_at_value()}</td>
                   </tr>
                   <tr className="ref-tr">
                     <td>{m.ref_ss_s5_row_retro()}</td>
-                    <td className="ref-td-mono">max 3 maanden</td>
+                    <td className="ref-td-mono">{m.ref_ss_s5_retro_value()}</td>
                   </tr>
                 </tbody>
               </Table>
@@ -387,9 +387,9 @@ export default function SalarySplitReference() {
                 <StatRow
                   label={m.ref_ss_label_nl_belastbaar_a()}
                   value="€41.763"
-                  sub="53.299 × 181/231"
+                  sub={m.ref_ss_example_sub_a_nl()}
                 />
-                <StatRow label={m.ref_ss_label_be_deel_bruto()} value="€11.536" sub="53.299 × 50/231" />
+                <StatRow label={m.ref_ss_label_be_deel_bruto()} value="€11.536" sub={m.ref_ss_example_sub_be_share()} />
                 <StatRow label={m.ref_ss_label_nl_teruggaaf()} value="€4.314" highlight />
                 <div className="mt-3 ref-scenario-divider">
                   <h6 className="mb-2 small fw-semibold ref-subsection-label ref-text-be">
@@ -398,7 +398,7 @@ export default function SalarySplitReference() {
                   <StatRow
                     label={m.ref_ss_label_w_grondslag()}
                     value="€44.711"
-                    sub="53.299 − (12.902 − 4.314)"
+                    sub={m.ref_ss_example_sub_w_base()}
                   />
                   <StatRow label={m.ref_ss_label_y_o1()} value="€10.310" />
                   <StatRow label={m.ref_ss_label_z_o2()} value="€34.401" />
@@ -424,19 +424,19 @@ export default function SalarySplitReference() {
                 <StatRow
                   label={m.ref_ss_label_breuk_nl_be()}
                   value="155 / 205"
-                  sub="breuk daalt: 180−25 / 230−25"
+                  sub={m.ref_ss_example_sub_fraction_b()}
                 />
                 <StatRow
                   label={m.ref_ss_label_be_aandeel_stijgt()}
                   value="50/205 = 24,4%"
-                  sub="vs 50/230 = 21,7% zonder ziek"
+                  sub={m.ref_ss_example_sub_be_share_b()}
                 />
-                <StatRow label={m.ref_ss_label_nl_teruggaaf()} value="€4.314" sub="ongewijzigd" />
+                <StatRow label={m.ref_ss_label_nl_teruggaaf()} value="€4.314" sub={m.ref_ss_example_unchanged()} />
                 <div className="mt-3 ref-scenario-divider">
                   <h6 className="mb-2 small fw-semibold ref-subsection-label ref-text-be">
                     {m.ref_ss_be_declaration()}
                   </h6>
-                  <StatRow label={m.ref_ss_label_w_grondslag()} value="€44.711" sub="ongewijzigd" />
+                  <StatRow label={m.ref_ss_label_w_grondslag()} value="€44.711" sub={m.ref_ss_example_unchanged()} />
                   <StatRow label={m.ref_ss_label_y_o1()} value="€11.561" />
                   <StatRow label={m.ref_ss_label_z_o2()} value="€33.150" />
                   <StatRow label={m.ref_ss_label_be_te_betalen()} value="€3.600" highlight />

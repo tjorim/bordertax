@@ -2104,50 +2104,6 @@ footer a:hover {
   border: 1px solid var(--bt-border);
 }
 
-/* Table helpers */
-.ref-table-text {
-  color: var(--bt-text);
-}
-
-.ref-table-sub-text {
-  color: var(--bt-text-sub);
-}
-
-.ref-table-header {
-  background: var(--bt-surface-3);
-}
-
-.ref-cell-mono-nl {
-  font-family: var(--bt-font-mono);
-  color: var(--bt-nl-light);
-}
-
-.ref-cell-mono-be {
-  font-family: var(--bt-font-mono);
-  color: var(--bt-be-light);
-}
-
-.ref-cell-mono-success {
-  font-family: var(--bt-font-mono);
-  color: var(--bt-success);
-  text-align: right;
-}
-
-.ref-cell-sub {
-  color: var(--bt-text-sub);
-  font-size: 0.875rem;
-}
-
-.ref-cell-indent-sub {
-  color: var(--bt-text-sub);
-  padding-left: 1rem;
-  font-size: 0.75rem;
-}
-
-.ref-cell-mono {
-  font-family: var(--bt-font-mono);
-}
-
 /* Overview card */
 .ref-overview-card {
   background: var(--bt-surface-2);
