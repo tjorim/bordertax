@@ -88,12 +88,12 @@ export default function SalarySplitReference() {
                 </thead>
                 <tbody>
                   {[
-                    [m.ref_ss_s2_row1_comp(), m.ref_ss_s2_row1_nl(), m.ref_ss_s2_row1_be()],
-                    [m.ref_ss_s2_row2_comp(), m.ref_ss_s2_row2_nl(), m.ref_ss_s2_row2_be()],
-                    [m.ref_ss_s2_row3_comp(), m.ref_ss_s2_row3_nl(), m.ref_ss_s2_row3_be()],
-                    [m.ref_ss_s2_row4_comp(), m.ref_ss_s2_row4_nl(), m.ref_ss_s2_row4_be()],
-                  ].map(([comp, nl, be]) => (
-                    <tr key={comp} className="ref-tr">
+                    { id: "row1", comp: m.ref_ss_s2_row1_comp(), nl: m.ref_ss_s2_row1_nl(), be: m.ref_ss_s2_row1_be() },
+                    { id: "row2", comp: m.ref_ss_s2_row2_comp(), nl: m.ref_ss_s2_row2_nl(), be: m.ref_ss_s2_row2_be() },
+                    { id: "row3", comp: m.ref_ss_s2_row3_comp(), nl: m.ref_ss_s2_row3_nl(), be: m.ref_ss_s2_row3_be() },
+                    { id: "row4", comp: m.ref_ss_s2_row4_comp(), nl: m.ref_ss_s2_row4_nl(), be: m.ref_ss_s2_row4_be() },
+                  ].map(({ id, comp, nl, be }) => (
+                    <tr key={id} className="ref-tr">
                       <td className="ref-td-label">{comp}</td>
                       <td>{nl}</td>
                       <td>{be}</td>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Badge, Button, Card } from "react-bootstrap";
 import { getLocale, setLocale } from "../../paraglide/runtime.js";
 import * as m from "../../paraglide/messages.js";
@@ -101,6 +101,16 @@ export function WarnBox({ children }: { children: React.ReactNode }) {
 
 export function LanguageToggleButton({ onToggle }: { onToggle?: () => void } = {}) {
   const [locale, setLocaleState] = useState(getLocale());
+
+  // Synchronise with external locale changes triggered by browser history
+  // navigation (popstate). Paraglide has no subscription API, so popstate is
+  // the best available signal when setLocale is called with { reload: false }.
+  useEffect(() => {
+    const sync = () => setLocaleState(getLocale());
+    window.addEventListener("popstate", sync);
+    return () => window.removeEventListener("popstate", sync);
+  }, []);
+
   const nextLangLabel = locale === "en" ? m.lang_nl() : m.lang_en();
 
   return (
