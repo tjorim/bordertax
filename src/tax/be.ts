@@ -80,14 +80,9 @@ export function calculateBETax(inputs: TaxInputs, nl: NLTaxResult): BETaxResult 
   // Net professional income
   const netProfessionalIncome = Math.max(0, declaredIncome - socialContributions - forfait);
 
-  // NL-source after-tax amount on the same base as nlTaxableIncome.
-  // nlTaxOnNLSource may be negative when credits exceed taxBeforeCredits; clamp at 0
-  // so nlNetFromNLSource and vrijgesteldFrac stay within a valid [0,1] ratio basis.
-  const nlTaxOnNLSource = nl.netTaxNL - nl.volksverzekeringen;
-  const nlNetFromNLSource = Math.max(0, nl.nlTaxableIncome - Math.max(0, nlTaxOnNLSource));
-
-  // Vrijgesteld fraction: what share of declaredIncome is NL-sourced net income
-  const vrijgesteldFrac = declaredIncome > 0 ? Math.min(1, nlNetFromNLSource / declaredIncome) : 0;
+  // Vrijgesteld fraction: NL days / total workdays (Belgian method: sick days excluded from both)
+  // Verified against aanslagbiljet: vol tarief = BE-days fraction of gross salary
+  const vrijgesteldFrac = totalDays > 0 ? inputs.daysWorkedNL / totalDays : 0;
 
   // Exempt and taxable portions of net professional income
   const vrijgesteld = vrijgesteldFrac * netProfessionalIncome;

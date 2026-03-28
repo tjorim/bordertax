@@ -1,6 +1,11 @@
 import { useState } from "react";
 import { Accordion, Alert, Badge, Button, Col, Form, Row } from "react-bootstrap";
-import { VALID_YEARS } from "../tax/constants";
+import {
+  VALID_YEARS,
+  VALID_RESIDENT_COUNTRIES,
+  VALID_CIVIL_STATUSES,
+  VALID_BELGIAN_REGIONS,
+} from "../tax/constants";
 import type { TaxInputs } from "../tax/types";
 import { getMaxDaysInYear, getTotalWorkdays } from "../tax/workdays";
 import * as m from "../paraglide/messages.js";
@@ -65,38 +70,50 @@ export default function InputPanel({ inputs, onChange }: Props) {
               </Form.Select>
             </Col>
 
-            <Col xs={12} sm={6}>
-              <Form.Label>{m.input_resident_country()}</Form.Label>
-              <Form.Select
-                value={inputs.residentCountry}
-                onChange={(e) =>
-                  set("residentCountry", e.target.value as TaxInputs["residentCountry"])
-                }
-              >
-                <option value="BE">🇧🇪 {m.input_resident_country_be()}</option>
-                <option value="NL">🇳🇱 {m.input_resident_country_nl()}</option>
-              </Form.Select>
-            </Col>
-
-            <Col xs={12} sm={6}>
-              <Form.Label>
-                {m.input_civil_status()}{" "}
-                <Badge
-                  bg="secondary"
-                  className="ms-1 fw-normal"
-                  aria-label={m.input_civil_status_not_used()}
+            {VALID_RESIDENT_COUNTRIES.length > 1 && (
+              <Col xs={12} sm={6}>
+                <Form.Label>{m.input_resident_country()}</Form.Label>
+                <Form.Select
+                  value={inputs.residentCountry}
+                  onChange={(e) =>
+                    set("residentCountry", e.target.value as TaxInputs["residentCountry"])
+                  }
                 >
-                  {m.input_civil_status_not_used()}
-                </Badge>
-              </Form.Label>
-              <Form.Select
-                value={inputs.civilStatus}
-                onChange={(e) => set("civilStatus", e.target.value as TaxInputs["civilStatus"])}
-              >
-                <option value="single">{m.input_civil_status_single()}</option>
-                <option value="married">{m.input_civil_status_married()}</option>
-              </Form.Select>
-            </Col>
+                  {(VALID_RESIDENT_COUNTRIES as readonly string[]).includes("BE") && (
+                    <option value="BE">🇧🇪 {m.input_resident_country_be()}</option>
+                  )}
+                  {(VALID_RESIDENT_COUNTRIES as readonly string[]).includes("NL") && (
+                    <option value="NL">🇳🇱 {m.input_resident_country_nl()}</option>
+                  )}
+                </Form.Select>
+              </Col>
+            )}
+
+            {VALID_CIVIL_STATUSES.length > 1 && (
+              <Col xs={12} sm={6}>
+                <Form.Label>
+                  {m.input_civil_status()}{" "}
+                  <Badge
+                    bg="secondary"
+                    className="ms-1 fw-normal"
+                    aria-label={m.input_civil_status_not_used()}
+                  >
+                    {m.input_civil_status_not_used()}
+                  </Badge>
+                </Form.Label>
+                <Form.Select
+                  value={inputs.civilStatus}
+                  onChange={(e) => set("civilStatus", e.target.value as TaxInputs["civilStatus"])}
+                >
+                  {(VALID_CIVIL_STATUSES as readonly string[]).includes("single") && (
+                    <option value="single">{m.input_civil_status_single()}</option>
+                  )}
+                  {(VALID_CIVIL_STATUSES as readonly string[]).includes("married") && (
+                    <option value="married">{m.input_civil_status_married()}</option>
+                  )}
+                </Form.Select>
+              </Col>
+            )}
 
             <Col xs={12} sm={6}>
               <Form.Label>{m.input_dependents()}</Form.Label>
@@ -120,28 +137,36 @@ export default function InputPanel({ inputs, onChange }: Props) {
 
             {inputs.residentCountry === "BE" && (
               <>
-                <Col xs={12} sm={6}>
-                  <Form.Label>
-                    {m.input_belgian_region()}{" "}
-                    <Badge
-                      bg="secondary"
-                      className="ms-1 fw-normal"
-                      aria-label={m.input_belgian_region_not_used()}
+                {VALID_BELGIAN_REGIONS.length > 1 && (
+                  <Col xs={12} sm={6}>
+                    <Form.Label>
+                      {m.input_belgian_region()}{" "}
+                      <Badge
+                        bg="secondary"
+                        className="ms-1 fw-normal"
+                        aria-label={m.input_belgian_region_not_used()}
+                      >
+                        {m.input_belgian_region_not_used()}
+                      </Badge>
+                    </Form.Label>
+                    <Form.Select
+                      value={inputs.belgianRegion}
+                      onChange={(e) =>
+                        set("belgianRegion", e.target.value as TaxInputs["belgianRegion"])
+                      }
                     >
-                      {m.input_belgian_region_not_used()}
-                    </Badge>
-                  </Form.Label>
-                  <Form.Select
-                    value={inputs.belgianRegion}
-                    onChange={(e) =>
-                      set("belgianRegion", e.target.value as TaxInputs["belgianRegion"])
-                    }
-                  >
-                    <option value="flemish">{m.input_belgian_region_flemish()}</option>
-                    <option value="walloon">{m.input_belgian_region_walloon()}</option>
-                    <option value="brussels">{m.input_belgian_region_brussels()}</option>
-                  </Form.Select>
-                </Col>
+                      {(VALID_BELGIAN_REGIONS as readonly string[]).includes("flemish") && (
+                        <option value="flemish">{m.input_belgian_region_flemish()}</option>
+                      )}
+                      {(VALID_BELGIAN_REGIONS as readonly string[]).includes("walloon") && (
+                        <option value="walloon">{m.input_belgian_region_walloon()}</option>
+                      )}
+                      {(VALID_BELGIAN_REGIONS as readonly string[]).includes("brussels") && (
+                        <option value="brussels">{m.input_belgian_region_brussels()}</option>
+                      )}
+                    </Form.Select>
+                  </Col>
+                )}
 
                 <Col xs={12} sm={6}>
                   <Form.Label>

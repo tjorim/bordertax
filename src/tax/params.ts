@@ -15,7 +15,7 @@
  *   gereduceerdRate = 1 / (1 + 0.33257) = 0.75043, verified for 2024 from official aanslagbiljet.
  *   2026 note: proposed 40%→35% bracket reform was not enacted for income year 2026.
  */
-import type { TaxYear } from "./types";
+import type { TaxYear } from "./constants";
 
 // ─── NL interfaces ────────────────────────────────────────────────────────────
 
@@ -445,7 +445,7 @@ export const TAX_PARAMS: Record<TaxYear, YearParams> = {
     },
   },
 
-  2026: {
+/*  2026: {
     nl: {
       under: {
         incomeTaxBrackets: [
@@ -503,5 +503,5 @@ export const TAX_PARAMS: Record<TaxYear, YearParams> = {
       gereduceerdRate: 0.75043,
       gewestelijkeRate: 0.33257,
     },
-  },
+  },*/
 };

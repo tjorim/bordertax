@@ -63,8 +63,10 @@ export function calculateNLTax(inputs: TaxInputs): NLTaxResult {
   const yearData = TAX_PARAMS[inputs.year]?.nl ?? TAX_PARAMS[2025].nl;
   const p = inputs.belowAOWAge ? yearData.under : yearData.over;
 
-  const totalDays = inputs.daysWorkedNL + inputs.daysWorkedBE + (inputs.daysWorkedOther ?? 0);
-  const nlFraction = totalDays > 0 ? inputs.daysWorkedNL / totalDays : 0;
+  // Dutch method: sick days count as NL workdays (added to both numerator and denominator)
+  const sickDays = inputs.sickDays ?? 0;
+  const totalDays = inputs.daysWorkedNL + inputs.daysWorkedBE + (inputs.daysWorkedOther ?? 0) + sickDays;
+  const nlFraction = totalDays > 0 ? (inputs.daysWorkedNL + sickDays) / totalDays : 0;
 
   let nlTaxableIncome = Math.round(inputs.grossSalary * nlFraction);
 
