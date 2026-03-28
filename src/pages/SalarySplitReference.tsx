@@ -28,12 +28,10 @@ export default function SalarySplitReference() {
     <>
       <Navbar bg="dark" variant="dark" expand="lg" className="mb-4">
         <Container>
-          <Link to="/" className="text-decoration-none">
-            <Navbar.Brand className="ref-nav-brand">
-              <i className="bi bi-arrow-left me-2" />
-              {m.ref_nav_back_to_calculator()}
-            </Navbar.Brand>
-          </Link>
+          <Navbar.Brand as={Link} to="/" className="text-decoration-none ref-nav-brand">
+            <i className="bi bi-arrow-left me-2" />
+            {m.ref_nav_back_to_calculator()}
+          </Navbar.Brand>
           <Navbar.Text className="fw-semibold ref-nav-text">
             <i className="bi bi-book-fill me-2" style={{ color: "var(--bt-be-light)" }} />
             {m.ref_ss_nav_title()}

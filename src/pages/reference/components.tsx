@@ -121,6 +121,7 @@ export function LanguageToggleButton() {
         const nextLocale = locale === "en" ? "nl" : "en";
         setLocale(nextLocale, { reload: false });
         setLocaleState(nextLocale);
+        document.documentElement.lang = nextLocale;
       }}
       aria-label={nextLangLabel}
     >
