@@ -531,8 +531,8 @@ export default function SalarySplitReference() {
                     </div>
                   </div>
                   <i
-                    className="bi bi-box-arrow-up-right ms-auto"
-                    className="ref-icon-muted-sm"
+                    className="bi bi-box-arrow-up-right ms-auto ref-icon-muted-sm"
+                    aria-hidden="true"
                   />
                 </div>
               </a>
@@ -558,8 +558,8 @@ export default function SalarySplitReference() {
                     </div>
                   </div>
                   <i
-                    className="bi bi-box-arrow-up-right ms-auto"
-                    className="ref-icon-muted-sm"
+                    className="bi bi-box-arrow-up-right ms-auto ref-icon-muted-sm"
+                    aria-hidden="true"
                   />
                 </div>
               </a>
