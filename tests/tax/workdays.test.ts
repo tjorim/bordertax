@@ -19,7 +19,7 @@ describe("getTotalWorkdays", () => {
     expect(
       getTotalWorkdays({
         year: 2025,
-        residentCountry: "NL",
+        residentCountry: "BE",
         civilStatus: "single",
         dependentChildren: 0,
         belowAOWAge: true,

@@ -5,9 +5,9 @@ import MultiYearComparison from "@/components/MultiYearComparison";
 import { mockTaxResult } from "../test-utils/mockData";
 import { calculate } from "@/tax";
 
-const rows = [2024, 2025, 2026].map((year) => ({
-  year: year as 2024 | 2025 | 2026,
-  result: calculate({ ...mockTaxResult.inputs, year: year as 2024 | 2025 | 2026 }),
+const rows = [2024, 2025].map((year) => ({
+  year: year as 2024 | 2025,
+  result: calculate({ ...mockTaxResult.inputs, year: year as 2024 | 2025 }),
 }));
 
 describe("MultiYearComparison", () => {
@@ -19,7 +19,6 @@ describe("MultiYearComparison", () => {
     render(<MultiYearComparison rows={rows} activeYear={2025} />);
     expect(screen.getAllByText("2024").length).toBeGreaterThan(0);
     expect(screen.getAllByText("2025").length).toBeGreaterThan(0);
-    expect(screen.getAllByText("2026").length).toBeGreaterThan(0);
   });
 
   it("marks the active year with a badge", () => {

@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, within } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("@tanstack/react-router", async (importOriginal) => {
@@ -93,31 +93,6 @@ describe("App", () => {
     localStorage.setItem(STORAGE_KEY, "not valid json{{");
     render(<App />);
     expect(screen.getByText(/Tax year.*2025/)).toBeInTheDocument();
-  });
-
-  it("shows 2026 provisional alert for year 2026", () => {
-    const savedInputs = {
-      year: 2026,
-      residentCountry: "BE",
-      civilStatus: "single",
-      dependentChildren: 0,
-      belowAOWAge: true,
-      belgianRegion: "flemish",
-      communalTaxRate: 7,
-      grossSalary: 60000,
-      daysWorkedNL: 200,
-      daysWorkedBE: 20,
-      thirtyPercentRuling: false,
-    };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(savedInputs));
-    render(<App />);
-    expect(screen.getByText(/Tax year.*2026/)).toBeInTheDocument();
-    const alert = screen
-      .getAllByRole("alert")
-      .find((node) => /indexed amounts.*2026/i.test(node.textContent ?? ""));
-    expect(alert).toBeDefined();
-    expect(alert).toHaveTextContent(/indexed amounts.*2026/i);
-    expect(within(alert!).getByText(/indexed amounts.*2026/i)).toBeInTheDocument();
   });
 
   it("sanitizes invalid enum field values from localStorage", () => {

@@ -6,11 +6,6 @@ import * as m from "@/paraglide/messages.js";
 import { mockBEResult } from "../test-utils/mockData";
 
 describe("BEResult", () => {
-  it("shows info alert for NL residents", () => {
-    render(<BEResult result={null} residentCountry="NL" />);
-    expect(screen.getByRole("alert")).toBeInTheDocument();
-  });
-
   it("renders nothing when result is null for BE resident", () => {
     const { container } = render(<BEResult result={null} residentCountry="BE" />);
     expect(container.firstChild).toBeNull();

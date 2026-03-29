@@ -72,8 +72,8 @@ export const mockTaxResult: TaxResult = {
   nlFractionBelgianMethod: 200 / 220,
 };
 
-export const mockTaxResultNLResident: TaxResult = {
-  inputs: { ...mockInputs, residentCountry: "NL" },
+export const mockTaxResultNoBE: TaxResult = {
+  inputs: { ...mockInputs },
   nl: mockNLResult,
   be: null,
   grossIncome: 60000,
