@@ -41,6 +41,7 @@ describe("SummaryResult", () => {
     const onReset = vi.fn();
     render(<SummaryResult result={mockTaxResultNoBE} onResetInputs={onReset} />);
     expect(screen.getByRole("button", { name: /copy/i })).toBeInTheDocument();
+    expect(screen.queryByText(m.summary_belgian_tax())).not.toBeInTheDocument();
   });
 
   it("shows net daily rate when workdays are set", () => {
