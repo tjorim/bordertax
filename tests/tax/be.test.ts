@@ -37,6 +37,11 @@ function mockNL(overrides?: Partial<NLTaxResult>): NLTaxResult {
 }
 
 describe("calculateBETax", () => {
+  it.skip("returns null for NL resident", () => {
+    const nlInputs = { ...base, residentCountry: "NL" as unknown as TaxInputs["residentCountry"] };
+    expect(calculateBETax(nlInputs, mockNL())).toBeNull();
+  });
+
   it("returns an object for BE resident", () => {
     const result = calculateBETax({ ...base, daysWorkedBE: 20 }, mockNL());
     expect(result).not.toBeNull();
@@ -190,6 +195,15 @@ describe("calculateBETax", () => {
   it("works for tax year 2024", () => {
     const result = calculateBETax(
       { ...base, year: 2024, daysWorkedNL: 200, daysWorkedBE: 20 },
+      mockNL(),
+    );
+    expect(result).not.toBeNull();
+    expect(result!.netTaxBE).toBeGreaterThan(0);
+  });
+
+  it.skip("works for tax year 2026", () => {
+    const result = calculateBETax(
+      { ...base, year: 2026 as unknown as TaxInputs["year"], daysWorkedNL: 200, daysWorkedBE: 20 },
       mockNL(),
     );
     expect(result).not.toBeNull();

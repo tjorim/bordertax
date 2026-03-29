@@ -2,10 +2,16 @@ import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
 import BEResult from "@/components/BEResult";
+import type { TaxInputs } from "@/tax/types";
 import * as m from "@/paraglide/messages.js";
 import { mockBEResult } from "../test-utils/mockData";
 
 describe("BEResult", () => {
+  it.skip("shows info alert for NL residents", () => {
+    render(<BEResult result={null} residentCountry={"NL" as unknown as TaxInputs["residentCountry"]} />);
+    expect(screen.getByRole("alert")).toBeInTheDocument();
+  });
+
   it("renders nothing when result is null for BE resident", () => {
     const { container } = render(<BEResult result={null} residentCountry="BE" />);
     expect(container.firstChild).toBeNull();

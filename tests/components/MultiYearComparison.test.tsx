@@ -2,6 +2,7 @@ import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
 import MultiYearComparison from "@/components/MultiYearComparison";
+import type { TaxYear } from "@/tax/constants";
 import { mockTaxResult } from "../test-utils/mockData";
 import { calculate } from "@/tax";
 
@@ -19,6 +20,15 @@ describe("MultiYearComparison", () => {
     render(<MultiYearComparison rows={rows} activeYear={2025} />);
     expect(screen.getAllByText("2024").length).toBeGreaterThan(0);
     expect(screen.getAllByText("2025").length).toBeGreaterThan(0);
+  });
+
+  it.skip("renders a row for year 2026", () => {
+    const rowsWith2026 = [...rows, {
+      year: 2026 as unknown as TaxYear,
+      result: calculate({ ...mockTaxResult.inputs, year: 2026 as unknown as TaxYear }),
+    }];
+    render(<MultiYearComparison rows={rowsWith2026} activeYear={2025} />);
+    expect(screen.getAllByText("2026").length).toBeGreaterThan(0);
   });
 
   it("marks the active year with a badge", () => {

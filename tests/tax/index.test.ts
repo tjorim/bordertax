@@ -26,6 +26,11 @@ describe("calculate", () => {
     expect(result.effectiveRateTotal).toBe(0);
   });
 
+  it.skip("returns null be result for NL resident", () => {
+    const result = calculate({ ...base, residentCountry: "NL" as unknown as TaxInputs["residentCountry"] });
+    expect(result.be).toBeNull();
+  });
+
   it("returns non-null be result for BE resident", () => {
     const result = calculate({ ...base, residentCountry: "BE", daysWorkedBE: 20 });
     expect(result.be).not.toBeNull();
@@ -39,6 +44,11 @@ describe("calculate", () => {
   it("netIncome equals grossSalary minus totalTax", () => {
     const result = calculate({ ...base });
     expect(result.netIncome).toBeCloseTo(result.grossIncome - result.totalTax, 5);
+  });
+
+  it.skip("totalTax equals nl.netTaxNL when residentCountry is NL", () => {
+    const result = calculate({ ...base, residentCountry: "NL" as unknown as TaxInputs["residentCountry"] });
+    expect(result.totalTax).toBeCloseTo(result.nl.netTaxNL, 5);
   });
 
   it("totalTax equals nl.netTaxNL + be.netTaxBE for BE resident", () => {

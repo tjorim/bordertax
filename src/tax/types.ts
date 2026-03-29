@@ -1,5 +1,4 @@
 import type { TaxYear, ResidentCountry, CivilStatus, BelgianRegion } from "./constants";
-export type { TaxYear };
 
 export interface TaxInputs {
   year: TaxYear;

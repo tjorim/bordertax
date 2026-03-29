@@ -101,6 +101,12 @@ describe("calculateNLTax", () => {
     expect(result.brackets.length).toBeGreaterThan(0);
   });
 
+  it.skip("works for tax year 2026", () => {
+    const result = calculateNLTax({ ...base, year: 2026 as unknown as TaxInputs["year"] });
+    expect(result.netTaxNL).toBeGreaterThan(0);
+    expect(result.brackets.length).toBeGreaterThan(0);
+  });
+
   it("reaches top bracket for very high salary", () => {
     const result = calculateNLTax({ ...base, grossSalary: 200000 });
     const topBracket = result.brackets.find((b) => b.rate === 0.495);
@@ -111,6 +117,25 @@ describe("calculateNLTax", () => {
   it("AHK is 0 for Belgian residents", () => {
     const result = calculateNLTax({ ...base, residentCountry: "BE" });
     expect(result.algemeneHeffingskorting).toBe(0);
+  });
+
+  it.skip("AHK is zero for very high income (above phase-out end)", () => {
+    const nlBase = { ...base, residentCountry: "NL" as unknown as TaxInputs["residentCountry"] };
+    const result = calculateNLTax({ ...nlBase, grossSalary: 200000 });
+    expect(result.algemeneHeffingskorting).toBe(0);
+  });
+
+  it.skip("AHK is at maximum for very low income (below phase-out start)", () => {
+    const nlBase = { ...base, residentCountry: "NL" as unknown as TaxInputs["residentCountry"] };
+    const result = calculateNLTax({ ...nlBase, grossSalary: 20000 });
+    expect(result.algemeneHeffingskorting).toBe(3068);
+  });
+
+  it.skip("above-AOW age uses lower AHK max", () => {
+    const nlBase = { ...base, residentCountry: "NL" as unknown as TaxInputs["residentCountry"] };
+    const under = calculateNLTax({ ...nlBase, grossSalary: 10000, belowAOWAge: true });
+    const over = calculateNLTax({ ...nlBase, grossSalary: 10000, belowAOWAge: false });
+    expect(over.algemeneHeffingskorting).toBeLessThan(under.algemeneHeffingskorting);
   });
 
   it("returns correct structure", () => {
