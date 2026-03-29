@@ -36,6 +36,7 @@ describe("InputPanel", () => {
     expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ year: 2024 }));
   });
 
+  // TODO: Re-enable when NL-resident support is re-integrated
   it.skip("hides Belgian region and communal tax fields for NL residents", () => {
     const onChange = vi.fn();
     const nlInputs = { ...mockInputs, residentCountry: "NL" as unknown as TaxInputs["residentCountry"] };
@@ -49,6 +50,7 @@ describe("InputPanel", () => {
     expect(screen.queryByRole("spinbutton", { name: /municipal tax|communal tax/i })).toBeNull();
   });
 
+  // TODO: Re-enable when NL-resident support is re-integrated
   it.skip("calls onChange when resident country changes to NL", () => {
     const onChange = vi.fn();
     render(<InputPanel inputs={mockInputs} onChange={onChange} />);
@@ -57,6 +59,7 @@ describe("InputPanel", () => {
     expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ residentCountry: "NL" }));
   });
 
+  // TODO: Re-enable when multiple civil statuses are supported
   it.skip("calls onChange when civil status changes", () => {
     const onChange = vi.fn();
     render(<InputPanel inputs={mockInputs} onChange={onChange} />);
@@ -65,6 +68,7 @@ describe("InputPanel", () => {
     expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ civilStatus: "married" }));
   });
 
+  // TODO: Re-enable when multiple Belgian regions are supported
   it.skip("calls onChange when belgian region changes", () => {
     const onChange = vi.fn();
     render(<InputPanel inputs={{ ...mockInputs, residentCountry: "BE" }} onChange={onChange} />);

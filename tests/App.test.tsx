@@ -95,6 +95,7 @@ describe("App", () => {
     expect(screen.getByText(/Tax year.*2025/)).toBeInTheDocument();
   });
 
+  // TODO: Re-enable when 2026 support is re-integrated
   it.skip("shows 2026 provisional alert for year 2026", () => {
     const savedInputs = {
       year: 2026,

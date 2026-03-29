@@ -37,6 +37,7 @@ function mockNL(overrides?: Partial<NLTaxResult>): NLTaxResult {
 }
 
 describe("calculateBETax", () => {
+  // TODO: Re-enable when NL-resident support is re-integrated
   it.skip("returns null for NL resident", () => {
     const nlInputs = { ...base, residentCountry: "NL" as unknown as TaxInputs["residentCountry"] };
     expect(calculateBETax(nlInputs, mockNL())).toBeNull();
@@ -201,6 +202,7 @@ describe("calculateBETax", () => {
     expect(result!.netTaxBE).toBeGreaterThan(0);
   });
 
+  // TODO: Re-enable when 2026 support is re-integrated
   it.skip("works for tax year 2026", () => {
     const result = calculateBETax(
       { ...base, year: 2026 as unknown as TaxInputs["year"], daysWorkedNL: 200, daysWorkedBE: 20 },
