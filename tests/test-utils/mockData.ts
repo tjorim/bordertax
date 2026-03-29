@@ -73,7 +73,9 @@ export const mockTaxResult: TaxResult = {
 };
 
 export const mockTaxResultNoBE: TaxResult = {
-  inputs: { ...mockInputs },
+  // residentCountry cast to NL to represent a realistic NL-resident scenario
+  // where calculateBETax returns null; BE is intentionally not supported yet.
+  inputs: { ...mockInputs, residentCountry: "NL" as TaxInputs["residentCountry"] },
   nl: mockNLResult,
   be: null,
   grossIncome: 60000,

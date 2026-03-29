@@ -16,7 +16,7 @@ describe("InputPanel", () => {
     render(<InputPanel inputs={mockInputs} onChange={onChange} />);
   });
 
-  it("shows Belgian region and communal tax fields for BE residents", () => {
+  it("shows communal tax field for BE residents", () => {
     const onChange = vi.fn();
     render(<InputPanel inputs={{ ...mockInputs, residentCountry: "BE" }} onChange={onChange} />);
     // Year is the only combobox shown (resident country, civil status and Belgian region
