@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import SummaryResult from "@/components/SummaryResult";
 import * as m from "@/paraglide/messages.js";
-import { mockTaxResult, mockTaxResultNLResident } from "../test-utils/mockData";
+import { mockTaxResult, mockTaxResultNoBE } from "../test-utils/mockData";
 
 describe("SummaryResult", () => {
   beforeEach(() => {
@@ -37,10 +37,11 @@ describe("SummaryResult", () => {
     expect(onReset).toHaveBeenCalledOnce();
   });
 
-  it("renders for NL resident (no Belgian tax row)", () => {
+  it("renders when be is null (no Belgian tax row)", () => {
     const onReset = vi.fn();
-    render(<SummaryResult result={mockTaxResultNLResident} onResetInputs={onReset} />);
+    render(<SummaryResult result={mockTaxResultNoBE} onResetInputs={onReset} />);
     expect(screen.getByRole("button", { name: /copy/i })).toBeInTheDocument();
+    expect(screen.queryByText(m.summary_belgian_tax())).not.toBeInTheDocument();
   });
 
   it("shows net daily rate when workdays are set", () => {

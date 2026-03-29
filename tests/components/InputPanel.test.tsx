@@ -2,6 +2,7 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import InputPanel from "@/components/InputPanel";
+import type { TaxInputs } from "@/tax/types";
 import { setLocale } from "@/paraglide/runtime";
 import { mockInputs } from "../test-utils/mockData";
 
@@ -15,25 +16,15 @@ describe("InputPanel", () => {
     render(<InputPanel inputs={mockInputs} onChange={onChange} />);
   });
 
-  it("shows Belgian region and communal tax fields for BE residents", () => {
+  it("shows communal tax field for BE residents", () => {
     const onChange = vi.fn();
     render(<InputPanel inputs={{ ...mockInputs, residentCountry: "BE" }} onChange={onChange} />);
+    // Year is the only combobox shown (resident country, civil status and Belgian region
+    // dropdowns are hidden when there is only one valid option each)
     const selects = screen.getAllByRole("combobox");
-    expect(selects.length).toBeGreaterThanOrEqual(4);
+    expect(selects.length).toBe(1);
     expect(screen.getByText(/municipal tax|communal tax|gemeentebelasting/i)).toBeInTheDocument();
     expect(screen.getAllByRole("spinbutton").length).toBeGreaterThanOrEqual(5);
-  });
-
-  it("hides Belgian region and communal tax fields for NL residents", () => {
-    const onChange = vi.fn();
-    render(<InputPanel inputs={{ ...mockInputs, residentCountry: "NL" }} onChange={onChange} />);
-    const selects = screen.getAllByRole("combobox");
-    expect(selects.length).toBe(3);
-    expect(screen.queryByText(/municipal tax|communal tax|gemeentebelasting/i)).toBeNull();
-    // Sick days field should be present for NL residents
-    expect(screen.getByRole("spinbutton", { name: /sick days/i })).toBeInTheDocument();
-    // Municipal/communal tax spinbutton should not be rendered for NL residents
-    expect(screen.queryByRole("spinbutton", { name: /municipal tax|communal tax/i })).toBeNull();
   });
 
   it("calls onChange when year dropdown is changed", () => {
@@ -45,7 +36,22 @@ describe("InputPanel", () => {
     expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ year: 2024 }));
   });
 
-  it("calls onChange when resident country changes to NL", () => {
+  // TODO: Re-enable when NL-resident support is re-integrated
+  it.skip("hides Belgian region and communal tax fields for NL residents", () => {
+    const onChange = vi.fn();
+    const nlInputs = { ...mockInputs, residentCountry: "NL" as unknown as TaxInputs["residentCountry"] };
+    render(<InputPanel inputs={nlInputs} onChange={onChange} />);
+    const selects = screen.getAllByRole("combobox");
+    expect(selects.length).toBe(3);
+    expect(screen.queryByText(/municipal tax|communal tax|gemeentebelasting/i)).toBeNull();
+    // Sick days field should be present for NL residents
+    expect(screen.getByRole("spinbutton", { name: /sick days/i })).toBeInTheDocument();
+    // Municipal/communal tax spinbutton should not be rendered for NL residents
+    expect(screen.queryByRole("spinbutton", { name: /municipal tax|communal tax/i })).toBeNull();
+  });
+
+  // TODO: Re-enable when NL-resident support is re-integrated
+  it.skip("calls onChange when resident country changes to NL", () => {
     const onChange = vi.fn();
     render(<InputPanel inputs={mockInputs} onChange={onChange} />);
     const selects = screen.getAllByRole("combobox");
@@ -53,7 +59,8 @@ describe("InputPanel", () => {
     expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ residentCountry: "NL" }));
   });
 
-  it("calls onChange when civil status changes", () => {
+  // TODO: Re-enable when multiple civil statuses are supported
+  it.skip("calls onChange when civil status changes", () => {
     const onChange = vi.fn();
     render(<InputPanel inputs={mockInputs} onChange={onChange} />);
     const selects = screen.getAllByRole("combobox");
@@ -61,7 +68,8 @@ describe("InputPanel", () => {
     expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ civilStatus: "married" }));
   });
 
-  it("calls onChange when belgian region changes", () => {
+  // TODO: Re-enable when multiple Belgian regions are supported
+  it.skip("calls onChange when belgian region changes", () => {
     const onChange = vi.fn();
     render(<InputPanel inputs={{ ...mockInputs, residentCountry: "BE" }} onChange={onChange} />);
     const selects = screen.getAllByRole("combobox");

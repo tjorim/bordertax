@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Alert, Button, Col, Container, Nav, Navbar, Row, Tab } from "react-bootstrap";
+import { Button, Col, Container, Nav, Navbar, Row, Tab } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "./styles.css";
@@ -190,12 +190,6 @@ export default function App() {
 
           {/* ── Right column: results ──────────────────────────── */}
           <Col lg={7}>
-            {inputs.year === 2026 && (
-              <Alert variant="warning" className="small py-2">
-                <i className="bi bi-exclamation-triangle me-2" />
-                {m.alert_2026_provisional()}
-              </Alert>
-            )}
             <Tab.Container defaultActiveKey="summary">
               <Nav variant="tabs" className="mb-3">
                 <Nav.Item>

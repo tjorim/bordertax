@@ -2,12 +2,13 @@ import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
 import MultiYearComparison from "@/components/MultiYearComparison";
+import type { TaxYear } from "@/tax/constants";
 import { mockTaxResult } from "../test-utils/mockData";
 import { calculate } from "@/tax";
 
-const rows = [2024, 2025, 2026].map((year) => ({
-  year: year as 2024 | 2025 | 2026,
-  result: calculate({ ...mockTaxResult.inputs, year: year as 2024 | 2025 | 2026 }),
+const rows = [2024, 2025].map((year) => ({
+  year: year as 2024 | 2025,
+  result: calculate({ ...mockTaxResult.inputs, year: year as 2024 | 2025 }),
 }));
 
 describe("MultiYearComparison", () => {
@@ -19,6 +20,15 @@ describe("MultiYearComparison", () => {
     render(<MultiYearComparison rows={rows} activeYear={2025} />);
     expect(screen.getAllByText("2024").length).toBeGreaterThan(0);
     expect(screen.getAllByText("2025").length).toBeGreaterThan(0);
+  });
+
+  // TODO: Re-enable when 2026 support is re-integrated
+  it.skip("renders a row for year 2026", () => {
+    const rowsWith2026 = [...rows, {
+      year: 2026 as unknown as TaxYear,
+      result: calculate({ ...mockTaxResult.inputs, year: 2026 as unknown as TaxYear }),
+    }];
+    render(<MultiYearComparison rows={rowsWith2026} activeYear={2025} />);
     expect(screen.getAllByText("2026").length).toBeGreaterThan(0);
   });
 

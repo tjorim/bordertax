@@ -1,6 +1,7 @@
 import { Badge, Table } from "react-bootstrap";
 import { VALID_YEARS } from "../tax/constants";
-import type { TaxResult, TaxYear } from "../tax/types";
+import type { TaxYear } from "../tax/constants";
+import type { TaxResult } from "../tax/types";
 import * as m from "../paraglide/messages.js";
 import { fmt, pct } from "./format.js";
 
