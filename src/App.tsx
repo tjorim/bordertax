@@ -119,35 +119,29 @@ function sanitizeInputs(raw: unknown): TaxInputs {
   };
 }
 
-type PersistedInputs = Omit<
+type PersistedInputs = Pick<
   TaxInputs,
-  | "grossSalary"
-  | "daysWorkedNL"
-  | "daysWorkedBE"
-  | "daysWorkedOther"
-  | "sickDays"
-  | "socialContributions"
-  | "aanvullendPensioen"
-  | "dienstencheques"
-  | "roerendeVoorheffing"
-  | "withheldTaxNL"
+  | "year"
+  | "residentCountry"
+  | "civilStatus"
+  | "dependentChildren"
+  | "belowAOWAge"
+  | "belgianRegion"
+  | "communalTaxRate"
+  | "thirtyPercentRuling"
 >;
 
 function toPersistedInputs(inputs: TaxInputs): PersistedInputs {
-  const {
-    grossSalary: _grossSalary,
-    daysWorkedNL: _daysWorkedNL,
-    daysWorkedBE: _daysWorkedBE,
-    daysWorkedOther: _daysWorkedOther,
-    sickDays: _sickDays,
-    socialContributions: _socialContributions,
-    aanvullendPensioen: _aanvullendPensioen,
-    dienstencheques: _dienstencheques,
-    roerendeVoorheffing: _roerendeVoorheffing,
-    withheldTaxNL: _withheldTaxNL,
-    ...rest
-  } = inputs;
-  return rest;
+  return {
+    year: inputs.year,
+    residentCountry: inputs.residentCountry,
+    civilStatus: inputs.civilStatus,
+    dependentChildren: inputs.dependentChildren,
+    belowAOWAge: inputs.belowAOWAge,
+    belgianRegion: inputs.belgianRegion,
+    communalTaxRate: inputs.communalTaxRate,
+    thirtyPercentRuling: inputs.thirtyPercentRuling,
+  };
 }
 
 function mergeWithDefaults(raw: unknown): TaxInputs {
