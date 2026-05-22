@@ -119,6 +119,54 @@ function sanitizeInputs(raw: unknown): TaxInputs {
   };
 }
 
+type PersistedInputs = Omit<
+  TaxInputs,
+  | "grossSalary"
+  | "daysWorkedNL"
+  | "daysWorkedBE"
+  | "daysWorkedOther"
+  | "sickDays"
+  | "socialContributions"
+  | "aanvullendPensioen"
+  | "dienstencheques"
+  | "roerendeVoorheffing"
+  | "withheldTaxNL"
+>;
+
+function toPersistedInputs(inputs: TaxInputs): PersistedInputs {
+  const {
+    grossSalary: _grossSalary,
+    daysWorkedNL: _daysWorkedNL,
+    daysWorkedBE: _daysWorkedBE,
+    daysWorkedOther: _daysWorkedOther,
+    sickDays: _sickDays,
+    socialContributions: _socialContributions,
+    aanvullendPensioen: _aanvullendPensioen,
+    dienstencheques: _dienstencheques,
+    roerendeVoorheffing: _roerendeVoorheffing,
+    withheldTaxNL: _withheldTaxNL,
+    ...rest
+  } = inputs;
+  return rest;
+}
+
+function mergeWithDefaults(raw: unknown): TaxInputs {
+  const sanitized = sanitizeInputs(raw);
+  return {
+    ...sanitized,
+    grossSalary: DEFAULT_INPUTS.grossSalary,
+    daysWorkedNL: DEFAULT_INPUTS.daysWorkedNL,
+    daysWorkedBE: DEFAULT_INPUTS.daysWorkedBE,
+    daysWorkedOther: DEFAULT_INPUTS.daysWorkedOther,
+    sickDays: DEFAULT_INPUTS.sickDays,
+    socialContributions: DEFAULT_INPUTS.socialContributions,
+    aanvullendPensioen: DEFAULT_INPUTS.aanvullendPensioen,
+    dienstencheques: DEFAULT_INPUTS.dienstencheques,
+    roerendeVoorheffing: DEFAULT_INPUTS.roerendeVoorheffing,
+    withheldTaxNL: DEFAULT_INPUTS.withheldTaxNL,
+  };
+}
+
 function loadInitialInputs(): TaxInputs {
   const saved = localStorage.getItem(STORAGE_KEY);
   if (!saved) {
@@ -126,7 +174,7 @@ function loadInitialInputs(): TaxInputs {
   }
 
   try {
-    return sanitizeInputs(JSON.parse(saved));
+    return mergeWithDefaults(JSON.parse(saved));
   } catch {
     return DEFAULT_INPUTS;
   }
@@ -148,7 +196,7 @@ export default function App() {
   );
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(inputs));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(toPersistedInputs(inputs)));
   }, [inputs]);
 
   return (
