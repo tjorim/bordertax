@@ -119,6 +119,48 @@ function sanitizeInputs(raw: unknown): TaxInputs {
   };
 }
 
+type PersistedInputs = Pick<
+  TaxInputs,
+  | "year"
+  | "residentCountry"
+  | "civilStatus"
+  | "dependentChildren"
+  | "belowAOWAge"
+  | "belgianRegion"
+  | "communalTaxRate"
+  | "thirtyPercentRuling"
+>;
+
+function toPersistedInputs(inputs: TaxInputs): PersistedInputs {
+  return {
+    year: inputs.year,
+    residentCountry: inputs.residentCountry,
+    civilStatus: inputs.civilStatus,
+    dependentChildren: inputs.dependentChildren,
+    belowAOWAge: inputs.belowAOWAge,
+    belgianRegion: inputs.belgianRegion,
+    communalTaxRate: inputs.communalTaxRate,
+    thirtyPercentRuling: inputs.thirtyPercentRuling,
+  };
+}
+
+function mergeWithDefaults(raw: unknown): TaxInputs {
+  const sanitized = sanitizeInputs(raw);
+  return {
+    ...sanitized,
+    grossSalary: DEFAULT_INPUTS.grossSalary,
+    daysWorkedNL: DEFAULT_INPUTS.daysWorkedNL,
+    daysWorkedBE: DEFAULT_INPUTS.daysWorkedBE,
+    daysWorkedOther: DEFAULT_INPUTS.daysWorkedOther,
+    sickDays: DEFAULT_INPUTS.sickDays,
+    socialContributions: DEFAULT_INPUTS.socialContributions,
+    aanvullendPensioen: DEFAULT_INPUTS.aanvullendPensioen,
+    dienstencheques: DEFAULT_INPUTS.dienstencheques,
+    roerendeVoorheffing: DEFAULT_INPUTS.roerendeVoorheffing,
+    withheldTaxNL: DEFAULT_INPUTS.withheldTaxNL,
+  };
+}
+
 function loadInitialInputs(): TaxInputs {
   const saved = localStorage.getItem(STORAGE_KEY);
   if (!saved) {
@@ -126,7 +168,7 @@ function loadInitialInputs(): TaxInputs {
   }
 
   try {
-    return sanitizeInputs(JSON.parse(saved));
+    return mergeWithDefaults(JSON.parse(saved));
   } catch {
     return DEFAULT_INPUTS;
   }
@@ -148,7 +190,7 @@ export default function App() {
   );
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(inputs));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(toPersistedInputs(inputs)));
   }, [inputs]);
 
   return (
