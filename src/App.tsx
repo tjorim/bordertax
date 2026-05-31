@@ -246,7 +246,7 @@ export default function App() {
             className="ms-2"
             onClick={() => {
               const idx = THEME_CYCLE.indexOf(theme);
-              setTheme(THEME_CYCLE[(idx + 1) % THEME_CYCLE.length]);
+              setTheme(THEME_CYCLE[(idx + 1) % THEME_CYCLE.length] as Theme);
             }}
             aria-label={`Theme: ${theme}`}
             title={`Theme: ${theme} (click to cycle)`}
