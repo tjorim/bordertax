@@ -174,10 +174,43 @@ function loadInitialInputs(): TaxInputs {
   }
 }
 
+type Theme = "auto" | "light" | "dark";
+const THEME_KEY = "bt-theme";
+
+function loadTheme(): Theme {
+  const stored = localStorage.getItem(THEME_KEY);
+  return stored === "light" || stored === "dark" || stored === "auto" ? stored : "auto";
+}
+
+function applyTheme(theme: Theme) {
+  const effective =
+    theme === "auto"
+      ? window.matchMedia("(prefers-color-scheme: dark)").matches
+        ? "dark"
+        : "light"
+      : theme;
+  document.documentElement.setAttribute("data-bs-theme", effective);
+}
+
+const THEME_CYCLE: Theme[] = ["auto", "light", "dark"];
+
 export default function App() {
   const [inputs, setInputs] = useState<TaxInputs>(loadInitialInputs);
   const [locale, setCurrentLocale] = useState(getLocale());
+  const [theme, setTheme] = useState<Theme>(loadTheme);
   const nextLangLabel = locale === "en" ? m.lang_nl() : m.lang_en();
+
+  useEffect(() => {
+    applyTheme(theme);
+    localStorage.setItem(THEME_KEY, theme);
+
+    if (theme === "auto") {
+      const mq = window.matchMedia("(prefers-color-scheme: dark)");
+      const handler = () => applyTheme("auto");
+      mq.addEventListener("change", handler);
+      return () => mq.removeEventListener("change", handler);
+    }
+  }, [theme]);
 
   const result = useMemo(() => calculate(inputs), [inputs]);
   const comparisonResults = useMemo(
@@ -208,9 +241,24 @@ export default function App() {
             </span>
           </Link>
           <Button
-            variant="outline-light"
+            variant="outline-secondary"
             size="sm"
-            className="ms-3"
+            className="ms-2"
+            onClick={() => {
+              const idx = THEME_CYCLE.indexOf(theme);
+              setTheme(THEME_CYCLE[(idx + 1) % THEME_CYCLE.length]);
+            }}
+            aria-label={`Theme: ${theme}`}
+            title={`Theme: ${theme} (click to cycle)`}
+          >
+            <i
+              className={`bi ${theme === "light" ? "bi-sun-fill" : theme === "dark" ? "bi-moon-fill" : "bi-circle-half"}`}
+            />
+          </Button>
+          <Button
+            variant="outline-secondary"
+            size="sm"
+            className="ms-2"
             onClick={() => {
               const nextLocale = locale === "en" ? "nl" : "en";
               setLocale(nextLocale, { reload: false });

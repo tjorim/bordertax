@@ -6,12 +6,19 @@
 /* ── Design Tokens ────────────────────────────────────────────── */
 
 :root {
-  /* Surfaces */
+  /* Brand — teal identity for a finance/tax tool */
+  --bt-brand: #0d9488;
+  --bt-brand-light: #14b8a6;
+  --bt-brand-dim: rgba(13, 148, 136, 0.12);
+  --bt-brand-border: rgba(13, 148, 136, 0.35);
+
+  /* Surfaces — dark mode defaults */
   --bt-bg: #07090f;
   --bt-surface: #0d1220;
   --bt-surface-2: #121829;
   --bt-surface-3: #1a2235;
   --bt-surface-4: #222c42;
+  --bt-navbar-bg: rgba(7, 9, 15, 0.92);
 
   /* Borders */
   --bt-border: rgba(255, 255, 255, 0.065);
@@ -20,18 +27,18 @@
 
   /* Text */
   --bt-text: #d4e4f5;
-  --bt-text-sub: #8ba8c5; /* 7.0:1 on surface-2 — secondary labels */
-  --bt-text-muted: #7090b0; /* 5.2:1 on surface-2 — passes AA normal text */
-  --bt-text-dim: #4e6884; /* 3.2:1 on surface-2 — large/decorative only */
+  --bt-text-sub: #8ba8c5;
+  --bt-text-muted: #7090b0;
+  --bt-text-dim: #4e6884;
 
-  /* Dutch Orange — the kingdom across the northern border */
+  /* Dutch Orange — demoted to per-tab accent only */
   --bt-nl: #e05020;
   --bt-nl-light: #f07040;
   --bt-nl-dim: rgba(224, 80, 32, 0.12);
   --bt-nl-glow: rgba(224, 80, 32, 0.25);
   --bt-nl-border: rgba(224, 80, 32, 0.35);
 
-  /* Belgian Gold — land of beer, chocolate, and complex taxes */
+  /* Belgian Gold — demoted to per-tab accent only */
   --bt-be: #c8901a;
   --bt-be-light: #e0a830;
   --bt-be-dim: rgba(200, 144, 26, 0.12);
@@ -67,8 +74,8 @@
   --bs-font-sans-serif: var(--bt-font-body);
   --bs-font-monospace: var(--bt-font-mono);
 
-  --bs-primary: #4a8fd4;
-  --bs-primary-rgb: 74, 143, 212;
+  --bs-primary: var(--bt-brand);
+  --bs-primary-rgb: 13, 148, 136;
   --bs-success-rgb: 34, 197, 94;
   --bs-danger-rgb: 239, 68, 68;
   --bs-warning-rgb: 245, 158, 11;
@@ -76,8 +83,47 @@
   --bs-secondary-rgb: 78, 104, 132;
   --bs-dark-rgb: 13, 18, 32;
 
-  --bs-link-color: var(--bt-info);
+  --bs-link-color: var(--bt-brand-light);
   --bs-link-hover-color: var(--bt-text);
+}
+
+/* ── Light mode token overrides ───────────────────────────────── */
+
+[data-bs-theme="light"] {
+  --bt-bg: #f8f9fa;
+  --bt-surface: #ffffff;
+  --bt-surface-2: #f0f4f8;
+  --bt-surface-3: #e4eaf1;
+  --bt-surface-4: #d8e2ec;
+  --bt-navbar-bg: rgba(248, 249, 250, 0.95);
+
+  --bt-border: rgba(0, 0, 0, 0.1);
+  --bt-border-soft: rgba(0, 0, 0, 0.06);
+  --bt-border-hover: rgba(0, 0, 0, 0.18);
+
+  --bt-text: #0f1923;
+  --bt-text-sub: #2e4560;
+  --bt-text-muted: #4a6480;
+  --bt-text-dim: #7a9ab8;
+
+  --bt-success: #16a34a;
+  --bt-success-dim: rgba(22, 163, 74, 0.1);
+  --bt-danger: #dc2626;
+  --bt-danger-dim: rgba(220, 38, 38, 0.08);
+  --bt-warning: #d97706;
+  --bt-warning-dim: rgba(217, 119, 6, 0.08);
+  --bt-warning-border: rgba(217, 119, 6, 0.3);
+  --bt-info: #2563eb;
+  --bt-info-dim: rgba(37, 99, 235, 0.08);
+  --bt-info-border: rgba(37, 99, 235, 0.25);
+
+  --bs-body-bg: var(--bt-bg);
+  --bs-body-color: var(--bt-text);
+  --bs-border-color: var(--bt-border);
+  --bs-secondary-color: var(--bt-text-sub);
+  --bs-link-color: var(--bt-brand);
+  --bs-link-hover-color: var(--bt-text);
+  --bs-secondary-rgb: 74, 100, 128;
 }
 
 /* ── Base ─────────────────────────────────────────────────────── */
@@ -93,12 +139,15 @@ html {
   color-scheme: dark;
 }
 
+[data-bs-theme="light"] {
+  color-scheme: light;
+}
+
 body {
   background-color: var(--bt-bg);
   background-image:
-    radial-gradient(ellipse 70% 45% at 15% 0%, rgba(224, 80, 32, 0.055) 0%, transparent 60%),
-    radial-gradient(ellipse 55% 40% at 85% 100%, rgba(200, 144, 26, 0.055) 0%, transparent 60%),
-    radial-gradient(ellipse 40% 50% at 50% 50%, rgba(7, 9, 15, 0) 0%, transparent 100%);
+    radial-gradient(ellipse 70% 45% at 15% 0%, rgba(13, 148, 136, 0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 55% 40% at 85% 100%, rgba(13, 148, 136, 0.04) 0%, transparent 60%);
   min-height: 100vh;
   color: var(--bt-text);
   font-family: var(--bt-font-body);
@@ -140,7 +189,7 @@ h6 {
 /* ── Navbar ───────────────────────────────────────────────────── */
 
 .navbar {
-  background: rgba(7, 9, 15, 0.92) !important;
+  background: var(--bt-navbar-bg) !important;
   backdrop-filter: blur(24px) saturate(160%);
   -webkit-backdrop-filter: blur(24px) saturate(160%);
   border-bottom: 1px solid var(--bt-border);
@@ -204,7 +253,7 @@ h6 {
   --bs-accordion-btn-bg: var(--bt-surface);
   --bs-accordion-active-color: var(--bt-text);
   --bs-accordion-active-bg: var(--bt-surface-2);
-  --bs-accordion-btn-focus-box-shadow: 0 0 0 3px var(--bt-nl-dim);
+  --bs-accordion-btn-focus-box-shadow: 0 0 0 3px var(--bt-brand-dim);
   border-radius: var(--bt-r-lg);
   overflow: hidden;
   border: 1px solid var(--bt-border);
@@ -243,9 +292,9 @@ h6 {
 /* Single definition; applied consistently to every focusable element */
 
 :focus-visible {
-  outline: 2px solid var(--bt-nl-border) !important;
+  outline: 2px solid var(--bt-brand-border) !important;
   outline-offset: 2px !important;
-  box-shadow: 0 0 0 4px var(--bt-nl-dim) !important;
+  box-shadow: 0 0 0 4px var(--bt-brand-dim) !important;
 }
 
 /* Suppress the default :focus ring (only show on keyboard nav) */
@@ -260,9 +309,9 @@ h6 {
 }
 
 .accordion-button:focus-visible {
-  outline: 2px solid var(--bt-nl-border) !important;
+  outline: 2px solid var(--bt-brand-border) !important;
   outline-offset: -2px !important;
-  box-shadow: 0 0 0 4px var(--bt-nl-dim) !important;
+  box-shadow: 0 0 0 4px var(--bt-brand-dim) !important;
 }
 
 .accordion-button::after {
@@ -322,8 +371,8 @@ h6 {
 .form-control:focus,
 .form-select:focus {
   background: var(--bt-surface-3) !important;
-  border-color: var(--bt-nl-border) !important;
-  box-shadow: 0 0 0 3px var(--bt-nl-dim) !important;
+  border-color: var(--bt-brand-border) !important;
+  box-shadow: 0 0 0 3px var(--bt-brand-dim) !important;
   color: var(--bt-text) !important;
   /* outline handled by :focus-visible above */
   outline: none !important;
@@ -369,13 +418,13 @@ h6 {
 }
 
 .form-check-input:checked {
-  background-color: var(--bt-nl) !important;
-  border-color: var(--bt-nl) !important;
+  background-color: var(--bt-brand) !important;
+  border-color: var(--bt-brand) !important;
 }
 
 .form-check-input:focus-visible {
-  box-shadow: 0 0 0 3px var(--bt-nl-dim) !important;
-  border-color: var(--bt-nl-border) !important;
+  box-shadow: 0 0 0 3px var(--bt-brand-dim) !important;
+  border-color: var(--bt-brand-border) !important;
 }
 
 /* ── Badges ───────────────────────────────────────────────────── */
@@ -395,9 +444,9 @@ h6 {
 
 .badge.bg-primary,
 .bg-primary {
-  background: rgba(74, 143, 212, 0.25) !important;
-  color: var(--bt-info) !important;
-  border: 1px solid rgba(74, 143, 212, 0.35) !important;
+  background: var(--bt-brand-dim) !important;
+  color: var(--bt-brand-light) !important;
+  border: 1px solid var(--bt-brand-border) !important;
 }
 
 /* ── Tables ───────────────────────────────────────────────────── */
@@ -458,11 +507,11 @@ h6 {
 }
 
 .table-primary {
-  --bs-table-bg: rgba(74, 143, 212, 0.09) !important;
+  --bs-table-bg: rgba(13, 148, 136, 0.09) !important;
 }
 .table-primary td,
 .table-primary th {
-  background: rgba(74, 143, 212, 0.09) !important;
+  background: rgba(13, 148, 136, 0.09) !important;
   color: var(--bt-text) !important;
 }
 
@@ -531,14 +580,14 @@ h6 {
 }
 
 .btn-outline-primary {
-  color: var(--bt-info) !important;
-  border-color: rgba(96, 165, 250, 0.35) !important;
+  color: var(--bt-brand-light) !important;
+  border-color: var(--bt-brand-border) !important;
   background: transparent !important;
 }
 .btn-outline-primary:hover {
-  background: var(--bt-info-dim) !important;
-  border-color: rgba(96, 165, 250, 0.6) !important;
-  color: var(--bt-info) !important;
+  background: var(--bt-brand-dim) !important;
+  border-color: var(--bt-brand) !important;
+  color: var(--bt-brand-light) !important;
 }
 
 .btn-outline-secondary {
@@ -856,7 +905,7 @@ footer a:hover {
 /* ── Year comparison active row ──────────────────────────────── */
 
 .table-primary > td:first-child {
-  border-left: 2px solid var(--bt-info) !important;
+  border-left: 2px solid var(--bt-brand) !important;
 }
 
 /* ── Utility: number formatting ──────────────────────────────── */
@@ -1915,6 +1964,49 @@ footer a:hover {
 .bt-be-accent .bt-table-result .table-primary td:last-child {
   font-size: 1rem !important;
   color: var(--bt-be-light) !important;
+}
+
+/* ── Light mode component overrides ──────────────────────────── */
+
+[data-bs-theme="light"] .accordion {
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+[data-bs-theme="light"] .tab-content {
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+[data-bs-theme="light"] .bt-stat-card:hover {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+[data-bs-theme="light"] .bt-wfh-current {
+  stroke: rgba(0, 0, 0, 0.4);
+}
+
+[data-bs-theme="light"] .bt-wfh-current-dot {
+  fill: var(--bt-bg);
+  stroke: rgba(0, 0, 0, 0.7);
+}
+
+[data-bs-theme="light"] .bt-wfh-pulse {
+  stroke: rgba(0, 0, 0, 0.15);
+}
+
+[data-bs-theme="light"] .bt-wfh-scrubber {
+  stroke: rgba(0, 0, 0, 0.2);
+}
+
+[data-bs-theme="light"] .bt-wfh-dot {
+  stroke: var(--bt-bg);
+}
+
+[data-bs-theme="light"] .bt-year-chart__row:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+[data-bs-theme="light"] .bt-wfh-legend-dash--current {
+  border-top-color: rgba(0, 0, 0, 0.35);
 }
 
 /* ═══════════════════════════════════════════════════════════════
