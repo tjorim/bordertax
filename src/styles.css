@@ -90,6 +90,7 @@
 /* ── Light mode token overrides ───────────────────────────────── */
 
 [data-bs-theme="light"] {
+  --bt-brand-light: #0f766e;
   --bt-bg: #f8f9fa;
   --bt-surface: #ffffff;
   --bt-surface-2: #f0f4f8;

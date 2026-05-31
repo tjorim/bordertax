@@ -185,7 +185,9 @@ function loadTheme(): Theme {
 function applyTheme(theme: Theme) {
   const effective =
     theme === "auto"
-      ? window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? typeof window !== "undefined" &&
+        window.matchMedia &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches
         ? "dark"
         : "light"
       : theme;
@@ -204,7 +206,7 @@ export default function App() {
     applyTheme(theme);
     localStorage.setItem(THEME_KEY, theme);
 
-    if (theme === "auto") {
+    if (theme === "auto" && typeof window !== "undefined" && window.matchMedia) {
       const mq = window.matchMedia("(prefers-color-scheme: dark)");
       const handler = () => applyTheme("auto");
       mq.addEventListener("change", handler);
@@ -248,8 +250,8 @@ export default function App() {
               const idx = THEME_CYCLE.indexOf(theme);
               setTheme(THEME_CYCLE[(idx + 1) % THEME_CYCLE.length] as Theme);
             }}
-            aria-label={`Theme: ${theme}`}
-            title={`Theme: ${theme} (click to cycle)`}
+            aria-label={`${m.theme_toggle_label()}: ${m[`theme_${theme}`]()}`}
+            title={`${m.theme_toggle_label()}: ${m[`theme_${theme}`]()} (click to cycle)`}
           >
             <i
               className={`bi ${theme === "light" ? "bi-sun-fill" : theme === "dark" ? "bi-moon-fill" : "bi-circle-half"}`}
