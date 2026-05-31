@@ -33,6 +33,7 @@
     "paraglide:compile": "paraglide-js compile --project ./project.inlang --outdir ./src/paraglide --emit-ts-declarations"
   },
   "dependencies": {
+    "@fontsource/inter": "^5.2.8",
     "@tanstack/react-router": "^1.170.9",
     "bootstrap": "^5.3.8",
     "bootstrap-icons": "^1.13.1",

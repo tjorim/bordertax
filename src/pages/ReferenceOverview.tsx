@@ -59,7 +59,7 @@ export default function ReferenceOverview() {
 
       <Container fluid="lg" className="pb-5">
         <div className="text-center mb-5 mt-2">
-          <h1 className="mb-2" style={{ fontFamily: "var(--bt-font-display)", fontSize: "2.2rem" }}>
+          <h1 className="mb-2" style={{ fontSize: "2.2rem" }}>
             🇧🇪&thinsp;🇳🇱&nbsp; {m.ref_overview_page_title()}
           </h1>
           <p className="text-secondary" style={{ maxWidth: 540, margin: "0 auto" }}>

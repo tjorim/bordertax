@@ -51,8 +51,7 @@
   --bt-warning-border: rgba(245, 158, 11, 0.3);
 
   /* Typography */
-  --bt-font-display: "Cormorant Garamond", "Times New Roman", Georgia, serif;
-  --bt-font-body: "Barlow Semi Condensed", system-ui, -apple-system, sans-serif;
+  --bt-font-body: "Inter", system-ui, -apple-system, sans-serif;
   --bt-font-mono: "Space Mono", "Courier New", monospace;
 
   /* Radii */
@@ -117,7 +116,7 @@ h2,
 h3,
 h4,
 h5 {
-  font-family: var(--bt-font-display);
+  font-family: var(--bt-font-body);
   letter-spacing: -0.01em;
 }
 
@@ -173,7 +172,7 @@ h6 {
 }
 
 .navbar-brand {
-  font-family: var(--bt-font-display) !important;
+  font-family: var(--bt-font-body) !important;
   font-size: 1.35rem !important;
   font-weight: 700 !important;
   letter-spacing: 0.01em !important;
@@ -2034,7 +2033,7 @@ footer a:hover {
 
 /* Hero section */
 .ref-hero-title {
-  font-family: var(--bt-font-display);
+  font-family: var(--bt-font-body);
   font-size: 2.4rem;
 }
 
