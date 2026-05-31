@@ -51,7 +51,7 @@
   --bt-warning-border: rgba(245, 158, 11, 0.3);
 
   /* Typography */
-  --bt-font-body: "Inter", system-ui, -apple-system, sans-serif;
+  --bt-font-body: "Inter Variable", "Inter", system-ui, -apple-system, sans-serif;
   --bt-font-mono: "Space Mono", "Courier New", monospace;
 
   /* Radii */
