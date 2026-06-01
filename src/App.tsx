@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { useForm, useStore } from "@tanstack/react-form";
 import { useEffect, useMemo, useState } from "react";
 import { Button, Col, Container, Nav, Navbar, Row, Tab } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -86,7 +87,8 @@ function applyTheme(theme: Theme) {
 const THEME_CYCLE: Theme[] = ["auto", "light", "dark"];
 
 export default function App() {
-  const [inputs, setInputs] = useState<TaxInputs>(loadInitialInputs);
+  const form = useForm({ defaultValues: loadInitialInputs() });
+  const inputs = useStore(form.store, (s) => s.values);
   const [locale, setCurrentLocale] = useState(getLocale());
   const [theme, setTheme] = useState<Theme>(loadTheme);
   const nextLangLabel = locale === "en" ? m.lang_nl() : m.lang_en();
@@ -166,7 +168,7 @@ export default function App() {
         <Row className="g-4 bt-main-row">
           {/* ── Left column: inputs ────────────────────────────── */}
           <Col lg={5}>
-            <InputPanel inputs={inputs} onChange={setInputs} />
+            <InputPanel form={form} />
           </Col>
 
           {/* ── Right column: results ──────────────────────────── */}
@@ -205,7 +207,7 @@ export default function App() {
 
               <Tab.Content>
                 <Tab.Pane eventKey="summary">
-                  <SummaryResult result={result} onResetInputs={() => setInputs(DEFAULT_INPUTS)} />
+                  <SummaryResult result={result} onResetInputs={() => form.reset(DEFAULT_INPUTS)} />
                 </Tab.Pane>
                 <Tab.Pane eventKey="nl" className="bt-nl-accent">
                   <NLResult
