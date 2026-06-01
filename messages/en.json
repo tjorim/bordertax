@@ -586,5 +586,12 @@
   "ref_pension_be2027_age_62": "62 years",
   "ref_pension_be2027_age_63": "63 years",
   "ref_pension_be2027_age_64": "64 years",
-  "ref_pension_be2027_age_65": "65 years"
+  "ref_pension_be2027_age_65": "65 years",
+  "theme_toggle_label": "Theme",
+  "theme_auto": "auto",
+  "theme_light": "light",
+  "theme_dark": "dark",
+  "results_error_title": "Something went wrong",
+  "results_error_description": "The tax calculation encountered an unexpected error. Try adjusting your inputs.",
+  "results_error_details": "Technical details"
 }

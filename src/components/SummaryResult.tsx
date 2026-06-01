@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Alert, Button, Col, Row, Stack } from "react-bootstrap";
+import clsx from "clsx";
 import type { TaxResult } from "../tax/types";
 import { getTotalWorkdays } from "../tax/workdays";
 import * as m from "../paraglide/messages.js";
@@ -267,13 +268,13 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
               <span className="bt-breakdown__value text-danger">−{fmt(nl.netTaxNL)}</span>
             </div>
             <div
-              className={`bt-breakdown__row ${nlBalance >= 0 ? "bt-breakdown__row--ok" : "bt-breakdown__row--warn"}`}
+              className={clsx("bt-breakdown__row", nlBalance >= 0 ? "bt-breakdown__row--ok" : "bt-breakdown__row--warn")}
             >
               <span className="bt-breakdown__label bt-breakdown__label--strong">
                 🇳🇱 {m.summary_nl_balance()}
               </span>
               <span
-                className={`bt-breakdown__value bt-breakdown__label--strong ${nlBalance >= 0 ? "text-success" : "text-danger"}`}
+                className={clsx("bt-breakdown__value", "bt-breakdown__label--strong", nlBalance >= 0 ? "text-success" : "text-danger")}
               >
                 {fmtSigned(nlBalance)}
               </span>
@@ -287,7 +288,7 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
           </div>
 
           <div
-            className={`bt-balance ${netResult >= 0 ? "bt-balance--refund" : "bt-balance--owe"}`}
+            className={clsx("bt-balance", netResult >= 0 ? "bt-balance--refund" : "bt-balance--owe")}
           >
             <div className="bt-balance__label">
               <i
