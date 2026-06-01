@@ -43,7 +43,6 @@
     "react-bootstrap": "3.0.0-beta.5",
     "react-dom": "^19.2.6",
     "react-error-boundary": "^6.1.2",
-    "recharts": "^3.8.1",
     "zod": "^4.4.3"
   },
   "devDependencies": {
