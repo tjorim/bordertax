@@ -5,6 +5,7 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import "../styles.css";
 import * as m from "../paraglide/messages.js";
 import { AppNavbar } from "../components/AppNavbar";
+import { PageHero } from "../components/PageHero";
 import { REFERENCE_PAGES } from "../referencePages";
 
 export default function ReferenceOverview() {
@@ -18,14 +19,7 @@ export default function ReferenceOverview() {
       </AppNavbar>
 
       <Container fluid="lg" className="pb-5">
-        <div className="text-center mb-5 mt-2">
-          <h1 className="mb-2" style={{ fontSize: "2.2rem" }}>
-            🇧🇪&thinsp;🇳🇱&nbsp; {m.ref_overview_page_title()}
-          </h1>
-          <p className="text-secondary" style={{ maxWidth: 540, margin: "0 auto" }}>
-            {m.ref_overview_subtitle()}
-          </p>
-        </div>
+        <PageHero title={m.ref_overview_page_title()} subtitle={m.ref_overview_subtitle()} />
 
         <Row className="g-4 justify-content-center">
           {REFERENCE_PAGES.map((page) => (

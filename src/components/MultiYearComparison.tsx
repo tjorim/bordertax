@@ -164,15 +164,30 @@ export default function MultiYearComparison({ rows, activeYear }: Props) {
                 <th
                   key={header.id}
                   className={NUMERIC_COLS.has(header.column.id) ? "text-end" : undefined}
-                  onClick={header.column.getToggleSortingHandler()}
-                  style={{ cursor: header.column.getCanSort() ? "pointer" : undefined }}
+                  aria-sort={
+                    header.column.getIsSorted() === "asc"
+                      ? "ascending"
+                      : header.column.getIsSorted() === "desc"
+                        ? "descending"
+                        : "none"
+                  }
                 >
-                  {flexRender(header.column.columnDef.header, header.getContext())}
-                  {header.column.getIsSorted() === "asc" && (
-                    <i className="bi bi-arrow-up ms-1" />
-                  )}
-                  {header.column.getIsSorted() === "desc" && (
-                    <i className="bi bi-arrow-down ms-1" />
+                  {header.column.getCanSort() ? (
+                    <button
+                      type="button"
+                      className="btn btn-link p-0 text-reset text-decoration-none"
+                      onClick={header.column.getToggleSortingHandler()}
+                    >
+                      {flexRender(header.column.columnDef.header, header.getContext())}
+                      {header.column.getIsSorted() === "asc" && (
+                        <i className="bi bi-arrow-up ms-1" aria-hidden="true" />
+                      )}
+                      {header.column.getIsSorted() === "desc" && (
+                        <i className="bi bi-arrow-down ms-1" aria-hidden="true" />
+                      )}
+                    </button>
+                  ) : (
+                    flexRender(header.column.columnDef.header, header.getContext())
                   )}
                 </th>
               ))}

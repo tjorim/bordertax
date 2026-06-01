@@ -21,7 +21,11 @@ function ThemeToggleButton() {
   const cycleTheme = () => {
     const next = THEME_CYCLE[(THEME_CYCLE.indexOf(theme) + 1) % THEME_CYCLE.length]!;
     applyTheme(next);
-    localStorage.setItem(THEME_KEY, next);
+    try {
+      localStorage.setItem(THEME_KEY, next);
+    } catch {
+      // Keep the in-memory theme change when persistence is unavailable.
+    }
     setThemeState(next);
   };
 
@@ -50,10 +54,15 @@ function ThemeToggleButton() {
 function LanguageToggleButton({ onSwitch }: { onSwitch?: () => void } = {}) {
   const [locale, setLocaleState] = useState(getLocale());
 
+  useEffect(() => {
+    document.documentElement.lang = locale;
+  }, [locale]);
+
   // Sync with back/forward navigation — Paraglide has no subscription API.
   useEffect(() => {
     const sync = () => {
-      setLocaleState(getLocale());
+      const currentLocale = getLocale();
+      setLocaleState(currentLocale);
       onSwitch?.();
     };
     window.addEventListener("popstate", sync);

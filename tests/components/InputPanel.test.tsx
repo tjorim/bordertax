@@ -41,8 +41,8 @@ describe("InputPanel", () => {
 
   it("updates year when dropdown is changed", () => {
     const { getForm } = renderInputPanel();
-    const selects = screen.getAllByRole("combobox");
-    fireEvent.change(selects[0]!, { target: { value: "2024" } });
+    const year = screen.getByRole("combobox", { name: /tax year/i });
+    fireEvent.change(year, { target: { value: "2024" } });
     expect(getForm().getFieldValue("year")).toBe(2024);
   });
 
@@ -61,55 +61,52 @@ describe("InputPanel", () => {
   // TODO: Re-enable when NL-resident support is re-integrated
   it.skip("updates resident country to NL", () => {
     const { getForm } = renderInputPanel();
-    const selects = screen.getAllByRole("combobox");
-    fireEvent.change(selects[1]!, { target: { value: "NL" } });
+    const residentCountry = screen.getByRole("combobox", { name: /country of residence/i });
+    fireEvent.change(residentCountry, { target: { value: "NL" } });
     expect(getForm().getFieldValue("residentCountry")).toBe("NL");
   });
 
   // TODO: Re-enable when multiple civil statuses are supported
   it.skip("updates civil status", () => {
     const { getForm } = renderInputPanel();
-    const selects = screen.getAllByRole("combobox");
-    fireEvent.change(selects[2]!, { target: { value: "married" } });
+    const civilStatus = screen.getByRole("combobox", { name: /civil status/i });
+    fireEvent.change(civilStatus, { target: { value: "married" } });
     expect(getForm().getFieldValue("civilStatus")).toBe("married");
   });
 
   // TODO: Re-enable when multiple Belgian regions are supported
   it.skip("updates belgian region", () => {
     const { getForm } = renderInputPanel({ residentCountry: "BE" });
-    const selects = screen.getAllByRole("combobox");
-    fireEvent.change(selects[3]!, { target: { value: "walloon" } });
+    const belgianRegion = screen.getByRole("combobox", { name: /belgian region/i });
+    fireEvent.change(belgianRegion, { target: { value: "walloon" } });
     expect(getForm().getFieldValue("belgianRegion")).toBe("walloon");
   });
 
   it("updates communal tax rate", () => {
     const { getForm } = renderInputPanel({ residentCountry: "BE" });
-    // For BE resident: spinbuttons are [dependentChildren, communalTaxRate, grossSalary, daysWorkedNL, daysWorkedBE]
-    const inputs = screen.getAllByRole("spinbutton");
-    fireEvent.change(inputs[1]!, { target: { value: "8" } });
+    const communalTaxRate = screen.getByRole("spinbutton", { name: /municipal tax/i });
+    fireEvent.change(communalTaxRate, { target: { value: "8" } });
     expect(getForm().getFieldValue("communalTaxRate")).toBe(8);
   });
 
   it("updates gross salary", () => {
     const { getForm } = renderInputPanel();
-    // For BE resident: spinbuttons are [dependentChildren, communalTaxRate, grossSalary, daysWorkedNL, daysWorkedBE]
-    const inputs = screen.getAllByRole("spinbutton");
-    const grossSalaryInput = inputs[2]!;
+    const grossSalaryInput = screen.getByRole("spinbutton", { name: /gross annual salary/i });
     fireEvent.change(grossSalaryInput, { target: { value: "80000" } });
     expect(getForm().getFieldValue("grossSalary")).toBe(80000);
   });
 
   it("updates daysWorkedNL", () => {
     const { getForm } = renderInputPanel();
-    const inputs = screen.getAllByRole("spinbutton");
-    fireEvent.change(inputs[4]!, { target: { value: "150" } });
+    const daysWorkedNL = screen.getByRole("spinbutton", { name: /workdays in.*nl/i });
+    fireEvent.change(daysWorkedNL, { target: { value: "150" } });
     expect(getForm().getFieldValue("daysWorkedNL")).toBe(150);
   });
 
   it("updates daysWorkedBE", () => {
     const { getForm } = renderInputPanel();
-    const inputs = screen.getAllByRole("spinbutton");
-    fireEvent.change(inputs[5]!, { target: { value: "30" } });
+    const daysWorkedBE = screen.getByRole("spinbutton", { name: /days worked in.*be/i });
+    fireEvent.change(daysWorkedBE, { target: { value: "30" } });
     expect(getForm().getFieldValue("daysWorkedBE")).toBe(30);
   });
 
@@ -122,27 +119,26 @@ describe("InputPanel", () => {
 
   it("updates thirtyPercentRuling when checkbox is toggled", () => {
     const { getForm } = renderInputPanel();
-    const checkboxes = screen.getAllByRole("checkbox");
-    // thirtyPercentRuling checkbox is the second checkbox
-    fireEvent.click(checkboxes[1]!);
+    const thirtyPercentRuling = screen.getByRole("checkbox", { name: /30% ruling/i });
+    fireEvent.click(thirtyPercentRuling);
     expect(getForm().getFieldValue("thirtyPercentRuling")).toBe(true);
   });
 
   it("updates dependents count", () => {
     const { getForm } = renderInputPanel();
-    const inputs = screen.getAllByRole("spinbutton");
-    fireEvent.change(inputs[0]!, { target: { value: "2" } });
+    const dependentChildren = screen.getByRole("spinbutton", { name: /dependents/i });
+    fireEvent.change(dependentChildren, { target: { value: "2" } });
     expect(getForm().getFieldValue("dependentChildren")).toBe(2);
   });
 
   it("allows out-of-range dependents and surfaces a validation error", () => {
     const { getForm } = renderInputPanel();
-    const spinButtons = screen.getAllByRole("spinbutton");
-    fireEvent.change(spinButtons[0]!, { target: { value: "99" } });
+    const dependentChildren = screen.getByRole("spinbutton", { name: /dependents/i });
+    fireEvent.change(dependentChildren, { target: { value: "99" } });
     // Raw form value is unclamped — clamping happens at the App layer via TaxInputSchema.parse
     expect(getForm().getFieldValue("dependentChildren")).toBe(99);
     // Zod validator marks the input as invalid
-    expect(spinButtons[0]).toHaveClass("is-invalid");
+    expect(dependentChildren).toHaveClass("is-invalid");
   });
 
   it("shows total workdays count", () => {
