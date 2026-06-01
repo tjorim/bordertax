@@ -215,6 +215,7 @@ export default function App() {
               const nextLocale = locale === "en" ? "nl" : "en";
               setLocale(nextLocale, { reload: false });
               setCurrentLocale(nextLocale);
+              document.documentElement.lang = nextLocale;
             }}
             aria-label={nextLangLabel}
           >

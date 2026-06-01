@@ -99,12 +99,10 @@ export function WarnBox({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function LanguageToggleButton({ onToggle }: { onToggle?: () => void } = {}) {
+export function LanguageToggleButton() {
   const [locale, setLocaleState] = useState(getLocale());
 
-  // Synchronise with external locale changes triggered by browser history
-  // navigation (popstate). Paraglide has no subscription API, so popstate is
-  // the best available signal when setLocale is called with { reload: false }.
+  // Sync with back/forward navigation — Paraglide has no subscription API.
   useEffect(() => {
     const sync = () => setLocaleState(getLocale());
     window.addEventListener("popstate", sync);
@@ -120,10 +118,7 @@ export function LanguageToggleButton({ onToggle }: { onToggle?: () => void } = {
       className="ms-3"
       onClick={() => {
         const nextLocale = locale === "en" ? "nl" : "en";
-        setLocale(nextLocale, { reload: false });
-        setLocaleState(nextLocale);
-        document.documentElement.lang = nextLocale;
-        onToggle?.();
+        setLocale(nextLocale);
       }}
       aria-label={nextLangLabel}
     >

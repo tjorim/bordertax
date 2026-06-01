@@ -1,11 +1,9 @@
-import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Accordion, Col, Container, Navbar, Row, Table } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "../styles.css";
 import * as m from "../paraglide/messages.js";
-import { getLocale } from "../paraglide/runtime.js";
 import {
   BeBadge,
   LanguageToggleButton,
@@ -19,7 +17,6 @@ import {
 // ── Main page ────────────────────────────────────────────────────
 
 export default function PensionReference() {
-  const [, setCurrentLocale] = useState(getLocale());
   return (
     <>
       <Navbar bg="dark" variant="dark" expand="lg" className="mb-4">
@@ -38,7 +35,7 @@ export default function PensionReference() {
               {m.ref_pension_nav_ss_link()}
             </span>
           </Link>
-          <LanguageToggleButton onToggle={() => setCurrentLocale(getLocale())} />
+          <LanguageToggleButton />
         </Container>
       </Navbar>
 

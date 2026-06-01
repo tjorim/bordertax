@@ -1,11 +1,9 @@
-import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Accordion, Col, Container, Navbar, Row, Table } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "../styles.css";
 import * as m from "../paraglide/messages.js";
-import { getLocale } from "../paraglide/runtime.js";
 import {
   BeBadge,
   LanguageToggleButton,
@@ -23,7 +21,6 @@ function Formula({ children }: { children: React.ReactNode }) {
 // ── Main page ────────────────────────────────────────────────────
 
 export default function SalarySplitReference() {
-  const [, setCurrentLocale] = useState(getLocale());
   return (
     <>
       <Navbar bg="dark" variant="dark" expand="lg" className="mb-4">
@@ -42,7 +39,7 @@ export default function SalarySplitReference() {
               {m.ref_ss_nav_pension_link()}
             </span>
           </Link>
-          <LanguageToggleButton onToggle={() => setCurrentLocale(getLocale())} />
+          <LanguageToggleButton />
         </Container>
       </Navbar>
 
