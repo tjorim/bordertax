@@ -179,7 +179,10 @@ function ResultsErrorFallback({ error }: FallbackProps) {
 export default function App() {
   const form = useForm({ defaultValues: loadInitialInputs() });
   const rawValues = useStore(form.store, (s) => s.values);
-  const inputs = useMemo(() => TaxInputSchema.parse(rawValues), [rawValues]);
+  const inputs = useMemo(() => {
+    const parsed = TaxInputSchema.safeParse(rawValues);
+    return parsed.success ? parsed.data : DEFAULT_INPUTS;
+  }, [rawValues]);
   const [locale, setCurrentLocale] = useState(getLocale());
   const [theme, setTheme] = useState<Theme>(loadTheme);
   const nextLangLabel = locale === "en" ? m.lang_nl() : m.lang_en();
