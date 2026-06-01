@@ -14,7 +14,7 @@ import {
   TipBox,
   WarnBox,
 } from "./reference/components.js";
-import { AppNavbar, BackBrand } from "../components/AppNavbar";
+import { AppNavbar } from "../components/AppNavbar";
 import { PageHero } from "../components/PageHero";
 import { PageFooter } from "../components/PageFooter";
 
@@ -28,7 +28,6 @@ export default function SalarySplitReference() {
   return (
     <>
       <AppNavbar>
-        <BackBrand />
         <Navbar.Text className="fw-semibold ref-nav-text">
           <i className="bi bi-book-fill me-2" style={{ color: "var(--bt-be-light)" }} />
           {m.ref_ss_nav_title()}

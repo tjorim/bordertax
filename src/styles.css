@@ -1359,6 +1359,46 @@ footer a:hover {
 }
 
 /* ── Hover readout bar ────────────────────────────────────────── */
+/* ── Recharts native tooltip ──────────────────────────────────── */
+.bt-wfh-tooltip {
+  background: var(--bt-surface-3);
+  border: 1px solid var(--bt-border);
+  border-radius: var(--bt-r-sm);
+  padding: 0.5rem 0.75rem;
+  font-size: 0.78rem;
+  pointer-events: none;
+  min-width: 160px;
+}
+
+.bt-wfh-tooltip__ratio {
+  color: var(--bt-text-sub);
+  margin-bottom: 0.35rem;
+  font-size: 0.75rem;
+}
+
+.bt-wfh-tooltip__values {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  margin-bottom: 0.35rem;
+}
+
+.bt-wfh-tooltip__net { color: var(--bt-success); font-weight: 600; }
+.bt-wfh-tooltip__nl  { color: var(--bt-nl-light); }
+.bt-wfh-tooltip__be  { color: var(--bt-be-light); }
+
+.bt-wfh-tooltip__zone {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.1rem 0.4rem;
+  border-radius: 3px;
+  display: inline-block;
+}
+.bt-wfh-tooltip__zone--full         { color: rgba(34,197,94,0.9);  background: rgba(34,197,94,0.1); }
+.bt-wfh-tooltip__zone--hybrid       { color: rgba(96,165,250,0.9); background: rgba(96,165,250,0.1); }
+.bt-wfh-tooltip__zone--kaderakkoord { color: rgba(168,85,247,0.9); background: rgba(168,85,247,0.1); }
+.bt-wfh-tooltip__zone--above        { color: rgba(245,158,11,0.9); background: rgba(245,158,11,0.1); }
+
 .bt-wfh-readout {
   display: flex;
   flex-wrap: wrap;

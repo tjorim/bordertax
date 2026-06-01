@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Container, NavDropdown, Navbar } from "react-bootstrap";
+import { Button, Container, Nav, NavDropdown, Navbar } from "react-bootstrap";
 import { Link } from "@tanstack/react-router";
 import { getLocale, setLocale } from "../paraglide/runtime.js";
 import * as m from "../paraglide/messages.js";
@@ -83,45 +83,44 @@ function LanguageToggleButton({ onSwitch }: { onSwitch?: () => void } = {}) {
 }
 
 interface AppNavbarProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   // Provide to use in-place locale switch (homepage). Omit for URL-navigation
   // locale switch (reference pages).
   onLocaleSwitch?: () => void;
 }
 
-export function BackBrand() {
-  return (
-    <Navbar.Brand as={Link} to="/" className="text-decoration-none ref-nav-brand">
-      <i className="bi bi-arrow-left me-2" />
-      {m.ref_nav_back_to_calculator()}
-    </Navbar.Brand>
-  );
-}
-
 export function AppNavbar({ children, onLocaleSwitch }: AppNavbarProps) {
   return (
-    <Navbar bg="dark" variant="dark" expand="lg" className="mb-4">
+    <Navbar expand="lg" className="mb-4">
       <Container>
-        {children}
-        <NavDropdown
-          title={
-            <>
-              <i className="bi bi-book me-1" />
-              {m.ref_overview_hub_title()}
-            </>
-          }
-          id="ref-nav-dropdown"
-          className="ms-3"
-        >
-          {REFERENCE_PAGES.map((page) => (
-            <NavDropdown.Item key={page.route} as={Link} to={page.route}>
-              <i className={`bi ${page.icon} me-2`} style={{ color: page.iconColor }} />
-              {page.titleFn()}
-            </NavDropdown.Item>
-          ))}
-        </NavDropdown>
-        <ThemeToggleButton />
-        <LanguageToggleButton onSwitch={onLocaleSwitch} />
+        <Navbar.Brand>🇧🇪&thinsp;🇳🇱</Navbar.Brand>
+        <Navbar.Toggle aria-controls="app-navbar-nav" />
+        <Navbar.Collapse id="app-navbar-nav">
+          <Nav className="me-auto">
+            <Nav.Link as={Link} to="/" activeProps={{ className: "active" }}>
+              Bordertax
+            </Nav.Link>
+            <NavDropdown
+              title={
+                <>
+                  <i className="bi bi-book me-1" />
+                  {m.ref_overview_hub_title()}
+                </>
+              }
+              id="ref-nav-dropdown"
+            >
+              {REFERENCE_PAGES.map((page) => (
+                <NavDropdown.Item key={page.route} as={Link} to={page.route}>
+                  <i className={`bi ${page.icon} me-2`} style={{ color: page.iconColor }} />
+                  {page.titleFn()}
+                </NavDropdown.Item>
+              ))}
+            </NavDropdown>
+          </Nav>
+          {children}
+          <ThemeToggleButton />
+          <LanguageToggleButton onSwitch={onLocaleSwitch} />
+        </Navbar.Collapse>
       </Container>
     </Navbar>
   );

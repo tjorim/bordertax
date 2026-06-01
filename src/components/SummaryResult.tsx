@@ -33,7 +33,7 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
     const pad = (label: string, value: string) => `  ${label.padEnd(28, ".")} ${value}`;
 
     const lines = [
-      `━━━ ${m.app_title()} · ${result.inputs.year} ━━━`,
+      `━━━ Bordertax · ${result.inputs.year} ━━━`,
       "",
       pad(m.summary_gross_income(), fmt(grossIncome)),
       pad(`🇳🇱 ${m.summary_dutch_tax()}`, `−${fmt(nl.netTaxNL)}`),

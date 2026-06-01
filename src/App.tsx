@@ -171,7 +171,6 @@ export default function App() {
   return (
     <>
       <AppNavbar onLocaleSwitch={() => setCurrentLocale(getLocale())}>
-        <Navbar.Brand>🇧🇪&thinsp;🇳🇱&nbsp; {m.app_title()}</Navbar.Brand>
         <Navbar.Text className="text-secondary small">
           {m.app_tax_year()} {inputs.year}
         </Navbar.Text>
