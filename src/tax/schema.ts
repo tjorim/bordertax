@@ -3,23 +3,21 @@ import {
   VALID_BELGIAN_REGIONS,
   VALID_CIVIL_STATUSES,
   VALID_RESIDENT_COUNTRIES,
+  VALID_YEARS,
 } from "./constants";
 
+const yearLiterals = VALID_YEARS.map((year) => z.literal(year)) as [
+  z.ZodLiteral<(typeof VALID_YEARS)[number]>,
+  ...z.ZodLiteral<(typeof VALID_YEARS)[number]>[],
+];
+
 export const TaxInputSchema = z.object({
-  year: z
-    .union([
-      z.literal(2020),
-      z.literal(2021),
-      z.literal(2022),
-      z.literal(2023),
-      z.literal(2024),
-      z.literal(2025),
-    ])
-    .catch(2025),
+  year: z.union(yearLiterals).catch(VALID_YEARS[VALID_YEARS.length - 1]!),
   residentCountry: z.enum(VALID_RESIDENT_COUNTRIES).catch("BE"),
   civilStatus: z.enum(VALID_CIVIL_STATUSES).catch("single"),
   dependentChildren: z
     .number()
+    .int()
     .catch(0)
     .transform((v) => Math.min(10, Math.max(0, v))),
   belowAOWAge: z.boolean().catch(true),

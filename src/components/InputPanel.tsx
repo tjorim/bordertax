@@ -75,6 +75,7 @@ export default function InputPanel({ form }: Props) {
                 <Col xs={12} sm={6}>
                   <Form.Label>{m.input_tax_year()}</Form.Label>
                   <Form.Select
+                    aria-label={m.input_tax_year()}
                     value={field.state.value}
                     onChange={(e) =>
                       field.handleChange(Number(e.target.value) as TaxInputs["year"])
@@ -97,6 +98,7 @@ export default function InputPanel({ form }: Props) {
                   <Col xs={12} sm={6}>
                     <Form.Label>{m.input_resident_country()}</Form.Label>
                     <Form.Select
+                      aria-label={m.input_resident_country()}
                       value={field.state.value}
                       onChange={(e) =>
                         field.handleChange(e.target.value as TaxInputs["residentCountry"])
@@ -130,6 +132,7 @@ export default function InputPanel({ form }: Props) {
                       </Badge>
                     </Form.Label>
                     <Form.Select
+                      aria-label={m.input_civil_status()}
                       value={field.state.value}
                       onChange={(e) =>
                         field.handleChange(e.target.value as TaxInputs["civilStatus"])
@@ -159,6 +162,7 @@ export default function InputPanel({ form }: Props) {
                     <Form.Label>{m.input_dependents()}</Form.Label>
                     <Form.Control
                       type="number"
+                      aria-label={m.input_dependents()}
                       min={0}
                       max={10}
                       value={field.state.value}
@@ -205,6 +209,7 @@ export default function InputPanel({ form }: Props) {
                           </Badge>
                         </Form.Label>
                         <Form.Select
+                          aria-label={m.input_belgian_region()}
                           value={field.state.value}
                           onChange={(e) =>
                             field.handleChange(e.target.value as TaxInputs["belgianRegion"])
@@ -242,6 +247,7 @@ export default function InputPanel({ form }: Props) {
                         </Form.Label>
                         <Form.Control
                           type="number"
+                          aria-label={m.input_municipal_tax()}
                           min={0}
                           max={15}
                           step={0.1}
@@ -286,6 +292,7 @@ export default function InputPanel({ form }: Props) {
                     <Form.Label>{m.input_gross_salary()}</Form.Label>
                     <Form.Control
                       type="number"
+                      aria-label={m.input_gross_salary()}
                       min={0}
                       step={100}
                       value={field.state.value}
@@ -338,6 +345,7 @@ export default function InputPanel({ form }: Props) {
                     <Form.Label>{m.input_workdays_nl()}</Form.Label>
                     <Form.Control
                       type="number"
+                      aria-label={m.input_workdays_nl()}
                       min={0}
                       value={field.state.value}
                       onChange={(e) => field.handleChange(Number(e.target.value) || 0)}
@@ -362,6 +370,7 @@ export default function InputPanel({ form }: Props) {
                     <Form.Label>{m.input_workdays_be()}</Form.Label>
                     <Form.Control
                       type="number"
+                      aria-label={m.input_workdays_be()}
                       min={0}
                       value={field.state.value}
                       onChange={(e) => field.handleChange(Number(e.target.value) || 0)}
