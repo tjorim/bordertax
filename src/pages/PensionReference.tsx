@@ -1,4 +1,3 @@
-import { Link } from "@tanstack/react-router";
 import { Accordion, Col, Container, Navbar, Row, Table } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
