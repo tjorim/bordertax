@@ -52,10 +52,13 @@ function LanguageToggleButton({ onSwitch }: { onSwitch?: () => void } = {}) {
 
   // Sync with back/forward navigation — Paraglide has no subscription API.
   useEffect(() => {
-    const sync = () => setLocaleState(getLocale());
+    const sync = () => {
+      setLocaleState(getLocale());
+      onSwitch?.();
+    };
     window.addEventListener("popstate", sync);
     return () => window.removeEventListener("popstate", sync);
-  }, []);
+  }, [onSwitch]);
 
   const nextLangLabel = locale === "en" ? m.lang_nl() : m.lang_en();
 
