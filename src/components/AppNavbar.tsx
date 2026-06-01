@@ -89,6 +89,15 @@ interface AppNavbarProps {
   onLocaleSwitch?: () => void;
 }
 
+export function BackBrand() {
+  return (
+    <Navbar.Brand as={Link} to="/" className="text-decoration-none ref-nav-brand">
+      <i className="bi bi-arrow-left me-2" />
+      {m.ref_nav_back_to_calculator()}
+    </Navbar.Brand>
+  );
+}
+
 export function AppNavbar({ children, onLocaleSwitch }: AppNavbarProps) {
   return (
     <Navbar bg="dark" variant="dark" expand="lg" className="mb-4">

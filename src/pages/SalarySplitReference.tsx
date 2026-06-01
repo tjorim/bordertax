@@ -12,7 +12,7 @@ import {
   TipBox,
   WarnBox,
 } from "./reference/components.js";
-import { AppNavbar } from "../components/AppNavbar";
+import { AppNavbar, BackBrand } from "../components/AppNavbar";
 import { PageFooter } from "../components/PageFooter";
 
 function Formula({ children }: { children: React.ReactNode }) {
@@ -25,10 +25,7 @@ export default function SalarySplitReference() {
   return (
     <>
       <AppNavbar>
-        <Navbar.Brand as={Link} to="/" className="text-decoration-none ref-nav-brand">
-          <i className="bi bi-arrow-left me-2" />
-          {m.ref_nav_back_to_calculator()}
-        </Navbar.Brand>
+        <BackBrand />
         <Navbar.Text className="fw-semibold ref-nav-text">
           <i className="bi bi-book-fill me-2" style={{ color: "var(--bt-be-light)" }} />
           {m.ref_ss_nav_title()}

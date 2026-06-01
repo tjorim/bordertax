@@ -4,17 +4,14 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "../styles.css";
 import * as m from "../paraglide/messages.js";
-import { AppNavbar } from "../components/AppNavbar";
+import { AppNavbar, BackBrand } from "../components/AppNavbar";
 import { REFERENCE_PAGES } from "../referencePages";
 
 export default function ReferenceOverview() {
   return (
     <>
       <AppNavbar>
-        <Navbar.Brand as={Link} to="/" className="text-decoration-none ref-nav-brand">
-          <i className="bi bi-arrow-left me-2" />
-          {m.ref_nav_back_to_calculator()}
-        </Navbar.Brand>
+        <BackBrand />
         <Navbar.Text className="fw-semibold ref-nav-text">
           <i className="bi bi-journals me-2" style={{ color: "var(--bt-be-light)" }} />
           {m.ref_overview_hub_title()}
