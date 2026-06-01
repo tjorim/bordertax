@@ -15,7 +15,7 @@ import WFHRatioChart from "./components/WFHRatioChart";
 import { calculate } from "./tax";
 import type { TaxInputs } from "./tax/types";
 import { VALID_YEARS } from "./tax/constants";
-import { PersistedInputsSchema, type PersistedInputs } from "./tax/schema";
+import { TaxInputSchema, PersistedInputsSchema, type PersistedInputs } from "./tax/schema";
 import * as m from "./paraglide/messages.js";
 import { getLocale, setLocale } from "./paraglide/runtime.js";
 
@@ -88,7 +88,8 @@ const THEME_CYCLE: Theme[] = ["auto", "light", "dark"];
 
 export default function App() {
   const form = useForm({ defaultValues: loadInitialInputs() });
-  const inputs = useStore(form.store, (s) => s.values);
+  const rawValues = useStore(form.store, (s) => s.values);
+  const inputs = useMemo(() => TaxInputSchema.parse(rawValues), [rawValues]);
   const [locale, setCurrentLocale] = useState(getLocale());
   const [theme, setTheme] = useState<Theme>(loadTheme);
   const nextLangLabel = locale === "en" ? m.lang_nl() : m.lang_en();

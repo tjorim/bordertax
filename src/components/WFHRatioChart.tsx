@@ -181,7 +181,7 @@ export default function WFHRatioChart({ inputs }: Props) {
               data={data}
               margin={{ top: 16, right: 16, bottom: 32, left: 56 }}
               onMouseMove={(state) => {
-                if (state.isTooltipActive && typeof state.activeTooltipIndex === "number") {
+                if (state?.isTooltipActive && typeof state?.activeTooltipIndex === "number") {
                   setHovered(state.activeTooltipIndex);
                 }
               }}

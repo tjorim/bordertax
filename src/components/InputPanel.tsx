@@ -161,9 +161,10 @@ export default function InputPanel({ form }: Props) {
                       min={0}
                       max={10}
                       value={field.state.value}
-                      onChange={(e) =>
-                        field.handleChange(Math.min(10, Math.max(0, Number(e.target.value) || 0)))
-                      }
+                      onChange={(e) => {
+                        const n = (e.target as HTMLInputElement).valueAsNumber;
+                        field.handleChange(Number.isNaN(n) ? 0 : n);
+                      }}
                       onBlur={field.handleBlur}
                       isInvalid={!!err}
                     />
@@ -244,11 +245,10 @@ export default function InputPanel({ form }: Props) {
                           max={15}
                           step={0.1}
                           value={field.state.value}
-                          onChange={(e) =>
-                            field.handleChange(
-                              Math.min(15, Math.max(0, Number(e.target.value) || 0)),
-                            )
-                          }
+                          onChange={(e) => {
+                            const n = (e.target as HTMLInputElement).valueAsNumber;
+                            field.handleChange(Number.isNaN(n) ? 0 : n);
+                          }}
                           onBlur={field.handleBlur}
                           isInvalid={!!err}
                           aria-describedby="communal-tax-hint"

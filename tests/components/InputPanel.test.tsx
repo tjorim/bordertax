@@ -135,11 +135,14 @@ describe("InputPanel", () => {
     expect(getForm().getFieldValue("dependentChildren")).toBe(2);
   });
 
-  it("clamps dependent children to the allowed maximum", () => {
+  it("allows out-of-range dependents and surfaces a validation error", () => {
     const { getForm } = renderInputPanel();
-    const inputs = screen.getAllByRole("spinbutton");
-    fireEvent.change(inputs[0]!, { target: { value: "99" } });
-    expect(getForm().getFieldValue("dependentChildren")).toBe(10);
+    const spinButtons = screen.getAllByRole("spinbutton");
+    fireEvent.change(spinButtons[0]!, { target: { value: "99" } });
+    // Raw form value is unclamped — clamping happens at the App layer via TaxInputSchema.parse
+    expect(getForm().getFieldValue("dependentChildren")).toBe(99);
+    // Zod validator marks the input as invalid
+    expect(spinButtons[0]).toHaveClass("is-invalid");
   });
 
   it("shows total workdays count", () => {
