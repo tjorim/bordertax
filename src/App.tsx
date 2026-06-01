@@ -1,6 +1,8 @@
 import { Link } from "@tanstack/react-router";
+import { useForm, useStore } from "@tanstack/react-form";
 import { useEffect, useMemo, useState } from "react";
 import { Button, Col, Container, Nav, Navbar, Row, Tab } from "react-bootstrap";
+import { ErrorBoundary, type FallbackProps } from "react-error-boundary";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "./styles.css";
@@ -14,7 +16,7 @@ import WFHRatioChart from "./components/WFHRatioChart";
 import { calculate } from "./tax";
 import type { TaxInputs } from "./tax/types";
 import { VALID_YEARS } from "./tax/constants";
-import { PersistedInputsSchema, type PersistedInputs } from "./tax/schema";
+import { TaxInputSchema, PersistedInputsSchema, type PersistedInputs } from "./tax/schema";
 import * as m from "./paraglide/messages.js";
 import { getLocale, setLocale } from "./paraglide/runtime.js";
 
@@ -85,8 +87,102 @@ function applyTheme(theme: Theme) {
 
 const THEME_CYCLE: Theme[] = ["auto", "light", "dark"];
 
+interface ResultsTabsProps {
+  inputs: TaxInputs;
+  onResetInputs: () => void;
+}
+
+function ResultsTabs({ inputs, onResetInputs }: ResultsTabsProps) {
+  const result = useMemo(() => calculate(inputs), [inputs]);
+  const comparisonResults = useMemo(
+    () =>
+      VALID_YEARS.map((year) => ({
+        year,
+        result: year === inputs.year ? result : calculate({ ...inputs, year }),
+      })),
+    [inputs, result],
+  );
+
+  return (
+    <Tab.Container defaultActiveKey="summary">
+      <Nav variant="tabs" className="mb-3">
+        <Nav.Item>
+          <Nav.Link eventKey="summary" aria-label={m.tabs_summary()}>
+            <i className="bi bi-pie-chart-fill me-1" />
+            {m.tabs_summary()}
+          </Nav.Link>
+        </Nav.Item>
+        <Nav.Item>
+          <Nav.Link eventKey="nl" aria-label={m.tabs_nl()}>
+            🇳🇱 {m.tabs_nl()}
+          </Nav.Link>
+        </Nav.Item>
+        <Nav.Item>
+          <Nav.Link eventKey="be" aria-label={m.tabs_be()}>
+            🇧🇪 {m.tabs_be()}
+          </Nav.Link>
+        </Nav.Item>
+        <Nav.Item>
+          <Nav.Link eventKey="years" aria-label={m.tabs_year_comparison()}>
+            <i className="bi bi-bar-chart-line-fill me-1" />
+            {m.tabs_year_comparison()}
+          </Nav.Link>
+        </Nav.Item>
+        <Nav.Item>
+          <Nav.Link eventKey="wfh" aria-label={m.tabs_wfh_ratio()}>
+            <i className="bi bi-house-fill me-1" />
+            {m.tabs_wfh_ratio()}
+          </Nav.Link>
+        </Nav.Item>
+      </Nav>
+
+      <Tab.Content>
+        <Tab.Pane eventKey="summary">
+          <SummaryResult result={result} onResetInputs={onResetInputs} />
+        </Tab.Pane>
+        <Tab.Pane eventKey="nl" className="bt-nl-accent">
+          <NLResult
+            result={result.nl}
+            withheldTaxNL={inputs.withheldTaxNL}
+            thirtyPercentRuling={inputs.thirtyPercentRuling}
+          />
+        </Tab.Pane>
+        <Tab.Pane eventKey="be" className="bt-be-accent">
+          <BEResult result={result.be} residentCountry={inputs.residentCountry} />
+        </Tab.Pane>
+        <Tab.Pane eventKey="years">
+          <MultiYearComparison rows={comparisonResults} activeYear={inputs.year} />
+        </Tab.Pane>
+        <Tab.Pane eventKey="wfh">
+          <WFHRatioChart inputs={inputs} />
+        </Tab.Pane>
+      </Tab.Content>
+    </Tab.Container>
+  );
+}
+
+function ResultsErrorFallback({ error }: FallbackProps) {
+  const message = error instanceof Error ? error.message : String(error);
+  return (
+    <div className="p-4 text-center">
+      <i className="bi bi-exclamation-triangle-fill text-warning fs-2 mb-3 d-block" />
+      <h5>{m.results_error_title()}</h5>
+      <p className="text-muted small mb-3">{m.results_error_description()}</p>
+      <details className="text-start small text-muted">
+        <summary className="mb-1">{m.results_error_details()}</summary>
+        <pre className="border rounded p-2 small overflow-auto">{message}</pre>
+      </details>
+    </div>
+  );
+}
+
 export default function App() {
-  const [inputs, setInputs] = useState<TaxInputs>(loadInitialInputs);
+  const form = useForm({ defaultValues: loadInitialInputs() });
+  const rawValues = useStore(form.store, (s) => s.values);
+  const inputs = useMemo(() => {
+    const parsed = TaxInputSchema.safeParse(rawValues);
+    return parsed.success ? parsed.data : DEFAULT_INPUTS;
+  }, [rawValues]);
   const [locale, setCurrentLocale] = useState(getLocale());
   const [theme, setTheme] = useState<Theme>(loadTheme);
   const nextLangLabel = locale === "en" ? m.lang_nl() : m.lang_en();
@@ -102,16 +198,6 @@ export default function App() {
       return () => mq.removeEventListener("change", handler);
     }
   }, [theme]);
-
-  const result = useMemo(() => calculate(inputs), [inputs]);
-  const comparisonResults = useMemo(
-    () =>
-      VALID_YEARS.map((year) => ({
-        year,
-        result: year === inputs.year ? result : calculate({ ...inputs, year }),
-      })),
-    [inputs, result],
-  );
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(toPersistedInputs(inputs)));
@@ -166,65 +252,14 @@ export default function App() {
         <Row className="g-4 bt-main-row">
           {/* ── Left column: inputs ────────────────────────────── */}
           <Col lg={5}>
-            <InputPanel inputs={inputs} onChange={setInputs} />
+            <InputPanel form={form} />
           </Col>
 
           {/* ── Right column: results ──────────────────────────── */}
           <Col lg={7}>
-            <Tab.Container defaultActiveKey="summary">
-              <Nav variant="tabs" className="mb-3">
-                <Nav.Item>
-                  <Nav.Link eventKey="summary" aria-label={m.tabs_summary()}>
-                    <i className="bi bi-pie-chart-fill me-1" />
-                    {m.tabs_summary()}
-                  </Nav.Link>
-                </Nav.Item>
-                <Nav.Item>
-                  <Nav.Link eventKey="nl" aria-label={m.tabs_nl()}>
-                    🇳🇱 {m.tabs_nl()}
-                  </Nav.Link>
-                </Nav.Item>
-                <Nav.Item>
-                  <Nav.Link eventKey="be" aria-label={m.tabs_be()}>
-                    🇧🇪 {m.tabs_be()}
-                  </Nav.Link>
-                </Nav.Item>
-                <Nav.Item>
-                  <Nav.Link eventKey="years" aria-label={m.tabs_year_comparison()}>
-                    <i className="bi bi-bar-chart-line-fill me-1" />
-                    {m.tabs_year_comparison()}
-                  </Nav.Link>
-                </Nav.Item>
-                <Nav.Item>
-                  <Nav.Link eventKey="wfh" aria-label={m.tabs_wfh_ratio()}>
-                    <i className="bi bi-house-fill me-1" />
-                    {m.tabs_wfh_ratio()}
-                  </Nav.Link>
-                </Nav.Item>
-              </Nav>
-
-              <Tab.Content>
-                <Tab.Pane eventKey="summary">
-                  <SummaryResult result={result} onResetInputs={() => setInputs(DEFAULT_INPUTS)} />
-                </Tab.Pane>
-                <Tab.Pane eventKey="nl" className="bt-nl-accent">
-                  <NLResult
-                    result={result.nl}
-                    withheldTaxNL={inputs.withheldTaxNL}
-                    thirtyPercentRuling={inputs.thirtyPercentRuling}
-                  />
-                </Tab.Pane>
-                <Tab.Pane eventKey="be" className="bt-be-accent">
-                  <BEResult result={result.be} residentCountry={inputs.residentCountry} />
-                </Tab.Pane>
-                <Tab.Pane eventKey="years">
-                  <MultiYearComparison rows={comparisonResults} activeYear={inputs.year} />
-                </Tab.Pane>
-                <Tab.Pane eventKey="wfh">
-                  <WFHRatioChart inputs={inputs} />
-                </Tab.Pane>
-              </Tab.Content>
-            </Tab.Container>
+            <ErrorBoundary FallbackComponent={ResultsErrorFallback}>
+              <ResultsTabs inputs={inputs} onResetInputs={() => form.reset(DEFAULT_INPUTS)} />
+            </ErrorBoundary>
           </Col>
         </Row>
       </Container>

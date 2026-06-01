@@ -11,7 +11,12 @@
     />
     <script>
       (function () {
-        var stored = localStorage.getItem("bt-theme");
+        var stored;
+        try {
+          stored = localStorage.getItem("bt-theme");
+        } catch (e) {
+          stored = null;
+        }
         var prefersDark =
           typeof window.matchMedia === "function" &&
           window.matchMedia("(prefers-color-scheme: dark)").matches;

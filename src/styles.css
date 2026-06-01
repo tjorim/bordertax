@@ -58,7 +58,7 @@
   --bt-warning-border: rgba(245, 158, 11, 0.3);
 
   /* Typography */
-  --bt-font-body: "Inter Variable", "Inter", system-ui, -apple-system, sans-serif;
+  --bt-font-body: "Inter Variable", system-ui, -apple-system, sans-serif;
   --bt-font-mono: "Space Mono", "Courier New", monospace;
 
   /* Radii */
@@ -1350,6 +1350,7 @@ footer a:hover {
   background: var(--bt-surface-2);
   border: 1px solid var(--bt-border);
   cursor: crosshair;
+  touch-action: pan-y;
 }
 
 /* Suppress the default recharts tooltip wrapper box */

@@ -590,5 +590,8 @@
   "theme_toggle_label": "Thema",
   "theme_auto": "auto",
   "theme_light": "licht",
-  "theme_dark": "donker"
+  "theme_dark": "donker",
+  "results_error_title": "Er ging iets mis",
+  "results_error_description": "De belastingberekening is vastgelopen. Probeer je gegevens aan te passen.",
+  "results_error_details": "Technische details"
 }

@@ -1,4 +1,5 @@
 import { Badge, Table } from "react-bootstrap";
+import clsx from "clsx";
 import { VALID_YEARS } from "../tax/constants";
 import type { TaxYear } from "../tax/constants";
 import type { TaxResult } from "../tax/types";
@@ -33,7 +34,7 @@ export default function MultiYearComparison({ rows, activeYear }: Props) {
           return (
             <div
               key={year}
-              className={`bt-year-chart__row${isActive ? " bt-year-chart__row--active" : ""}`}
+              className={clsx("bt-year-chart__row", isActive && "bt-year-chart__row--active")}
             >
               <div className="bt-year-chart__label">
                 {year}
@@ -92,7 +93,7 @@ export default function MultiYearComparison({ rows, activeYear }: Props) {
         </thead>
         <tbody>
           {rows.map(({ year, result }) => (
-            <tr key={year} className={year === activeYear ? "table-primary" : undefined}>
+            <tr key={year} className={clsx(year === activeYear && "table-primary")}>
               <td>
                 {year} {year === activeYear && <Badge bg="primary">{m.years_active()}</Badge>}
               </td>
