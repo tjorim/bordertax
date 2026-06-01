@@ -32,12 +32,6 @@ export default function SalarySplitReference() {
           <i className="bi bi-book-fill me-2" style={{ color: "var(--bt-be-light)" }} />
           {m.ref_ss_nav_title()}
         </Navbar.Text>
-        <Link to="/reference/pension" className="ms-3 text-decoration-none">
-          <span className="small opacity-75" style={{ color: "var(--bt-text)" }}>
-            <i className="bi bi-piggy-bank me-1" />
-            {m.ref_ss_nav_pension_link()}
-          </span>
-        </Link>
       </AppNavbar>
 
       <Container fluid="lg" className="pb-5">

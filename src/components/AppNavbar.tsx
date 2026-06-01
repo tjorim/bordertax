@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
-import { Button, Container, Navbar } from "react-bootstrap";
+import { Button, Container, NavDropdown, Navbar } from "react-bootstrap";
+import { Link } from "@tanstack/react-router";
 import { getLocale, setLocale } from "../paraglide/runtime.js";
 import * as m from "../paraglide/messages.js";
 import { type Theme, THEME_KEY, THEME_CYCLE, loadTheme, applyTheme } from "../theme";
+import { REFERENCE_PAGES } from "../referencePages";
 
 function ThemeToggleButton() {
   const [theme, setThemeState] = useState<Theme>(loadTheme);
@@ -92,6 +94,23 @@ export function AppNavbar({ children, onLocaleSwitch }: AppNavbarProps) {
     <Navbar bg="dark" variant="dark" expand="lg" className="mb-4">
       <Container>
         {children}
+        <NavDropdown
+          title={
+            <>
+              <i className="bi bi-book me-1" />
+              {m.ref_overview_hub_title()}
+            </>
+          }
+          id="ref-nav-dropdown"
+          className="ms-3"
+        >
+          {REFERENCE_PAGES.map((page) => (
+            <NavDropdown.Item key={page.route} as={Link} to={page.route}>
+              <i className={`bi ${page.icon} me-2`} style={{ color: page.iconColor }} />
+              {page.titleFn()}
+            </NavDropdown.Item>
+          ))}
+        </NavDropdown>
         <ThemeToggleButton />
         <LanguageToggleButton onSwitch={onLocaleSwitch} />
       </Container>

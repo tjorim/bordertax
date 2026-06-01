@@ -175,12 +175,6 @@ export default function App() {
         <Navbar.Text className="text-secondary small">
           {m.app_tax_year()} {inputs.year}
         </Navbar.Text>
-        <Link to="/reference" className="ms-3 text-decoration-none">
-          <span className="small opacity-75" style={{ color: "var(--bt-text)" }}>
-            <i className="bi bi-book me-1" />
-            {m.ref_overview_hub_title()}
-          </span>
-        </Link>
       </AppNavbar>
 
       <Container fluid="lg" className="pb-5">
