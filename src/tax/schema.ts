@@ -8,6 +8,7 @@ import {
 
 const yearLiterals = VALID_YEARS.map((year) => z.literal(year)) as [
   z.ZodLiteral<(typeof VALID_YEARS)[number]>,
+  z.ZodLiteral<(typeof VALID_YEARS)[number]>,
   ...z.ZodLiteral<(typeof VALID_YEARS)[number]>[],
 ];
 

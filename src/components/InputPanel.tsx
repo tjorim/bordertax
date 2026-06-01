@@ -73,9 +73,9 @@ export default function InputPanel({ form }: Props) {
             <form.Field name="year">
               {(field) => (
                 <Col xs={12} sm={6}>
-                  <Form.Label>{m.input_tax_year()}</Form.Label>
+                  <Form.Label htmlFor="tax-year">{m.input_tax_year()}</Form.Label>
                   <Form.Select
-                    aria-label={m.input_tax_year()}
+                    id="tax-year"
                     value={field.state.value}
                     onChange={(e) =>
                       field.handleChange(Number(e.target.value) as TaxInputs["year"])
@@ -96,9 +96,9 @@ export default function InputPanel({ form }: Props) {
               <form.Field name="residentCountry">
                 {(field) => (
                   <Col xs={12} sm={6}>
-                    <Form.Label>{m.input_resident_country()}</Form.Label>
+                    <Form.Label htmlFor="resident-country">{m.input_resident_country()}</Form.Label>
                     <Form.Select
-                      aria-label={m.input_resident_country()}
+                      id="resident-country"
                       value={field.state.value}
                       onChange={(e) =>
                         field.handleChange(e.target.value as TaxInputs["residentCountry"])
@@ -121,7 +121,7 @@ export default function InputPanel({ form }: Props) {
               <form.Field name="civilStatus">
                 {(field) => (
                   <Col xs={12} sm={6}>
-                    <Form.Label>
+                    <Form.Label htmlFor="civil-status">
                       {m.input_civil_status()}{" "}
                       <Badge
                         bg="secondary"
@@ -132,7 +132,7 @@ export default function InputPanel({ form }: Props) {
                       </Badge>
                     </Form.Label>
                     <Form.Select
-                      aria-label={m.input_civil_status()}
+                      id="civil-status"
                       value={field.state.value}
                       onChange={(e) =>
                         field.handleChange(e.target.value as TaxInputs["civilStatus"])
@@ -159,10 +159,10 @@ export default function InputPanel({ form }: Props) {
                 const err = fieldError(field.state.meta.errors as unknown[]);
                 return (
                   <Col xs={12} sm={6}>
-                    <Form.Label>{m.input_dependents()}</Form.Label>
+                    <Form.Label htmlFor="dependent-children">{m.input_dependents()}</Form.Label>
                     <Form.Control
+                      id="dependent-children"
                       type="number"
-                      aria-label={m.input_dependents()}
                       min={0}
                       max={10}
                       value={field.state.value}
@@ -198,7 +198,7 @@ export default function InputPanel({ form }: Props) {
                   <form.Field name="belgianRegion">
                     {(field) => (
                       <Col xs={12} sm={6}>
-                        <Form.Label>
+                        <Form.Label htmlFor="belgian-region">
                           {m.input_belgian_region()}{" "}
                           <Badge
                             bg="secondary"
@@ -209,7 +209,7 @@ export default function InputPanel({ form }: Props) {
                           </Badge>
                         </Form.Label>
                         <Form.Select
-                          aria-label={m.input_belgian_region()}
+                          id="belgian-region"
                           value={field.state.value}
                           onChange={(e) =>
                             field.handleChange(e.target.value as TaxInputs["belgianRegion"])
@@ -239,15 +239,15 @@ export default function InputPanel({ form }: Props) {
                     const err = fieldError(field.state.meta.errors as unknown[]);
                     return (
                       <Col xs={12} sm={6}>
-                        <Form.Label>
+                        <Form.Label htmlFor="communal-tax-rate">
                           {m.input_municipal_tax()}{" "}
                           <Badge bg="secondary" className="ms-1">
                             %
                           </Badge>
                         </Form.Label>
                         <Form.Control
+                          id="communal-tax-rate"
                           type="number"
-                          aria-label={m.input_municipal_tax()}
                           min={0}
                           max={15}
                           step={0.1}
@@ -289,10 +289,10 @@ export default function InputPanel({ form }: Props) {
                 const err = fieldError(field.state.meta.errors as unknown[]);
                 return (
                   <Col xs={12}>
-                    <Form.Label>{m.input_gross_salary()}</Form.Label>
+                    <Form.Label htmlFor="gross-salary">{m.input_gross_salary()}</Form.Label>
                     <Form.Control
+                      id="gross-salary"
                       type="number"
-                      aria-label={m.input_gross_salary()}
                       min={0}
                       step={100}
                       value={field.state.value}
@@ -342,10 +342,10 @@ export default function InputPanel({ form }: Props) {
                 const err = fieldError(field.state.meta.errors as unknown[]);
                 return (
                   <Col xs={12} sm={6}>
-                    <Form.Label>{m.input_workdays_nl()}</Form.Label>
+                    <Form.Label htmlFor="days-worked-nl">{m.input_workdays_nl()}</Form.Label>
                     <Form.Control
+                      id="days-worked-nl"
                       type="number"
-                      aria-label={m.input_workdays_nl()}
                       min={0}
                       value={field.state.value}
                       onChange={(e) => field.handleChange(Number(e.target.value) || 0)}
@@ -367,10 +367,10 @@ export default function InputPanel({ form }: Props) {
                 const err = fieldError(field.state.meta.errors as unknown[]);
                 return (
                   <Col xs={12} sm={6}>
-                    <Form.Label>{m.input_workdays_be()}</Form.Label>
+                    <Form.Label htmlFor="days-worked-be">{m.input_workdays_be()}</Form.Label>
                     <Form.Control
+                      id="days-worked-be"
                       type="number"
-                      aria-label={m.input_workdays_be()}
                       min={0}
                       value={field.state.value}
                       onChange={(e) => field.handleChange(Number(e.target.value) || 0)}

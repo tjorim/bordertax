@@ -63,7 +63,6 @@ function LanguageToggleButton({ onSwitch }: { onSwitch?: () => void } = {}) {
     const sync = () => {
       const currentLocale = getLocale();
       setLocaleState(currentLocale);
-      document.documentElement.lang = currentLocale;
       onSwitch?.();
     };
     window.addEventListener("popstate", sync);
