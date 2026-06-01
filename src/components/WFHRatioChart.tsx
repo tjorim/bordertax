@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { Badge, Table } from "react-bootstrap";
+import clsx from "clsx";
 import {
   Area,
   CartesianGrid,
@@ -454,11 +455,11 @@ export default function WFHRatioChart({ inputs }: Props) {
         </div>
 
         {/* ── Readout bar ───────────────────────────────────────────── */}
-        <div className={`bt-wfh-readout${isHovering ? " bt-wfh-readout--visible" : ""}`}>
+        <div className={clsx("bt-wfh-readout", isHovering && "bt-wfh-readout--visible")}>
           {displayPoint ? (
             <>
               <span
-                className={`bt-wfh-readout__label${isHovering ? "" : " bt-wfh-readout__label--current"}`}
+                className={clsx("bt-wfh-readout__label", !isHovering && "bt-wfh-readout__label--current")}
               >
                 {!isHovering && (
                   <span className="bt-wfh-readout__tag">{m.wfh_current_ratio()}</span>
