@@ -1,5 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Badge, Table } from "react-bootstrap";
+import {
+  createColumnHelper,
+  flexRender,
+  getCoreRowModel,
+  getSortedRowModel,
+  useReactTable,
+  type SortingState,
+} from "@tanstack/react-table";
 import { calculate } from "../tax";
 import type { TaxInputs } from "../tax/types";
 import * as m from "../paraglide/messages.js";
@@ -495,6 +503,79 @@ export default function WFHRatioChart({ inputs }: Props) {
 
 // ─── Detail table ───────────────────────────────────────────────────────────
 
+interface RatioRow {
+  idx: number;
+  beRatio: number;
+  beDays: number;
+  nlDays: number;
+  nlTax: number;
+  beTax: number;
+  totalTax: number;
+  netIncome: number;
+  effectiveRate: number;
+  threshold?: "90-norm" | "hybrid" | "kaderakkoord";
+  isCurrent?: boolean;
+  isOptimal?: boolean;
+}
+
+const ratioColumnHelper = createColumnHelper<RatioRow>();
+const RATIO_NUMERIC_COLS = new Set(["nlTax", "beTax", "totalTax", "netIncome", "effectiveRate"]);
+
+const ratioColumns = [
+  ratioColumnHelper.accessor("beRatio", {
+    id: "beSplit",
+    header: () => m.wfh_be_split(),
+    enableSorting: false,
+    cell: (info) => {
+      const row = info.row.original;
+      const bePct = Math.round(info.getValue() * 100);
+      return (
+        <>
+          <span className="bt-wfh-table-ratio">{bePct}%</span>
+          <span className="text-muted ms-2 small">
+            {row.nlDays}d NL / {row.beDays}d BE
+          </span>
+          {row.isCurrent && (
+            <Badge bg="primary" className="ms-2">{m.years_active()}</Badge>
+          )}
+          {row.isOptimal && !row.isCurrent && (
+            <Badge bg="success" className="ms-2">{m.wfh_optimal()}</Badge>
+          )}
+          {row.threshold === "90-norm" && (
+            <Badge className="ms-2 bt-wfh-badge-10">{m.wfh_threshold_10_label()}</Badge>
+          )}
+          {row.threshold === "hybrid" && (
+            <Badge className="ms-2 bt-wfh-badge-25">{m.wfh_threshold_25_label()}</Badge>
+          )}
+          {row.threshold === "kaderakkoord" && (
+            <Badge className="ms-2 bt-wfh-badge-49">{m.wfh_threshold_49_label()}</Badge>
+          )}
+        </>
+      );
+    },
+  }),
+  ratioColumnHelper.accessor("nlTax", {
+    header: () => m.years_nl_tax(),
+    cell: (info) => <span className="text-danger small">−{fmt(info.getValue())}</span>,
+  }),
+  ratioColumnHelper.accessor("beTax", {
+    header: () => m.years_be_tax(),
+    cell: (info) => <span className="text-danger small">−{fmt(info.getValue())}</span>,
+  }),
+  ratioColumnHelper.accessor("totalTax", {
+    header: () => m.years_total_tax(),
+    cell: (info) => <span className="text-danger fw-semibold">−{fmt(info.getValue())}</span>,
+  }),
+  ratioColumnHelper.accessor("netIncome", {
+    header: () => m.years_net_income(),
+    cell: (info) => <span className="text-success fw-semibold">{fmt(info.getValue())}</span>,
+  }),
+  ratioColumnHelper.accessor("effectiveRate", {
+    header: () => m.years_effective_rate(),
+    cell: (info) => <span className="text-muted small">{pct(info.getValue())}</span>,
+  }),
+];
+
 interface RatioTableProps {
   data: DataPoint[];
   currentIdx: number;
@@ -503,90 +584,106 @@ interface RatioTableProps {
 }
 
 function RatioTable({ data, currentIdx, optimalIdx, showBE }: RatioTableProps) {
-  if (data.length === 0) return null;
+  const [sorting, setSorting] = useState<SortingState>([]);
 
-  interface RowMeta {
-    idx: number;
-    threshold?: "90-norm" | "hybrid" | "kaderakkoord";
-    isCurrent?: boolean;
-    isOptimal?: boolean;
-  }
-  const seen = new Set<number>();
-  const rows: RowMeta[] = [];
+  const tableRows = useMemo<RatioRow[]>(() => {
+    if (data.length === 0) return [];
 
-  function add(idx: number, extra: Partial<RowMeta> = {}) {
-    if (seen.has(idx)) {
-      const r = rows.find((x) => x.idx === idx);
-      if (r) Object.assign(r, extra);
-      return;
+    interface RowMeta {
+      idx: number;
+      threshold?: RatioRow["threshold"];
+      isCurrent?: boolean;
+      isOptimal?: boolean;
     }
-    seen.add(idx);
-    rows.push({ idx, ...extra });
-  }
+    const seen = new Set<number>();
+    const metas: RowMeta[] = [];
 
-  add(0);
-  add(Math.round(T_90 * (STEPS - 1)), { threshold: "90-norm" });
-  add(Math.round(T_25 * (STEPS - 1)), { threshold: "hybrid" });
-  add(Math.round(T_49 * (STEPS - 1)), { threshold: "kaderakkoord" });
-  add(currentIdx, { isCurrent: true });
-  add(optimalIdx, { isOptimal: true });
-  add(Math.round(0.5 * (STEPS - 1)));
-  add(Math.round(0.75 * (STEPS - 1)));
-  add(STEPS - 1);
+    function add(idx: number, extra: Partial<RowMeta> = {}) {
+      if (seen.has(idx)) {
+        const r = metas.find((x) => x.idx === idx);
+        if (r) Object.assign(r, extra);
+        return;
+      }
+      seen.add(idx);
+      metas.push({ idx, ...extra });
+    }
 
-  rows.sort((a, b) => a.idx - b.idx);
+    add(0);
+    add(Math.round(T_90 * (STEPS - 1)), { threshold: "90-norm" });
+    add(Math.round(T_25 * (STEPS - 1)), { threshold: "hybrid" });
+    add(Math.round(T_49 * (STEPS - 1)), { threshold: "kaderakkoord" });
+    add(currentIdx, { isCurrent: true });
+    add(optimalIdx, { isOptimal: true });
+    add(Math.round(0.5 * (STEPS - 1)));
+    add(Math.round(0.75 * (STEPS - 1)));
+    add(STEPS - 1);
+
+    metas.sort((a, b) => a.idx - b.idx);
+
+    return metas.flatMap(({ idx, threshold, isCurrent, isOptimal }) => {
+      const d = data[idx];
+      if (!d) return [];
+      const totalTax = d.nlTax + d.beTax;
+      const gross = d.netIncome + totalTax;
+      return [{ idx, beRatio: d.beRatio, beDays: d.beDays, nlDays: d.nlDays, nlTax: d.nlTax, beTax: d.beTax, totalTax, netIncome: d.netIncome, effectiveRate: gross > 0 ? totalTax / gross : 0, threshold, isCurrent, isOptimal }];
+    });
+  }, [data, currentIdx, optimalIdx]);
+
+  const table = useReactTable({
+    data: tableRows,
+    columns: ratioColumns,
+    state: { sorting, columnVisibility: { beTax: showBE } },
+    onSortingChange: setSorting,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+  });
+
+  if (tableRows.length === 0) return null;
 
   return (
     <Table bordered hover responsive className="bt-wfh-table">
       <thead>
-        <tr>
-          <th>{m.wfh_be_split()}</th>
-          <th className="text-end">{m.years_nl_tax()}</th>
-          {showBE && <th className="text-end">{m.years_be_tax()}</th>}
-          <th className="text-end">{m.years_total_tax()}</th>
-          <th className="text-end">{m.years_net_income()}</th>
-          <th className="text-end">{m.years_effective_rate()}</th>
-        </tr>
+        {table.getHeaderGroups().map((headerGroup) => (
+          <tr key={headerGroup.id}>
+            {headerGroup.headers.map((header) => (
+              <th
+                key={header.id}
+                className={RATIO_NUMERIC_COLS.has(header.column.id) ? "text-end" : undefined}
+                onClick={header.column.getToggleSortingHandler()}
+                style={{ cursor: header.column.getCanSort() ? "pointer" : undefined }}
+              >
+                {flexRender(header.column.columnDef.header, header.getContext())}
+                {header.column.getIsSorted() === "asc" && <i className="bi bi-arrow-up ms-1" />}
+                {header.column.getIsSorted() === "desc" && <i className="bi bi-arrow-down ms-1" />}
+              </th>
+            ))}
+          </tr>
+        ))}
       </thead>
       <tbody>
-        {rows.map(({ idx, threshold, isCurrent, isOptimal }) => {
-          const d = data[idx];
-          if (!d) return null;
-          const bePct = Math.round(d.beRatio * 100);
-          const totalTax = d.nlTax + d.beTax;
-          const gross = d.netIncome + totalTax;
-          const rate = gross > 0 ? totalTax / gross : 0;
-          const zone = getZone(d.beRatio);
-          const rowClass = isCurrent ? "table-primary" : isOptimal ? "table-success" : undefined;
-
+        {table.getRowModel().rows.map((row) => {
+          const zone = getZone(row.original.beRatio);
+          const rowClass = row.original.isCurrent
+            ? "table-primary"
+            : row.original.isOptimal
+              ? "table-success"
+              : undefined;
           return (
-            <tr key={idx} className={rowClass}>
-              <td className={`bt-wfh-table-cell bt-wfh-table-cell--${zone}`}>
-                <span className="bt-wfh-table-ratio">{bePct}%</span>
-                <span className="text-muted ms-2 small">
-                  {d.nlDays}d NL / {d.beDays}d BE
-                </span>
-                {isCurrent && (
-                  <Badge bg="primary" className="ms-2">{m.years_active()}</Badge>
-                )}
-                {isOptimal && !isCurrent && (
-                  <Badge bg="success" className="ms-2">{m.wfh_optimal()}</Badge>
-                )}
-                {threshold === "90-norm" && (
-                  <Badge className="ms-2 bt-wfh-badge-10">{m.wfh_threshold_10_label()}</Badge>
-                )}
-                {threshold === "hybrid" && (
-                  <Badge className="ms-2 bt-wfh-badge-25">{m.wfh_threshold_25_label()}</Badge>
-                )}
-                {threshold === "kaderakkoord" && (
-                  <Badge className="ms-2 bt-wfh-badge-49">{m.wfh_threshold_49_label()}</Badge>
-                )}
-              </td>
-              <td className="text-end text-danger small">−{fmt(d.nlTax)}</td>
-              {showBE && <td className="text-end text-danger small">−{fmt(d.beTax)}</td>}
-              <td className="text-end text-danger fw-semibold">−{fmt(totalTax)}</td>
-              <td className="text-end text-success fw-semibold">{fmt(d.netIncome)}</td>
-              <td className="text-end text-muted small">{pct(rate)}</td>
+            <tr key={row.id} className={rowClass}>
+              {row.getVisibleCells().map((cell) => (
+                <td
+                  key={cell.id}
+                  className={
+                    cell.column.id === "beSplit"
+                      ? `bt-wfh-table-cell bt-wfh-table-cell--${zone}`
+                      : RATIO_NUMERIC_COLS.has(cell.column.id)
+                        ? "text-end"
+                        : undefined
+                  }
+                >
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </td>
+              ))}
             </tr>
           );
         })}
