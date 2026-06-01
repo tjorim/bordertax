@@ -4,7 +4,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "../styles.css";
 import * as m from "../paraglide/messages.js";
-import { LanguageToggleButton } from "./reference/components.js";
+import { AppNavbar } from "../components/AppNavbar";
 
 interface ReferenceCard {
   route: string;
@@ -40,19 +40,16 @@ const cards: ReferenceCard[] = [
 export default function ReferenceOverview() {
   return (
     <>
-      <Navbar bg="dark" variant="dark" expand="lg" className="mb-4">
-        <Container>
-          <Navbar.Brand as={Link} to="/" className="text-decoration-none ref-nav-brand">
-            <i className="bi bi-arrow-left me-2" />
-            {m.ref_nav_back_to_calculator()}
-          </Navbar.Brand>
-          <Navbar.Text className="fw-semibold ref-nav-text">
-            <i className="bi bi-journals me-2" style={{ color: "var(--bt-be-light)" }} />
-            {m.ref_overview_hub_title()}
-          </Navbar.Text>
-          <LanguageToggleButton />
-        </Container>
-      </Navbar>
+      <AppNavbar>
+        <Navbar.Brand as={Link} to="/" className="text-decoration-none ref-nav-brand">
+          <i className="bi bi-arrow-left me-2" />
+          {m.ref_nav_back_to_calculator()}
+        </Navbar.Brand>
+        <Navbar.Text className="fw-semibold ref-nav-text">
+          <i className="bi bi-journals me-2" style={{ color: "var(--bt-be-light)" }} />
+          {m.ref_overview_hub_title()}
+        </Navbar.Text>
+      </AppNavbar>
 
       <Container fluid="lg" className="pb-5">
         <div className="text-center mb-5 mt-2">

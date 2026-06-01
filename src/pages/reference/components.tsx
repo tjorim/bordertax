@@ -1,7 +1,4 @@
-import { useEffect, useState } from "react";
-import { Badge, Button, Card } from "react-bootstrap";
-import { getLocale, setLocale } from "../../paraglide/runtime.js";
-import * as m from "../../paraglide/messages.js";
+import { Badge, Card } from "react-bootstrap";
 
 // ── Shared styled sub-components for reference pages ────────────
 
@@ -96,33 +93,5 @@ export function WarnBox({ children }: { children: React.ReactNode }) {
       <i className="bi bi-exclamation-triangle-fill me-2" style={{ color: "var(--bt-warning)" }} />
       {children}
     </div>
-  );
-}
-
-export function LanguageToggleButton() {
-  const [locale, setLocaleState] = useState(getLocale());
-
-  // Sync with back/forward navigation — Paraglide has no subscription API.
-  useEffect(() => {
-    const sync = () => setLocaleState(getLocale());
-    window.addEventListener("popstate", sync);
-    return () => window.removeEventListener("popstate", sync);
-  }, []);
-
-  const nextLangLabel = locale === "en" ? m.lang_nl() : m.lang_en();
-
-  return (
-    <Button
-      variant="outline-light"
-      size="sm"
-      className="ms-3"
-      onClick={() => {
-        const nextLocale = locale === "en" ? "nl" : "en";
-        setLocale(nextLocale);
-      }}
-      aria-label={nextLangLabel}
-    >
-      {nextLangLabel}
-    </Button>
   );
 }

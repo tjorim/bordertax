@@ -6,38 +6,35 @@ import "../styles.css";
 import * as m from "../paraglide/messages.js";
 import {
   BeBadge,
-  LanguageToggleButton,
   NlBadge,
   SectionCard,
   StatRow,
   TipBox,
   WarnBox,
 } from "./reference/components.js";
+import { AppNavbar } from "../components/AppNavbar";
 
 // ── Main page ────────────────────────────────────────────────────
 
 export default function PensionReference() {
   return (
     <>
-      <Navbar bg="dark" variant="dark" expand="lg" className="mb-4">
-        <Container>
-          <Navbar.Brand as={Link} to="/" className="text-decoration-none ref-nav-brand">
-            <i className="bi bi-arrow-left me-2" />
-            {m.ref_nav_back_to_calculator()}
-          </Navbar.Brand>
-          <Navbar.Text className="fw-semibold ref-nav-text">
-            <i className="bi bi-piggy-bank-fill me-2" style={{ color: "var(--bt-be-light)" }} />
-            {m.ref_pension_nav_title()}
-          </Navbar.Text>
-          <Link to="/reference/salary-split" className="ms-3 text-decoration-none">
-            <span className="text-light small opacity-75">
-              <i className="bi bi-book me-1" />
-              {m.ref_pension_nav_ss_link()}
-            </span>
-          </Link>
-          <LanguageToggleButton />
-        </Container>
-      </Navbar>
+      <AppNavbar>
+        <Navbar.Brand as={Link} to="/" className="text-decoration-none ref-nav-brand">
+          <i className="bi bi-arrow-left me-2" />
+          {m.ref_nav_back_to_calculator()}
+        </Navbar.Brand>
+        <Navbar.Text className="fw-semibold ref-nav-text">
+          <i className="bi bi-piggy-bank-fill me-2" style={{ color: "var(--bt-be-light)" }} />
+          {m.ref_pension_nav_title()}
+        </Navbar.Text>
+        <Link to="/reference/salary-split" className="ms-3 text-decoration-none">
+          <span className="small opacity-75" style={{ color: "var(--bt-text)" }}>
+            <i className="bi bi-book me-1" />
+            {m.ref_pension_nav_ss_link()}
+          </span>
+        </Link>
+      </AppNavbar>
 
       <Container fluid="lg" className="pb-5">
         {/* ── Hero ──────────────────────────────────────────────── */}

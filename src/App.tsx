@@ -18,7 +18,8 @@ import type { TaxInputs } from "./tax/types";
 import { VALID_YEARS } from "./tax/constants";
 import { TaxInputSchema, PersistedInputsSchema, type PersistedInputs } from "./tax/schema";
 import * as m from "./paraglide/messages.js";
-import { getLocale, setLocale } from "./paraglide/runtime.js";
+import { getLocale } from "./paraglide/runtime.js";
+import { AppNavbar } from "./components/AppNavbar";
 
 const DEFAULT_INPUTS: TaxInputs = {
   year: 2025,
@@ -64,28 +65,6 @@ function loadInitialInputs(): TaxInputs {
     return DEFAULT_INPUTS;
   }
 }
-
-type Theme = "auto" | "light" | "dark";
-const THEME_KEY = "bt-theme";
-
-function loadTheme(): Theme {
-  const stored = localStorage.getItem(THEME_KEY);
-  return stored === "light" || stored === "dark" || stored === "auto" ? stored : "auto";
-}
-
-function applyTheme(theme: Theme) {
-  const effective =
-    theme === "auto"
-      ? typeof window !== "undefined" &&
-        window.matchMedia &&
-        window.matchMedia("(prefers-color-scheme: dark)").matches
-        ? "dark"
-        : "light"
-      : theme;
-  document.documentElement.setAttribute("data-bs-theme", effective);
-}
-
-const THEME_CYCLE: Theme[] = ["auto", "light", "dark"];
 
 interface ResultsTabsProps {
   inputs: TaxInputs;
@@ -183,21 +162,7 @@ export default function App() {
     const parsed = TaxInputSchema.safeParse(rawValues);
     return parsed.success ? parsed.data : DEFAULT_INPUTS;
   }, [rawValues]);
-  const [locale, setCurrentLocale] = useState(getLocale());
-  const [theme, setTheme] = useState<Theme>(loadTheme);
-  const nextLangLabel = locale === "en" ? m.lang_nl() : m.lang_en();
-
-  useEffect(() => {
-    applyTheme(theme);
-    localStorage.setItem(THEME_KEY, theme);
-
-    if (theme === "auto" && typeof window !== "undefined" && window.matchMedia) {
-      const mq = window.matchMedia("(prefers-color-scheme: dark)");
-      const handler = () => applyTheme("auto");
-      mq.addEventListener("change", handler);
-      return () => mq.removeEventListener("change", handler);
-    }
-  }, [theme]);
+  const [, setCurrentLocale] = useState(getLocale());
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(toPersistedInputs(inputs)));
@@ -205,49 +170,18 @@ export default function App() {
 
   return (
     <>
-      <Navbar bg="dark" variant="dark" expand="lg" className="mb-4">
-        <Container>
-          <Navbar.Brand>🇧🇪&thinsp;🇳🇱&nbsp; {m.app_title()}</Navbar.Brand>
-          <Navbar.Text className="text-secondary small">
-            {m.app_tax_year()} {inputs.year}
-          </Navbar.Text>
-          <Link to="/reference" className="ms-3 text-decoration-none">
-            <span className="text-light small opacity-75">
-              <i className="bi bi-book me-1" />
-              {m.ref_overview_hub_title()}
-            </span>
-          </Link>
-          <Button
-            variant="outline-secondary"
-            size="sm"
-            className="ms-2"
-            onClick={() => {
-              const idx = THEME_CYCLE.indexOf(theme);
-              setTheme(THEME_CYCLE[(idx + 1) % THEME_CYCLE.length] as Theme);
-            }}
-            aria-label={`${m.theme_toggle_label()}: ${theme === "light" ? m.theme_light() : theme === "dark" ? m.theme_dark() : m.theme_auto()}`}
-            title={`${m.theme_toggle_label()}: ${theme === "light" ? m.theme_light() : theme === "dark" ? m.theme_dark() : m.theme_auto()} (click to cycle)`}
-          >
-            <i
-              className={`bi ${theme === "light" ? "bi-sun-fill" : theme === "dark" ? "bi-moon-fill" : "bi-circle-half"}`}
-            />
-          </Button>
-          <Button
-            variant="outline-secondary"
-            size="sm"
-            className="ms-2"
-            onClick={() => {
-              const nextLocale = locale === "en" ? "nl" : "en";
-              setLocale(nextLocale, { reload: false });
-              setCurrentLocale(nextLocale);
-              document.documentElement.lang = nextLocale;
-            }}
-            aria-label={nextLangLabel}
-          >
-            {nextLangLabel}
-          </Button>
-        </Container>
-      </Navbar>
+      <AppNavbar onLocaleSwitch={() => setCurrentLocale(getLocale())}>
+        <Navbar.Brand>🇧🇪&thinsp;🇳🇱&nbsp; {m.app_title()}</Navbar.Brand>
+        <Navbar.Text className="text-secondary small">
+          {m.app_tax_year()} {inputs.year}
+        </Navbar.Text>
+        <Link to="/reference" className="ms-3 text-decoration-none">
+          <span className="small opacity-75" style={{ color: "var(--bt-text)" }}>
+            <i className="bi bi-book me-1" />
+            {m.ref_overview_hub_title()}
+          </span>
+        </Link>
+      </AppNavbar>
 
       <Container fluid="lg" className="pb-5">
         <Row className="g-4 bt-main-row">

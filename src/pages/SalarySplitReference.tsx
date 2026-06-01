@@ -6,13 +6,13 @@ import "../styles.css";
 import * as m from "../paraglide/messages.js";
 import {
   BeBadge,
-  LanguageToggleButton,
   NlBadge,
   SectionCard,
   StatRow,
   TipBox,
   WarnBox,
 } from "./reference/components.js";
+import { AppNavbar } from "../components/AppNavbar";
 
 function Formula({ children }: { children: React.ReactNode }) {
   return <pre className="p-3 rounded mb-0 ref-formula">{children}</pre>;
@@ -23,25 +23,22 @@ function Formula({ children }: { children: React.ReactNode }) {
 export default function SalarySplitReference() {
   return (
     <>
-      <Navbar bg="dark" variant="dark" expand="lg" className="mb-4">
-        <Container>
-          <Navbar.Brand as={Link} to="/" className="text-decoration-none ref-nav-brand">
-            <i className="bi bi-arrow-left me-2" />
-            {m.ref_nav_back_to_calculator()}
-          </Navbar.Brand>
-          <Navbar.Text className="fw-semibold ref-nav-text">
-            <i className="bi bi-book-fill me-2" style={{ color: "var(--bt-be-light)" }} />
-            {m.ref_ss_nav_title()}
-          </Navbar.Text>
-          <Link to="/reference/pension" className="ms-3 text-decoration-none">
-            <span className="text-light small opacity-75">
-              <i className="bi bi-piggy-bank me-1" />
-              {m.ref_ss_nav_pension_link()}
-            </span>
-          </Link>
-          <LanguageToggleButton />
-        </Container>
-      </Navbar>
+      <AppNavbar>
+        <Navbar.Brand as={Link} to="/" className="text-decoration-none ref-nav-brand">
+          <i className="bi bi-arrow-left me-2" />
+          {m.ref_nav_back_to_calculator()}
+        </Navbar.Brand>
+        <Navbar.Text className="fw-semibold ref-nav-text">
+          <i className="bi bi-book-fill me-2" style={{ color: "var(--bt-be-light)" }} />
+          {m.ref_ss_nav_title()}
+        </Navbar.Text>
+        <Link to="/reference/pension" className="ms-3 text-decoration-none">
+          <span className="small opacity-75" style={{ color: "var(--bt-text)" }}>
+            <i className="bi bi-piggy-bank me-1" />
+            {m.ref_ss_nav_pension_link()}
+          </span>
+        </Link>
+      </AppNavbar>
 
       <Container fluid="lg" className="pb-5">
         {/* ── Hero ──────────────────────────────────────────────── */}
