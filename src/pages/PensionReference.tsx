@@ -13,6 +13,7 @@ import {
   WarnBox,
 } from "./reference/components.js";
 import { AppNavbar } from "../components/AppNavbar";
+import { PageFooter } from "../components/PageFooter";
 
 // ── Main page ────────────────────────────────────────────────────
 
@@ -731,8 +732,7 @@ export default function PensionReference() {
           </a>
         </SectionCard>
 
-        {/* ── Footer ──────────────────────────────────────────────── */}
-        <footer className="text-center small py-3 mt-2 ref-page-footer">
+        <PageFooter>
           {m.ref_pension_footer()}&nbsp;|&nbsp;
           <a
             href="https://www.acvgrensarbeiders.be"
@@ -742,7 +742,7 @@ export default function PensionReference() {
           >
             acvgrensarbeiders.be
           </a>
-        </footer>
+        </PageFooter>
       </Container>
     </>
   );

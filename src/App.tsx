@@ -20,6 +20,7 @@ import { TaxInputSchema, PersistedInputsSchema, type PersistedInputs } from "./t
 import * as m from "./paraglide/messages.js";
 import { getLocale } from "./paraglide/runtime.js";
 import { AppNavbar } from "./components/AppNavbar";
+import { PageFooter } from "./components/PageFooter";
 
 const DEFAULT_INPUTS: TaxInputs = {
   year: 2025,
@@ -193,7 +194,7 @@ export default function App() {
         </Row>
       </Container>
 
-      <footer className="text-center text-muted small py-3 border-top mt-4">
+      <PageFooter variant="main">
         {m.footer_disclaimer()}
         &nbsp;|&nbsp; {m.footer_sources()}:{" "}
         <a href="https://www.belastingdienst.nl" target="_blank" rel="noreferrer">
@@ -203,7 +204,7 @@ export default function App() {
         <a href="https://fin.belgium.be" target="_blank" rel="noreferrer">
           FOD Financiën
         </a>
-      </footer>
+      </PageFooter>
     </>
   );
 }

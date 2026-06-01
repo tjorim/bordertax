@@ -13,6 +13,7 @@ import {
   WarnBox,
 } from "./reference/components.js";
 import { AppNavbar } from "../components/AppNavbar";
+import { PageFooter } from "../components/PageFooter";
 
 function Formula({ children }: { children: React.ReactNode }) {
   return <pre className="p-3 rounded mb-0 ref-formula">{children}</pre>;
@@ -469,8 +470,7 @@ export default function SalarySplitReference() {
           </Row>
         </SectionCard>
 
-        {/* ── Footer ──────────────────────────────────────────────── */}
-        <footer className="text-center small py-3 mt-2 ref-page-footer">
+        <PageFooter>
           {m.ref_ss_footer()}&nbsp; |&nbsp;{" "}
           <a
             href="https://www.acvgrensarbeiders.be"
@@ -480,7 +480,7 @@ export default function SalarySplitReference() {
           >
             acvgrensarbeiders.be
           </a>
-        </footer>
+        </PageFooter>
       </Container>
     </>
   );
