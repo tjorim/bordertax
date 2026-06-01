@@ -1,53 +1,36 @@
-import { useState } from "react";
-import { Link } from "@tanstack/react-router";
 import { Accordion, Col, Container, Navbar, Row, Table } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "../styles.css";
 import * as m from "../paraglide/messages.js";
-import { getLocale } from "../paraglide/runtime.js";
 import {
   BeBadge,
-  LanguageToggleButton,
+  DocLink,
   NlBadge,
+  RefAccordionItem,
   SectionCard,
   StatRow,
   TipBox,
   WarnBox,
 } from "./reference/components.js";
+import { AppNavbar } from "../components/AppNavbar";
+import { PageHero } from "../components/PageHero";
+import { PageFooter } from "../components/PageFooter";
 
 // ── Main page ────────────────────────────────────────────────────
 
 export default function PensionReference() {
-  const [, setCurrentLocale] = useState(getLocale());
   return (
     <>
-      <Navbar bg="dark" variant="dark" expand="lg" className="mb-4">
-        <Container>
-          <Navbar.Brand as={Link} to="/" className="text-decoration-none ref-nav-brand">
-            <i className="bi bi-arrow-left me-2" />
-            {m.ref_nav_back_to_calculator()}
-          </Navbar.Brand>
-          <Navbar.Text className="fw-semibold ref-nav-text">
-            <i className="bi bi-piggy-bank-fill me-2" style={{ color: "var(--bt-be-light)" }} />
-            {m.ref_pension_nav_title()}
-          </Navbar.Text>
-          <Link to="/reference/salary-split" className="ms-3 text-decoration-none">
-            <span className="text-light small opacity-75">
-              <i className="bi bi-book me-1" />
-              {m.ref_pension_nav_ss_link()}
-            </span>
-          </Link>
-          <LanguageToggleButton onToggle={() => setCurrentLocale(getLocale())} />
-        </Container>
-      </Navbar>
+      <AppNavbar>
+        <Navbar.Text className="fw-semibold ref-nav-text">
+          <i className="bi bi-piggy-bank-fill me-2" style={{ color: "var(--bt-be-light)" }} />
+          {m.ref_pension_nav_title()}
+        </Navbar.Text>
+      </AppNavbar>
 
       <Container fluid="lg" className="pb-5">
-        {/* ── Hero ──────────────────────────────────────────────── */}
-        <div className="text-center mb-5 mt-2">
-          <h1 className="mb-2 ref-hero-title">🇧🇪&thinsp;🇳🇱&nbsp; {m.ref_pension_hero_title()}</h1>
-          <p className="ref-hero-subtitle">{m.ref_pension_hero_subtitle()}</p>
-        </div>
+        <PageHero title={m.ref_pension_hero_title()} subtitle={m.ref_pension_hero_subtitle()} />
 
         {/* ── 3-pijler overzicht ────────────────────────────────── */}
         <SectionCard title={m.ref_pension_s1_title()} icon="bi-layers-fill" accent="neutral">
@@ -187,11 +170,7 @@ export default function PensionReference() {
               </div>
 
               <Accordion flush className="mt-2">
-                <Accordion.Item eventKey="aow-history" className="ref-accordion-item">
-                  <Accordion.Header>
-                    <span className="small fw-semibold">{m.ref_pension_aow_history()}</span>
-                  </Accordion.Header>
-                  <Accordion.Body className="ref-accordion-body">
+                <RefAccordionItem eventKey="aow-history" title={m.ref_pension_aow_history()}>
                     <Table size="sm" className="ref-table-sub">
                       <tbody>
                         {[
@@ -214,8 +193,7 @@ export default function PensionReference() {
                         ))}
                       </tbody>
                     </Table>
-                  </Accordion.Body>
-                </Accordion.Item>
+                </RefAccordionItem>
               </Accordion>
             </SectionCard>
 
@@ -717,34 +695,15 @@ export default function PensionReference() {
           icon="bi-file-earmark-pdf-fill"
           accent="neutral"
         >
-          <a
+          <DocLink
             href="/docs/ACV-Pensioen-Infosessie-2026.pdf"
-            target="_blank"
-            rel="noreferrer"
-            className="text-decoration-none"
-          >
-            <div
-              className="ref-link-card ref-link-card-body p-3 rounded d-flex align-items-center gap-3"
-              style={{ maxWidth: 480 }}
-            >
-              <i
-                className="bi bi-file-earmark-pdf-fill fs-2"
-                style={{ color: "#e74c3c", flexShrink: 0 }}
-              />
-              <div>
-                <div className="fw-semibold small ref-text">{m.ref_pension_source_doc_title()}</div>
-                <div className="ref-footnote">{m.ref_pension_source_doc_sub()}</div>
-              </div>
-              <i
-                className="bi bi-box-arrow-up-right ms-auto ref-icon-muted-sm"
-                aria-hidden="true"
-              />
-            </div>
-          </a>
+            title={m.ref_pension_source_doc_title()}
+            sub={m.ref_pension_source_doc_sub()}
+            maxWidth={480}
+          />
         </SectionCard>
 
-        {/* ── Footer ──────────────────────────────────────────────── */}
-        <footer className="text-center small py-3 mt-2 ref-page-footer">
+        <PageFooter>
           {m.ref_pension_footer()}&nbsp;|&nbsp;
           <a
             href="https://www.acvgrensarbeiders.be"
@@ -754,7 +713,7 @@ export default function PensionReference() {
           >
             acvgrensarbeiders.be
           </a>
-        </footer>
+        </PageFooter>
       </Container>
     </>
   );

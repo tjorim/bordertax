@@ -1,20 +1,21 @@
-import { useState } from "react";
-import { Link } from "@tanstack/react-router";
 import { Accordion, Col, Container, Navbar, Row, Table } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "../styles.css";
 import * as m from "../paraglide/messages.js";
-import { getLocale } from "../paraglide/runtime.js";
 import {
   BeBadge,
-  LanguageToggleButton,
+  DocLink,
   NlBadge,
+  RefAccordionItem,
   SectionCard,
   StatRow,
   TipBox,
   WarnBox,
 } from "./reference/components.js";
+import { AppNavbar } from "../components/AppNavbar";
+import { PageHero } from "../components/PageHero";
+import { PageFooter } from "../components/PageFooter";
 
 function Formula({ children }: { children: React.ReactNode }) {
   return <pre className="p-3 rounded mb-0 ref-formula">{children}</pre>;
@@ -23,35 +24,17 @@ function Formula({ children }: { children: React.ReactNode }) {
 // ── Main page ────────────────────────────────────────────────────
 
 export default function SalarySplitReference() {
-  const [, setCurrentLocale] = useState(getLocale());
   return (
     <>
-      <Navbar bg="dark" variant="dark" expand="lg" className="mb-4">
-        <Container>
-          <Navbar.Brand as={Link} to="/" className="text-decoration-none ref-nav-brand">
-            <i className="bi bi-arrow-left me-2" />
-            {m.ref_nav_back_to_calculator()}
-          </Navbar.Brand>
-          <Navbar.Text className="fw-semibold ref-nav-text">
-            <i className="bi bi-book-fill me-2" style={{ color: "var(--bt-be-light)" }} />
-            {m.ref_ss_nav_title()}
-          </Navbar.Text>
-          <Link to="/reference/pension" className="ms-3 text-decoration-none">
-            <span className="text-light small opacity-75">
-              <i className="bi bi-piggy-bank me-1" />
-              {m.ref_ss_nav_pension_link()}
-            </span>
-          </Link>
-          <LanguageToggleButton onToggle={() => setCurrentLocale(getLocale())} />
-        </Container>
-      </Navbar>
+      <AppNavbar>
+        <Navbar.Text className="fw-semibold ref-nav-text">
+          <i className="bi bi-book-fill me-2" style={{ color: "var(--bt-be-light)" }} />
+          {m.ref_ss_nav_title()}
+        </Navbar.Text>
+      </AppNavbar>
 
       <Container fluid="lg" className="pb-5">
-        {/* ── Hero ──────────────────────────────────────────────── */}
-        <div className="text-center mb-5 mt-2">
-          <h1 className="mb-2 ref-hero-title">🇧🇪&thinsp;🇳🇱&nbsp; {m.ref_ss_hero_title()}</h1>
-          <p className="ref-hero-subtitle">{m.ref_ss_hero_subtitle()}</p>
-        </div>
+        <PageHero title={m.ref_ss_hero_title()} subtitle={m.ref_ss_hero_subtitle()} />
 
         {/* ── Alert: geen neutralisatieregeling ─────────────────── */}
         <WarnBox>
@@ -252,11 +235,7 @@ export default function SalarySplitReference() {
             <SectionCard title={m.ref_ss_s6_title()} icon="bi-folder2-open" accent="neutral">
               <p className="mb-2 ref-section-intro">{m.ref_ss_s6_intro()}</p>
               <Accordion flush>
-                <Accordion.Item eventKey="0" className="ref-accordion-item">
-                  <Accordion.Header>
-                    <span className="small fw-semibold">{m.ref_ss_strong_evidence()}</span>
-                  </Accordion.Header>
-                  <Accordion.Body className="ref-accordion-body">
+                <RefAccordionItem eventKey="0" title={m.ref_ss_strong_evidence()}>
                     <ul className="mb-0 ref-list-sub">
                       <li>{m.ref_ss_s6_ev1()}</li>
                       <li>{m.ref_ss_s6_ev2()}</li>
@@ -266,25 +245,19 @@ export default function SalarySplitReference() {
                       <li>{m.ref_ss_s6_ev6()}</li>
                       <li>{m.ref_ss_s6_ev7()}</li>
                     </ul>
-                  </Accordion.Body>
-                </Accordion.Item>
-                <Accordion.Item
+                </RefAccordionItem>
+                <RefAccordionItem
                   eventKey="1"
-                  className="ref-accordion-item"
+                  title={m.ref_ss_insufficient_evidence()}
                   style={{ marginTop: 2 }}
                 >
-                  <Accordion.Header>
-                    <span className="small fw-semibold">{m.ref_ss_insufficient_evidence()}</span>
-                  </Accordion.Header>
-                  <Accordion.Body className="ref-accordion-body">
                     <ul className="mb-0 ref-list-muted">
                       <li>{m.ref_ss_s6_insuf1()}</li>
                       <li>{m.ref_ss_s6_insuf2()}</li>
                       <li>{m.ref_ss_s6_insuf3()}</li>
                     </ul>
                     <p className="mt-2 mb-0 ref-footnote">{m.ref_ss_s6_source_note()}</p>
-                  </Accordion.Body>
-                </Accordion.Item>
+                </RefAccordionItem>
               </Accordion>
             </SectionCard>
           </Col>
@@ -433,56 +406,23 @@ export default function SalarySplitReference() {
           <p className="mb-3 ref-section-intro">{m.ref_ss_s8_intro()}</p>
           <Row className="g-3">
             <Col sm={6}>
-              <a
+              <DocLink
                 href="/docs/ACV-Checklist-Grensarbeiders-2026.pdf"
-                target="_blank"
-                rel="noreferrer"
-                className="text-decoration-none"
-              >
-                <div className="ref-link-card ref-link-card-body p-3 rounded d-flex align-items-center gap-3">
-                  <i
-                    className="bi bi-file-earmark-pdf-fill fs-2"
-                    style={{ color: "#e74c3c", flexShrink: 0 }}
-                  />
-                  <div>
-                    <div className="fw-semibold small ref-text">{m.ref_ss_doc1_title()}</div>
-                    <div className="ref-footnote">{m.ref_ss_doc1_sub()}</div>
-                  </div>
-                  <i
-                    className="bi bi-box-arrow-up-right ms-auto ref-icon-muted-sm"
-                    aria-hidden="true"
-                  />
-                </div>
-              </a>
+                title={m.ref_ss_doc1_title()}
+                sub={m.ref_ss_doc1_sub()}
+              />
             </Col>
             <Col sm={6}>
-              <a
+              <DocLink
                 href="/docs/ACV-Telewerk-Infosessie-2026.pdf"
-                target="_blank"
-                rel="noreferrer"
-                className="text-decoration-none"
-              >
-                <div className="ref-link-card ref-link-card-body p-3 rounded d-flex align-items-center gap-3">
-                  <i
-                    className="bi bi-file-earmark-pdf-fill fs-2"
-                    style={{ color: "#e74c3c", flexShrink: 0 }}
-                  />
-                  <div>
-                    <div className="fw-semibold small ref-text">{m.ref_ss_doc2_title()}</div>
-                    <div className="ref-footnote">{m.ref_ss_doc2_sub()}</div>
-                  </div>
-                  <i
-                    className="bi bi-box-arrow-up-right ms-auto ref-icon-muted-sm"
-                    aria-hidden="true"
-                  />
-                </div>
-              </a>
+                title={m.ref_ss_doc2_title()}
+                sub={m.ref_ss_doc2_sub()}
+              />
             </Col>
           </Row>
         </SectionCard>
 
-        {/* ── Footer ──────────────────────────────────────────────── */}
-        <footer className="text-center small py-3 mt-2 ref-page-footer">
+        <PageFooter>
           {m.ref_ss_footer()}&nbsp; |&nbsp;{" "}
           <a
             href="https://www.acvgrensarbeiders.be"
@@ -492,7 +432,7 @@ export default function SalarySplitReference() {
           >
             acvgrensarbeiders.be
           </a>
-        </footer>
+        </PageFooter>
       </Container>
     </>
   );

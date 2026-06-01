@@ -70,9 +70,9 @@ describe("SalarySplitReference", () => {
     ).toBeInTheDocument();
   });
 
-  it("renders the back-to-calculator nav link", () => {
+  it("renders the home nav link", () => {
     render(<SalarySplitReference />);
-    expect(screen.getByRole("link", { name: /back to calculator/i })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /bordertax/i })).toBeInTheDocument();
   });
 
   it("switches locale and re-renders in Dutch", () => {
@@ -104,9 +104,9 @@ describe("PensionReference", () => {
     ).toBeInTheDocument();
   });
 
-  it("renders the back-to-calculator nav link", () => {
+  it("renders the home nav link", () => {
     render(<PensionReference />);
-    expect(screen.getByRole("link", { name: /back to calculator/i })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /bordertax/i })).toBeInTheDocument();
   });
 
   it("switches locale and re-renders in Dutch", () => {

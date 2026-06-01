@@ -1,37 +1,5 @@
-import type { TaxYear, ResidentCountry, CivilStatus, BelgianRegion } from "./constants";
-
-export interface TaxInputs {
-  year: TaxYear;
-  residentCountry: ResidentCountry;
-  civilStatus: CivilStatus;
-  dependentChildren: number;
-  belowAOWAge: boolean;
-  belgianRegion: BelgianRegion;
-  /** Municipal tax rate as a percentage, e.g. 7 for 7%. Typical Belgian range: 0–9%. */
-  communalTaxRate: number;
-  grossSalary: number;
-  daysWorkedNL: number;
-  daysWorkedBE: number;
-  /** Days worked in a third country (e.g. customer installation in France).
-   *  Belgium treats these identically to Belgian days (vol tarief) since the NL-BE treaty
-   *  only covers NL-sourced income. Default 0. */
-  daysWorkedOther?: number;
-  thirtyPercentRuling: boolean;
-  /** Belgian social contributions (eigen bijdragen) — deductible from Belgian declared income. Default 0. */
-  socialContributions?: number;
-  /** Supplementary pension contributions (code 1285) — 30% reduction applies. Default 0. */
-  aanvullendPensioen?: number;
-  /** Diensten-cheques amount (code 3364) — 20% reduction applies. Default 0. */
-  dienstencheques?: number;
-  /** Roerende voorheffing / withholding tax already paid (code 1437). Default 0. */
-  roerendeVoorheffing?: number;
-  /** NL wage tax withheld by employer (ingehouden loonheffing from jaaropgave).
-   *  Used to compute NL refund/payment and net eindafrekening. Default 0. */
-  withheldTaxNL?: number;
-  /** Sick days during the year. NL and BE use different methods to account for sick days
-   *  when calculating the income sourcing fraction. Default 0. */
-  sickDays?: number;
-}
+import type { TaxInputs } from "./schema";
+export type { TaxInputs };
 
 export interface BracketLine {
   label: string;

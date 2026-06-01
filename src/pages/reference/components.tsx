@@ -1,7 +1,4 @@
-import { useEffect, useState } from "react";
-import { Badge, Button, Card } from "react-bootstrap";
-import { getLocale, setLocale } from "../../paraglide/runtime.js";
-import * as m from "../../paraglide/messages.js";
+import { Accordion, Badge, Card } from "react-bootstrap";
 
 // ── Shared styled sub-components for reference pages ────────────
 
@@ -99,35 +96,51 @@ export function WarnBox({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function LanguageToggleButton({ onToggle }: { onToggle?: () => void } = {}) {
-  const [locale, setLocaleState] = useState(getLocale());
-
-  // Synchronise with external locale changes triggered by browser history
-  // navigation (popstate). Paraglide has no subscription API, so popstate is
-  // the best available signal when setLocale is called with { reload: false }.
-  useEffect(() => {
-    const sync = () => setLocaleState(getLocale());
-    window.addEventListener("popstate", sync);
-    return () => window.removeEventListener("popstate", sync);
-  }, []);
-
-  const nextLangLabel = locale === "en" ? m.lang_nl() : m.lang_en();
-
+export function DocLink({
+  href,
+  title,
+  sub,
+  maxWidth,
+}: {
+  href: string;
+  title: string;
+  sub: string;
+  maxWidth?: number;
+}) {
   return (
-    <Button
-      variant="outline-light"
-      size="sm"
-      className="ms-3"
-      onClick={() => {
-        const nextLocale = locale === "en" ? "nl" : "en";
-        setLocale(nextLocale, { reload: false });
-        setLocaleState(nextLocale);
-        document.documentElement.lang = nextLocale;
-        onToggle?.();
-      }}
-      aria-label={nextLangLabel}
-    >
-      {nextLangLabel}
-    </Button>
+    <a href={href} target="_blank" rel="noreferrer" className="text-decoration-none">
+      <div
+        className="ref-link-card ref-link-card-body p-3 rounded d-flex align-items-center gap-3"
+        style={maxWidth ? { maxWidth } : undefined}
+      >
+        <i className="bi bi-file-earmark-pdf-fill fs-2" style={{ color: "#e74c3c", flexShrink: 0 }} />
+        <div>
+          <div className="fw-semibold small ref-text">{title}</div>
+          <div className="ref-footnote">{sub}</div>
+        </div>
+        <i className="bi bi-box-arrow-up-right ms-auto ref-icon-muted-sm" aria-hidden="true" />
+      </div>
+    </a>
+  );
+}
+
+export function RefAccordionItem({
+  eventKey,
+  title,
+  children,
+  style,
+}: {
+  eventKey: string;
+  title: string;
+  children: React.ReactNode;
+  style?: React.CSSProperties;
+}) {
+  return (
+    <Accordion.Item eventKey={eventKey} className="ref-accordion-item" style={style}>
+      <Accordion.Header>
+        <span className="small fw-semibold">{title}</span>
+      </Accordion.Header>
+      <Accordion.Body className="ref-accordion-body">{children}</Accordion.Body>
+    </Accordion.Item>
   );
 }

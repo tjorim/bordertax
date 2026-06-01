@@ -1,6 +1,7 @@
-import { Link } from "@tanstack/react-router";
+import { useForm, useStore } from "@tanstack/react-form";
 import { useEffect, useMemo, useState } from "react";
-import { Button, Col, Container, Nav, Navbar, Row, Tab } from "react-bootstrap";
+import { Col, Container, Nav, Navbar, Row, Tab } from "react-bootstrap";
+import { ErrorBoundary, type FallbackProps } from "react-error-boundary";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "./styles.css";
@@ -13,26 +14,14 @@ import MultiYearComparison from "./components/MultiYearComparison";
 import WFHRatioChart from "./components/WFHRatioChart";
 import { calculate } from "./tax";
 import type { TaxInputs } from "./tax/types";
-import {
-  VALID_BELGIAN_REGIONS,
-  VALID_CIVIL_STATUSES,
-  VALID_RESIDENT_COUNTRIES,
-  VALID_YEARS,
-} from "./tax/constants";
+import { VALID_YEARS } from "./tax/constants";
+import { TaxInputSchema, PersistedInputsSchema, type PersistedInputs } from "./tax/schema";
 import * as m from "./paraglide/messages.js";
-import { getLocale, setLocale } from "./paraglide/runtime.js";
+import { getLocale } from "./paraglide/runtime.js";
+import { AppNavbar } from "./components/AppNavbar";
+import { PageFooter } from "./components/PageFooter";
 
-type TaxInputsWithRequiredBEDeductions = TaxInputs & {
-  socialContributions: number;
-  aanvullendPensioen: number;
-  dienstencheques: number;
-  roerendeVoorheffing: number;
-  withheldTaxNL: number;
-  daysWorkedOther: number;
-  sickDays: number;
-};
-
-const DEFAULT_INPUTS: TaxInputsWithRequiredBEDeductions = {
+const DEFAULT_INPUTS: TaxInputs = {
   year: 2025,
   residentCountry: "BE",
   civilStatus: "single",
@@ -55,110 +44,13 @@ const DEFAULT_INPUTS: TaxInputsWithRequiredBEDeductions = {
 
 const STORAGE_KEY = "grensarbeider-tax-inputs-v1";
 
-function sanitizeInputs(raw: unknown): TaxInputs {
-  if (!raw || typeof raw !== "object") {
-    return DEFAULT_INPUTS;
-  }
-
-  const input = raw as Partial<TaxInputs>;
-
-  const isOneOf = <T,>(value: unknown, options: readonly T[]): value is T =>
-    options.includes(value as T);
-
-  const sanitizeNonNegative = (value: unknown, defaultValue: number): number =>
-    Number.isFinite(value) ? Math.max(0, Number(value)) : defaultValue;
-
-  return {
-    year: isOneOf(input.year, VALID_YEARS) ? input.year : DEFAULT_INPUTS.year,
-    residentCountry: isOneOf(input.residentCountry, VALID_RESIDENT_COUNTRIES)
-      ? input.residentCountry
-      : DEFAULT_INPUTS.residentCountry,
-    civilStatus: isOneOf(input.civilStatus, VALID_CIVIL_STATUSES)
-      ? input.civilStatus
-      : DEFAULT_INPUTS.civilStatus,
-    dependentChildren: Number.isFinite(input.dependentChildren)
-      ? Math.min(10, Math.max(0, Number(input.dependentChildren)))
-      : DEFAULT_INPUTS.dependentChildren,
-    belowAOWAge:
-      typeof input.belowAOWAge === "boolean" ? input.belowAOWAge : DEFAULT_INPUTS.belowAOWAge,
-    belgianRegion: isOneOf(input.belgianRegion, VALID_BELGIAN_REGIONS)
-      ? input.belgianRegion
-      : DEFAULT_INPUTS.belgianRegion,
-    communalTaxRate: Number.isFinite(input.communalTaxRate)
-      ? Math.min(15, Math.max(0, Number(input.communalTaxRate)))
-      : DEFAULT_INPUTS.communalTaxRate,
-    grossSalary: Number.isFinite(input.grossSalary)
-      ? Math.max(0, Number(input.grossSalary))
-      : DEFAULT_INPUTS.grossSalary,
-    daysWorkedNL: Number.isFinite(input.daysWorkedNL)
-      ? Math.max(0, Number(input.daysWorkedNL))
-      : DEFAULT_INPUTS.daysWorkedNL,
-    daysWorkedBE: Number.isFinite(input.daysWorkedBE)
-      ? Math.max(0, Number(input.daysWorkedBE))
-      : DEFAULT_INPUTS.daysWorkedBE,
-    daysWorkedOther: sanitizeNonNegative(input.daysWorkedOther, DEFAULT_INPUTS.daysWorkedOther),
-    thirtyPercentRuling:
-      typeof input.thirtyPercentRuling === "boolean"
-        ? input.thirtyPercentRuling
-        : DEFAULT_INPUTS.thirtyPercentRuling,
-    socialContributions: sanitizeNonNegative(
-      input.socialContributions,
-      DEFAULT_INPUTS.socialContributions,
-    ),
-    aanvullendPensioen: sanitizeNonNegative(
-      input.aanvullendPensioen,
-      DEFAULT_INPUTS.aanvullendPensioen,
-    ),
-    dienstencheques: sanitizeNonNegative(input.dienstencheques, DEFAULT_INPUTS.dienstencheques),
-    roerendeVoorheffing: sanitizeNonNegative(
-      input.roerendeVoorheffing,
-      DEFAULT_INPUTS.roerendeVoorheffing,
-    ),
-    withheldTaxNL: sanitizeNonNegative(input.withheldTaxNL, DEFAULT_INPUTS.withheldTaxNL),
-    sickDays: sanitizeNonNegative(input.sickDays, DEFAULT_INPUTS.sickDays),
-  };
-}
-
-type PersistedInputs = Pick<
-  TaxInputs,
-  | "year"
-  | "residentCountry"
-  | "civilStatus"
-  | "dependentChildren"
-  | "belowAOWAge"
-  | "belgianRegion"
-  | "communalTaxRate"
-  | "thirtyPercentRuling"
->;
-
 function toPersistedInputs(inputs: TaxInputs): PersistedInputs {
-  return {
-    year: inputs.year,
-    residentCountry: inputs.residentCountry,
-    civilStatus: inputs.civilStatus,
-    dependentChildren: inputs.dependentChildren,
-    belowAOWAge: inputs.belowAOWAge,
-    belgianRegion: inputs.belgianRegion,
-    communalTaxRate: inputs.communalTaxRate,
-    thirtyPercentRuling: inputs.thirtyPercentRuling,
-  };
+  return PersistedInputsSchema.parse(inputs);
 }
 
 function mergeWithDefaults(raw: unknown): TaxInputs {
-  const sanitized = sanitizeInputs(raw);
-  return {
-    ...sanitized,
-    grossSalary: DEFAULT_INPUTS.grossSalary,
-    daysWorkedNL: DEFAULT_INPUTS.daysWorkedNL,
-    daysWorkedBE: DEFAULT_INPUTS.daysWorkedBE,
-    daysWorkedOther: DEFAULT_INPUTS.daysWorkedOther,
-    sickDays: DEFAULT_INPUTS.sickDays,
-    socialContributions: DEFAULT_INPUTS.socialContributions,
-    aanvullendPensioen: DEFAULT_INPUTS.aanvullendPensioen,
-    dienstencheques: DEFAULT_INPUTS.dienstencheques,
-    roerendeVoorheffing: DEFAULT_INPUTS.roerendeVoorheffing,
-    withheldTaxNL: DEFAULT_INPUTS.withheldTaxNL,
-  };
+  const parsed = PersistedInputsSchema.safeParse(raw);
+  return parsed.success ? { ...DEFAULT_INPUTS, ...parsed.data } : DEFAULT_INPUTS;
 }
 
 function loadInitialInputs(): TaxInputs {
@@ -174,11 +66,12 @@ function loadInitialInputs(): TaxInputs {
   }
 }
 
-export default function App() {
-  const [inputs, setInputs] = useState<TaxInputs>(loadInitialInputs);
-  const [locale, setCurrentLocale] = useState(getLocale());
-  const nextLangLabel = locale === "en" ? m.lang_nl() : m.lang_en();
+interface ResultsTabsProps {
+  inputs: TaxInputs;
+  onResetInputs: () => void;
+}
 
+function ResultsTabs({ inputs, onResetInputs }: ResultsTabsProps) {
   const result = useMemo(() => calculate(inputs), [inputs]);
   const comparisonResults = useMemo(
     () =>
@@ -189,108 +82,118 @@ export default function App() {
     [inputs, result],
   );
 
+  return (
+    <Tab.Container defaultActiveKey="summary">
+      <Nav variant="tabs" className="mb-3">
+        <Nav.Item>
+          <Nav.Link eventKey="summary" aria-label={m.tabs_summary()}>
+            <i className="bi bi-pie-chart-fill me-1" />
+            {m.tabs_summary()}
+          </Nav.Link>
+        </Nav.Item>
+        <Nav.Item>
+          <Nav.Link eventKey="nl" aria-label={m.tabs_nl()}>
+            🇳🇱 {m.tabs_nl()}
+          </Nav.Link>
+        </Nav.Item>
+        <Nav.Item>
+          <Nav.Link eventKey="be" aria-label={m.tabs_be()}>
+            🇧🇪 {m.tabs_be()}
+          </Nav.Link>
+        </Nav.Item>
+        <Nav.Item>
+          <Nav.Link eventKey="years" aria-label={m.tabs_year_comparison()}>
+            <i className="bi bi-bar-chart-line-fill me-1" />
+            {m.tabs_year_comparison()}
+          </Nav.Link>
+        </Nav.Item>
+        <Nav.Item>
+          <Nav.Link eventKey="wfh" aria-label={m.tabs_wfh_ratio()}>
+            <i className="bi bi-house-fill me-1" />
+            {m.tabs_wfh_ratio()}
+          </Nav.Link>
+        </Nav.Item>
+      </Nav>
+
+      <Tab.Content>
+        <Tab.Pane eventKey="summary">
+          <SummaryResult result={result} onResetInputs={onResetInputs} />
+        </Tab.Pane>
+        <Tab.Pane eventKey="nl" className="bt-nl-accent">
+          <NLResult
+            result={result.nl}
+            withheldTaxNL={inputs.withheldTaxNL}
+            thirtyPercentRuling={inputs.thirtyPercentRuling}
+          />
+        </Tab.Pane>
+        <Tab.Pane eventKey="be" className="bt-be-accent">
+          <BEResult result={result.be} residentCountry={inputs.residentCountry} />
+        </Tab.Pane>
+        <Tab.Pane eventKey="years">
+          <MultiYearComparison rows={comparisonResults} activeYear={inputs.year} />
+        </Tab.Pane>
+        <Tab.Pane eventKey="wfh">
+          <WFHRatioChart inputs={inputs} />
+        </Tab.Pane>
+      </Tab.Content>
+    </Tab.Container>
+  );
+}
+
+function ResultsErrorFallback({ error }: FallbackProps) {
+  const message = error instanceof Error ? error.message : String(error);
+  return (
+    <div className="p-4 text-center">
+      <i className="bi bi-exclamation-triangle-fill text-warning fs-2 mb-3 d-block" />
+      <h5>{m.results_error_title()}</h5>
+      <p className="text-muted small mb-3">{m.results_error_description()}</p>
+      <details className="text-start small text-muted">
+        <summary className="mb-1">{m.results_error_details()}</summary>
+        <pre className="border rounded p-2 small overflow-auto">{message}</pre>
+      </details>
+    </div>
+  );
+}
+
+export default function App() {
+  const [initialValues] = useState(loadInitialInputs);
+  const form = useForm({ defaultValues: initialValues });
+  const rawValues = useStore(form.store, (s) => s.values);
+  const inputs = useMemo(() => {
+    const parsed = TaxInputSchema.safeParse(rawValues);
+    return parsed.success ? parsed.data : DEFAULT_INPUTS;
+  }, [rawValues]);
+  const [, setCurrentLocale] = useState(getLocale());
+
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(toPersistedInputs(inputs)));
   }, [inputs]);
 
   return (
     <>
-      <Navbar bg="dark" variant="dark" expand="lg" className="mb-4">
-        <Container>
-          <Navbar.Brand>🇧🇪&thinsp;🇳🇱&nbsp; {m.app_title()}</Navbar.Brand>
-          <Navbar.Text className="text-secondary small">
-            {m.app_tax_year()} {inputs.year}
-          </Navbar.Text>
-          <Link to="/reference" className="ms-3 text-decoration-none">
-            <span className="text-light small opacity-75">
-              <i className="bi bi-book me-1" />
-              {m.ref_overview_hub_title()}
-            </span>
-          </Link>
-          <Button
-            variant="outline-light"
-            size="sm"
-            className="ms-3"
-            onClick={() => {
-              const nextLocale = locale === "en" ? "nl" : "en";
-              setLocale(nextLocale, { reload: false });
-              setCurrentLocale(nextLocale);
-            }}
-            aria-label={nextLangLabel}
-          >
-            {nextLangLabel}
-          </Button>
-        </Container>
-      </Navbar>
+      <AppNavbar onLocaleSwitch={() => setCurrentLocale(getLocale())}>
+        <Navbar.Text className="text-secondary small">
+          {m.app_tax_year()} {inputs.year}
+        </Navbar.Text>
+      </AppNavbar>
 
       <Container fluid="lg" className="pb-5">
         <Row className="g-4 bt-main-row">
           {/* ── Left column: inputs ────────────────────────────── */}
           <Col lg={5}>
-            <InputPanel inputs={inputs} onChange={setInputs} />
+            <InputPanel form={form} />
           </Col>
 
           {/* ── Right column: results ──────────────────────────── */}
           <Col lg={7}>
-            <Tab.Container defaultActiveKey="summary">
-              <Nav variant="tabs" className="mb-3">
-                <Nav.Item>
-                  <Nav.Link eventKey="summary" aria-label={m.tabs_summary()}>
-                    <i className="bi bi-pie-chart-fill me-1" />
-                    {m.tabs_summary()}
-                  </Nav.Link>
-                </Nav.Item>
-                <Nav.Item>
-                  <Nav.Link eventKey="nl" aria-label={m.tabs_nl()}>
-                    🇳🇱 {m.tabs_nl()}
-                  </Nav.Link>
-                </Nav.Item>
-                <Nav.Item>
-                  <Nav.Link eventKey="be" aria-label={m.tabs_be()}>
-                    🇧🇪 {m.tabs_be()}
-                  </Nav.Link>
-                </Nav.Item>
-                <Nav.Item>
-                  <Nav.Link eventKey="years" aria-label={m.tabs_year_comparison()}>
-                    <i className="bi bi-bar-chart-line-fill me-1" />
-                    {m.tabs_year_comparison()}
-                  </Nav.Link>
-                </Nav.Item>
-                <Nav.Item>
-                  <Nav.Link eventKey="wfh" aria-label={m.tabs_wfh_ratio()}>
-                    <i className="bi bi-house-fill me-1" />
-                    {m.tabs_wfh_ratio()}
-                  </Nav.Link>
-                </Nav.Item>
-              </Nav>
-
-              <Tab.Content>
-                <Tab.Pane eventKey="summary">
-                  <SummaryResult result={result} onResetInputs={() => setInputs(DEFAULT_INPUTS)} />
-                </Tab.Pane>
-                <Tab.Pane eventKey="nl" className="bt-nl-accent">
-                  <NLResult
-                    result={result.nl}
-                    withheldTaxNL={inputs.withheldTaxNL}
-                    thirtyPercentRuling={inputs.thirtyPercentRuling}
-                  />
-                </Tab.Pane>
-                <Tab.Pane eventKey="be" className="bt-be-accent">
-                  <BEResult result={result.be} residentCountry={inputs.residentCountry} />
-                </Tab.Pane>
-                <Tab.Pane eventKey="years">
-                  <MultiYearComparison rows={comparisonResults} activeYear={inputs.year} />
-                </Tab.Pane>
-                <Tab.Pane eventKey="wfh">
-                  <WFHRatioChart inputs={inputs} />
-                </Tab.Pane>
-              </Tab.Content>
-            </Tab.Container>
+            <ErrorBoundary FallbackComponent={ResultsErrorFallback}>
+              <ResultsTabs inputs={inputs} onResetInputs={() => form.reset(DEFAULT_INPUTS)} />
+            </ErrorBoundary>
           </Col>
         </Row>
       </Container>
 
-      <footer className="text-center text-muted small py-3 border-top mt-4">
+      <PageFooter variant="main">
         {m.footer_disclaimer()}
         &nbsp;|&nbsp; {m.footer_sources()}:{" "}
         <a href="https://www.belastingdienst.nl" target="_blank" rel="noreferrer">
@@ -300,7 +203,7 @@ export default function App() {
         <a href="https://fin.belgium.be" target="_blank" rel="noreferrer">
           FOD Financiën
         </a>
-      </footer>
+      </PageFooter>
     </>
   );
 }
