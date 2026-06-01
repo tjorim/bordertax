@@ -46,10 +46,8 @@ function toPersistedInputs(inputs: TaxInputs): PersistedInputs {
 }
 
 function mergeWithDefaults(raw: unknown): TaxInputs {
-  if (!raw || typeof raw !== "object") {
-    return DEFAULT_INPUTS;
-  }
-  return { ...DEFAULT_INPUTS, ...PersistedInputsSchema.parse(raw) };
+  const parsed = PersistedInputsSchema.safeParse(raw);
+  return parsed.success ? { ...DEFAULT_INPUTS, ...parsed.data } : DEFAULT_INPUTS;
 }
 
 function loadInitialInputs(): TaxInputs {
