@@ -6,6 +6,7 @@ import "../styles.css";
 import * as m from "../paraglide/messages.js";
 import {
   BeBadge,
+  DocLink,
   NlBadge,
   SectionCard,
   StatRow,
@@ -416,50 +417,18 @@ export default function SalarySplitReference() {
           <p className="mb-3 ref-section-intro">{m.ref_ss_s8_intro()}</p>
           <Row className="g-3">
             <Col sm={6}>
-              <a
+              <DocLink
                 href="/docs/ACV-Checklist-Grensarbeiders-2026.pdf"
-                target="_blank"
-                rel="noreferrer"
-                className="text-decoration-none"
-              >
-                <div className="ref-link-card ref-link-card-body p-3 rounded d-flex align-items-center gap-3">
-                  <i
-                    className="bi bi-file-earmark-pdf-fill fs-2"
-                    style={{ color: "#e74c3c", flexShrink: 0 }}
-                  />
-                  <div>
-                    <div className="fw-semibold small ref-text">{m.ref_ss_doc1_title()}</div>
-                    <div className="ref-footnote">{m.ref_ss_doc1_sub()}</div>
-                  </div>
-                  <i
-                    className="bi bi-box-arrow-up-right ms-auto ref-icon-muted-sm"
-                    aria-hidden="true"
-                  />
-                </div>
-              </a>
+                title={m.ref_ss_doc1_title()}
+                sub={m.ref_ss_doc1_sub()}
+              />
             </Col>
             <Col sm={6}>
-              <a
+              <DocLink
                 href="/docs/ACV-Telewerk-Infosessie-2026.pdf"
-                target="_blank"
-                rel="noreferrer"
-                className="text-decoration-none"
-              >
-                <div className="ref-link-card ref-link-card-body p-3 rounded d-flex align-items-center gap-3">
-                  <i
-                    className="bi bi-file-earmark-pdf-fill fs-2"
-                    style={{ color: "#e74c3c", flexShrink: 0 }}
-                  />
-                  <div>
-                    <div className="fw-semibold small ref-text">{m.ref_ss_doc2_title()}</div>
-                    <div className="ref-footnote">{m.ref_ss_doc2_sub()}</div>
-                  </div>
-                  <i
-                    className="bi bi-box-arrow-up-right ms-auto ref-icon-muted-sm"
-                    aria-hidden="true"
-                  />
-                </div>
-              </a>
+                title={m.ref_ss_doc2_title()}
+                sub={m.ref_ss_doc2_sub()}
+              />
             </Col>
           </Row>
         </SectionCard>

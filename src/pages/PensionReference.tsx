@@ -6,6 +6,7 @@ import "../styles.css";
 import * as m from "../paraglide/messages.js";
 import {
   BeBadge,
+  DocLink,
   NlBadge,
   SectionCard,
   StatRow,
@@ -700,30 +701,12 @@ export default function PensionReference() {
           icon="bi-file-earmark-pdf-fill"
           accent="neutral"
         >
-          <a
+          <DocLink
             href="/docs/ACV-Pensioen-Infosessie-2026.pdf"
-            target="_blank"
-            rel="noreferrer"
-            className="text-decoration-none"
-          >
-            <div
-              className="ref-link-card ref-link-card-body p-3 rounded d-flex align-items-center gap-3"
-              style={{ maxWidth: 480 }}
-            >
-              <i
-                className="bi bi-file-earmark-pdf-fill fs-2"
-                style={{ color: "#e74c3c", flexShrink: 0 }}
-              />
-              <div>
-                <div className="fw-semibold small ref-text">{m.ref_pension_source_doc_title()}</div>
-                <div className="ref-footnote">{m.ref_pension_source_doc_sub()}</div>
-              </div>
-              <i
-                className="bi bi-box-arrow-up-right ms-auto ref-icon-muted-sm"
-                aria-hidden="true"
-              />
-            </div>
-          </a>
+            title={m.ref_pension_source_doc_title()}
+            sub={m.ref_pension_source_doc_sub()}
+            maxWidth={480}
+          />
         </SectionCard>
 
         <PageFooter>
