@@ -30,6 +30,12 @@ describe("getTotalWorkdays", () => {
         daysWorkedBE: 10,
         daysWorkedOther: 5,
         thirtyPercentRuling: false,
+        socialContributions: 0,
+        aanvullendPensioen: 0,
+        dienstencheques: 0,
+        roerendeVoorheffing: 0,
+        withheldTaxNL: 0,
+        sickDays: 0,
       }),
     ).toBe(235);
   });

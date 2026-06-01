@@ -14,7 +14,14 @@ const base: TaxInputs = {
   grossSalary: 60000,
   daysWorkedNL: 220,
   daysWorkedBE: 0,
+  daysWorkedOther: 0,
   thirtyPercentRuling: false,
+  socialContributions: 0,
+  aanvullendPensioen: 0,
+  dienstencheques: 0,
+  roerendeVoorheffing: 0,
+  withheldTaxNL: 0,
+  sickDays: 0,
 };
 
 describe("calculate", () => {

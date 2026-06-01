@@ -58,7 +58,7 @@
   --bt-warning-border: rgba(245, 158, 11, 0.3);
 
   /* Typography */
-  --bt-font-body: "Inter Variable", "Inter", system-ui, -apple-system, sans-serif;
+  --bt-font-body: "Inter Variable", system-ui, -apple-system, sans-serif;
   --bt-font-mono: "Space Mono", "Courier New", monospace;
 
   /* Radii */
@@ -1345,199 +1345,17 @@ footer a:hover {
   position: relative;
 }
 
-.bt-wfh-svg {
-  width: 100%;
-  height: auto;
-  display: block;
-  cursor: crosshair;
+.bt-wfh-recharts {
   border-radius: var(--bt-r);
   background: var(--bt-surface-2);
   border: 1px solid var(--bt-border);
-  overflow: visible; /* let glow spill outside */
+  cursor: crosshair;
+  touch-action: pan-y;
 }
 
-/* ── Background zones ─────────────────────────────────────────── */
-.bt-wfh-zone {
-  pointer-events: none;
-}
-.bt-wfh-zone--full {
-  fill: rgba(34, 197, 94, 0.06);
-}
-.bt-wfh-zone--hybrid {
-  fill: rgba(96, 165, 250, 0.025);
-}
-.bt-wfh-zone--kaderakkoord {
-  fill: rgba(168, 85, 247, 0.025);
-}
-.bt-wfh-zone--above {
-  fill: rgba(245, 158, 11, 0.025);
-}
-
-/* Coloured top-edge accent per zone */
-.bt-wfh-zone-edge {
-  stroke-width: 2;
-  pointer-events: none;
-}
-.bt-wfh-zone-edge--full {
-  stroke: rgba(34, 197, 94, 0.5);
-}
-.bt-wfh-zone-edge--hybrid {
-  stroke: rgba(96, 165, 250, 0.35);
-}
-.bt-wfh-zone-edge--kaderakkoord {
-  stroke: rgba(168, 85, 247, 0.35);
-}
-.bt-wfh-zone-edge--above {
-  stroke: rgba(245, 158, 11, 0.35);
-}
-
-/* ── Grid & axes ──────────────────────────────────────────────── */
-.bt-wfh-grid {
-  stroke: var(--bt-border-soft);
-  stroke-width: 1;
-}
-
-.bt-wfh-axis-label {
-  font-family: var(--bt-font-mono);
-  font-size: 10px;
-  fill: var(--bt-text-muted);
-}
-
-.bt-wfh-axis-title {
-  font-family: var(--bt-font-body);
-  font-size: 10px;
-  fill: var(--bt-text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-}
-
-/* ── Threshold lines ──────────────────────────────────────────── */
-.bt-wfh-threshold {
-  stroke-width: 1.5;
-  stroke-dasharray: 5 3;
-  pointer-events: none;
-}
-.bt-wfh-threshold--10 {
-  stroke: rgba(96, 165, 250, 0.7);
-}
-.bt-wfh-threshold--25 {
-  stroke: rgba(245, 158, 11, 0.7);
-}
-.bt-wfh-threshold--49 {
-  stroke: rgba(168, 85, 247, 0.7);
-}
-
-/* Floating chip labels inside SVG */
-.bt-wfh-chip-bg--10 {
-  fill: rgba(96, 165, 250, 0.15);
-}
-.bt-wfh-chip-bg--25 {
-  fill: rgba(245, 158, 11, 0.12);
-}
-.bt-wfh-chip-bg--49 {
-  fill: rgba(168, 85, 247, 0.12);
-}
-
-.bt-wfh-chip-text {
-  font-family: var(--bt-font-mono);
-  font-size: 8px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-.bt-wfh-chip-text--10 {
-  fill: rgba(96, 165, 250, 0.9);
-}
-.bt-wfh-chip-text--25 {
-  fill: rgba(245, 158, 11, 0.9);
-}
-.bt-wfh-chip-text--49 {
-  fill: rgba(168, 85, 247, 0.9);
-}
-
-/* ── Data lines ───────────────────────────────────────────────── */
-.bt-wfh-line {
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-.bt-wfh-line--net {
-  stroke: var(--bt-success);
-  stroke-width: 2.5;
-}
-.bt-wfh-line--nl {
-  stroke: var(--bt-nl);
-  stroke-width: 2;
-  opacity: 0.85;
-}
-.bt-wfh-line--be {
-  stroke: var(--bt-be);
-  stroke-width: 2;
-  opacity: 0.85;
-}
-
-/* ── Hover dots ───────────────────────────────────────────────── */
-.bt-wfh-dot {
-  stroke: var(--bt-bg);
-  stroke-width: 2;
-}
-.bt-wfh-dot--net {
-  fill: var(--bt-success);
-}
-.bt-wfh-dot--nl {
-  fill: var(--bt-nl);
-}
-.bt-wfh-dot--be {
-  fill: var(--bt-be);
-}
-
-/* ── Current position marker ──────────────────────────────────── */
-.bt-wfh-current {
-  stroke: rgba(255, 255, 255, 0.55);
-  stroke-width: 1.5;
-  stroke-dasharray: 6 4;
-}
-
-.bt-wfh-current-dot {
-  fill: var(--bt-bg);
-  stroke: rgba(255, 255, 255, 0.85);
-  stroke-width: 2.5;
-}
-
-/* Pulsing outer ring on the current-position dot */
-.bt-wfh-pulse {
-  fill: none;
-  stroke: rgba(255, 255, 255, 0.25);
-  stroke-width: 1.5;
-  animation: wfh-pulse 2.4s ease-out infinite;
-}
-
-@keyframes wfh-pulse {
-  0% {
-    r: 7;
-    opacity: 0.5;
-  }
-  100% {
-    r: 16;
-    opacity: 0;
-  }
-}
-
-/* ── Optimal marker ───────────────────────────────────────────── */
-.bt-wfh-optimal {
-  stroke: var(--bt-success);
-  stroke-width: 1;
-  stroke-dasharray: 3 3;
-  opacity: 0.55;
-}
-.bt-wfh-optimal-diamond {
-  fill: var(--bt-success);
-  opacity: 0.9;
-}
-
-/* ── Hover scrubber ───────────────────────────────────────────── */
-.bt-wfh-scrubber {
-  stroke: rgba(255, 255, 255, 0.3);
-  stroke-width: 1;
+/* Suppress the default recharts tooltip wrapper box */
+.bt-wfh-recharts .recharts-tooltip-wrapper {
+  display: none;
 }
 
 /* ── Hover readout bar ────────────────────────────────────────── */
@@ -1990,17 +1808,6 @@ footer a:hover {
   stroke: rgba(0, 0, 0, 0.7);
 }
 
-[data-bs-theme="light"] .bt-wfh-pulse {
-  stroke: rgba(0, 0, 0, 0.15);
-}
-
-[data-bs-theme="light"] .bt-wfh-scrubber {
-  stroke: rgba(0, 0, 0, 0.2);
-}
-
-[data-bs-theme="light"] .bt-wfh-dot {
-  stroke: var(--bt-bg);
-}
 
 [data-bs-theme="light"] .bt-year-chart__row:hover {
   background: rgba(0, 0, 0, 0.04);
