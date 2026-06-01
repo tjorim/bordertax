@@ -156,7 +156,8 @@ function ResultsErrorFallback({ error }: FallbackProps) {
 }
 
 export default function App() {
-  const form = useForm({ defaultValues: loadInitialInputs() });
+  const [initialValues] = useState(loadInitialInputs);
+  const form = useForm({ defaultValues: initialValues });
   const rawValues = useStore(form.store, (s) => s.values);
   const inputs = useMemo(() => {
     const parsed = TaxInputSchema.safeParse(rawValues);

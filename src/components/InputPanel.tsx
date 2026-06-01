@@ -27,8 +27,8 @@ type BelgianDeductionKey =
   | "dienstencheques"
   | "roerendeVoorheffing";
 
-function fieldError(errors: unknown[]): string | undefined {
-  if (!errors.length) return undefined;
+function fieldError(errors: unknown[] | undefined): string | undefined {
+  if (!errors?.length) return undefined;
   const msgs = errors.flatMap((e) => {
     if (Array.isArray(e)) return e.map((i) => (i as { message?: string })?.message ?? String(i));
     if (e && typeof e === "object" && "message" in e)
