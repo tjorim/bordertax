@@ -11,11 +11,14 @@ export const mockInputs: TaxInputs = {
   grossSalary: 60000,
   daysWorkedNL: 200,
   daysWorkedBE: 20,
+  daysWorkedOther: 0,
   thirtyPercentRuling: false,
   socialContributions: 0,
   aanvullendPensioen: 0,
   dienstencheques: 0,
   roerendeVoorheffing: 0,
+  withheldTaxNL: 0,
+  sickDays: 0,
 };
 
 export const mockNLResult: NLTaxResult = {

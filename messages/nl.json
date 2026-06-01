@@ -586,5 +586,12 @@
   "ref_pension_be2027_age_62": "62 jaar",
   "ref_pension_be2027_age_63": "63 jaar",
   "ref_pension_be2027_age_64": "64 jaar",
-  "ref_pension_be2027_age_65": "65 jaar"
+  "ref_pension_be2027_age_65": "65 jaar",
+  "theme_toggle_label": "Thema",
+  "theme_auto": "auto",
+  "theme_light": "licht",
+  "theme_dark": "donker",
+  "results_error_title": "Er ging iets mis",
+  "results_error_description": "De belastingberekening is vastgelopen. Probeer je gegevens aan te passen.",
+  "results_error_details": "Technische details"
 }
