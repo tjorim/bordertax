@@ -13,26 +13,12 @@ import MultiYearComparison from "./components/MultiYearComparison";
 import WFHRatioChart from "./components/WFHRatioChart";
 import { calculate } from "./tax";
 import type { TaxInputs } from "./tax/types";
-import {
-  VALID_BELGIAN_REGIONS,
-  VALID_CIVIL_STATUSES,
-  VALID_RESIDENT_COUNTRIES,
-  VALID_YEARS,
-} from "./tax/constants";
+import { VALID_YEARS } from "./tax/constants";
+import { PersistedInputsSchema, type PersistedInputs } from "./tax/schema";
 import * as m from "./paraglide/messages.js";
 import { getLocale, setLocale } from "./paraglide/runtime.js";
 
-type TaxInputsWithRequiredBEDeductions = TaxInputs & {
-  socialContributions: number;
-  aanvullendPensioen: number;
-  dienstencheques: number;
-  roerendeVoorheffing: number;
-  withheldTaxNL: number;
-  daysWorkedOther: number;
-  sickDays: number;
-};
-
-const DEFAULT_INPUTS: TaxInputsWithRequiredBEDeductions = {
+const DEFAULT_INPUTS: TaxInputs = {
   year: 2025,
   residentCountry: "BE",
   civilStatus: "single",
@@ -55,110 +41,15 @@ const DEFAULT_INPUTS: TaxInputsWithRequiredBEDeductions = {
 
 const STORAGE_KEY = "grensarbeider-tax-inputs-v1";
 
-function sanitizeInputs(raw: unknown): TaxInputs {
-  if (!raw || typeof raw !== "object") {
-    return DEFAULT_INPUTS;
-  }
-
-  const input = raw as Partial<TaxInputs>;
-
-  const isOneOf = <T,>(value: unknown, options: readonly T[]): value is T =>
-    options.includes(value as T);
-
-  const sanitizeNonNegative = (value: unknown, defaultValue: number): number =>
-    Number.isFinite(value) ? Math.max(0, Number(value)) : defaultValue;
-
-  return {
-    year: isOneOf(input.year, VALID_YEARS) ? input.year : DEFAULT_INPUTS.year,
-    residentCountry: isOneOf(input.residentCountry, VALID_RESIDENT_COUNTRIES)
-      ? input.residentCountry
-      : DEFAULT_INPUTS.residentCountry,
-    civilStatus: isOneOf(input.civilStatus, VALID_CIVIL_STATUSES)
-      ? input.civilStatus
-      : DEFAULT_INPUTS.civilStatus,
-    dependentChildren: Number.isFinite(input.dependentChildren)
-      ? Math.min(10, Math.max(0, Number(input.dependentChildren)))
-      : DEFAULT_INPUTS.dependentChildren,
-    belowAOWAge:
-      typeof input.belowAOWAge === "boolean" ? input.belowAOWAge : DEFAULT_INPUTS.belowAOWAge,
-    belgianRegion: isOneOf(input.belgianRegion, VALID_BELGIAN_REGIONS)
-      ? input.belgianRegion
-      : DEFAULT_INPUTS.belgianRegion,
-    communalTaxRate: Number.isFinite(input.communalTaxRate)
-      ? Math.min(15, Math.max(0, Number(input.communalTaxRate)))
-      : DEFAULT_INPUTS.communalTaxRate,
-    grossSalary: Number.isFinite(input.grossSalary)
-      ? Math.max(0, Number(input.grossSalary))
-      : DEFAULT_INPUTS.grossSalary,
-    daysWorkedNL: Number.isFinite(input.daysWorkedNL)
-      ? Math.max(0, Number(input.daysWorkedNL))
-      : DEFAULT_INPUTS.daysWorkedNL,
-    daysWorkedBE: Number.isFinite(input.daysWorkedBE)
-      ? Math.max(0, Number(input.daysWorkedBE))
-      : DEFAULT_INPUTS.daysWorkedBE,
-    daysWorkedOther: sanitizeNonNegative(input.daysWorkedOther, DEFAULT_INPUTS.daysWorkedOther),
-    thirtyPercentRuling:
-      typeof input.thirtyPercentRuling === "boolean"
-        ? input.thirtyPercentRuling
-        : DEFAULT_INPUTS.thirtyPercentRuling,
-    socialContributions: sanitizeNonNegative(
-      input.socialContributions,
-      DEFAULT_INPUTS.socialContributions,
-    ),
-    aanvullendPensioen: sanitizeNonNegative(
-      input.aanvullendPensioen,
-      DEFAULT_INPUTS.aanvullendPensioen,
-    ),
-    dienstencheques: sanitizeNonNegative(input.dienstencheques, DEFAULT_INPUTS.dienstencheques),
-    roerendeVoorheffing: sanitizeNonNegative(
-      input.roerendeVoorheffing,
-      DEFAULT_INPUTS.roerendeVoorheffing,
-    ),
-    withheldTaxNL: sanitizeNonNegative(input.withheldTaxNL, DEFAULT_INPUTS.withheldTaxNL),
-    sickDays: sanitizeNonNegative(input.sickDays, DEFAULT_INPUTS.sickDays),
-  };
-}
-
-type PersistedInputs = Pick<
-  TaxInputs,
-  | "year"
-  | "residentCountry"
-  | "civilStatus"
-  | "dependentChildren"
-  | "belowAOWAge"
-  | "belgianRegion"
-  | "communalTaxRate"
-  | "thirtyPercentRuling"
->;
-
 function toPersistedInputs(inputs: TaxInputs): PersistedInputs {
-  return {
-    year: inputs.year,
-    residentCountry: inputs.residentCountry,
-    civilStatus: inputs.civilStatus,
-    dependentChildren: inputs.dependentChildren,
-    belowAOWAge: inputs.belowAOWAge,
-    belgianRegion: inputs.belgianRegion,
-    communalTaxRate: inputs.communalTaxRate,
-    thirtyPercentRuling: inputs.thirtyPercentRuling,
-  };
+  return PersistedInputsSchema.parse(inputs);
 }
 
 function mergeWithDefaults(raw: unknown): TaxInputs {
-  const sanitized = sanitizeInputs(raw);
-  return {
-    ...sanitized,
-    grossSalary: DEFAULT_INPUTS.grossSalary,
-    daysWorkedNL: DEFAULT_INPUTS.daysWorkedNL,
-    daysWorkedBE: DEFAULT_INPUTS.daysWorkedBE,
-    daysWorkedOther: DEFAULT_INPUTS.daysWorkedOther,
-    sickDays: DEFAULT_INPUTS.sickDays,
-    socialContributions: DEFAULT_INPUTS.socialContributions,
-    aanvullendPensioen: DEFAULT_INPUTS.aanvullendPensioen,
-    dienstencheques: DEFAULT_INPUTS.dienstencheques,
-    roerendeVoorheffing: DEFAULT_INPUTS.roerendeVoorheffing,
-    withheldTaxNL: DEFAULT_INPUTS.withheldTaxNL,
-  };
+  if (!raw || typeof raw !== "object") {
+    return DEFAULT_INPUTS;
+  }
+  return { ...DEFAULT_INPUTS, ...PersistedInputsSchema.parse(raw) };
 }
 
 function loadInitialInputs(): TaxInputs {
