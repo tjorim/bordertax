@@ -8,6 +8,7 @@ import {
   BeBadge,
   DocLink,
   NlBadge,
+  RefAccordionItem,
   SectionCard,
   StatRow,
   TipBox,
@@ -171,11 +172,7 @@ export default function PensionReference() {
               </div>
 
               <Accordion flush className="mt-2">
-                <Accordion.Item eventKey="aow-history" className="ref-accordion-item">
-                  <Accordion.Header>
-                    <span className="small fw-semibold">{m.ref_pension_aow_history()}</span>
-                  </Accordion.Header>
-                  <Accordion.Body className="ref-accordion-body">
+                <RefAccordionItem eventKey="aow-history" title={m.ref_pension_aow_history()}>
                     <Table size="sm" className="ref-table-sub">
                       <tbody>
                         {[
@@ -198,8 +195,7 @@ export default function PensionReference() {
                         ))}
                       </tbody>
                     </Table>
-                  </Accordion.Body>
-                </Accordion.Item>
+                </RefAccordionItem>
               </Accordion>
             </SectionCard>
 

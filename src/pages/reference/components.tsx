@@ -1,4 +1,4 @@
-import { Badge, Card } from "react-bootstrap";
+import { Accordion, Badge, Card } from "react-bootstrap";
 
 // ── Shared styled sub-components for reference pages ────────────
 
@@ -121,5 +121,26 @@ export function DocLink({
         <i className="bi bi-box-arrow-up-right ms-auto ref-icon-muted-sm" aria-hidden="true" />
       </div>
     </a>
+  );
+}
+
+export function RefAccordionItem({
+  eventKey,
+  title,
+  children,
+  style,
+}: {
+  eventKey: string;
+  title: string;
+  children: React.ReactNode;
+  style?: React.CSSProperties;
+}) {
+  return (
+    <Accordion.Item eventKey={eventKey} className="ref-accordion-item" style={style}>
+      <Accordion.Header>
+        <span className="small fw-semibold">{title}</span>
+      </Accordion.Header>
+      <Accordion.Body className="ref-accordion-body">{children}</Accordion.Body>
+    </Accordion.Item>
   );
 }

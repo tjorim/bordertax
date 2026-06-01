@@ -8,6 +8,7 @@ import {
   BeBadge,
   DocLink,
   NlBadge,
+  RefAccordionItem,
   SectionCard,
   StatRow,
   TipBox,
@@ -236,11 +237,7 @@ export default function SalarySplitReference() {
             <SectionCard title={m.ref_ss_s6_title()} icon="bi-folder2-open" accent="neutral">
               <p className="mb-2 ref-section-intro">{m.ref_ss_s6_intro()}</p>
               <Accordion flush>
-                <Accordion.Item eventKey="0" className="ref-accordion-item">
-                  <Accordion.Header>
-                    <span className="small fw-semibold">{m.ref_ss_strong_evidence()}</span>
-                  </Accordion.Header>
-                  <Accordion.Body className="ref-accordion-body">
+                <RefAccordionItem eventKey="0" title={m.ref_ss_strong_evidence()}>
                     <ul className="mb-0 ref-list-sub">
                       <li>{m.ref_ss_s6_ev1()}</li>
                       <li>{m.ref_ss_s6_ev2()}</li>
@@ -250,25 +247,19 @@ export default function SalarySplitReference() {
                       <li>{m.ref_ss_s6_ev6()}</li>
                       <li>{m.ref_ss_s6_ev7()}</li>
                     </ul>
-                  </Accordion.Body>
-                </Accordion.Item>
-                <Accordion.Item
+                </RefAccordionItem>
+                <RefAccordionItem
                   eventKey="1"
-                  className="ref-accordion-item"
+                  title={m.ref_ss_insufficient_evidence()}
                   style={{ marginTop: 2 }}
                 >
-                  <Accordion.Header>
-                    <span className="small fw-semibold">{m.ref_ss_insufficient_evidence()}</span>
-                  </Accordion.Header>
-                  <Accordion.Body className="ref-accordion-body">
                     <ul className="mb-0 ref-list-muted">
                       <li>{m.ref_ss_s6_insuf1()}</li>
                       <li>{m.ref_ss_s6_insuf2()}</li>
                       <li>{m.ref_ss_s6_insuf3()}</li>
                     </ul>
                     <p className="mt-2 mb-0 ref-footnote">{m.ref_ss_s6_source_note()}</p>
-                  </Accordion.Body>
-                </Accordion.Item>
+                </RefAccordionItem>
               </Accordion>
             </SectionCard>
           </Col>
