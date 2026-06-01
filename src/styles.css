@@ -1807,17 +1807,6 @@ footer a:hover {
   stroke: rgba(0, 0, 0, 0.7);
 }
 
-[data-bs-theme="light"] .bt-wfh-pulse {
-  stroke: rgba(0, 0, 0, 0.15);
-}
-
-[data-bs-theme="light"] .bt-wfh-scrubber {
-  stroke: rgba(0, 0, 0, 0.2);
-}
-
-[data-bs-theme="light"] .bt-wfh-dot {
-  stroke: var(--bt-bg);
-}
 
 [data-bs-theme="light"] .bt-year-chart__row:hover {
   background: rgba(0, 0, 0, 0.04);

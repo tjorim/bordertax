@@ -250,8 +250,8 @@ export default function App() {
               const idx = THEME_CYCLE.indexOf(theme);
               setTheme(THEME_CYCLE[(idx + 1) % THEME_CYCLE.length] as Theme);
             }}
-            aria-label={`${m.theme_toggle_label()}: ${m[`theme_${theme}`]()}`}
-            title={`${m.theme_toggle_label()}: ${m[`theme_${theme}`]()} (click to cycle)`}
+            aria-label={`${m.theme_toggle_label()}: ${theme === "light" ? m.theme_light() : theme === "dark" ? m.theme_dark() : m.theme_auto()}`}
+            title={`${m.theme_toggle_label()}: ${theme === "light" ? m.theme_light() : theme === "dark" ? m.theme_dark() : m.theme_auto()} (click to cycle)`}
           >
             <i
               className={`bi ${theme === "light" ? "bi-sun-fill" : theme === "dark" ? "bi-moon-fill" : "bi-circle-half"}`}

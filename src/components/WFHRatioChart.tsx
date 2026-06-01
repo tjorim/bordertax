@@ -56,18 +56,19 @@ function getZone(ratio: number): Zone {
 }
 
 interface ThresholdLabelProps {
-  viewBox?: { x: number; y: number; width: number; height: number };
+  x?: number;
+  viewBox?: { y: number };
   label: string;
   color: string;
   bg: string;
 }
 
-function ThresholdLabel({ viewBox, label, color, bg }: ThresholdLabelProps) {
-  if (!viewBox) return null;
+function ThresholdLabel({ x, viewBox, label, color, bg }: ThresholdLabelProps) {
+  if (x == null || !viewBox) return null;
   const W = 44;
   const H = 14;
   return (
-    <g transform={`translate(${viewBox.x + 4}, ${viewBox.y + 4})`}>
+    <g transform={`translate(${x + 4}, ${viewBox.y + 4})`}>
       <rect rx={3} ry={3} width={W} height={H} fill={bg} />
       <text
         x={W / 2}
@@ -258,8 +259,9 @@ export default function WFHRatioChart({ inputs }: Props) {
                 stroke="rgba(96,165,250,0.7)"
                 strokeDasharray="5 3"
                 strokeWidth={1.5}
-                label={(props: { viewBox?: { x: number; y: number; width: number; height: number } }) => (
+                label={(props: { x?: number; viewBox?: { y: number } }) => (
                   <ThresholdLabel
+                    x={props.x}
                     viewBox={props.viewBox}
                     label={m.wfh_threshold_10_label()}
                     color="rgba(96,165,250,0.9)"
@@ -272,8 +274,9 @@ export default function WFHRatioChart({ inputs }: Props) {
                 stroke="rgba(245,158,11,0.7)"
                 strokeDasharray="5 3"
                 strokeWidth={1.5}
-                label={(props: { viewBox?: { x: number; y: number; width: number; height: number } }) => (
+                label={(props: { x?: number; viewBox?: { y: number } }) => (
                   <ThresholdLabel
+                    x={props.x}
                     viewBox={props.viewBox}
                     label={m.wfh_threshold_25_label()}
                     color="rgba(245,158,11,0.9)"
@@ -286,8 +289,9 @@ export default function WFHRatioChart({ inputs }: Props) {
                 stroke="rgba(168,85,247,0.7)"
                 strokeDasharray="5 3"
                 strokeWidth={1.5}
-                label={(props: { viewBox?: { x: number; y: number; width: number; height: number } }) => (
+                label={(props: { x?: number; viewBox?: { y: number } }) => (
                   <ThresholdLabel
+                    x={props.x}
                     viewBox={props.viewBox}
                     label={m.wfh_threshold_49_label()}
                     color="rgba(168,85,247,0.9)"
@@ -302,6 +306,7 @@ export default function WFHRatioChart({ inputs }: Props) {
                 stroke="rgba(255,255,255,0.55)"
                 strokeDasharray="6 4"
                 strokeWidth={1.5}
+                className="bt-wfh-current"
               />
 
               {/* Optimal position line */}
@@ -372,6 +377,7 @@ export default function WFHRatioChart({ inputs }: Props) {
                   fill="var(--bt-bg)"
                   stroke="rgba(255,255,255,0.85)"
                   strokeWidth={2.5}
+                  className="bt-wfh-current-dot"
                 />
               )}
 
@@ -398,7 +404,7 @@ export default function WFHRatioChart({ inputs }: Props) {
               {/* Scrubber cursor without tooltip box */}
               <Tooltip
                 content={() => null}
-                cursor={{ stroke: "rgba(255,255,255,0.3)", strokeWidth: 1 }}
+                cursor={{ stroke: "var(--bt-text-dim)", strokeWidth: 1, strokeOpacity: 0.5 }}
               />
             </ComposedChart>
           </ResponsiveContainer>
