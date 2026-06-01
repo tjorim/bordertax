@@ -13,6 +13,7 @@ import {
   WarnBox,
 } from "./reference/components.js";
 import { AppNavbar, BackBrand } from "../components/AppNavbar";
+import { PageHero } from "../components/PageHero";
 import { PageFooter } from "../components/PageFooter";
 
 // ── Main page ────────────────────────────────────────────────────
@@ -29,11 +30,7 @@ export default function PensionReference() {
       </AppNavbar>
 
       <Container fluid="lg" className="pb-5">
-        {/* ── Hero ──────────────────────────────────────────────── */}
-        <div className="text-center mb-5 mt-2">
-          <h1 className="mb-2 ref-hero-title">🇧🇪&thinsp;🇳🇱&nbsp; {m.ref_pension_hero_title()}</h1>
-          <p className="ref-hero-subtitle">{m.ref_pension_hero_subtitle()}</p>
-        </div>
+        <PageHero title={m.ref_pension_hero_title()} subtitle={m.ref_pension_hero_subtitle()} />
 
         {/* ── 3-pijler overzicht ────────────────────────────────── */}
         <SectionCard title={m.ref_pension_s1_title()} icon="bi-layers-fill" accent="neutral">

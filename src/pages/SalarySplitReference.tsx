@@ -13,6 +13,7 @@ import {
   WarnBox,
 } from "./reference/components.js";
 import { AppNavbar, BackBrand } from "../components/AppNavbar";
+import { PageHero } from "../components/PageHero";
 import { PageFooter } from "../components/PageFooter";
 
 function Formula({ children }: { children: React.ReactNode }) {
@@ -33,11 +34,7 @@ export default function SalarySplitReference() {
       </AppNavbar>
 
       <Container fluid="lg" className="pb-5">
-        {/* ── Hero ──────────────────────────────────────────────── */}
-        <div className="text-center mb-5 mt-2">
-          <h1 className="mb-2 ref-hero-title">🇧🇪&thinsp;🇳🇱&nbsp; {m.ref_ss_hero_title()}</h1>
-          <p className="ref-hero-subtitle">{m.ref_ss_hero_subtitle()}</p>
-        </div>
+        <PageHero title={m.ref_ss_hero_title()} subtitle={m.ref_ss_hero_subtitle()} />
 
         {/* ── Alert: geen neutralisatieregeling ─────────────────── */}
         <WarnBox>
