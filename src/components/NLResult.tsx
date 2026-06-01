@@ -1,4 +1,5 @@
 import { Badge, Table } from "react-bootstrap";
+import clsx from "clsx";
 import type { NLTaxResult } from "../tax/types";
 import * as m from "../paraglide/messages.js";
 import { fmtExact as fmt, pctExact as pct } from "./format.js";
@@ -110,9 +111,9 @@ export default function NLResult({
                 <td>{m.nl_withheld()}</td>
                 <td className="text-end">{fmt(withheldTaxNL)}</td>
               </tr>
-              <tr className={`fw-bold ${nlBalance >= 0 ? "table-success" : "table-danger"}`}>
+              <tr className={clsx("fw-bold", nlBalance >= 0 ? "table-success" : "table-danger")}>
                 <td>{nlBalance >= 0 ? m.nl_balance_refund() : m.nl_balance_due()}</td>
-                <td className={`text-end ${nlBalance >= 0 ? "text-success" : "text-danger"}`}>
+                <td className={clsx("text-end", nlBalance >= 0 ? "text-success" : "text-danger")}>
                   {nlBalance >= 0 ? "+" : "−"}
                   {fmt(Math.abs(nlBalance))}
                 </td>
