@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useStore } from "@tanstack/react-form";
+import clsx from "clsx";
 import type { ReactFormExtendedApi } from "@tanstack/react-form";
 import { z } from "zod";
 import { Accordion, Alert, Badge, Button, Col, Form, Row } from "react-bootstrap";
@@ -427,7 +428,7 @@ export default function InputPanel({ form }: Props) {
 
             <Col xs={12}>
               <div
-                className={`bt-workday-bar${totalWorkdays > maxWorkdaysInYear ? " bt-workday-bar--over" : ""}`}
+                className={clsx("bt-workday-bar", totalWorkdays > maxWorkdaysInYear && "bt-workday-bar--over")}
                 role="img"
                 aria-label={`${m.input_workdays_total()} ${totalWorkdays}`}
               >
@@ -460,11 +461,11 @@ export default function InputPanel({ form }: Props) {
               </div>
               <Form.Text
                 role="status"
-                className={
+                className={clsx(
                   totalWorkdays === 0 || totalWorkdays > maxWorkdaysInYear
                     ? "text-warning"
-                    : "text-muted"
-                }
+                    : "text-muted",
+                )}
               >
                 {m.input_workdays_total()} {totalWorkdays}
                 {totalWorkdays === 0 && ` — ${m.input_workdays_total_zero_warning()}`}

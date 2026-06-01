@@ -590,5 +590,8 @@
   "theme_toggle_label": "Theme",
   "theme_auto": "auto",
   "theme_light": "light",
-  "theme_dark": "dark"
+  "theme_dark": "dark",
+  "results_error_title": "Something went wrong",
+  "results_error_description": "The tax calculation encountered an unexpected error. Try adjusting your inputs.",
+  "results_error_details": "Technical details"
 }
