@@ -19,7 +19,7 @@ function ThemeToggleButton() {
   }, [theme]);
 
   const cycleTheme = () => {
-    const next = THEME_CYCLE[(THEME_CYCLE.indexOf(theme) + 1) % THEME_CYCLE.length];
+    const next = THEME_CYCLE[(THEME_CYCLE.indexOf(theme) + 1) % THEME_CYCLE.length]!;
     applyTheme(next);
     localStorage.setItem(THEME_KEY, next);
     setThemeState(next);
