@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useStore } from "@tanstack/react-form";
 import clsx from "clsx";
 import type { ReactFormExtendedApi } from "@tanstack/react-form";
+import { z } from "zod";
 import { Accordion, Alert, Badge, Button, Col, Form, Row } from "react-bootstrap";
 import {
   VALID_YEARS,
@@ -149,7 +150,7 @@ export default function InputPanel({ form }: Props) {
 
             <form.Field
               name="dependentChildren"
-              validators={{ onChange: ({ value }) => (value < 0 || value > 10 || !Number.isInteger(value) ? "Must be an integer between 0 and 10" : undefined) }}
+              validators={{ onChange: z.number().int().min(0).max(10) }}
             >
               {(field) => {
                 const err = fieldError(field.state.meta.errors as unknown[]);
@@ -227,7 +228,7 @@ export default function InputPanel({ form }: Props) {
 
                 <form.Field
                   name="communalTaxRate"
-                  validators={{ onChange: ({ value }) => (value < 0 || value > 15 ? "Must be between 0 and 15" : undefined) }}
+                  validators={{ onChange: z.number().min(0).max(15) }}
                 >
                   {(field) => {
                     const err = fieldError(field.state.meta.errors as unknown[]);
@@ -277,7 +278,7 @@ export default function InputPanel({ form }: Props) {
         </Accordion.Header>
         <Accordion.Body>
           <Row className="g-3">
-            <form.Field name="grossSalary" validators={{ onChange: ({ value }) => (value < 0 ? "Must be non-negative" : undefined) }}>
+            <form.Field name="grossSalary" validators={{ onChange: z.number().min(0) }}>
               {(field) => {
                 const err = fieldError(field.state.meta.errors as unknown[]);
                 return (
@@ -302,7 +303,7 @@ export default function InputPanel({ form }: Props) {
               }}
             </form.Field>
 
-            <form.Field name="withheldTaxNL" validators={{ onChange: ({ value }) => (value < 0 ? "Must be non-negative" : undefined) }}>
+            <form.Field name="withheldTaxNL" validators={{ onChange: z.number().min(0) }}>
               {(field) => {
                 const err = fieldError(field.state.meta.errors as unknown[]);
                 return (
@@ -329,7 +330,7 @@ export default function InputPanel({ form }: Props) {
               }}
             </form.Field>
 
-            <form.Field name="daysWorkedNL" validators={{ onChange: ({ value }) => (value < 0 ? "Must be non-negative" : undefined) }}>
+            <form.Field name="daysWorkedNL" validators={{ onChange: z.number().min(0) }}>
               {(field) => {
                 const err = fieldError(field.state.meta.errors as unknown[]);
                 return (
@@ -353,7 +354,7 @@ export default function InputPanel({ form }: Props) {
               }}
             </form.Field>
 
-            <form.Field name="daysWorkedBE" validators={{ onChange: ({ value }) => (value < 0 ? "Must be non-negative" : undefined) }}>
+            <form.Field name="daysWorkedBE" validators={{ onChange: z.number().min(0) }}>
               {(field) => {
                 const err = fieldError(field.state.meta.errors as unknown[]);
                 return (
@@ -373,7 +374,7 @@ export default function InputPanel({ form }: Props) {
               }}
             </form.Field>
 
-            <form.Field name="daysWorkedOther" validators={{ onChange: ({ value }) => (value < 0 ? "Must be non-negative" : undefined) }}>
+            <form.Field name="daysWorkedOther" validators={{ onChange: z.number().min(0) }}>
               {(field) => {
                 const err = fieldError(field.state.meta.errors as unknown[]);
                 return (
@@ -399,7 +400,7 @@ export default function InputPanel({ form }: Props) {
               }}
             </form.Field>
 
-            <form.Field name="sickDays" validators={{ onChange: ({ value }) => (value < 0 ? "Must be non-negative" : undefined) }}>
+            <form.Field name="sickDays" validators={{ onChange: z.number().min(0) }}>
               {(field) => {
                 const err = fieldError(field.state.meta.errors as unknown[]);
                 return (
@@ -530,7 +531,7 @@ export default function InputPanel({ form }: Props) {
                   <form.Field
                     key={fieldDef.key}
                     name={fieldDef.key}
-                    validators={{ onChange: ({ value }) => (value < 0 ? "Must be non-negative" : undefined) }}
+                    validators={{ onChange: z.number().min(0) }}
                   >
                     {(field) => {
                       const err = fieldError(field.state.meta.errors as unknown[]);
