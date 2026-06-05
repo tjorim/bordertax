@@ -59,7 +59,7 @@
     "@vitejs/plugin-react": "^6.0.2",
     "@vitest/coverage-v8": "^4.1.8",
     "@vitest/ui": "^4.1.8",
-    "happy-dom": "^20.9.0",
+    "happy-dom": "^20.10.1",
     "lightningcss": "^1.31.0",
     "oxfmt": "^0.53.0",
     "oxlint": "^1.68.0",
