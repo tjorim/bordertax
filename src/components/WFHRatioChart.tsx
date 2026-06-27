@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { Badge, Table } from "react-bootstrap";
 import {
   createColumnHelper,
@@ -71,6 +71,8 @@ function snapToKnown(idx: number, snapPoints: number[]): number {
 }
 
 export default function WFHRatioChart({ inputs }: Props) {
+  const chartTitleId = useId();
+  const chartDescriptionId = useId();
   const [hovered, setHovered] = useState<number | null>(null);
   const [tableOpen, setTableOpen] = useState(false);
   const svgRef = useRef<SVGSVGElement>(null);
@@ -242,8 +244,14 @@ export default function WFHRatioChart({ inputs }: Props) {
           className="bt-wfh-svg"
           onMouseMove={handleMouseMove}
           onMouseLeave={() => setHovered(null)}
-          aria-label={m.wfh_title()}
+          role="img"
+          aria-labelledby={chartTitleId}
+          aria-describedby={chartDescriptionId}
         >
+          <title id={chartTitleId}>{m.wfh_title()}</title>
+          <desc id={chartDescriptionId}>
+            {m.wfh_description()} {m.wfh_current_ratio()}: {Math.round(currentBeRatio * 100)}% BE.
+          </desc>
           <defs>
             <linearGradient id="wfh-net-grad" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor="var(--bt-success)" stopOpacity="0.18" />

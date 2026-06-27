@@ -11,8 +11,14 @@
  * Year-specific rates are in params.ts — that is the only file that needs updating each year.
  */
 import type { TaxInputs, BETaxResult, NLTaxResult } from "./types";
+import {
+  BE_PENSION_REDUCTION_RATE,
+  BE_SERVICE_VOUCHER_REDUCTION_RATE,
+  BE_TAX_FREE_ALLOWANCE_REDUCTION_RATE,
+} from "./constants";
 import { TAX_PARAMS } from "./params";
 import type { BEBracket, BEYearParams } from "./params";
+import { getNLFractions } from "./workdays";
 
 function applyBEBrackets(income: number, brackets: BEBracket[]): number {
   let remaining = income;
@@ -45,7 +51,7 @@ function belastingvrijeSomReduction(inputs: TaxInputs, p: BEYearParams): number 
         ? (p.childExtraAmounts[n] ?? 0)
         : (p.childExtraAmounts[4] ?? 0) + (n - 4) * (p.extraPerChildAbove4 ?? 0);
 
-  return (baseAmount + childAmount) * 0.25;
+  return (baseAmount + childAmount) * BE_TAX_FREE_ALLOWANCE_REDUCTION_RATE;
 }
 
 export function calculateBETax(inputs: TaxInputs, nl: NLTaxResult): BETaxResult | null {
@@ -57,9 +63,7 @@ export function calculateBETax(inputs: TaxInputs, nl: NLTaxResult): BETaxResult 
   }
   const p = yearParams.be;
 
-  const daysOutsideNL = inputs.daysWorkedBE + (inputs.daysWorkedOther ?? 0);
-  const totalDays = inputs.daysWorkedNL + daysOutsideNL;
-  const beFraction = totalDays > 0 ? daysOutsideNL / totalDays : 0;
+  const { beFraction, vrijgesteldFrac } = getNLFractions(inputs);
 
   // Gross split for reference fields
   const beIncome = inputs.grossSalary * beFraction;
@@ -79,10 +83,6 @@ export function calculateBETax(inputs: TaxInputs, nl: NLTaxResult): BETaxResult 
 
   // Net professional income
   const netProfessionalIncome = Math.max(0, declaredIncome - socialContributions - forfait);
-
-  // Vrijgesteld fraction: NL days / total workdays (Belgian method: sick days excluded from both)
-  // Verified against aanslagbiljet: vol tarief = BE-days fraction of gross salary
-  const vrijgesteldFrac = totalDays > 0 ? inputs.daysWorkedNL / totalDays : 0;
 
   // Exempt and taxable portions of net professional income
   const vrijgesteld = vrijgesteldFrac * netProfessionalIncome;
@@ -112,8 +112,8 @@ export function calculateBETax(inputs: TaxInputs, nl: NLTaxResult): BETaxResult 
   const gewestelijke = gereduceerde * p.gewestelijkeRate;
 
   // Optional deductions
-  const pensioenRed = aanvullendPensioen * 0.3;
-  const dienstchequesRed = dienstencheques * 0.2;
+  const pensioenRed = aanvullendPensioen * BE_PENSION_REDUCTION_RATE;
+  const dienstchequesRed = dienstencheques * BE_SERVICE_VOUCHER_REDUCTION_RATE;
 
   // Saldi
   const saldoFederaal = Math.max(0, gereduceerde - pensioenRed - roerendeVoorheffing);

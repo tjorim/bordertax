@@ -13,8 +13,10 @@
  * Year-specific rates are in params.ts — that is the only file that needs updating each year.
  */
 import type { TaxInputs, NLTaxResult, BracketLine } from "./types";
+import { NL_THIRTY_PERCENT_RULING_TAXABLE_RESIDUAL } from "./constants";
 import { TAX_PARAMS } from "./params";
 import type { NLBracket, NLYearParams } from "./params";
+import { getNLFractions } from "./workdays";
 
 function applyBrackets(
   income: number,
@@ -63,16 +65,13 @@ export function calculateNLTax(inputs: TaxInputs): NLTaxResult {
   const yearData = TAX_PARAMS[inputs.year]?.nl ?? TAX_PARAMS[2025].nl;
   const p = inputs.belowAOWAge ? yearData.under : yearData.over;
 
-  // Dutch method: sick days count as NL workdays (added to both numerator and denominator)
-  const sickDays = inputs.sickDays ?? 0;
-  const totalDays = inputs.daysWorkedNL + inputs.daysWorkedBE + (inputs.daysWorkedOther ?? 0) + sickDays;
-  const nlFraction = totalDays > 0 ? (inputs.daysWorkedNL + sickDays) / totalDays : 0;
+  const { nlFractionDutchMethod: nlFraction } = getNLFractions(inputs);
 
   let nlTaxableIncome = Math.round(inputs.grossSalary * nlFraction);
 
   if (inputs.thirtyPercentRuling) {
     // 30% of the income is tax-free; only 70% is taxed
-    nlTaxableIncome = Math.round(nlTaxableIncome * 0.7);
+    nlTaxableIncome = Math.round(nlTaxableIncome * NL_THIRTY_PERCENT_RULING_TAXABLE_RESIDUAL);
   }
 
   // Income tax only — applied to NL-fraction income

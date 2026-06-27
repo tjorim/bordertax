@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Alert, Button, Col, Row, Stack } from "react-bootstrap";
 import clsx from "clsx";
 import type { TaxResult } from "../tax/types";
-import { getTotalWorkdays } from "../tax/workdays";
+import { getNLFractions, getTotalWorkdays } from "../tax/workdays";
 import * as m from "../paraglide/messages.js";
 import { fmt, fmtSigned, pct } from "./format.js";
 
@@ -199,15 +199,8 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
 
       {/* Income sourcing ratio (4 percentages) */}
       {(() => {
-        const daysNL = Math.max(0, result.inputs.daysWorkedNL);
-        const daysOther =
-          Math.max(0, result.inputs.daysWorkedBE ?? 0) +
-          Math.max(0, result.inputs.daysWorkedOther ?? 0);
-        const sickDays = Math.max(0, result.inputs.sickDays ?? 0);
-        // NL method denominator: NL + other + sick; BE method denominator: NL + other
-        const totalForNLMethod = daysNL + daysOther + sickDays;
-        const totalForBEMethod = daysNL + daysOther;
-        const showOverlapNote = sickDays > 0 && (result.inputs.daysWorkedBE ?? 0) > 0;
+        const { totalWithSick, totalNoSick, sickDays, daysBE } = getNLFractions(result.inputs);
+        const showOverlapNote = sickDays > 0 && daysBE > 0;
         return (
           <div className="mt-4">
             <h6 className="mb-2">{m.summary_sourcing_title()}</h6>
@@ -227,19 +220,19 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
                 <tr>
                   <td>🇳🇱 {m.summary_sourcing_nl_method()}</td>
                   <td className="text-center">
-                    {totalForNLMethod > 0 ? pct(result.nlFractionDutchMethod) : "—"}
+                    {totalWithSick > 0 ? pct(result.nlFractionDutchMethod) : "—"}
                   </td>
                   <td className="text-center">
-                    {totalForNLMethod > 0 ? pct(1 - result.nlFractionDutchMethod) : "—"}
+                    {totalWithSick > 0 ? pct(1 - result.nlFractionDutchMethod) : "—"}
                   </td>
                 </tr>
                 <tr>
                   <td>🇧🇪 {m.summary_sourcing_be_method()}</td>
                   <td className="text-center">
-                    {totalForBEMethod > 0 ? pct(result.nlFractionBelgianMethod) : "—"}
+                    {totalNoSick > 0 ? pct(result.nlFractionBelgianMethod) : "—"}
                   </td>
                   <td className="text-center">
-                    {totalForBEMethod > 0 ? pct(1 - result.nlFractionBelgianMethod) : "—"}
+                    {totalNoSick > 0 ? pct(1 - result.nlFractionBelgianMethod) : "—"}
                   </td>
                 </tr>
               </tbody>

@@ -44,4 +44,18 @@ describe("BEResult", () => {
     // beFraction of 0.0909 → "9.09%"
     expect(screen.getByText("9.09%")).toBeInTheDocument();
   });
+
+  it("shows final calculation rows that reconcile to BE tax payable", () => {
+    render(<BEResult result={mockBEResult} residentCountry="BE" />);
+
+    const finalRowsTotal =
+      mockBEResult.saldoFederaal +
+      mockBEResult.saldoGewestelijk +
+      mockBEResult.communalTax +
+      mockBEResult.communalTaxOnVrijgesteld;
+
+    expect(finalRowsTotal).toBeCloseTo(mockBEResult.netTaxBE, 2);
+    expect(screen.getByText(m.be_regional_tax())).toBeInTheDocument();
+    expect(screen.getByText(m.be_municipal_tax_on_exempt())).toBeInTheDocument();
+  });
 });

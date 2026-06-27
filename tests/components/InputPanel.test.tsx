@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { useForm } from "@tanstack/react-form";
 
 import InputPanel, { type TaxFormApi } from "@/components/InputPanel";
+import { fieldError } from "@/components/fields/NumberField";
 import type { TaxInputs } from "@/tax/types";
 import { setLocale } from "@/paraglide/runtime";
 import { mockInputs } from "../test-utils/mockData";
@@ -96,6 +97,16 @@ describe("InputPanel", () => {
     expect(getForm().getFieldValue("grossSalary")).toBe(80000);
   });
 
+  it("allows numeric fields to be cleared while editing", () => {
+    const { getForm } = renderInputPanel({ grossSalary: 60000 });
+    const grossSalaryInput = screen.getByRole("spinbutton", { name: /gross annual salary/i });
+
+    fireEvent.change(grossSalaryInput, { target: { value: "" } });
+
+    expect(grossSalaryInput).toHaveValue(null);
+    expect(getForm().getFieldValue("grossSalary")).toBeUndefined();
+  });
+
   it("updates daysWorkedNL", () => {
     const { getForm } = renderInputPanel();
     const daysWorkedNL = screen.getByRole("spinbutton", { name: /workdays in.*nl/i });
@@ -161,5 +172,28 @@ describe("InputPanel", () => {
   it("does not show high workdays warning when total is within normal range", () => {
     renderInputPanel({ daysWorkedNL: 200, daysWorkedBE: 20, daysWorkedOther: 0 });
     expect(screen.queryByText(/double-check|controleer/i)).toBeNull();
+  });
+
+  it("includes other-country days in the social-security warning fraction", () => {
+    renderInputPanel({ daysWorkedNL: 100, daysWorkedBE: 20, daysWorkedOther: 90 });
+
+    expect(screen.getByText(/above 49% be days|meer dan 49% be-dagen/i)).toBeInTheDocument();
+  });
+});
+
+describe("fieldError", () => {
+  it("joins string, Error-like and nested validation messages", () => {
+    expect(
+      fieldError([
+        "Required",
+        { message: "Too low" },
+        [{ message: "Must be an integer" }, "Invalid number"],
+      ]),
+    ).toBe("Required Too low Must be an integer Invalid number");
+  });
+
+  it("returns undefined for empty errors", () => {
+    expect(fieldError(undefined)).toBeUndefined();
+    expect(fieldError([])).toBeUndefined();
   });
 });
