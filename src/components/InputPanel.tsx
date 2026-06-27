@@ -13,6 +13,7 @@ import {
 import type { TaxInputs } from "../tax/types";
 import { getMaxDaysInYear, getNLFractions, getTotalWorkdays } from "../tax/workdays";
 import * as m from "../paraglide/messages.js";
+import { CurrencyField, NumberField, fieldError } from "./fields/NumberField";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type TaxFormApi = ReactFormExtendedApi<TaxInputs, any, any, any, any, any, any, any, any, any, any, any>;
@@ -26,17 +27,6 @@ type BelgianDeductionKey =
   | "aanvullendPensioen"
   | "dienstencheques"
   | "roerendeVoorheffing";
-
-function fieldError(errors: unknown[] | undefined): string | undefined {
-  if (!errors?.length) return undefined;
-  const msgs = errors.flatMap((e) => {
-    if (Array.isArray(e)) return e.map((i) => (i as { message?: string })?.message ?? String(i));
-    if (e && typeof e === "object" && "message" in e)
-      return [(e as { message: unknown }).message as string];
-    return [String(e)];
-  });
-  return msgs.filter(Boolean).join(" ") || undefined;
-}
 
 export default function InputPanel({ form }: Props) {
   const [showFormulas, setShowFormulas] = useState(false);
@@ -159,21 +149,16 @@ export default function InputPanel({ form }: Props) {
                 const err = fieldError(field.state.meta.errors as unknown[]);
                 return (
                   <Col xs={12} sm={6}>
-                    <Form.Label htmlFor="dependent-children">{m.input_dependents()}</Form.Label>
-                    <Form.Control
+                    <NumberField
                       id="dependent-children"
-                      type="number"
+                      label={m.input_dependents()}
                       min={0}
                       max={10}
                       value={field.state.value}
-                      onChange={(e) => {
-                        const n = (e.target as HTMLInputElement).valueAsNumber;
-                        field.handleChange(Number.isNaN(n) ? 0 : n);
-                      }}
+                      onChange={field.handleChange}
                       onBlur={field.handleBlur}
-                      isInvalid={!!err}
+                      error={err}
                     />
-                    {err && <Form.Control.Feedback type="invalid">{err}</Form.Control.Feedback>}
                   </Col>
                 );
               }}
@@ -239,33 +224,26 @@ export default function InputPanel({ form }: Props) {
                     const err = fieldError(field.state.meta.errors as unknown[]);
                     return (
                       <Col xs={12} sm={6}>
-                        <Form.Label htmlFor="communal-tax-rate">
-                          {m.input_municipal_tax()}{" "}
-                          <Badge bg="secondary" className="ms-1">
-                            %
-                          </Badge>
-                        </Form.Label>
-                        <Form.Control
+                        <NumberField
                           id="communal-tax-rate"
-                          type="number"
+                          label={
+                            <>
+                              {m.input_municipal_tax()}{" "}
+                              <Badge bg="secondary" className="ms-1">
+                                %
+                              </Badge>
+                            </>
+                          }
                           min={0}
                           max={15}
                           step={0.1}
                           value={field.state.value}
-                          onChange={(e) => {
-                            const n = (e.target as HTMLInputElement).valueAsNumber;
-                            field.handleChange(Number.isNaN(n) ? 0 : n);
-                          }}
+                          onChange={field.handleChange}
                           onBlur={field.handleBlur}
-                          isInvalid={!!err}
-                          aria-describedby="communal-tax-hint"
+                          hint={m.input_municipal_tax_hint()}
+                          hintId="communal-tax-hint"
+                          error={err}
                         />
-                        <Form.Text id="communal-tax-hint" className="text-muted">
-                          {m.input_municipal_tax_hint()}
-                        </Form.Text>
-                        {err && (
-                          <Form.Control.Feedback type="invalid">{err}</Form.Control.Feedback>
-                        )}
                       </Col>
                     );
                   }}
@@ -293,22 +271,17 @@ export default function InputPanel({ form }: Props) {
                 const err = fieldError(field.state.meta.errors as unknown[]);
                 return (
                   <Col xs={12}>
-                    <Form.Label htmlFor="gross-salary">{m.input_gross_salary()}</Form.Label>
-                    <Form.Control
+                    <CurrencyField
                       id="gross-salary"
-                      type="number"
+                      label={m.input_gross_salary()}
                       min={0}
-                      step={100}
                       value={field.state.value}
-                      onChange={(e) => field.handleChange(Number(e.target.value) || 0)}
+                      onChange={field.handleChange}
                       onBlur={field.handleBlur}
-                      isInvalid={!!err}
-                      aria-describedby="gross-salary-hint"
+                      hint={m.input_gross_salary_hint()}
+                      hintId="gross-salary-hint"
+                      error={err}
                     />
-                    <Form.Text id="gross-salary-hint" className="text-muted">
-                      {m.input_gross_salary_hint()}
-                    </Form.Text>
-                    {err && <Form.Control.Feedback type="invalid">{err}</Form.Control.Feedback>}
                   </Col>
                 );
               }}
@@ -319,23 +292,17 @@ export default function InputPanel({ form }: Props) {
                 const err = fieldError(field.state.meta.errors as unknown[]);
                 return (
                   <Col xs={12}>
-                    <Form.Group controlId="withheldTaxNL">
-                      <Form.Label>{m.input_withheld_tax_nl()}</Form.Label>
-                      <Form.Control
-                        type="number"
-                        min={0}
-                        step={100}
-                        value={field.state.value}
-                        onChange={(e) => field.handleChange(Number(e.target.value) || 0)}
-                        onBlur={field.handleBlur}
-                        isInvalid={!!err}
-                        aria-describedby="withheld-tax-nl-hint"
-                      />
-                      <Form.Text id="withheld-tax-nl-hint" className="text-muted">
-                        {m.input_withheld_tax_nl_hint()}
-                      </Form.Text>
-                      {err && <Form.Control.Feedback type="invalid">{err}</Form.Control.Feedback>}
-                    </Form.Group>
+                    <CurrencyField
+                      id="withheldTaxNL"
+                      label={m.input_withheld_tax_nl()}
+                      min={0}
+                      value={field.state.value}
+                      onChange={field.handleChange}
+                      onBlur={field.handleBlur}
+                      hint={m.input_withheld_tax_nl_hint()}
+                      hintId="withheld-tax-nl-hint"
+                      error={err}
+                    />
                   </Col>
                 );
               }}
@@ -346,21 +313,17 @@ export default function InputPanel({ form }: Props) {
                 const err = fieldError(field.state.meta.errors as unknown[]);
                 return (
                   <Col xs={12} sm={6}>
-                    <Form.Label htmlFor="days-worked-nl">{m.input_workdays_nl()}</Form.Label>
-                    <Form.Control
+                    <NumberField
                       id="days-worked-nl"
-                      type="number"
+                      label={m.input_workdays_nl()}
                       min={0}
                       value={field.state.value}
-                      onChange={(e) => field.handleChange(Number(e.target.value) || 0)}
+                      onChange={field.handleChange}
                       onBlur={field.handleBlur}
-                      isInvalid={!!err}
-                      aria-describedby="workdays-nl-hint"
+                      hint={m.input_workdays_nl_hint()}
+                      hintId="workdays-nl-hint"
+                      error={err}
                     />
-                    <Form.Text id="workdays-nl-hint" className="text-muted">
-                      {m.input_workdays_nl_hint()}
-                    </Form.Text>
-                    {err && <Form.Control.Feedback type="invalid">{err}</Form.Control.Feedback>}
                   </Col>
                 );
               }}
@@ -371,17 +334,15 @@ export default function InputPanel({ form }: Props) {
                 const err = fieldError(field.state.meta.errors as unknown[]);
                 return (
                   <Col xs={12} sm={6}>
-                    <Form.Label htmlFor="days-worked-be">{m.input_workdays_be()}</Form.Label>
-                    <Form.Control
+                    <NumberField
                       id="days-worked-be"
-                      type="number"
+                      label={m.input_workdays_be()}
                       min={0}
                       value={field.state.value}
-                      onChange={(e) => field.handleChange(Number(e.target.value) || 0)}
+                      onChange={field.handleChange}
                       onBlur={field.handleBlur}
-                      isInvalid={!!err}
+                      error={err}
                     />
-                    {err && <Form.Control.Feedback type="invalid">{err}</Form.Control.Feedback>}
                   </Col>
                 );
               }}
@@ -392,22 +353,17 @@ export default function InputPanel({ form }: Props) {
                 const err = fieldError(field.state.meta.errors as unknown[]);
                 return (
                   <Col xs={12} sm={6}>
-                    <Form.Group controlId="daysWorkedOther">
-                      <Form.Label>{m.input_workdays_other()}</Form.Label>
-                      <Form.Control
-                        type="number"
-                        min={0}
-                        value={field.state.value}
-                        onChange={(e) => field.handleChange(Number(e.target.value) || 0)}
-                        onBlur={field.handleBlur}
-                        isInvalid={!!err}
-                        aria-describedby="days-other-hint"
-                      />
-                      <Form.Text id="days-other-hint" className="text-muted">
-                        {m.input_workdays_other_hint()}
-                      </Form.Text>
-                      {err && <Form.Control.Feedback type="invalid">{err}</Form.Control.Feedback>}
-                    </Form.Group>
+                    <NumberField
+                      id="daysWorkedOther"
+                      label={m.input_workdays_other()}
+                      min={0}
+                      value={field.state.value}
+                      onChange={field.handleChange}
+                      onBlur={field.handleBlur}
+                      hint={m.input_workdays_other_hint()}
+                      hintId="days-other-hint"
+                      error={err}
+                    />
                   </Col>
                 );
               }}
@@ -418,22 +374,17 @@ export default function InputPanel({ form }: Props) {
                 const err = fieldError(field.state.meta.errors as unknown[]);
                 return (
                   <Col xs={12} sm={6}>
-                    <Form.Group controlId="sickDays">
-                      <Form.Label>{m.input_sick_days()}</Form.Label>
-                      <Form.Control
-                        type="number"
-                        min={0}
-                        value={field.state.value}
-                        onChange={(e) => field.handleChange(Number(e.target.value) || 0)}
-                        onBlur={field.handleBlur}
-                        isInvalid={!!err}
-                        aria-describedby="sick-days-hint"
-                      />
-                      <Form.Text id="sick-days-hint" className="text-muted">
-                        {m.input_sick_days_hint()}
-                      </Form.Text>
-                      {err && <Form.Control.Feedback type="invalid">{err}</Form.Control.Feedback>}
-                    </Form.Group>
+                    <NumberField
+                      id="sickDays"
+                      label={m.input_sick_days()}
+                      min={0}
+                      value={field.state.value}
+                      onChange={field.handleChange}
+                      onBlur={field.handleBlur}
+                      hint={m.input_sick_days_hint()}
+                      hintId="sick-days-hint"
+                      error={err}
+                    />
                   </Col>
                 );
               }}
@@ -550,21 +501,15 @@ export default function InputPanel({ form }: Props) {
                       const err = fieldError(field.state.meta.errors as unknown[]);
                       return (
                         <Col xs={12} sm={6}>
-                          <Form.Group controlId={fieldDef.key}>
-                            <Form.Label>{fieldDef.label}</Form.Label>
-                            <Form.Control
-                              type="number"
-                              min={0}
-                              step={100}
-                              value={field.state.value}
-                              onChange={(e) => field.handleChange(Number(e.target.value) || 0)}
-                              onBlur={field.handleBlur}
-                              isInvalid={!!err}
-                            />
-                            {err && (
-                              <Form.Control.Feedback type="invalid">{err}</Form.Control.Feedback>
-                            )}
-                          </Form.Group>
+                          <CurrencyField
+                            id={fieldDef.key}
+                            label={fieldDef.label}
+                            min={0}
+                            value={field.state.value}
+                            onChange={field.handleChange}
+                            onBlur={field.handleBlur}
+                            error={err}
+                          />
                         </Col>
                       );
                     }}

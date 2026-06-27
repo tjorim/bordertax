@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { useForm } from "@tanstack/react-form";
 
 import InputPanel, { type TaxFormApi } from "@/components/InputPanel";
+import { fieldError } from "@/components/fields/NumberField";
 import type { TaxInputs } from "@/tax/types";
 import { setLocale } from "@/paraglide/runtime";
 import { mockInputs } from "../test-utils/mockData";
@@ -167,5 +168,22 @@ describe("InputPanel", () => {
     renderInputPanel({ daysWorkedNL: 100, daysWorkedBE: 20, daysWorkedOther: 90 });
 
     expect(screen.getByText(/above 49% be days|meer dan 49% be-dagen/i)).toBeInTheDocument();
+  });
+});
+
+describe("fieldError", () => {
+  it("joins string, Error-like and nested validation messages", () => {
+    expect(
+      fieldError([
+        "Required",
+        { message: "Too low" },
+        [{ message: "Must be an integer" }, "Invalid number"],
+      ]),
+    ).toBe("Required Too low Must be an integer Invalid number");
+  });
+
+  it("returns undefined for empty errors", () => {
+    expect(fieldError(undefined)).toBeUndefined();
+    expect(fieldError([])).toBeUndefined();
   });
 });

@@ -32,7 +32,7 @@ Here is my detailed review of the current `bordertax` codebase (React 19 + TypeS
 
 ## Code Structure & Organization
 
-- [ ] **Step 1: Centralize workday-fraction math in `tax/workdays.ts`**
+- [x] **Step 1: Centralize workday-fraction math in `tax/workdays.ts`**
   - **Task**: Add pure helpers `getWorkdayTotals(inputs)` and `getNLFractions(inputs)` returning `{ nlFractionDutchMethod, nlFractionBelgianMethod, beFraction, vrijgesteldFrac, totalWithSick, totalNoSick }`, encapsulating every `?? 0` guard and divide-by-zero check currently inlined. Keep `getTotalWorkdays`/`getMaxDaysInYear` but document that `getTotalWorkdays` excludes sick days. Do not change any numeric output.
   - **Files**:
     - `src/tax/workdays.ts`: add the two helper functions + JSDoc.
@@ -41,7 +41,7 @@ Here is my detailed review of the current `bordertax` codebase (React 19 + TypeS
   - **User Instructions**: None.
   - **Success Criteria**: New helpers return values identical to the existing inline calculations; `pnpm test` green.
 
-- [ ] **Step 2: Consume the shared fraction helpers in the engine**
+- [x] **Step 2: Consume the shared fraction helpers in the engine**
   - **Task**: Replace the inline fraction arithmetic in `tax/nl.ts`, `tax/index.ts`, and `tax/be.ts` with calls to the Step 1 helpers. Output of `calculate()` must be byte-for-byte unchanged (assert via existing tests).
   - **Files**:
     - `src/tax/nl.ts`: use `getNLFractions` for `nlFraction`.
@@ -50,14 +50,14 @@ Here is my detailed review of the current `bordertax` codebase (React 19 + TypeS
   - **Step Dependencies**: Step 1.
   - **Success Criteria**: `tests/tax/*` all pass unchanged; no duplicated fraction expressions remain (grep for `daysWorkedNL +` returns only `workdays.ts`).
 
-- [ ] **Step 3: Reuse the shared helper in `SummaryResult` sourcing table**
+- [x] **Step 3: Reuse the shared helper in `SummaryResult` sourcing table**
   - **Task**: Replace the locally recomputed `totalForNLMethod`/`totalForBEMethod` IIFE denominators in `SummaryResult.tsx` with the Step 1 helper so the "—" empty-state logic and percentages share one source of truth.
   - **Files**:
     - `src/components/SummaryResult.tsx`: swap inline math for helper call.
   - **Step Dependencies**: Step 1.
   - **Success Criteria**: `tests/components/SummaryResult.test.tsx` passes; sourcing percentages unchanged on screen.
 
-- [ ] **Step 4: Extract a reusable numeric form field for `InputPanel`**
+- [x] **Step 4: Extract a reusable numeric form field for `InputPanel`**
   - **Task**: Create a `NumberField` (and thin `CurrencyField` wrapper) component encapsulating the repeated `Form.Label`/`Form.Control[type=number]`/`Form.Text` hint/`Form.Control.Feedback` pattern, with one consistent value parser (`valueAsNumber` + NaN→0). Refactor the ~9 duplicated numeric blocks in `InputPanel.tsx` to use it. No visual or behavioural change.
   - **Files**:
     - `src/components/fields/NumberField.tsx`: new component (+ `fieldError` moved here from InputPanel).
@@ -68,7 +68,7 @@ Here is my detailed review of the current `bordertax` codebase (React 19 + TypeS
 
 ## Code Quality & Best Practices
 
-- [ ] **Step 5: Name the Belgian policy-rate magic numbers**
+- [x] **Step 5: Name the Belgian policy-rate magic numbers**
   - **Task**: Introduce named constants for the belastingvrije-som reduction rate (`0.25`), pension reduction (`0.3`), dienstencheques reduction (`0.2`), and the 30%-ruling taxable residual (`0.7`). Place them in `tax/constants.ts` (or extend `BEYearParams` if you prefer them year-scoped) and reference from `be.ts`/`nl.ts`. No numeric change.
   - **Files**:
     - `src/tax/constants.ts`: add constants with source comments.
@@ -77,7 +77,7 @@ Here is my detailed review of the current `bordertax` codebase (React 19 + TypeS
   - **Step Dependencies**: None.
   - **Success Criteria**: No bare policy-rate literals remain in `be.ts`/`nl.ts`; all tax tests pass.
 
-- [ ] **Step 6: Prune (or wire up) the 9 unused i18n keys**
+- [x] **Step 6: Prune (or wire up) the 9 unused i18n keys**
   - **Task**: Remove the 9 keys with zero `src` references from both locale files — `app_title`, `summary_title`, `wfh_threshold_{10,25,49}_hint`, `ref_nav_back_to_calculator`, `ref_ss_nav_pension_link`, `ref_pension_nav_ss_link`. For `alert_2026_provisional`, prefer to **keep but wire it up** in Step 9 (so leave it if doing Step 9, otherwise remove). Keep `en.json`/`nl.json` at perfect parity.
   - **Files**:
     - `messages/en.json`: delete unused keys.
@@ -85,7 +85,7 @@ Here is my detailed review of the current `bordertax` codebase (React 19 + TypeS
   - **Step Dependencies**: None (coordinate with Step 9 re `alert_2026_provisional`).
   - **Success Criteria**: `pnpm paraglide:compile` succeeds; key counts still equal; no runtime references break.
 
-- [ ] **Step 7: Document the theme-resolution mirror**
+- [x] **Step 7: Document the theme-resolution mirror**
   - **Task**: The inline `index.html` boot script must stay (it runs before the bundle to avoid a flash), but add a comment in both `index.html` and `theme.ts:applyTheme` noting they implement the same resolution and must be kept in sync, and align the `"auto"` handling so they cannot diverge.
   - **Files**:
     - `index.html`: comment + align auto/stored handling with `theme.ts`.
@@ -93,7 +93,7 @@ Here is my detailed review of the current `bordertax` codebase (React 19 + TypeS
   - **Step Dependencies**: None.
   - **Success Criteria**: Theme on first paint matches post-hydration theme for stored `light`/`dark`/`auto`; no FOUC regression.
 
-- [ ] **Step 8: Refresh the README to match shipped years**
+- [x] **Step 8: Refresh the README to match shipped years**
   - **Task**: Update the README feature list and note to reflect the actually-enabled `VALID_YEARS` (2020–2025) instead of "2024/2025/2026", and move the 2026 line into a clearly-marked "planned / commented-out" note so it matches `params.ts`.
   - **Files**:
     - `README.md`: correct year coverage and the provisional-2026 note.
@@ -113,7 +113,7 @@ Here is my detailed review of the current `bordertax` codebase (React 19 + TypeS
   - **User Instructions**: Confirm whether 2026 figures are final enough to publish before enabling.
   - **Success Criteria**: Year 2026 selectable, calculates, and shows the provisional banner; tests cover it.
 
-- [ ] **Step 10: Make the BE final breakdown reconcile to the total**
+- [x] **Step 10: Make the BE final breakdown reconcile to the total**
   - **Task**: In `BEResult.tsx` "Final calculation", show the full composition of `netTaxBE`: federal saldo, **regional saldo** (`saldoGewestelijk`), municipal tax on taxable income, and municipal tax on the exempt portion (`communalTaxOnVrijgesteld`) — so the rows visibly sum to `Tax payable`. Add new i18n keys for any missing labels (both locales).
   - **Files**:
     - `src/components/BEResult.tsx`: add the missing rows.
@@ -122,7 +122,7 @@ Here is my detailed review of the current `bordertax` codebase (React 19 + TypeS
   - **Step Dependencies**: None.
   - **Success Criteria**: Federal + regional + municipal(+exempt) rows equal the bold total for representative inputs; new test passes.
 
-- [ ] **Step 11: Fix the misleading "× BE fraction" row**
+- [x] **Step 11: Fix the misleading "× BE fraction" row**
   - **Task**: Replace the `× {belgian_fraction} ({beFraction}%)` → `totaleBelasting` row in `BEResult.tsx` with rows that reflect the real derivation (`omTeSlane` → `vrijstellingReduction` → `hoofdsom` → federal/regional split), or relabel it accurately so the displayed value reconciles with the arithmetic. Coordinate visually with Step 10.
   - **Files**:
     - `src/components/BEResult.tsx`: relabel/restructure the progression row.
@@ -130,7 +130,7 @@ Here is my detailed review of the current `bordertax` codebase (React 19 + TypeS
   - **Step Dependencies**: Step 10 (do together to avoid double-editing the same table).
   - **Success Criteria**: No row implies an arithmetic relationship the numbers don't satisfy; BE tests pass.
 
-- [ ] **Step 12: Align the social-security warning fraction with the engine**
+- [x] **Step 12: Align the social-security warning fraction with the engine**
   - **Task**: In `InputPanel.tsx`, drive the >50% and 25–49% kaderakkoord alerts off `(daysWorkedBE + daysWorkedOther) / total` (the engine/WFH-chart definition) instead of `daysWorkedBE / total`, using the Step 1 helper. This removes the disagreement between the input alert and the WFH-chart zone.
   - **Files**:
     - `src/components/InputPanel.tsx`: use shared `beFraction`.
@@ -138,14 +138,14 @@ Here is my detailed review of the current `bordertax` codebase (React 19 + TypeS
   - **Step Dependencies**: Step 1.
   - **Success Criteria**: Alert state matches the WFH-chart zone for identical inputs including other-country days.
 
-- [ ] **Step 13: Improve WFH-chart accessibility**
+- [x] **Step 13: Improve WFH-chart accessibility**
   - **Task**: Add `aria-live="polite"` (and `role="status"`) to the `bt-wfh-readout` bar so screen readers announce the net/NL/BE figures as the user scrubs, and add a concise `<title>`/`aria-describedby` summary to the SVG. Keep the existing data-table fallback.
   - **Files**:
     - `src/components/WFHRatioChart.tsx`: add ARIA attributes + SVG `<title>`.
   - **Step Dependencies**: None.
   - **Success Criteria**: Readout updates are announced; no visual change; lint/tests pass.
 
-- [ ] **Step 14: Surface the "income not persisted" expectation**
+- [x] **Step 14: Surface the "income not persisted" expectation**
   - **Task**: Add a short hint (tooltip or `Form.Text`) near the income section, and a code comment on `PersistedInputsSchema`, clarifying that salary/day counts are intentionally not stored (privacy) and reset to defaults on reload.
   - **Files**:
     - `src/components/InputPanel.tsx`: hint text (new i18n key in both locales).
