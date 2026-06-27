@@ -16,8 +16,8 @@ export function fieldError(errors: unknown[] | undefined): string | undefined {
 interface NumberFieldProps {
   id: string;
   label: ReactNode;
-  value: number;
-  onChange: (value: number) => void;
+  value: number | undefined;
+  onChange: (value: number | undefined) => void;
   onBlur?: () => void;
   min?: number;
   max?: number;
@@ -50,10 +50,14 @@ export function NumberField({
         min={min}
         max={max}
         step={step}
-        value={value}
+        value={value ?? ""}
         onChange={(e) => {
+          if (e.target.value === "") {
+            onChange(undefined);
+            return;
+          }
           const n = (e.target as HTMLInputElement).valueAsNumber;
-          onChange(Number.isNaN(n) ? 0 : n);
+          onChange(Number.isNaN(n) ? undefined : n);
         }}
         onBlur={onBlur}
         isInvalid={!!error}

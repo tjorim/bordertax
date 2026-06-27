@@ -97,6 +97,16 @@ describe("InputPanel", () => {
     expect(getForm().getFieldValue("grossSalary")).toBe(80000);
   });
 
+  it("allows numeric fields to be cleared while editing", () => {
+    const { getForm } = renderInputPanel({ grossSalary: 60000 });
+    const grossSalaryInput = screen.getByRole("spinbutton", { name: /gross annual salary/i });
+
+    fireEvent.change(grossSalaryInput, { target: { value: "" } });
+
+    expect(grossSalaryInput).toHaveValue(null);
+    expect(getForm().getFieldValue("grossSalary")).toBeUndefined();
+  });
+
   it("updates daysWorkedNL", () => {
     const { getForm } = renderInputPanel();
     const daysWorkedNL = screen.getByRole("spinbutton", { name: /workdays in.*nl/i });

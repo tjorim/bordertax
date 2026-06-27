@@ -433,11 +433,7 @@ export default function WFHRatioChart({ inputs }: Props) {
         </div>
 
         {/* ── Readout bar ───────────────────────────────────────────── */}
-        <div
-          className={`bt-wfh-readout${isHovering ? " bt-wfh-readout--visible" : ""}`}
-          role="status"
-          aria-live="polite"
-        >
+        <div className={`bt-wfh-readout${isHovering ? " bt-wfh-readout--visible" : ""}`}>
           {displayPoint ? (
             <>
               <span className={`bt-wfh-readout__label${isHovering ? "" : " bt-wfh-readout__label--current"}`}>

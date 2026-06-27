@@ -28,6 +28,10 @@ type BelgianDeductionKey =
   | "dienstencheques"
   | "roerendeVoorheffing";
 
+const allowEmptyNumber =
+  (handleChange: (value: number) => void) => (value: number | undefined) =>
+    handleChange(value as number);
+
 export default function InputPanel({ form }: Props) {
   const [showFormulas, setShowFormulas] = useState(false);
   const values = useStore(form.store, (s) => s.values);
@@ -35,19 +39,19 @@ export default function InputPanel({ form }: Props) {
   const totalWorkdays = getTotalWorkdays(values);
   const maxWorkdaysInYear = getMaxDaysInYear(values.year);
   const { beFraction } = getNLFractions(values);
+  const daysWorkedNL = values.daysWorkedNL ?? 0;
+  const daysWorkedBE = values.daysWorkedBE ?? 0;
+  const daysWorkedOther = values.daysWorkedOther ?? 0;
 
   const nlBarW =
-    maxWorkdaysInYear > 0 ? Math.min(100, (values.daysWorkedNL / maxWorkdaysInYear) * 100) : 0;
+    maxWorkdaysInYear > 0 ? Math.min(100, (daysWorkedNL / maxWorkdaysInYear) * 100) : 0;
   const beBarW =
     maxWorkdaysInYear > 0
-      ? Math.min(100 - nlBarW, (values.daysWorkedBE / maxWorkdaysInYear) * 100)
+      ? Math.min(100 - nlBarW, (daysWorkedBE / maxWorkdaysInYear) * 100)
       : 0;
   const otherBarW =
     maxWorkdaysInYear > 0
-      ? Math.min(
-          100 - nlBarW - beBarW,
-          ((values.daysWorkedOther ?? 0) / maxWorkdaysInYear) * 100,
-        )
+      ? Math.min(100 - nlBarW - beBarW, (daysWorkedOther / maxWorkdaysInYear) * 100)
       : 0;
 
   return (
@@ -155,7 +159,7 @@ export default function InputPanel({ form }: Props) {
                       min={0}
                       max={10}
                       value={field.state.value}
-                      onChange={field.handleChange}
+                      onChange={allowEmptyNumber(field.handleChange)}
                       onBlur={field.handleBlur}
                       error={err}
                     />
@@ -238,7 +242,7 @@ export default function InputPanel({ form }: Props) {
                           max={15}
                           step={0.1}
                           value={field.state.value}
-                          onChange={field.handleChange}
+                          onChange={allowEmptyNumber(field.handleChange)}
                           onBlur={field.handleBlur}
                           hint={m.input_municipal_tax_hint()}
                           hintId="communal-tax-hint"
@@ -276,7 +280,7 @@ export default function InputPanel({ form }: Props) {
                       label={m.input_gross_salary()}
                       min={0}
                       value={field.state.value}
-                      onChange={field.handleChange}
+                      onChange={allowEmptyNumber(field.handleChange)}
                       onBlur={field.handleBlur}
                       hint={m.input_gross_salary_hint()}
                       hintId="gross-salary-hint"
@@ -297,7 +301,7 @@ export default function InputPanel({ form }: Props) {
                       label={m.input_withheld_tax_nl()}
                       min={0}
                       value={field.state.value}
-                      onChange={field.handleChange}
+                      onChange={allowEmptyNumber(field.handleChange)}
                       onBlur={field.handleBlur}
                       hint={m.input_withheld_tax_nl_hint()}
                       hintId="withheld-tax-nl-hint"
@@ -318,7 +322,7 @@ export default function InputPanel({ form }: Props) {
                       label={m.input_workdays_nl()}
                       min={0}
                       value={field.state.value}
-                      onChange={field.handleChange}
+                      onChange={allowEmptyNumber(field.handleChange)}
                       onBlur={field.handleBlur}
                       hint={m.input_workdays_nl_hint()}
                       hintId="workdays-nl-hint"
@@ -339,7 +343,7 @@ export default function InputPanel({ form }: Props) {
                       label={m.input_workdays_be()}
                       min={0}
                       value={field.state.value}
-                      onChange={field.handleChange}
+                      onChange={allowEmptyNumber(field.handleChange)}
                       onBlur={field.handleBlur}
                       error={err}
                     />
@@ -358,7 +362,7 @@ export default function InputPanel({ form }: Props) {
                       label={m.input_workdays_other()}
                       min={0}
                       value={field.state.value}
-                      onChange={field.handleChange}
+                      onChange={allowEmptyNumber(field.handleChange)}
                       onBlur={field.handleBlur}
                       hint={m.input_workdays_other_hint()}
                       hintId="days-other-hint"
@@ -379,7 +383,7 @@ export default function InputPanel({ form }: Props) {
                       label={m.input_sick_days()}
                       min={0}
                       value={field.state.value}
-                      onChange={field.handleChange}
+                      onChange={allowEmptyNumber(field.handleChange)}
                       onBlur={field.handleBlur}
                       hint={m.input_sick_days_hint()}
                       hintId="sick-days-hint"
@@ -402,7 +406,7 @@ export default function InputPanel({ form }: Props) {
                     style={{ width: `${nlBarW}%` }}
                   >
                     {nlBarW > 14 && (
-                      <span className="bt-workday-bar__label">{values.daysWorkedNL}</span>
+                      <span className="bt-workday-bar__label">{daysWorkedNL}</span>
                     )}
                   </div>
                 )}
@@ -412,7 +416,7 @@ export default function InputPanel({ form }: Props) {
                     style={{ width: `${beBarW}%` }}
                   >
                     {beBarW > 10 && (
-                      <span className="bt-workday-bar__label">{values.daysWorkedBE}</span>
+                      <span className="bt-workday-bar__label">{daysWorkedBE}</span>
                     )}
                   </div>
                 )}
@@ -506,7 +510,7 @@ export default function InputPanel({ form }: Props) {
                             label={fieldDef.label}
                             min={0}
                             value={field.state.value}
-                            onChange={field.handleChange}
+                            onChange={allowEmptyNumber(field.handleChange)}
                             onBlur={field.handleBlur}
                             error={err}
                           />
