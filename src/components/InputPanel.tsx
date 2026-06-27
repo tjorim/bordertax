@@ -11,7 +11,7 @@ import {
   VALID_BELGIAN_REGIONS,
 } from "../tax/constants";
 import type { TaxInputs } from "../tax/types";
-import { getMaxDaysInYear, getTotalWorkdays } from "../tax/workdays";
+import { getMaxDaysInYear, getNLFractions, getTotalWorkdays } from "../tax/workdays";
 import * as m from "../paraglide/messages.js";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -44,7 +44,7 @@ export default function InputPanel({ form }: Props) {
 
   const totalWorkdays = getTotalWorkdays(values);
   const maxWorkdaysInYear = getMaxDaysInYear(values.year);
-  const beFraction = totalWorkdays > 0 ? values.daysWorkedBE / totalWorkdays : 0;
+  const { beFraction } = getNLFractions(values);
 
   const nlBarW =
     maxWorkdaysInYear > 0 ? Math.min(100, (values.daysWorkedNL / maxWorkdaysInYear) * 100) : 0;
@@ -284,6 +284,10 @@ export default function InputPanel({ form }: Props) {
         </Accordion.Header>
         <Accordion.Body>
           <Row className="g-3">
+            <Col xs={12}>
+              <Form.Text className="text-muted">{m.input_income_not_persisted_hint()}</Form.Text>
+            </Col>
+
             <form.Field name="grossSalary" validators={{ onChange: z.number().min(0) }}>
               {(field) => {
                 const err = fieldError(field.state.meta.errors as unknown[]);

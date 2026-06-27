@@ -40,6 +40,7 @@ export const TaxInputSchema = z.object({
   sickDays: z.number().catch(0).transform((v) => Math.max(0, v)),
 });
 
+// Privacy: salary and day-count inputs are intentionally not persisted across reloads.
 export const PersistedInputsSchema = TaxInputSchema.pick({
   year: true,
   residentCountry: true,

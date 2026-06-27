@@ -4,7 +4,7 @@ A standalone web app for Belgian residents working for Dutch employers (cross-bo
 
 ## Features
 
-- **NL Box 1 income tax** — 2024/2025/2026 brackets (under/over AOW age)
+- **NL Box 1 income tax** — 2020–2025 brackets (under/over AOW age)
 - **Heffingskortingen** — Algemene heffingskorting + arbeidskorting (full build-up/phase-out tables)
 - **30%-regeling** — Optional 30% expat ruling support
 - **Belgische personenbelasting** — Exemption-with-progression (vrijstelling met progressievoorbehoud) per the BE-NL tax treaty
@@ -19,7 +19,7 @@ A standalone web app for Belgian residents working for Dutch employers (cross-bo
 - Belgian (BE) brackets and belastingvrije som: [FOD Financiën](https://fin.belgium.be)
 - BE-NL tax treaty: IBFD / official government publications
 
-> **Note:** 2026 NL rates are provisional (based on 2025) until official Belastingdienst tables are published. 2026 BE rates are draft proposals and may change. Always consult a tax advisor for your final return.
+> **Note:** Income year 2026 is not enabled in the UI yet. A commented-out 2026 parameter block may be prepared in code, but shipped calculations currently cover 2020–2025 only. Always consult a tax advisor for your final return.
 
 ## Getting Started
 

@@ -80,10 +80,20 @@ export default function BEResult({ result, residentCountry }: Props) {
             <td className="text-end">{fmt(result.omTeSlane)}</td>
           </tr>
           <tr>
-            <td>
-              × {m.be_belgian_fraction()} ({pct(result.beFraction)})
-            </td>
-            <td className="text-end">{fmt(result.totaleBelasting)}</td>
+            <td>{m.be_exemption_reduction()}</td>
+            <td className="text-end text-success">−{fmt(result.vrijstellingReduction)}</td>
+          </tr>
+          <tr className="fw-semibold">
+            <td>{m.be_tax_before_split()}</td>
+            <td className="text-end">{fmt(result.hoofdsom)}</td>
+          </tr>
+          <tr>
+            <td>{m.be_federal_part()}</td>
+            <td className="text-end">{fmt(result.gereduceerde)}</td>
+          </tr>
+          <tr>
+            <td>{m.be_regional_part()}</td>
+            <td className="text-end">{fmt(result.gewestelijke)}</td>
           </tr>
         </tbody>
       </Table>
@@ -93,11 +103,19 @@ export default function BEResult({ result, residentCountry }: Props) {
         <tbody>
           <tr>
             <td>{m.be_federal_tax()}</td>
-            <td className="text-end">{fmt(result.federalTax)}</td>
+            <td className="text-end">{fmt(result.saldoFederaal)}</td>
+          </tr>
+          <tr>
+            <td>{m.be_regional_tax()}</td>
+            <td className="text-end">{fmt(result.saldoGewestelijk)}</td>
           </tr>
           <tr>
             <td>{m.be_municipal_tax()}</td>
             <td className="text-end">{fmt(result.communalTax)}</td>
+          </tr>
+          <tr>
+            <td>{m.be_municipal_tax_on_exempt()}</td>
+            <td className="text-end">{fmt(result.communalTaxOnVrijgesteld)}</td>
           </tr>
           <tr className="table-primary fw-bold">
             <td>{m.be_tax_payable()}</td>

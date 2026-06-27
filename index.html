@@ -11,17 +11,18 @@
     />
     <script>
       (function () {
+        // Mirrors src/theme.ts applyTheme() so first paint matches hydrated theme.
         var stored;
         try {
           stored = localStorage.getItem("bt-theme");
         } catch (e) {
           stored = null;
         }
+        var theme = stored === "light" || stored === "dark" || stored === "auto" ? stored : "auto";
         var prefersDark =
           typeof window.matchMedia === "function" &&
           window.matchMedia("(prefers-color-scheme: dark)").matches;
-        var effective =
-          stored === "light" ? "light" : stored === "dark" ? "dark" : prefersDark ? "dark" : "light";
+        var effective = theme === "auto" ? (prefersDark ? "dark" : "light") : theme;
         document.documentElement.setAttribute("data-bs-theme", effective);
       })();
     </script>

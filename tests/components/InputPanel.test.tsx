@@ -162,4 +162,10 @@ describe("InputPanel", () => {
     renderInputPanel({ daysWorkedNL: 200, daysWorkedBE: 20, daysWorkedOther: 0 });
     expect(screen.queryByText(/double-check|controleer/i)).toBeNull();
   });
+
+  it("includes other-country days in the social-security warning fraction", () => {
+    renderInputPanel({ daysWorkedNL: 100, daysWorkedBE: 20, daysWorkedOther: 90 });
+
+    expect(screen.getByText(/above 49% be days|meer dan 49% be-dagen/i)).toBeInTheDocument();
+  });
 });
