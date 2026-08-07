@@ -46,8 +46,8 @@ importers:
         version: 4.4.3
     devDependencies:
       '@inlang/paraglide-js':
-        specifier: ^2.23.0
-        version: 2.23.0(typescript@7.0.2)(vite@8.1.5(@types/node@26.1.2)(terser@5.49.0))
+        specifier: ^2.23.1
+        version: 2.23.1(typescript@7.0.2)(vite@8.1.5(@types/node@26.1.2)(terser@5.49.0))
       '@inlang/plugin-m-function-matcher':
         specifier: ^2.2.9
         version: 2.2.9
@@ -156,8 +156,8 @@ packages:
   '@fontsource-variable/inter@5.3.0':
     resolution: {integrity: sha512-OupL48va4JNofb97w6NYeF9S7W/kHNKM0Er8Dem5nqi4jeOLrVJDoE8tZEpnMJmtkvNbB1EIPPwHcdkF6b1oUA==}
 
-  '@inlang/paraglide-js@2.23.0':
-    resolution: {integrity: sha512-q+FQisRAVQqyD+0fdVHPkC7UDfaXENUJqUjim7XGEzWHE6vVMUOO10MFtAOKx5VYAgi8o7rLwe4zjzesCY0Anw==}
+  '@inlang/paraglide-js@2.23.1':
+    resolution: {integrity: sha512-KEnJhvRLhB1zbGNmt2DHi4SuIbr7ZcZ0tftFYxQDDSpS1GqjJJ+b+ZaxVC2PElpgcQYNgD5Bt9hYUpV+et8IMw==}
     hasBin: true
     peerDependencies:
       typescript: '>=5.6'
@@ -1585,7 +1585,7 @@ snapshots:
 
   '@fontsource-variable/inter@5.3.0': {}
 
-  '@inlang/paraglide-js@2.23.0(typescript@7.0.2)(vite@8.1.5(@types/node@26.1.2)(terser@5.49.0))':
+  '@inlang/paraglide-js@2.23.1(typescript@7.0.2)(vite@8.1.5(@types/node@26.1.2)(terser@5.49.0))':
     dependencies:
       '@inlang/recommend-sherlock': 0.2.1
       '@inlang/sdk': 2.10.2
