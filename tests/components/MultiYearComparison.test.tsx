@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
 import MultiYearComparison from "@/components/MultiYearComparison";
@@ -24,10 +24,13 @@ describe("MultiYearComparison", () => {
 
   // TODO: Re-enable when 2026 support is re-integrated
   it.skip("renders a row for year 2026", () => {
-    const rowsWith2026 = [...rows, {
-      year: 2026 as unknown as TaxYear,
-      result: calculate({ ...mockTaxResult.inputs, year: 2026 as unknown as TaxYear }),
-    }];
+    const rowsWith2026 = [
+      ...rows,
+      {
+        year: 2026 as unknown as TaxYear,
+        result: calculate({ ...mockTaxResult.inputs, year: 2026 as unknown as TaxYear }),
+      },
+    ];
     render(<MultiYearComparison rows={rowsWith2026} activeYear={2025} />);
     expect(screen.getAllByText("2026").length).toBeGreaterThan(0);
   });
@@ -48,5 +51,15 @@ describe("MultiYearComparison", () => {
     expect(screen.getByRole("table")).toBeInTheDocument();
     const headers = screen.getAllByRole("columnheader");
     expect(headers.length).toBeGreaterThan(3);
+  });
+
+  it("sorts table rows by year", () => {
+    render(<MultiYearComparison rows={rows} activeYear={2025} />);
+
+    fireEvent.click(screen.getByRole("button", { name: /year/i }));
+
+    const bodyRows = screen.getByRole("table").querySelectorAll("tbody tr");
+    expect(bodyRows[0]).toHaveTextContent("2025");
+    expect(bodyRows[1]).toHaveTextContent("2024");
   });
 });
