@@ -2,12 +2,17 @@ import { useMemo, useState } from "react";
 import { Badge, Table } from "react-bootstrap";
 import clsx from "clsx";
 import {
+  columnVisibilityFeature,
   createColumnHelper,
+  createSortedRowModel,
   flexRender,
-  getCoreRowModel,
-  getSortedRowModel,
-  useReactTable,
+  rowSortingFeature,
+  sortFn_alphanumeric,
+  sortFn_basic,
+  sortFn_text,
+  tableFeatures,
   type SortingState,
+  useTable,
 } from "@tanstack/react-table";
 import { VALID_YEARS } from "../tax/constants";
 import type { TaxYear } from "../tax/constants";
@@ -25,7 +30,17 @@ interface Props {
   activeYear: TaxYear;
 }
 
-const columnHelper = createColumnHelper<ComparisonRow>();
+const comparisonTableFeatures = tableFeatures({
+  columnVisibilityFeature,
+  rowSortingFeature,
+  sortedRowModel: createSortedRowModel(),
+  sortFns: {
+    alphanumeric: sortFn_alphanumeric,
+    basic: sortFn_basic,
+    text: sortFn_text,
+  },
+});
+const columnHelper = createColumnHelper<typeof comparisonTableFeatures, ComparisonRow>();
 
 const NUMERIC_COLS = new Set(["gross", "nlTax", "beTax", "totalTax", "netIncome", "effectiveRate"]);
 
@@ -33,65 +48,61 @@ export default function MultiYearComparison({ rows, activeYear }: Props) {
   const [sorting, setSorting] = useState<SortingState>([]);
 
   const columns = useMemo(
-    () => [
-      columnHelper.accessor("year", {
-        header: () => m.years_year(),
-        cell: (info) => (
-          <>
-            {info.getValue()}
-            {info.getValue() === activeYear && (
-              <Badge bg="primary" className="ms-2">
-                {m.years_active()}
-              </Badge>
-            )}
-          </>
-        ),
-      }),
-      columnHelper.accessor((row) => row.result.grossIncome, {
-        id: "gross",
-        header: () => m.years_gross(),
-        cell: (info) => fmt(info.getValue()),
-      }),
-      columnHelper.accessor((row) => row.result.nl.netTaxNL, {
-        id: "nlTax",
-        header: () => m.years_nl_tax(),
-        cell: (info) => <span className="text-danger">-{fmt(info.getValue())}</span>,
-      }),
-      columnHelper.accessor((row) => row.result.be?.netTaxBE ?? 0, {
-        id: "beTax",
-        header: () => m.years_be_tax(),
-        cell: (info) => <span className="text-danger">-{fmt(info.getValue())}</span>,
-      }),
-      columnHelper.accessor((row) => row.result.totalTax, {
-        id: "totalTax",
-        header: () => m.years_total_tax(),
-        cell: (info) => (
-          <span className="text-danger fw-semibold">-{fmt(info.getValue())}</span>
-        ),
-      }),
-      columnHelper.accessor((row) => row.result.netIncome, {
-        id: "netIncome",
-        header: () => m.years_net_income(),
-        cell: (info) => (
-          <span className="text-success fw-semibold">{fmt(info.getValue())}</span>
-        ),
-      }),
-      columnHelper.accessor((row) => row.result.effectiveRateTotal, {
-        id: "effectiveRate",
-        header: () => m.years_effective_rate(),
-        cell: (info) => pct(info.getValue()),
-      }),
-    ],
+    () =>
+      columnHelper.columns([
+        columnHelper.accessor("year", {
+          header: () => m.years_year(),
+          cell: (info) => (
+            <>
+              {info.getValue()}
+              {info.getValue() === activeYear && (
+                <Badge bg="primary" className="ms-2">
+                  {m.years_active()}
+                </Badge>
+              )}
+            </>
+          ),
+        }),
+        columnHelper.accessor((row) => row.result.grossIncome, {
+          id: "gross",
+          header: () => m.years_gross(),
+          cell: (info) => fmt(info.getValue()),
+        }),
+        columnHelper.accessor((row) => row.result.nl.netTaxNL, {
+          id: "nlTax",
+          header: () => m.years_nl_tax(),
+          cell: (info) => <span className="text-danger">-{fmt(info.getValue())}</span>,
+        }),
+        columnHelper.accessor((row) => row.result.be?.netTaxBE ?? 0, {
+          id: "beTax",
+          header: () => m.years_be_tax(),
+          cell: (info) => <span className="text-danger">-{fmt(info.getValue())}</span>,
+        }),
+        columnHelper.accessor((row) => row.result.totalTax, {
+          id: "totalTax",
+          header: () => m.years_total_tax(),
+          cell: (info) => <span className="text-danger fw-semibold">-{fmt(info.getValue())}</span>,
+        }),
+        columnHelper.accessor((row) => row.result.netIncome, {
+          id: "netIncome",
+          header: () => m.years_net_income(),
+          cell: (info) => <span className="text-success fw-semibold">{fmt(info.getValue())}</span>,
+        }),
+        columnHelper.accessor((row) => row.result.effectiveRateTotal, {
+          id: "effectiveRate",
+          header: () => m.years_effective_rate(),
+          cell: (info) => pct(info.getValue()),
+        }),
+      ]),
     [activeYear],
   );
 
-  const table = useReactTable({
+  const table = useTable({
+    features: comparisonTableFeatures,
     data: rows,
     columns,
     state: { sorting },
     onSortingChange: setSorting,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
   });
 
   return (

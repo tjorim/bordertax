@@ -1,12 +1,17 @@
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { Badge, Table } from "react-bootstrap";
 import {
+  columnVisibilityFeature,
   createColumnHelper,
+  createSortedRowModel,
   flexRender,
-  getCoreRowModel,
-  getSortedRowModel,
-  useReactTable,
+  rowSortingFeature,
+  sortFn_alphanumeric,
+  sortFn_basic,
+  sortFn_text,
+  tableFeatures,
   type SortingState,
+  useTable,
 } from "@tanstack/react-table";
 import { calculate } from "../tax";
 import type { TaxInputs } from "../tax/types";
@@ -114,16 +119,15 @@ export default function WFHRatioChart({ inputs }: Props) {
   }, [data]);
 
   const snapPoints = useMemo(
-    () =>
-      [
-        ...new Set([
-          Math.round(T_90 * (STEPS - 1)),
-          Math.round(T_25 * (STEPS - 1)),
-          Math.round(T_49 * (STEPS - 1)),
-          currentIdx,
-          optimalIdx,
-        ]),
-      ],
+    () => [
+      ...new Set([
+        Math.round(T_90 * (STEPS - 1)),
+        Math.round(T_25 * (STEPS - 1)),
+        Math.round(T_49 * (STEPS - 1)),
+        currentIdx,
+        optimalIdx,
+      ]),
+    ],
     [currentIdx, optimalIdx],
   );
 
@@ -300,16 +304,52 @@ export default function WFHRatioChart({ inputs }: Props) {
           />
 
           {/* Zone top-edge accents */}
-          <line x1={PAD.left} x2={x90} y1={PAD.top} y2={PAD.top} className="bt-wfh-zone-edge bt-wfh-zone-edge--full" />
-          <line x1={x90} x2={x25} y1={PAD.top} y2={PAD.top} className="bt-wfh-zone-edge bt-wfh-zone-edge--hybrid" />
-          <line x1={x25} x2={x49} y1={PAD.top} y2={PAD.top} className="bt-wfh-zone-edge bt-wfh-zone-edge--kaderakkoord" />
-          <line x1={x49} x2={W - PAD.right} y1={PAD.top} y2={PAD.top} className="bt-wfh-zone-edge bt-wfh-zone-edge--above" />
+          <line
+            x1={PAD.left}
+            x2={x90}
+            y1={PAD.top}
+            y2={PAD.top}
+            className="bt-wfh-zone-edge bt-wfh-zone-edge--full"
+          />
+          <line
+            x1={x90}
+            x2={x25}
+            y1={PAD.top}
+            y2={PAD.top}
+            className="bt-wfh-zone-edge bt-wfh-zone-edge--hybrid"
+          />
+          <line
+            x1={x25}
+            x2={x49}
+            y1={PAD.top}
+            y2={PAD.top}
+            className="bt-wfh-zone-edge bt-wfh-zone-edge--kaderakkoord"
+          />
+          <line
+            x1={x49}
+            x2={W - PAD.right}
+            y1={PAD.top}
+            y2={PAD.top}
+            className="bt-wfh-zone-edge bt-wfh-zone-edge--above"
+          />
 
           {/* ── Y grid + labels ───────────────────────────────────────── */}
           {yTicks.map((v, i) => (
             <g key={i}>
-              <line x1={PAD.left} x2={W - PAD.right} y1={yOf(v)} y2={yOf(v)} className="bt-wfh-grid" />
-              <text x={PAD.left - 8} y={yOf(v)} textAnchor="end" dominantBaseline="middle" className="bt-wfh-axis-label">
+              <line
+                x1={PAD.left}
+                x2={W - PAD.right}
+                y1={yOf(v)}
+                y2={yOf(v)}
+                className="bt-wfh-grid"
+              />
+              <text
+                x={PAD.left - 8}
+                y={yOf(v)}
+                textAnchor="end"
+                dominantBaseline="middle"
+                className="bt-wfh-axis-label"
+              >
                 {fmtK(v)}
               </text>
             </g>
@@ -317,7 +357,13 @@ export default function WFHRatioChart({ inputs }: Props) {
 
           {/* ── X axis ────────────────────────────────────────────────── */}
           {[0, 10, 25, 50, 75, 100].map((p) => (
-            <text key={p} x={xOf(p / 100)} y={H - PAD.bottom + 16} textAnchor="middle" className="bt-wfh-axis-label">
+            <text
+              key={p}
+              x={xOf(p / 100)}
+              y={H - PAD.bottom + 16}
+              textAnchor="middle"
+              className="bt-wfh-axis-label"
+            >
               {p}%
             </text>
           ))}
@@ -326,25 +372,79 @@ export default function WFHRatioChart({ inputs }: Props) {
           </text>
 
           {/* ── Threshold lines + chips ────────────────────────────────── */}
-          <line x1={x90} x2={x90} y1={PAD.top} y2={H - PAD.bottom} className="bt-wfh-threshold bt-wfh-threshold--10" />
-          <line x1={x25} x2={x25} y1={PAD.top} y2={H - PAD.bottom} className="bt-wfh-threshold bt-wfh-threshold--25" />
-          <line x1={x49} x2={x49} y1={PAD.top} y2={H - PAD.bottom} className="bt-wfh-threshold bt-wfh-threshold--49" />
+          <line
+            x1={x90}
+            x2={x90}
+            y1={PAD.top}
+            y2={H - PAD.bottom}
+            className="bt-wfh-threshold bt-wfh-threshold--10"
+          />
+          <line
+            x1={x25}
+            x2={x25}
+            y1={PAD.top}
+            y2={H - PAD.bottom}
+            className="bt-wfh-threshold bt-wfh-threshold--25"
+          />
+          <line
+            x1={x49}
+            x2={x49}
+            y1={PAD.top}
+            y2={H - PAD.bottom}
+            className="bt-wfh-threshold bt-wfh-threshold--49"
+          />
 
           <g transform={`translate(${x90 + 4}, ${PAD.top + 4})`}>
-            <rect rx="3" ry="3" width="44" height="14" className="bt-wfh-chip-bg bt-wfh-chip-bg--10" />
-            <text x="22" y="7" textAnchor="middle" dominantBaseline="middle" className="bt-wfh-chip-text bt-wfh-chip-text--10">
+            <rect
+              rx="3"
+              ry="3"
+              width="44"
+              height="14"
+              className="bt-wfh-chip-bg bt-wfh-chip-bg--10"
+            />
+            <text
+              x="22"
+              y="7"
+              textAnchor="middle"
+              dominantBaseline="middle"
+              className="bt-wfh-chip-text bt-wfh-chip-text--10"
+            >
               {m.wfh_threshold_10_label()}
             </text>
           </g>
           <g transform={`translate(${x25 + 4}, ${PAD.top + 4})`}>
-            <rect rx="3" ry="3" width="44" height="14" className="bt-wfh-chip-bg bt-wfh-chip-bg--25" />
-            <text x="22" y="7" textAnchor="middle" dominantBaseline="middle" className="bt-wfh-chip-text bt-wfh-chip-text--25">
+            <rect
+              rx="3"
+              ry="3"
+              width="44"
+              height="14"
+              className="bt-wfh-chip-bg bt-wfh-chip-bg--25"
+            />
+            <text
+              x="22"
+              y="7"
+              textAnchor="middle"
+              dominantBaseline="middle"
+              className="bt-wfh-chip-text bt-wfh-chip-text--25"
+            >
               {m.wfh_threshold_25_label()}
             </text>
           </g>
           <g transform={`translate(${x49 + 4}, ${PAD.top + 4})`}>
-            <rect rx="3" ry="3" width="44" height="14" className="bt-wfh-chip-bg bt-wfh-chip-bg--49" />
-            <text x="22" y="7" textAnchor="middle" dominantBaseline="middle" className="bt-wfh-chip-text bt-wfh-chip-text--49">
+            <rect
+              rx="3"
+              ry="3"
+              width="44"
+              height="14"
+              className="bt-wfh-chip-bg bt-wfh-chip-bg--49"
+            />
+            <text
+              x="22"
+              y="7"
+              textAnchor="middle"
+              dominantBaseline="middle"
+              className="bt-wfh-chip-text bt-wfh-chip-text--49"
+            >
               {m.wfh_threshold_49_label()}
             </text>
           </g>
@@ -352,7 +452,12 @@ export default function WFHRatioChart({ inputs }: Props) {
           {/* ── Area fill + data lines ─────────────────────────────────── */}
           <g clipPath="url(#wfh-clip)">
             <path d={areaPath} fill="url(#wfh-net-grad)" />
-            <path d={polyline("netIncome")} fill="none" className="bt-wfh-line bt-wfh-line--net" filter="url(#wfh-glow)" />
+            <path
+              d={polyline("netIncome")}
+              fill="none"
+              className="bt-wfh-line bt-wfh-line--net"
+              filter="url(#wfh-glow)"
+            />
             <path d={polyline("nlTax")} fill="none" className="bt-wfh-line bt-wfh-line--nl" />
             {showBE && (
               <path d={polyline("beTax")} fill="none" className="bt-wfh-line bt-wfh-line--be" />
@@ -362,7 +467,13 @@ export default function WFHRatioChart({ inputs }: Props) {
           {/* ── Optimal marker ────────────────────────────────────────── */}
           {optimalIdx !== currentIdx && data[optimalIdx] && (
             <>
-              <line x1={xOpt} x2={xOpt} y1={PAD.top} y2={H - PAD.bottom} className="bt-wfh-optimal" />
+              <line
+                x1={xOpt}
+                x2={xOpt}
+                y1={PAD.top}
+                y2={H - PAD.bottom}
+                className="bt-wfh-optimal"
+              />
               <polygon
                 points={`${xOpt},${yOf(optimalNet) - 8} ${xOpt + 6},${yOf(optimalNet)} ${xOpt},${yOf(optimalNet) + 8} ${xOpt - 6},${yOf(optimalNet)}`}
                 className="bt-wfh-optimal-diamond"
@@ -374,19 +485,50 @@ export default function WFHRatioChart({ inputs }: Props) {
           <line x1={xCur} x2={xCur} y1={PAD.top} y2={H - PAD.bottom} className="bt-wfh-current" />
           {data[currentIdx] && (
             <>
-              <circle cx={xCur} cy={yOf(data[currentIdx]!.netIncome)} r="10" className="bt-wfh-pulse" />
-              <circle cx={xCur} cy={yOf(data[currentIdx]!.netIncome)} r="5" className="bt-wfh-current-dot" />
+              <circle
+                cx={xCur}
+                cy={yOf(data[currentIdx]!.netIncome)}
+                r="10"
+                className="bt-wfh-pulse"
+              />
+              <circle
+                cx={xCur}
+                cy={yOf(data[currentIdx]!.netIncome)}
+                r="5"
+                className="bt-wfh-current-dot"
+              />
             </>
           )}
 
           {/* ── Hover scrubber ────────────────────────────────────────── */}
           {hovered !== null && hovered !== currentIdx && data[hovered] && (
             <>
-              <line x1={xIdx(hovered)} x2={xIdx(hovered)} y1={PAD.top} y2={H - PAD.bottom} className="bt-wfh-scrubber" />
-              <circle cx={xIdx(hovered)} cy={yOf(data[hovered]!.netIncome)} r={4} className="bt-wfh-dot bt-wfh-dot--net" />
-              <circle cx={xIdx(hovered)} cy={yOf(data[hovered]!.nlTax)} r={3} className="bt-wfh-dot bt-wfh-dot--nl" />
+              <line
+                x1={xIdx(hovered)}
+                x2={xIdx(hovered)}
+                y1={PAD.top}
+                y2={H - PAD.bottom}
+                className="bt-wfh-scrubber"
+              />
+              <circle
+                cx={xIdx(hovered)}
+                cy={yOf(data[hovered]!.netIncome)}
+                r={4}
+                className="bt-wfh-dot bt-wfh-dot--net"
+              />
+              <circle
+                cx={xIdx(hovered)}
+                cy={yOf(data[hovered]!.nlTax)}
+                r={3}
+                className="bt-wfh-dot bt-wfh-dot--nl"
+              />
               {showBE && (
-                <circle cx={xIdx(hovered)} cy={yOf(data[hovered]!.beTax)} r={3} className="bt-wfh-dot bt-wfh-dot--be" />
+                <circle
+                  cx={xIdx(hovered)}
+                  cy={yOf(data[hovered]!.beTax)}
+                  r={3}
+                  className="bt-wfh-dot bt-wfh-dot--be"
+                />
               )}
             </>
           )}
@@ -395,7 +537,10 @@ export default function WFHRatioChart({ inputs }: Props) {
         {/* ── Legend — directly below chart, above readout ──────────── */}
         <div className="bt-year-chart__legend bt-wfh-legend">
           <span className="bt-year-chart__legend-item">
-            <span className="bt-year-chart__legend-dot" style={{ background: "var(--bt-success)" }} />
+            <span
+              className="bt-year-chart__legend-dot"
+              style={{ background: "var(--bt-success)" }}
+            />
             {m.summary_net_income()}
           </span>
           <span className="bt-year-chart__legend-item">
@@ -436,7 +581,9 @@ export default function WFHRatioChart({ inputs }: Props) {
         <div className={`bt-wfh-readout${isHovering ? " bt-wfh-readout--visible" : ""}`}>
           {displayPoint ? (
             <>
-              <span className={`bt-wfh-readout__label${isHovering ? "" : " bt-wfh-readout__label--current"}`}>
+              <span
+                className={`bt-wfh-readout__label${isHovering ? "" : " bt-wfh-readout__label--current"}`}
+              >
                 {!isHovering && (
                   <span className="bt-wfh-readout__tag">{m.wfh_current_ratio()}</span>
                 )}
@@ -457,10 +604,14 @@ export default function WFHRatioChart({ inputs }: Props) {
                   🇧🇪 −{fmt(displayPoint.beTax)}
                 </span>
               )}
-              <span className={`bt-wfh-readout__badge bt-wfh-readout__badge--${getZone(displayPoint.beRatio)}`}>
+              <span
+                className={`bt-wfh-readout__badge bt-wfh-readout__badge--${getZone(displayPoint.beRatio)}`}
+              >
                 {getZone(displayPoint.beRatio) === "full" && `✓ ${m.wfh_threshold_10_label()}`}
-                {getZone(displayPoint.beRatio) === "hybrid" && `✓ ${m.wfh_threshold_25_label()} · ✗ hypo`}
-                {getZone(displayPoint.beRatio) === "kaderakkoord" && `✓ ${m.wfh_threshold_49_label()} · A1`}
+                {getZone(displayPoint.beRatio) === "hybrid" &&
+                  `✓ ${m.wfh_threshold_25_label()} · ✗ hypo`}
+                {getZone(displayPoint.beRatio) === "kaderakkoord" &&
+                  `✓ ${m.wfh_threshold_49_label()} · A1`}
                 {getZone(displayPoint.beRatio) === "above" && `✗ ${m.wfh_threshold_49_label()}`}
               </span>
             </>
@@ -526,10 +677,20 @@ interface RatioRow {
   isOptimal?: boolean;
 }
 
-const ratioColumnHelper = createColumnHelper<RatioRow>();
+const ratioTableFeatures = tableFeatures({
+  columnVisibilityFeature,
+  rowSortingFeature,
+  sortedRowModel: createSortedRowModel(),
+  sortFns: {
+    alphanumeric: sortFn_alphanumeric,
+    basic: sortFn_basic,
+    text: sortFn_text,
+  },
+});
+const ratioColumnHelper = createColumnHelper<typeof ratioTableFeatures, RatioRow>();
 const RATIO_NUMERIC_COLS = new Set(["nlTax", "beTax", "totalTax", "netIncome", "effectiveRate"]);
 
-const ratioColumns = [
+const ratioColumns = ratioColumnHelper.columns([
   ratioColumnHelper.accessor("beRatio", {
     id: "beSplit",
     header: () => m.wfh_be_split(),
@@ -544,10 +705,14 @@ const ratioColumns = [
             {row.nlDays}d NL / {row.beDays}d BE
           </span>
           {row.isCurrent && (
-            <Badge bg="primary" className="ms-2">{m.years_active()}</Badge>
+            <Badge bg="primary" className="ms-2">
+              {m.years_active()}
+            </Badge>
           )}
           {row.isOptimal && !row.isCurrent && (
-            <Badge bg="success" className="ms-2">{m.wfh_optimal()}</Badge>
+            <Badge bg="success" className="ms-2">
+              {m.wfh_optimal()}
+            </Badge>
           )}
           {row.threshold === "90-norm" && (
             <Badge className="ms-2 bt-wfh-badge-10">{m.wfh_threshold_10_label()}</Badge>
@@ -582,7 +747,7 @@ const ratioColumns = [
     header: () => m.years_effective_rate(),
     cell: (info) => <span className="text-muted small">{pct(info.getValue())}</span>,
   }),
-];
+]);
 
 interface RatioTableProps {
   data: DataPoint[];
@@ -633,17 +798,31 @@ function RatioTable({ data, currentIdx, optimalIdx, showBE }: RatioTableProps) {
       if (!d) return [];
       const totalTax = d.nlTax + d.beTax;
       const gross = d.netIncome + totalTax;
-      return [{ idx, beRatio: d.beRatio, beDays: d.beDays, nlDays: d.nlDays, nlTax: d.nlTax, beTax: d.beTax, totalTax, netIncome: d.netIncome, effectiveRate: gross > 0 ? totalTax / gross : 0, threshold, isCurrent, isOptimal }];
+      return [
+        {
+          idx,
+          beRatio: d.beRatio,
+          beDays: d.beDays,
+          nlDays: d.nlDays,
+          nlTax: d.nlTax,
+          beTax: d.beTax,
+          totalTax,
+          netIncome: d.netIncome,
+          effectiveRate: gross > 0 ? totalTax / gross : 0,
+          threshold,
+          isCurrent,
+          isOptimal,
+        },
+      ];
     });
   }, [data, currentIdx, optimalIdx]);
 
-  const table = useReactTable({
+  const table = useTable({
+    features: ratioTableFeatures,
     data: tableRows,
     columns: ratioColumns,
     state: { sorting, columnVisibility: { beTax: showBE } },
     onSortingChange: setSorting,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
   });
 
   if (tableRows.length === 0) return null;
