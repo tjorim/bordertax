@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <rect x="0" y="0" width="100%" height="100%" rx="14" fill="#0d9488"/>
+
+  <defs>
+    <clipPath id="page">
+      <polygon points="16,8 38,8 48,18 48,56 16,56"/>
+    </clipPath>
+  </defs>
+
+  <g clip-path="url(#page)">
+    <rect x="16" y="8" width="16" height="48" fill="#ffffff"/>
+    <rect x="32" y="8" width="16" height="48" fill="#ffffff" opacity="0.55"/>
+  </g>
+  <line x1="32" y1="8" x2="32" y2="56" stroke="#0d9488" stroke-width="1.5"/>
+
+  <g fill="#0d9488">
+    <circle cx="24" cy="24" r="4.5"/>
+    <circle cx="40" cy="40" r="4.5"/>
+    <line x1="26.5" y1="37.5" x2="37.5" y2="26.5" stroke="#0d9488" stroke-width="4.5" stroke-linecap="round"/>
+  </g>
+</svg>
