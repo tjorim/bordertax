@@ -34,6 +34,11 @@ npm run dev
 npm run build
 ```
 
+## Architecture
+
+See [ARCHITECTURE.md](ARCHITECTURE.md) for architectural notes, including
+retry-safety/idempotency requirements for any future backend writes.
+
 ## Caveats
 
 - Civil status and Belgian region fields are present but not yet used in the calculation.
