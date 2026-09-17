@@ -26,7 +26,8 @@ import {
 import { decorative } from "@tanstack/charts/mark/decorative";
 import { crosshair } from "@tanstack/charts/crosshair";
 import { scaleLinear } from "@tanstack/charts/scales/linear";
-import { Chart } from "@tanstack/charts/react";
+import { motion } from "@tanstack/charts/motion";
+import { Chart } from "@tanstack/charts/react/core";
 import { calculate } from "../tax";
 import type { TaxInputs } from "../tax/types";
 import * as m from "../paraglide/messages.js";
@@ -55,6 +56,12 @@ const T_25 = 0.25;
 const T_49 = 0.49;
 
 const Y_TICKS = 5;
+
+// Spring transition for line/area/marker movement as the ratio curve is
+// recomputed (inputs change) or the focused point moves along it.
+const chartRenderer = motion({
+  transition: { type: "spring", stiffness: 170, damping: 22, mass: 1 },
+});
 
 function fmtK(n: number): string {
   if (Math.abs(n) >= 1000) return `€${Math.round(n / 1000)}k`;
@@ -422,6 +429,7 @@ export default function WFHRatioChart({ inputs }: Props) {
         {chartDefinition && (
           <Chart
             definition={chartDefinition}
+            renderer={chartRenderer}
             height={300}
             ariaLabel={m.wfh_title()}
             ariaDescription={`${m.wfh_description()} ${m.wfh_current_ratio()}: ${Math.round(currentBeRatio * 100)}% BE.`}
