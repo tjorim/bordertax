@@ -1,4 +1,4 @@
-import { useEffect, useId, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { Badge, Table } from "react-bootstrap";
 import {
   columnVisibilityFeature,
@@ -13,6 +13,20 @@ import {
   type SortingState,
   useTable,
 } from "@tanstack/react-table";
+import {
+  areaY,
+  defineChart,
+  dot,
+  lineY,
+  rect,
+  ruleX,
+  text as textMark,
+  whenFocused,
+} from "@tanstack/charts";
+import { decorative } from "@tanstack/charts/mark/decorative";
+import { crosshair } from "@tanstack/charts/crosshair";
+import { scaleLinear } from "@tanstack/charts/scales/linear";
+import { Chart } from "@tanstack/charts/react";
 import { calculate } from "../tax";
 import type { TaxInputs } from "../tax/types";
 import * as m from "../paraglide/messages.js";
@@ -40,13 +54,7 @@ const T_25 = 0.25;
 /** ≤49 % BE → Dutch social security remains applicable via kaderakkoord (apply at SVB; A1 document required) */
 const T_49 = 0.49;
 
-const W = 600;
-const H = 300;
-const PAD = { top: 32, right: 24, bottom: 52, left: 76 };
-const CW = W - PAD.left - PAD.right;
-const CH = H - PAD.top - PAD.bottom;
-
-const SNAP_RADIUS = 3;
+const Y_TICKS = 5;
 
 function fmtK(n: number): string {
   if (Math.abs(n) >= 1000) return `€${Math.round(n / 1000)}k`;
@@ -62,26 +70,29 @@ function getZone(ratio: number): Zone {
   return "above";
 }
 
-function snapToKnown(idx: number, snapPoints: number[]): number {
-  let best: number | null = null;
-  let bestDist = SNAP_RADIUS + 1;
-  for (const pt of snapPoints) {
-    const dist = Math.abs(idx - pt);
-    if (dist <= SNAP_RADIUS && dist < bestDist) {
-      best = pt;
-      bestDist = dist;
-    }
-  }
-  return best ?? idx;
+// Threshold/current/optimal marker rows are plain objects rather than raw
+// numbers so their positional channels can use stable field-name accessors.
+interface XPoint {
+  x: number;
+}
+interface XYPoint {
+  x: number;
+  y: number;
+}
+interface ZoneRow {
+  x1: number;
+  x2: number;
+  fill: string;
+}
+interface ChipRow {
+  x: number;
+  label: string;
+  color: string;
 }
 
 export default function WFHRatioChart({ inputs }: Props) {
-  const chartTitleId = useId();
-  const chartDescriptionId = useId();
   const [hovered, setHovered] = useState<number | null>(null);
   const [tableOpen, setTableOpen] = useState(false);
-  const svgRef = useRef<SVGSVGElement>(null);
-  const scrubToRef = useRef<(clientX: number) => void>(() => {});
 
   const nlbeDays = inputs.daysWorkedNL + inputs.daysWorkedBE;
 
@@ -118,19 +129,6 @@ export default function WFHRatioChart({ inputs }: Props) {
     return best;
   }, [data]);
 
-  const snapPoints = useMemo(
-    () => [
-      ...new Set([
-        Math.round(T_90 * (STEPS - 1)),
-        Math.round(T_25 * (STEPS - 1)),
-        Math.round(T_49 * (STEPS - 1)),
-        currentIdx,
-        optimalIdx,
-      ]),
-    ],
-    [currentIdx, optimalIdx],
-  );
-
   const yMin = useMemo(
     () => Math.min(0, ...data.map((d) => Math.min(d.netIncome, d.nlTax, d.beTax))),
     [data],
@@ -140,25 +138,9 @@ export default function WFHRatioChart({ inputs }: Props) {
   const yLow = yMin - yPad;
   const yHigh = yMax + yPad;
 
-  const xOf = (r: number) => PAD.left + r * CW;
-  const xIdx = (i: number) => xOf(i / (STEPS - 1));
-  const yOf = (v: number) => PAD.top + CH - ((v - yLow) / (yHigh - yLow)) * CH;
-
-  const polyline = (key: keyof DataPoint) =>
-    data
-      .map(
-        (d, i) => `${i === 0 ? "M" : "L"}${xIdx(i).toFixed(1)},${yOf(d[key] as number).toFixed(1)}`,
-      )
-      .join(" ");
-
-  const areaPath = data.length
-    ? `${polyline("netIncome")} L${xIdx(STEPS - 1).toFixed(1)},${(PAD.top + CH).toFixed(1)} L${xIdx(0).toFixed(1)},${(PAD.top + CH).toFixed(1)} Z`
-    : "";
-
-  const Y_TICKS = 5;
-  const yTicks = Array.from(
-    { length: Y_TICKS + 1 },
-    (_, i) => yLow + (i / Y_TICKS) * (yHigh - yLow),
+  const yTicks = useMemo(
+    () => Array.from({ length: Y_TICKS + 1 }, (_, i) => yLow + (i / Y_TICKS) * (yHigh - yLow)),
+    [yLow, yHigh],
   );
 
   const showBE = inputs.residentCountry === "BE";
@@ -170,47 +152,242 @@ export default function WFHRatioChart({ inputs }: Props) {
   const optimalNet = data[optimalIdx]?.netIncome ?? 0;
   const delta = optimalNet - currentNet;
   const currentZone = getZone(currentBeRatio);
+  const optimalBeRatio = data[optimalIdx]?.beRatio ?? 0;
+  const showOptimalMarker = optimalIdx !== currentIdx && data[optimalIdx] !== undefined;
 
-  const x90 = xOf(T_90);
-  const x25 = xOf(T_25);
-  const x49 = xOf(T_49);
-  const xCur = xIdx(currentIdx);
-  const xOpt = xIdx(optimalIdx);
+  const chartDefinition = useMemo(() => {
+    if (data.length === 0) return null;
 
-  // Unified pointer handler — shared by mouse and touch
-  function scrubTo(clientX: number) {
-    const rect = svgRef.current?.getBoundingClientRect();
-    if (!rect) return;
-    const idx = Math.round(
-      (((clientX - rect.left) * (W / rect.width) - PAD.left) / CW) * (STEPS - 1),
+    const zoneRows: ZoneRow[] = [
+      { x1: 0, x2: T_90, fill: "rgba(34, 197, 94, 0.06)" },
+      { x1: T_90, x2: T_25, fill: "rgba(96, 165, 250, 0.025)" },
+      { x1: T_25, x2: T_49, fill: "rgba(168, 85, 247, 0.025)" },
+      { x1: T_49, x2: 1, fill: "rgba(245, 158, 11, 0.025)" },
+    ];
+    const chipRows: ChipRow[] = [
+      { x: T_90, label: m.wfh_threshold_10_label(), color: "rgba(96, 165, 250, 0.9)" },
+      { x: T_25, label: m.wfh_threshold_25_label(), color: "rgba(245, 158, 11, 0.9)" },
+      { x: T_49, label: m.wfh_threshold_49_label(), color: "rgba(168, 85, 247, 0.9)" },
+    ];
+    const currentPoint: XYPoint[] = [{ x: currentBeRatio, y: currentNet }];
+    const optimalPoint: XYPoint[] = showOptimalMarker ? [{ x: optimalBeRatio, y: optimalNet }] : [];
+    const thresholdRules: XPoint[] = [{ x: T_90 }, { x: T_25 }, { x: T_49 }];
+    const thresholdColors = [
+      "rgba(96, 165, 250, 0.7)",
+      "rgba(245, 158, 11, 0.7)",
+      "rgba(168, 85, 247, 0.7)",
+    ];
+
+    return defineChart(
+      {
+        marks: [
+          ...zoneRows.map((row, i) =>
+            decorative(
+              rect([row], {
+                id: `zone-${i}`,
+                x1: "x1",
+                x2: "x2",
+                y1: () => yLow,
+                y2: () => yHigh,
+                fill: row.fill,
+                inset: 0,
+              }),
+            ),
+          ),
+          decorative(
+            areaY(data, {
+              id: "net-area",
+              x: "beRatio",
+              y: "netIncome",
+              fill: "url(#wfh-net-grad)",
+            }),
+          ),
+          lineY(data, {
+            id: "net-line",
+            x: "beRatio",
+            y: "netIncome",
+            stroke: "var(--bt-success)",
+            strokeWidth: 2.5,
+          }),
+          decorative(
+            lineY(data, {
+              id: "nl-line",
+              x: "beRatio",
+              y: "nlTax",
+              stroke: "var(--bt-nl)",
+              strokeWidth: 2,
+              strokeOpacity: 0.85,
+            }),
+          ),
+          ...(showBE
+            ? [
+                decorative(
+                  lineY(data, {
+                    id: "be-line",
+                    x: "beRatio",
+                    y: "beTax",
+                    stroke: "var(--bt-be)",
+                    strokeWidth: 2,
+                    strokeOpacity: 0.85,
+                  }),
+                ),
+              ]
+            : []),
+          ...thresholdRules.map((row, i) =>
+            ruleX([row], {
+              id: `threshold-${i}`,
+              x: "x",
+              stroke: thresholdColors[i],
+              strokeWidth: 1.5,
+              strokeDasharray: "5 3",
+            }),
+          ),
+          decorative(
+            textMark(chipRows, {
+              id: "threshold-chips",
+              x: "x",
+              y: () => yHigh,
+              text: "label",
+              fill: "color",
+              fontSize: 8,
+              fontWeight: 600,
+              anchor: "start",
+              dx: 4,
+              dy: 10,
+            }),
+          ),
+          ruleX([{ x: currentBeRatio }], {
+            id: "current-line",
+            x: "x",
+            stroke: "rgba(255, 255, 255, 0.55)",
+            strokeWidth: 1.5,
+            strokeDasharray: "6 4",
+          }),
+          ...(showOptimalMarker
+            ? [
+                ruleX([{ x: optimalBeRatio }], {
+                  id: "optimal-line",
+                  x: "x",
+                  stroke: "var(--bt-success)",
+                  strokeWidth: 1,
+                  strokeDasharray: "3 3",
+                  strokeOpacity: 0.55,
+                }),
+                decorative(
+                  dot(optimalPoint, {
+                    id: "optimal-dot",
+                    x: "x",
+                    y: "y",
+                    r: 6,
+                    fill: "var(--bt-success)",
+                    fillOpacity: 0.9,
+                  }),
+                ),
+              ]
+            : []),
+          decorative(
+            dot(currentPoint, {
+              id: "current-dot",
+              x: "x",
+              y: "y",
+              r: 5,
+              fill: "var(--bt-bg)",
+              stroke: "rgba(255, 255, 255, 0.85)",
+              strokeWidth: 2.5,
+            }),
+          ),
+          whenFocused(
+            dot(data, {
+              id: "hover-net-dot",
+              x: "beRatio",
+              y: "netIncome",
+              r: 4,
+              fill: "var(--bt-success)",
+              stroke: "var(--bt-bg)",
+              strokeWidth: 2,
+            }),
+            { match: "x" },
+          ),
+          whenFocused(
+            dot(data, {
+              id: "hover-nl-dot",
+              x: "beRatio",
+              y: "nlTax",
+              r: 3,
+              fill: "var(--bt-nl)",
+              stroke: "var(--bt-bg)",
+              strokeWidth: 2,
+            }),
+            { match: "x" },
+          ),
+          ...(showBE
+            ? [
+                whenFocused(
+                  dot(data, {
+                    id: "hover-be-dot",
+                    x: "beRatio",
+                    y: "beTax",
+                    r: 3,
+                    fill: "var(--bt-be)",
+                    stroke: "var(--bt-bg)",
+                    strokeWidth: 2,
+                  }),
+                  { match: "x" },
+                ),
+              ]
+            : []),
+          crosshair({ x: {}, y: false }),
+        ],
+        scales: {
+          x: {
+            scale: () => scaleLinear().domain([0, 1]),
+            axis: {
+              ticks: {
+                values: [0, 0.1, 0.25, 0.5, 0.75, 1],
+                format: (v: number) => `${Math.round(v * 100)}%`,
+              },
+              label: m.wfh_x_label(),
+            },
+          },
+          y: {
+            scale: () => scaleLinear().domain([yLow, yHigh]),
+            grid: true,
+            axis: {
+              ticks: { values: yTicks, format: fmtK },
+            },
+          },
+        },
+        gradients: [
+          {
+            id: "wfh-net-grad",
+            y1: 0,
+            y2: 1,
+            stops: [
+              { offset: 0, color: "var(--bt-success)", opacity: 0.18 },
+              { offset: 1, color: "var(--bt-success)", opacity: 0.01 },
+            ],
+          },
+        ],
+        clip: true,
+      },
+      {
+        focus: "nearest-x",
+        maxFocusDistance: Number.POSITIVE_INFINITY,
+        keyboard: true,
+      },
     );
-    setHovered(snapToKnown(Math.max(0, Math.min(STEPS - 1, idx)), snapPoints));
-  }
-  scrubToRef.current = scrubTo;
-
-  function handleMouseMove(e: React.MouseEvent<SVGSVGElement>) {
-    scrubTo(e.clientX);
-  }
-
-  // Attach touch listener non-passively so preventDefault() suppresses scroll
-  useEffect(() => {
-    const el = svgRef.current;
-    if (!el) return;
-    function onTouchMove(e: TouchEvent) {
-      e.preventDefault();
-      const touch = e.touches[0];
-      if (touch) scrubToRef.current(touch.clientX);
-    }
-    function onTouchEnd() {
-      setHovered(null);
-    }
-    el.addEventListener("touchmove", onTouchMove, { passive: false });
-    el.addEventListener("touchend", onTouchEnd);
-    return () => {
-      el.removeEventListener("touchmove", onTouchMove);
-      el.removeEventListener("touchend", onTouchEnd);
-    };
-  }, []);
+  }, [
+    data,
+    showBE,
+    currentBeRatio,
+    currentNet,
+    optimalBeRatio,
+    optimalNet,
+    showOptimalMarker,
+    yLow,
+    yHigh,
+    yTicks,
+  ]);
 
   if (nlbeDays === 0) {
     return (
@@ -242,297 +419,15 @@ export default function WFHRatioChart({ inputs }: Props) {
 
       {/* ── Chart ───────────────────────────────────────────────────── */}
       <div className="bt-wfh-chart-wrap">
-        <svg
-          ref={svgRef}
-          viewBox={`0 0 ${W} ${H}`}
-          className="bt-wfh-svg"
-          onMouseMove={handleMouseMove}
-          onMouseLeave={() => setHovered(null)}
-          role="img"
-          aria-labelledby={chartTitleId}
-          aria-describedby={chartDescriptionId}
-        >
-          <title id={chartTitleId}>{m.wfh_title()}</title>
-          <desc id={chartDescriptionId}>
-            {m.wfh_description()} {m.wfh_current_ratio()}: {Math.round(currentBeRatio * 100)}% BE.
-          </desc>
-          <defs>
-            <linearGradient id="wfh-net-grad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="var(--bt-success)" stopOpacity="0.18" />
-              <stop offset="100%" stopColor="var(--bt-success)" stopOpacity="0.01" />
-            </linearGradient>
-            <filter id="wfh-glow" x="-20%" y="-50%" width="140%" height="200%">
-              <feGaussianBlur stdDeviation="2.5" result="blur" />
-              <feMerge>
-                <feMergeNode in="blur" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
-            </filter>
-            <clipPath id="wfh-clip">
-              <rect x={PAD.left} y={PAD.top} width={CW} height={CH} />
-            </clipPath>
-          </defs>
-
-          {/* ── Zone backgrounds ──────────────────────────────────────── */}
-          <rect
-            x={PAD.left}
-            y={PAD.top}
-            width={x90 - PAD.left}
-            height={CH}
-            className="bt-wfh-zone bt-wfh-zone--full"
+        {chartDefinition && (
+          <Chart
+            definition={chartDefinition}
+            height={300}
+            ariaLabel={m.wfh_title()}
+            ariaDescription={`${m.wfh_description()} ${m.wfh_current_ratio()}: ${Math.round(currentBeRatio * 100)}% BE.`}
+            onFocusChange={(point) => setHovered(point?.datumIndex ?? null)}
           />
-          <rect
-            x={x90}
-            y={PAD.top}
-            width={x25 - x90}
-            height={CH}
-            className="bt-wfh-zone bt-wfh-zone--hybrid"
-          />
-          <rect
-            x={x25}
-            y={PAD.top}
-            width={x49 - x25}
-            height={CH}
-            className="bt-wfh-zone bt-wfh-zone--kaderakkoord"
-          />
-          <rect
-            x={x49}
-            y={PAD.top}
-            width={W - PAD.right - x49}
-            height={CH}
-            className="bt-wfh-zone bt-wfh-zone--above"
-          />
-
-          {/* Zone top-edge accents */}
-          <line
-            x1={PAD.left}
-            x2={x90}
-            y1={PAD.top}
-            y2={PAD.top}
-            className="bt-wfh-zone-edge bt-wfh-zone-edge--full"
-          />
-          <line
-            x1={x90}
-            x2={x25}
-            y1={PAD.top}
-            y2={PAD.top}
-            className="bt-wfh-zone-edge bt-wfh-zone-edge--hybrid"
-          />
-          <line
-            x1={x25}
-            x2={x49}
-            y1={PAD.top}
-            y2={PAD.top}
-            className="bt-wfh-zone-edge bt-wfh-zone-edge--kaderakkoord"
-          />
-          <line
-            x1={x49}
-            x2={W - PAD.right}
-            y1={PAD.top}
-            y2={PAD.top}
-            className="bt-wfh-zone-edge bt-wfh-zone-edge--above"
-          />
-
-          {/* ── Y grid + labels ───────────────────────────────────────── */}
-          {yTicks.map((v, i) => (
-            <g key={i}>
-              <line
-                x1={PAD.left}
-                x2={W - PAD.right}
-                y1={yOf(v)}
-                y2={yOf(v)}
-                className="bt-wfh-grid"
-              />
-              <text
-                x={PAD.left - 8}
-                y={yOf(v)}
-                textAnchor="end"
-                dominantBaseline="middle"
-                className="bt-wfh-axis-label"
-              >
-                {fmtK(v)}
-              </text>
-            </g>
-          ))}
-
-          {/* ── X axis ────────────────────────────────────────────────── */}
-          {[0, 10, 25, 50, 75, 100].map((p) => (
-            <text
-              key={p}
-              x={xOf(p / 100)}
-              y={H - PAD.bottom + 16}
-              textAnchor="middle"
-              className="bt-wfh-axis-label"
-            >
-              {p}%
-            </text>
-          ))}
-          <text x={PAD.left + CW / 2} y={H - 6} textAnchor="middle" className="bt-wfh-axis-title">
-            {m.wfh_x_label()}
-          </text>
-
-          {/* ── Threshold lines + chips ────────────────────────────────── */}
-          <line
-            x1={x90}
-            x2={x90}
-            y1={PAD.top}
-            y2={H - PAD.bottom}
-            className="bt-wfh-threshold bt-wfh-threshold--10"
-          />
-          <line
-            x1={x25}
-            x2={x25}
-            y1={PAD.top}
-            y2={H - PAD.bottom}
-            className="bt-wfh-threshold bt-wfh-threshold--25"
-          />
-          <line
-            x1={x49}
-            x2={x49}
-            y1={PAD.top}
-            y2={H - PAD.bottom}
-            className="bt-wfh-threshold bt-wfh-threshold--49"
-          />
-
-          <g transform={`translate(${x90 + 4}, ${PAD.top + 4})`}>
-            <rect
-              rx="3"
-              ry="3"
-              width="44"
-              height="14"
-              className="bt-wfh-chip-bg bt-wfh-chip-bg--10"
-            />
-            <text
-              x="22"
-              y="7"
-              textAnchor="middle"
-              dominantBaseline="middle"
-              className="bt-wfh-chip-text bt-wfh-chip-text--10"
-            >
-              {m.wfh_threshold_10_label()}
-            </text>
-          </g>
-          <g transform={`translate(${x25 + 4}, ${PAD.top + 4})`}>
-            <rect
-              rx="3"
-              ry="3"
-              width="44"
-              height="14"
-              className="bt-wfh-chip-bg bt-wfh-chip-bg--25"
-            />
-            <text
-              x="22"
-              y="7"
-              textAnchor="middle"
-              dominantBaseline="middle"
-              className="bt-wfh-chip-text bt-wfh-chip-text--25"
-            >
-              {m.wfh_threshold_25_label()}
-            </text>
-          </g>
-          <g transform={`translate(${x49 + 4}, ${PAD.top + 4})`}>
-            <rect
-              rx="3"
-              ry="3"
-              width="44"
-              height="14"
-              className="bt-wfh-chip-bg bt-wfh-chip-bg--49"
-            />
-            <text
-              x="22"
-              y="7"
-              textAnchor="middle"
-              dominantBaseline="middle"
-              className="bt-wfh-chip-text bt-wfh-chip-text--49"
-            >
-              {m.wfh_threshold_49_label()}
-            </text>
-          </g>
-
-          {/* ── Area fill + data lines ─────────────────────────────────── */}
-          <g clipPath="url(#wfh-clip)">
-            <path d={areaPath} fill="url(#wfh-net-grad)" />
-            <path
-              d={polyline("netIncome")}
-              fill="none"
-              className="bt-wfh-line bt-wfh-line--net"
-              filter="url(#wfh-glow)"
-            />
-            <path d={polyline("nlTax")} fill="none" className="bt-wfh-line bt-wfh-line--nl" />
-            {showBE && (
-              <path d={polyline("beTax")} fill="none" className="bt-wfh-line bt-wfh-line--be" />
-            )}
-          </g>
-
-          {/* ── Optimal marker ────────────────────────────────────────── */}
-          {optimalIdx !== currentIdx && data[optimalIdx] && (
-            <>
-              <line
-                x1={xOpt}
-                x2={xOpt}
-                y1={PAD.top}
-                y2={H - PAD.bottom}
-                className="bt-wfh-optimal"
-              />
-              <polygon
-                points={`${xOpt},${yOf(optimalNet) - 8} ${xOpt + 6},${yOf(optimalNet)} ${xOpt},${yOf(optimalNet) + 8} ${xOpt - 6},${yOf(optimalNet)}`}
-                className="bt-wfh-optimal-diamond"
-              />
-            </>
-          )}
-
-          {/* ── Current position ──────────────────────────────────────── */}
-          <line x1={xCur} x2={xCur} y1={PAD.top} y2={H - PAD.bottom} className="bt-wfh-current" />
-          {data[currentIdx] && (
-            <>
-              <circle
-                cx={xCur}
-                cy={yOf(data[currentIdx]!.netIncome)}
-                r="10"
-                className="bt-wfh-pulse"
-              />
-              <circle
-                cx={xCur}
-                cy={yOf(data[currentIdx]!.netIncome)}
-                r="5"
-                className="bt-wfh-current-dot"
-              />
-            </>
-          )}
-
-          {/* ── Hover scrubber ────────────────────────────────────────── */}
-          {hovered !== null && hovered !== currentIdx && data[hovered] && (
-            <>
-              <line
-                x1={xIdx(hovered)}
-                x2={xIdx(hovered)}
-                y1={PAD.top}
-                y2={H - PAD.bottom}
-                className="bt-wfh-scrubber"
-              />
-              <circle
-                cx={xIdx(hovered)}
-                cy={yOf(data[hovered]!.netIncome)}
-                r={4}
-                className="bt-wfh-dot bt-wfh-dot--net"
-              />
-              <circle
-                cx={xIdx(hovered)}
-                cy={yOf(data[hovered]!.nlTax)}
-                r={3}
-                className="bt-wfh-dot bt-wfh-dot--nl"
-              />
-              {showBE && (
-                <circle
-                  cx={xIdx(hovered)}
-                  cy={yOf(data[hovered]!.beTax)}
-                  r={3}
-                  className="bt-wfh-dot bt-wfh-dot--be"
-                />
-              )}
-            </>
-          )}
-        </svg>
+        )}
 
         {/* ── Legend — directly below chart, above readout ──────────── */}
         <div className="bt-year-chart__legend bt-wfh-legend">
