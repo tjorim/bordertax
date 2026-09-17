@@ -50,7 +50,7 @@
     "@inlang/paraglide-js": "^2.25.1",
     "@inlang/plugin-m-function-matcher": "^2.2.14",
     "@inlang/plugin-message-format": "^4.4.4",
-    "@testing-library/dom": "^10.4.1",
+    "@testing-library/dom": "^10.4.2",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.3",
     "@types/node": "^26.5.0",
