@@ -30,6 +30,7 @@ import { motion } from "@tanstack/charts/motion";
 import { Chart } from "@tanstack/charts/react/core";
 import { calculate } from "../tax";
 import type { TaxInputs } from "../tax/types";
+import { getLocale } from "../paraglide/runtime.js";
 import * as m from "../paraglide/messages.js";
 import { fmt, pct } from "./format.js";
 
@@ -100,6 +101,7 @@ interface ChipRow {
 export default function WFHRatioChart({ inputs }: Props) {
   const [hovered, setHovered] = useState<number | null>(null);
   const [tableOpen, setTableOpen] = useState(false);
+  const locale = getLocale();
 
   const nlbeDays = inputs.daysWorkedNL + inputs.daysWorkedBE;
 
@@ -172,9 +174,9 @@ export default function WFHRatioChart({ inputs }: Props) {
       { x1: T_49, x2: 1, fill: "rgba(245, 158, 11, 0.025)" },
     ];
     const chipRows: ChipRow[] = [
-      { x: T_90, label: m.wfh_threshold_10_label(), color: "rgba(96, 165, 250, 0.9)" },
-      { x: T_25, label: m.wfh_threshold_25_label(), color: "rgba(245, 158, 11, 0.9)" },
-      { x: T_49, label: m.wfh_threshold_49_label(), color: "rgba(168, 85, 247, 0.9)" },
+      { x: T_90, label: m.wfh_threshold_10_label({}, { locale }), color: "rgba(96, 165, 250, 0.9)" },
+      { x: T_25, label: m.wfh_threshold_25_label({}, { locale }), color: "rgba(245, 158, 11, 0.9)" },
+      { x: T_49, label: m.wfh_threshold_49_label({}, { locale }), color: "rgba(168, 85, 247, 0.9)" },
     ];
     const currentPoint: XYPoint[] = [{ x: currentBeRatio, y: currentNet }];
     const optimalPoint: XYPoint[] = showOptimalMarker ? [{ x: optimalBeRatio, y: optimalNet }] : [];
@@ -353,7 +355,7 @@ export default function WFHRatioChart({ inputs }: Props) {
                 values: [0, 0.1, 0.25, 0.5, 0.75, 1],
                 format: (v: number) => `${Math.round(v * 100)}%`,
               },
-              label: m.wfh_x_label(),
+              label: m.wfh_x_label({}, { locale }),
             },
           },
           y: {
@@ -394,6 +396,7 @@ export default function WFHRatioChart({ inputs }: Props) {
     yLow,
     yHigh,
     yTicks,
+    locale,
   ]);
 
   if (nlbeDays === 0) {
