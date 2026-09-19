@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { useStore } from "@tanstack/react-form";
+import { useSelector } from "@tanstack/react-form";
 import clsx from "clsx";
-import type { ReactFormExtendedApi } from "@tanstack/react-form";
 import { z } from "zod";
 import { Accordion, Alert, Badge, Button, Col, Form, Row } from "react-bootstrap";
 import {
@@ -10,13 +9,11 @@ import {
   VALID_CIVIL_STATUSES,
   VALID_BELGIAN_REGIONS,
 } from "../tax/constants";
+import type { TaxFormApi } from "../App";
 import type { TaxInputs } from "../tax/types";
 import { getMaxDaysInYear, getNLFractions, getTotalWorkdays } from "../tax/workdays";
 import * as m from "../paraglide/messages.js";
 import { CurrencyField, NumberField, fieldError } from "./fields/NumberField";
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type TaxFormApi = ReactFormExtendedApi<TaxInputs, any, any, any, any, any, any, any, any, any, any, any>;
 
 interface Props {
   form: TaxFormApi;
@@ -34,7 +31,7 @@ const allowEmptyNumber =
 
 export default function InputPanel({ form }: Props) {
   const [showFormulas, setShowFormulas] = useState(false);
-  const values = useStore(form.store, (s) => s.values);
+  const values = useSelector(form.atom, (s) => s.values);
 
   const totalWorkdays = getTotalWorkdays(values);
   const maxWorkdaysInYear = getMaxDaysInYear(values.year);
@@ -70,7 +67,7 @@ export default function InputPanel({ form }: Props) {
                   <Form.Label htmlFor="tax-year">{m.input_tax_year()}</Form.Label>
                   <Form.Select
                     id="tax-year"
-                    value={field.state.value}
+                    value={field.value}
                     onChange={(e) =>
                       field.handleChange(Number(e.target.value) as TaxInputs["year"])
                     }
@@ -93,7 +90,7 @@ export default function InputPanel({ form }: Props) {
                     <Form.Label htmlFor="resident-country">{m.input_resident_country()}</Form.Label>
                     <Form.Select
                       id="resident-country"
-                      value={field.state.value}
+                      value={field.value}
                       onChange={(e) =>
                         field.handleChange(e.target.value as TaxInputs["residentCountry"])
                       }
@@ -127,7 +124,7 @@ export default function InputPanel({ form }: Props) {
                     </Form.Label>
                     <Form.Select
                       id="civil-status"
-                      value={field.state.value}
+                      value={field.value}
                       onChange={(e) =>
                         field.handleChange(e.target.value as TaxInputs["civilStatus"])
                       }
@@ -147,10 +144,10 @@ export default function InputPanel({ form }: Props) {
 
             <form.Field
               name="dependentChildren"
-              validators={{ onChange: z.number().int().min(0).max(10) }}
+              validators={[{ run: z.number().int().min(0).max(10), triggers: ["change"] }]}
             >
               {(field) => {
-                const err = fieldError(field.state.meta.errors as unknown[]);
+                const err = fieldError(field.errors as unknown[]);
                 return (
                   <Col xs={12} sm={6}>
                     <NumberField
@@ -158,7 +155,7 @@ export default function InputPanel({ form }: Props) {
                       label={m.input_dependents()}
                       min={0}
                       max={10}
-                      value={field.state.value}
+                      value={field.value}
                       onChange={allowEmptyNumber(field.handleChange)}
                       onBlur={field.handleBlur}
                       error={err}
@@ -174,7 +171,7 @@ export default function InputPanel({ form }: Props) {
                   <Form.Check
                     id="aow-age"
                     label={m.input_below_aow_age()}
-                    checked={field.state.value}
+                    checked={field.value}
                     onChange={(e) => field.handleChange(e.target.checked)}
                   />
                 </Col>
@@ -199,7 +196,7 @@ export default function InputPanel({ form }: Props) {
                         </Form.Label>
                         <Form.Select
                           id="belgian-region"
-                          value={field.state.value}
+                          value={field.value}
                           onChange={(e) =>
                             field.handleChange(e.target.value as TaxInputs["belgianRegion"])
                           }
@@ -222,10 +219,10 @@ export default function InputPanel({ form }: Props) {
 
                 <form.Field
                   name="communalTaxRate"
-                  validators={{ onChange: z.number().min(0).max(15) }}
+                  validators={[{ run: z.number().min(0).max(15), triggers: ["change"] }]}
                 >
                   {(field) => {
-                    const err = fieldError(field.state.meta.errors as unknown[]);
+                    const err = fieldError(field.errors as unknown[]);
                     return (
                       <Col xs={12} sm={6}>
                         <NumberField
@@ -241,7 +238,7 @@ export default function InputPanel({ form }: Props) {
                           min={0}
                           max={15}
                           step={0.1}
-                          value={field.state.value}
+                          value={field.value}
                           onChange={allowEmptyNumber(field.handleChange)}
                           onBlur={field.handleBlur}
                           hint={m.input_municipal_tax_hint()}
@@ -270,16 +267,16 @@ export default function InputPanel({ form }: Props) {
               <Form.Text className="text-muted">{m.input_income_not_persisted_hint()}</Form.Text>
             </Col>
 
-            <form.Field name="grossSalary" validators={{ onChange: z.number().min(0) }}>
+            <form.Field name="grossSalary" validators={[{ run: z.number().min(0), triggers: ["change"] }]}>
               {(field) => {
-                const err = fieldError(field.state.meta.errors as unknown[]);
+                const err = fieldError(field.errors as unknown[]);
                 return (
                   <Col xs={12}>
                     <CurrencyField
                       id="gross-salary"
                       label={m.input_gross_salary()}
                       min={0}
-                      value={field.state.value}
+                      value={field.value}
                       onChange={allowEmptyNumber(field.handleChange)}
                       onBlur={field.handleBlur}
                       hint={m.input_gross_salary_hint()}
@@ -291,16 +288,16 @@ export default function InputPanel({ form }: Props) {
               }}
             </form.Field>
 
-            <form.Field name="withheldTaxNL" validators={{ onChange: z.number().min(0) }}>
+            <form.Field name="withheldTaxNL" validators={[{ run: z.number().min(0), triggers: ["change"] }]}>
               {(field) => {
-                const err = fieldError(field.state.meta.errors as unknown[]);
+                const err = fieldError(field.errors as unknown[]);
                 return (
                   <Col xs={12}>
                     <CurrencyField
                       id="withheldTaxNL"
                       label={m.input_withheld_tax_nl()}
                       min={0}
-                      value={field.state.value}
+                      value={field.value}
                       onChange={allowEmptyNumber(field.handleChange)}
                       onBlur={field.handleBlur}
                       hint={m.input_withheld_tax_nl_hint()}
@@ -312,16 +309,16 @@ export default function InputPanel({ form }: Props) {
               }}
             </form.Field>
 
-            <form.Field name="daysWorkedNL" validators={{ onChange: z.number().min(0) }}>
+            <form.Field name="daysWorkedNL" validators={[{ run: z.number().min(0), triggers: ["change"] }]}>
               {(field) => {
-                const err = fieldError(field.state.meta.errors as unknown[]);
+                const err = fieldError(field.errors as unknown[]);
                 return (
                   <Col xs={12} sm={6}>
                     <NumberField
                       id="days-worked-nl"
                       label={m.input_workdays_nl()}
                       min={0}
-                      value={field.state.value}
+                      value={field.value}
                       onChange={allowEmptyNumber(field.handleChange)}
                       onBlur={field.handleBlur}
                       hint={m.input_workdays_nl_hint()}
@@ -333,16 +330,16 @@ export default function InputPanel({ form }: Props) {
               }}
             </form.Field>
 
-            <form.Field name="daysWorkedBE" validators={{ onChange: z.number().min(0) }}>
+            <form.Field name="daysWorkedBE" validators={[{ run: z.number().min(0), triggers: ["change"] }]}>
               {(field) => {
-                const err = fieldError(field.state.meta.errors as unknown[]);
+                const err = fieldError(field.errors as unknown[]);
                 return (
                   <Col xs={12} sm={6}>
                     <NumberField
                       id="days-worked-be"
                       label={m.input_workdays_be()}
                       min={0}
-                      value={field.state.value}
+                      value={field.value}
                       onChange={allowEmptyNumber(field.handleChange)}
                       onBlur={field.handleBlur}
                       error={err}
@@ -352,16 +349,16 @@ export default function InputPanel({ form }: Props) {
               }}
             </form.Field>
 
-            <form.Field name="daysWorkedOther" validators={{ onChange: z.number().min(0) }}>
+            <form.Field name="daysWorkedOther" validators={[{ run: z.number().min(0), triggers: ["change"] }]}>
               {(field) => {
-                const err = fieldError(field.state.meta.errors as unknown[]);
+                const err = fieldError(field.errors as unknown[]);
                 return (
                   <Col xs={12} sm={6}>
                     <NumberField
                       id="daysWorkedOther"
                       label={m.input_workdays_other()}
                       min={0}
-                      value={field.state.value}
+                      value={field.value}
                       onChange={allowEmptyNumber(field.handleChange)}
                       onBlur={field.handleBlur}
                       hint={m.input_workdays_other_hint()}
@@ -373,16 +370,16 @@ export default function InputPanel({ form }: Props) {
               }}
             </form.Field>
 
-            <form.Field name="sickDays" validators={{ onChange: z.number().min(0) }}>
+            <form.Field name="sickDays" validators={[{ run: z.number().min(0), triggers: ["change"] }]}>
               {(field) => {
-                const err = fieldError(field.state.meta.errors as unknown[]);
+                const err = fieldError(field.errors as unknown[]);
                 return (
                   <Col xs={12} sm={6}>
                     <NumberField
                       id="sickDays"
                       label={m.input_sick_days()}
                       min={0}
-                      value={field.state.value}
+                      value={field.value}
                       onChange={allowEmptyNumber(field.handleChange)}
                       onBlur={field.handleBlur}
                       hint={m.input_sick_days_hint()}
@@ -463,7 +460,7 @@ export default function InputPanel({ form }: Props) {
                   <Form.Check
                     id="thirty-ruling"
                     label={m.input_thirty_percent_ruling()}
-                    checked={field.state.value}
+                    checked={field.value}
                     onChange={(e) => field.handleChange(e.target.checked)}
                     aria-describedby="thirty-ruling-hint"
                   />
@@ -499,17 +496,17 @@ export default function InputPanel({ form }: Props) {
                   <form.Field
                     key={fieldDef.key}
                     name={fieldDef.key}
-                    validators={{ onChange: z.number().min(0) }}
+                    validators={[{ run: z.number().min(0), triggers: ["change"] }]}
                   >
                     {(field) => {
-                      const err = fieldError(field.state.meta.errors as unknown[]);
+                      const err = fieldError(field.errors as unknown[]);
                       return (
                         <Col xs={12} sm={6}>
                           <CurrencyField
                             id={fieldDef.key}
                             label={fieldDef.label}
                             min={0}
-                            value={field.state.value}
+                            value={field.value}
                             onChange={allowEmptyNumber(field.handleChange)}
                             onBlur={field.handleBlur}
                             error={err}

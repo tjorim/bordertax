@@ -1,4 +1,4 @@
-import { useForm, useStore } from "@tanstack/react-form";
+import { formOptions, useForm, useSelector, type ReactFormType } from "@tanstack/react-form";
 import { useEffect, useMemo, useState } from "react";
 import { Col, Container, Nav, Navbar, Row, Tab } from "react-bootstrap";
 import { ErrorBoundary, type FallbackProps } from "react-error-boundary";
@@ -21,7 +21,7 @@ import { getLocale } from "./paraglide/runtime.js";
 import { AppNavbar } from "./components/AppNavbar";
 import { PageFooter } from "./components/PageFooter";
 
-const DEFAULT_INPUTS: TaxInputs = {
+export const DEFAULT_INPUTS: TaxInputs = {
   year: 2025,
   residentCountry: "BE",
   civilStatus: "single",
@@ -41,6 +41,9 @@ const DEFAULT_INPUTS: TaxInputs = {
   withheldTaxNL: 0,
   sickDays: 0,
 };
+
+const taxFormOptions = formOptions({ defaultValues: DEFAULT_INPUTS });
+export type TaxFormApi = ReactFormType<typeof taxFormOptions>;
 
 const STORAGE_KEY = "grensarbeider-tax-inputs-v1";
 
@@ -158,7 +161,7 @@ function ResultsErrorFallback({ error }: FallbackProps) {
 export default function App() {
   const [initialValues] = useState(loadInitialInputs);
   const form = useForm({ defaultValues: initialValues });
-  const rawValues = useStore(form.store, (s) => s.values);
+  const rawValues = useSelector(form.atom, (s) => s.values);
   const inputs = useMemo(() => {
     const parsed = TaxInputSchema.safeParse(rawValues);
     return parsed.success ? parsed.data : DEFAULT_INPUTS;

@@ -1,8 +1,9 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 import { useForm } from "@tanstack/react-form";
 
-import InputPanel, { type TaxFormApi } from "@/components/InputPanel";
+import InputPanel from "@/components/InputPanel";
+import type { TaxFormApi } from "@/App";
 import { fieldError } from "@/components/fields/NumberField";
 import type { TaxInputs } from "@/tax/types";
 import { setLocale } from "@/paraglide/runtime";
@@ -142,14 +143,16 @@ describe("InputPanel", () => {
     expect(getForm().getFieldValue("dependentChildren")).toBe(2);
   });
 
-  it("allows out-of-range dependents and surfaces a validation error", () => {
+  it("allows out-of-range dependents and surfaces a validation error", async () => {
     const { getForm } = renderInputPanel();
     const dependentChildren = screen.getByRole("spinbutton", { name: /dependents/i });
     fireEvent.change(dependentChildren, { target: { value: "99" } });
     // Raw form value is unclamped — clamping happens at the App layer via TaxInputSchema.parse
     expect(getForm().getFieldValue("dependentChildren")).toBe(99);
-    // Zod validator marks the input as invalid
-    expect(dependentChildren).toHaveClass("is-invalid");
+    // Zod validator marks the input as invalid. TanStack Form v2 runs validators
+    // through an async pipeline even for sync schemas, so the error state lands
+    // a tick after the change event rather than within the same act() flush.
+    await waitFor(() => expect(dependentChildren).toHaveClass("is-invalid"));
   });
 
   it("shows total workdays count", () => {
