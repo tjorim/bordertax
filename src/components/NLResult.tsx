@@ -3,6 +3,7 @@ import clsx from "clsx";
 import type { NLTaxResult } from "../tax/types";
 import * as m from "../paraglide/messages.js";
 import { fmtExact as fmt, pctExact as pct } from "./format.js";
+import { CodeBadge } from "./CodeBadge";
 
 interface Props {
   result: NLTaxResult;
@@ -36,6 +37,17 @@ export default function NLResult({
 
       <Table bordered size="sm" className="mb-3">
         <tbody>
+          <tr>
+            <td>
+              {m.nl_not_taxed_income()}
+              <CodeBadge
+                code={m.nl_not_taxed_income()}
+                description={m.code_desc_deel_niet_in_nl_belast()}
+                system="nl"
+              />
+            </td>
+            <td className="text-end">{fmt(result.deelNietInNLBelast)}</td>
+          </tr>
           <tr>
             <td>{m.nl_taxable_income()}</td>
             <td className="text-end fw-semibold">{fmt(result.nlTaxableIncome)}</td>

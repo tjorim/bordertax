@@ -14,7 +14,7 @@ import MultiYearComparison from "./components/MultiYearComparison";
 import WFHRatioChart from "./components/WFHRatioChart";
 import { calculate } from "./tax";
 import type { TaxInputs } from "./tax/types";
-import { VALID_YEARS } from "./tax/constants";
+import { isThirtyPercentRulingSupportedResident, VALID_YEARS } from "./tax/constants";
 import { TaxInputSchema, PersistedInputsSchema, type PersistedInputs } from "./tax/schema";
 import * as m from "./paraglide/messages.js";
 import { getLocale } from "./paraglide/runtime.js";
@@ -126,7 +126,10 @@ function ResultsTabs({ inputs, onResetInputs }: ResultsTabsProps) {
           <NLResult
             result={result.nl}
             withheldTaxNL={inputs.withheldTaxNL}
-            thirtyPercentRuling={inputs.thirtyPercentRuling}
+            thirtyPercentRuling={
+              isThirtyPercentRulingSupportedResident(inputs.residentCountry) &&
+              inputs.thirtyPercentRuling
+            }
           />
         </Tab.Pane>
         <Tab.Pane eventKey="be" className="bt-be-accent">

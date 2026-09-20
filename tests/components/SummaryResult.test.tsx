@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import SummaryResult from "@/components/SummaryResult";
 import * as m from "@/paraglide/messages.js";
+import { fmtExact } from "@/components/format";
 import { mockTaxResult, mockTaxResultNoBE } from "../test-utils/mockData";
 
 describe("SummaryResult", () => {
@@ -28,6 +29,39 @@ describe("SummaryResult", () => {
     render(<SummaryResult result={mockTaxResult} onResetInputs={onReset} />);
     expect(screen.getByRole("button", { name: /copy/i })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /reset/i })).toBeInTheDocument();
+  });
+
+  it("shows the document-to-return filing checklist", () => {
+    const onReset = vi.fn();
+    render(<SummaryResult result={mockTaxResult} onResetInputs={onReset} />);
+    expect(screen.getByRole("heading", { name: /prepare your returns/i })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /mijn belastingdienst/i })).toHaveAttribute(
+      "href",
+      "https://mijn.belastingdienst.nl/",
+    );
+    expect(screen.getAllByText(/code 1250/i)).toHaveLength(2);
+    expect(
+      screen.getByRole("columnheader", { name: /section o\.2.*netherlands/i }),
+    ).toBeInTheDocument();
+    expect(screen.getByText(/personal social contributions.*netherlands/i)).toBeInTheDocument();
+    expect(screen.getByText(/not amounts to type into the returns/i)).toBeInTheDocument();
+  });
+
+  it("uses the Belgian-taxable workday share for the O.2 wage amount", () => {
+    const onReset = vi.fn();
+    const result = {
+      ...mockTaxResult,
+      // Make the Dutch-return field intentionally different from the Belgian
+      // allocation to prove the O.2 row follows the Belgian calculation.
+      nl: { ...mockTaxResult.nl, deelNietInNLBelast: 10000 },
+    };
+    render(<SummaryResult result={result} onResetInputs={onReset} />);
+
+    const row = screen.getByText(m.filing_be_1250_nl()).closest("tr");
+    expect(row).toHaveTextContent(
+      fmtExact(Math.max(0, mockTaxResult.be!.declaredIncome - mockTaxResult.be!.beIncome)),
+    );
+    expect(row).not.toHaveTextContent(fmtExact(mockTaxResult.be!.declaredIncome - 10000));
   });
 
   it("calls onResetInputs when reset button is clicked", async () => {

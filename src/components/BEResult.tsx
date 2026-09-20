@@ -2,6 +2,7 @@ import { Alert, Table } from "react-bootstrap";
 import type { BETaxResult, TaxInputs } from "../tax/types";
 import * as m from "../paraglide/messages.js";
 import { fmtExact as fmt, pctExact as pct } from "./format.js";
+import { CodeBadge } from "./CodeBadge";
 
 interface Props {
   result: BETaxResult | null;
@@ -58,6 +59,13 @@ export default function BEResult({ result, residentCountry }: Props) {
           <tr>
             <td>{m.be_total_gross_income()}</td>
             <td className="text-end">{fmt(result.nlExemptIncome + result.beIncome)}</td>
+          </tr>
+          <tr className="fw-semibold">
+            <td>
+              {m.be_declared_income()}
+              <CodeBadge code="1250" description={m.code_desc_1250()} />
+            </td>
+            <td className="text-end">{fmt(result.declaredIncome)}</td>
           </tr>
           <tr>
             <td>{m.be_professional_expenses()}</td>

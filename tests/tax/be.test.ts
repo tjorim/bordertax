@@ -78,6 +78,30 @@ describe("calculateBETax", () => {
     expect(result!.netTaxBE).toBeGreaterThan(0);
   });
 
+  it("dienstencheques reduce netTaxBE for income year 2024 (reduction still in force)", () => {
+    const withoutVouchers = calculateBETax(
+      { ...base, year: 2024, daysWorkedNL: 200, daysWorkedBE: 20, dienstencheques: 0 },
+      mockNL(),
+    );
+    const withVouchers = calculateBETax(
+      { ...base, year: 2024, daysWorkedNL: 200, daysWorkedBE: 20, dienstencheques: 1000 },
+      mockNL(),
+    );
+    expect(withVouchers!.netTaxBE).toBeLessThan(withoutVouchers!.netTaxBE);
+  });
+
+  it("dienstencheques no longer reduce netTaxBE from income year 2025 onward (reduction abolished)", () => {
+    const withoutVouchers = calculateBETax(
+      { ...base, year: 2025, daysWorkedNL: 200, daysWorkedBE: 20, dienstencheques: 0 },
+      mockNL(),
+    );
+    const withVouchers = calculateBETax(
+      { ...base, year: 2025, daysWorkedNL: 200, daysWorkedBE: 20, dienstencheques: 1000 },
+      mockNL(),
+    );
+    expect(withVouchers!.netTaxBE).toBeCloseTo(withoutVouchers!.netTaxBE, 6);
+  });
+
   it("returns zero netTaxBE when both day counts are 0 and grossSalary is 0", () => {
     // With grossSalary=0, declared income=0, no tax of any kind
     const result = calculateBETax(
@@ -94,6 +118,16 @@ describe("calculateBETax", () => {
       mockNL({ nlTaxableIncome: 0, netTaxNL: 0 }),
     );
     expect(result!.beFraction).toBe(1);
+  });
+
+  it("allocates Dutch tax only to the NL-exempt portion of the Belgian return", () => {
+    const result = calculateBETax(
+      { ...base, grossSalary: 10000, daysWorkedNL: 9, daysWorkedBE: 1 },
+      mockNL({ nlTaxableIncome: 9000, netTaxNL: 2000 }),
+    );
+    // Code 1250 is €8,000 after €2,000 NL tax. The €1,000 Belgian work share
+    // stays taxable in Belgium, leaving €7,000 (= 87.5%) as NL-exempt income.
+    expect(result!.vrijgesteld / result!.netProfessionalIncome).toBeCloseTo(0.875, 6);
   });
 
   it("communal levy increases with higher communalTaxRate", () => {

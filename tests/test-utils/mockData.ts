@@ -23,6 +23,7 @@ export const mockInputs: TaxInputs = {
 
 export const mockNLResult: NLTaxResult = {
   nlTaxableIncome: 54545.45,
+  deelNietInNLBelast: 5454.55,
   taxBeforeCredits: 19807.51,
   brackets: [
     { label: "€0 – €38.441", rate: 0.3582, taxableAmount: 38441, tax: 13773.56 },

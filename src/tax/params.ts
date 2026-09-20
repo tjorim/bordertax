@@ -67,6 +67,11 @@ export interface BEYearParams {
   gereduceerdRate: number;
   /** Regional supplement: gereduceerde × gewestelijkeRate = gewestelijke belasting. */
   gewestelijkeRate: number;
+  /**
+   * Regional tax reduction rate for dienstencheques (service vouchers), Flemish region.
+   * Abolished for cheques purchased from 1 January 2025 onward (income year 2025 / AJ2026+) — 0 from 2025.
+   */
+  serviceVoucherReductionRate: number;
 }
 
 // ─── Combined params ──────────────────────────────────────────────────────────
@@ -135,6 +140,7 @@ export const TAX_PARAMS: Record<TaxYear, YearParams> = {
       forfaitMax: 4880,
       gereduceerdRate: 0.75043,
       gewestelijkeRate: 0.33257,
+      serviceVoucherReductionRate: 0.2,
     },
   },
 
@@ -196,6 +202,7 @@ export const TAX_PARAMS: Record<TaxYear, YearParams> = {
       forfaitMax: 4920,
       gereduceerdRate: 0.75043,
       gewestelijkeRate: 0.33257,
+      serviceVoucherReductionRate: 0.2,
     },
   },
 
@@ -257,6 +264,7 @@ export const TAX_PARAMS: Record<TaxYear, YearParams> = {
       forfaitMax: 5040,
       gereduceerdRate: 0.75043,
       gewestelijkeRate: 0.33257,
+      serviceVoucherReductionRate: 0.2,
     },
   },
 
@@ -319,6 +327,7 @@ export const TAX_PARAMS: Record<TaxYear, YearParams> = {
       forfaitMax: 5520,
       gereduceerdRate: 0.75043,
       gewestelijkeRate: 0.33257,
+      serviceVoucherReductionRate: 0.2,
     },
   },
 
@@ -381,6 +390,7 @@ export const TAX_PARAMS: Record<TaxYear, YearParams> = {
       forfaitMax: 5750,
       gereduceerdRate: 0.75043,
       gewestelijkeRate: 0.33257,
+      serviceVoucherReductionRate: 0.2,
     },
   },
 
@@ -442,10 +452,11 @@ export const TAX_PARAMS: Record<TaxYear, YearParams> = {
       forfaitMax: 5930,
       gereduceerdRate: 0.75043,
       gewestelijkeRate: 0.33257,
+      serviceVoucherReductionRate: 0,
     },
   },
 
-/*  2026: {
+  /*  2026: {
     nl: {
       under: {
         incomeTaxBrackets: [
@@ -502,6 +513,7 @@ export const TAX_PARAMS: Record<TaxYear, YearParams> = {
       forfaitMax: 6070,
       gereduceerdRate: 0.75043,
       gewestelijkeRate: 0.33257,
+      serviceVoucherReductionRate: 0,
     },
   },*/
 };

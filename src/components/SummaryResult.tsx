@@ -5,6 +5,7 @@ import type { TaxResult } from "../tax/types";
 import { getNLFractions, getTotalWorkdays } from "../tax/workdays";
 import * as m from "../paraglide/messages.js";
 import { fmt, fmtSigned, pct } from "./format.js";
+import FilingChecklist from "./FilingChecklist";
 
 interface Props {
   result: TaxResult;
@@ -196,6 +197,8 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
           </div>
         </Col>
       </Row>
+
+      <FilingChecklist result={result} />
 
       {/* Income sourcing ratio (4 percentages) */}
       {(() => {

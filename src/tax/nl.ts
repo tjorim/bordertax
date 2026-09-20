@@ -13,7 +13,10 @@
  * Year-specific rates are in params.ts — that is the only file that needs updating each year.
  */
 import type { TaxInputs, NLTaxResult, BracketLine } from "./types";
-import { NL_THIRTY_PERCENT_RULING_TAXABLE_RESIDUAL } from "./constants";
+import {
+  isThirtyPercentRulingSupportedResident,
+  NL_THIRTY_PERCENT_RULING_TAXABLE_RESIDUAL,
+} from "./constants";
 import { TAX_PARAMS } from "./params";
 import type { NLBracket, NLYearParams } from "./params";
 import { getNLFractions } from "./workdays";
@@ -67,9 +70,17 @@ export function calculateNLTax(inputs: TaxInputs): NLTaxResult {
 
   const { nlFractionDutchMethod: nlFraction } = getNLFractions(inputs);
 
-  let nlTaxableIncome = Math.round(inputs.grossSalary * nlFraction);
+  // "Deel niet in NL belast": entered as its own field on the NL aangifte, separate from Loon.
+  // Computed independently of the 30% ruling, which is a distinct exemption on the form.
+  const nlTaxableIncomeBeforeRuling = Math.round(inputs.grossSalary * nlFraction);
+  const deelNietInNLBelast = inputs.grossSalary - nlTaxableIncomeBeforeRuling;
 
-  if (inputs.thirtyPercentRuling) {
+  let nlTaxableIncome = nlTaxableIncomeBeforeRuling;
+
+  if (
+    isThirtyPercentRulingSupportedResident(inputs.residentCountry) &&
+    inputs.thirtyPercentRuling
+  ) {
     // 30% of the income is tax-free; only 70% is taxed
     nlTaxableIncome = Math.round(nlTaxableIncome * NL_THIRTY_PERCENT_RULING_TAXABLE_RESIDUAL);
   }
@@ -96,6 +107,7 @@ export function calculateNLTax(inputs: TaxInputs): NLTaxResult {
 
   return {
     nlTaxableIncome,
+    deelNietInNLBelast,
     taxBeforeCredits,
     brackets,
     algemeneHeffingskorting: ahk,
