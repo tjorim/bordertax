@@ -14,6 +14,7 @@ import type { TaxInputs } from "../tax/types";
 import { getMaxDaysInYear, getNLFractions, getTotalWorkdays } from "../tax/workdays";
 import * as m from "../paraglide/messages.js";
 import { CurrencyField, NumberField, fieldError } from "./fields/NumberField";
+import { CodeBadge } from "./CodeBadge";
 
 interface Props {
   form: TaxFormApi;
@@ -478,20 +479,34 @@ export default function InputPanel({ form }: Props) {
                     {
                       key: "socialContributions",
                       label: m.input_social_contributions(),
+                      code: "1257",
+                      hint: undefined,
                     },
                     {
                       key: "aanvullendPensioen",
                       label: m.input_aanvullend_pensioen(),
+                      code: "1285",
+                      hint: undefined,
                     },
                     {
                       key: "dienstencheques",
                       label: m.input_dienstencheques(),
+                      code: "3364",
+                      hint:
+                        values.year >= 2025 ? m.input_dienstencheques_hint_abolished() : undefined,
                     },
                     {
                       key: "roerendeVoorheffing",
                       label: m.input_roerende_voorheffing(),
+                      code: "1437",
+                      hint: undefined,
                     },
-                  ] as const satisfies readonly { key: BelgianDeductionKey; label: string }[]
+                  ] as const satisfies readonly {
+                    key: BelgianDeductionKey;
+                    label: string;
+                    code: string;
+                    hint?: string;
+                  }[]
                 ).map((fieldDef) => (
                   <form.Field
                     key={fieldDef.key}
@@ -504,12 +519,19 @@ export default function InputPanel({ form }: Props) {
                         <Col xs={12} sm={6}>
                           <CurrencyField
                             id={fieldDef.key}
-                            label={fieldDef.label}
+                            label={
+                              <>
+                                {fieldDef.label}
+                                <CodeBadge code={fieldDef.code} />
+                              </>
+                            }
                             min={0}
                             value={field.value}
                             onChange={allowEmptyNumber(field.handleChange)}
                             onBlur={field.handleBlur}
                             error={err}
+                            hint={fieldDef.hint}
+                            hintId={fieldDef.hint ? `${fieldDef.key}-hint` : undefined}
                           />
                         </Col>
                       );

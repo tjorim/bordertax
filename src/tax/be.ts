@@ -13,7 +13,6 @@
 import type { TaxInputs, BETaxResult, NLTaxResult } from "./types";
 import {
   BE_PENSION_REDUCTION_RATE,
-  BE_SERVICE_VOUCHER_REDUCTION_RATE,
   BE_TAX_FREE_ALLOWANCE_REDUCTION_RATE,
 } from "./constants";
 import { TAX_PARAMS } from "./params";
@@ -113,7 +112,7 @@ export function calculateBETax(inputs: TaxInputs, nl: NLTaxResult): BETaxResult 
 
   // Optional deductions
   const pensioenRed = aanvullendPensioen * BE_PENSION_REDUCTION_RATE;
-  const dienstchequesRed = dienstencheques * BE_SERVICE_VOUCHER_REDUCTION_RATE;
+  const dienstchequesRed = dienstencheques * p.serviceVoucherReductionRate;
 
   // Saldi
   const saldoFederaal = Math.max(0, gereduceerde - pensioenRed - roerendeVoorheffing);

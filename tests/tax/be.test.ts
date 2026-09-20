@@ -78,6 +78,30 @@ describe("calculateBETax", () => {
     expect(result!.netTaxBE).toBeGreaterThan(0);
   });
 
+  it("dienstencheques reduce netTaxBE for income year 2024 (reduction still in force)", () => {
+    const withoutVouchers = calculateBETax(
+      { ...base, year: 2024, daysWorkedNL: 200, daysWorkedBE: 20, dienstencheques: 0 },
+      mockNL(),
+    );
+    const withVouchers = calculateBETax(
+      { ...base, year: 2024, daysWorkedNL: 200, daysWorkedBE: 20, dienstencheques: 1000 },
+      mockNL(),
+    );
+    expect(withVouchers!.netTaxBE).toBeLessThan(withoutVouchers!.netTaxBE);
+  });
+
+  it("dienstencheques no longer reduce netTaxBE from income year 2025 onward (reduction abolished)", () => {
+    const withoutVouchers = calculateBETax(
+      { ...base, year: 2025, daysWorkedNL: 200, daysWorkedBE: 20, dienstencheques: 0 },
+      mockNL(),
+    );
+    const withVouchers = calculateBETax(
+      { ...base, year: 2025, daysWorkedNL: 200, daysWorkedBE: 20, dienstencheques: 1000 },
+      mockNL(),
+    );
+    expect(withVouchers!.netTaxBE).toBeCloseTo(withoutVouchers!.netTaxBE, 6);
+  });
+
   it("returns zero netTaxBE when both day counts are 0 and grossSalary is 0", () => {
     // With grossSalary=0, declared income=0, no tax of any kind
     const result = calculateBETax(
