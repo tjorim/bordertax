@@ -117,7 +117,7 @@ export default function FilingChecklist({ result }: Props) {
               </tr>
               <tr>
                 <td>{m.filing_be_1250_nl()}</td>
-                <td className="text-end fw-semibold">{fmt(be.declaredIncome - nl.deelNietInNLBelast)}</td>
+                <td className="text-end fw-semibold">{fmt(Math.max(0, be.declaredIncome - be.beIncome))}</td>
                 <td>{m.filing_be_1250_nl_source()}</td>
               </tr>
               <tr>
