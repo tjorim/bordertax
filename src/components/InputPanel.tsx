@@ -353,6 +353,8 @@ export default function InputPanel({ form }: Props) {
                       value={field.value}
                       onChange={allowEmptyNumber(field.handleChange)}
                       onBlur={field.handleBlur}
+                      hint={m.input_workdays_be_hint()}
+                      hintId="workdays-be-hint"
                       error={err}
                     />
                   </Col>
@@ -511,14 +513,14 @@ export default function InputPanel({ form }: Props) {
                       label: m.input_social_contributions(),
                       code: "1257",
                       codeDescription: m.code_desc_1257(),
-                      hint: undefined,
+                      hint: m.input_social_contributions_hint(),
                     },
                     {
                       key: "aanvullendPensioen",
                       label: m.input_aanvullend_pensioen(),
                       code: "1285",
                       codeDescription: m.code_desc_1285(),
-                      hint: undefined,
+                      hint: m.input_aanvullend_pensioen_hint(),
                     },
                     {
                       key: "dienstencheques",
@@ -533,7 +535,7 @@ export default function InputPanel({ form }: Props) {
                       label: m.input_roerende_voorheffing(),
                       code: "1437",
                       codeDescription: m.code_desc_1437(),
-                      hint: undefined,
+                      hint: m.input_roerende_voorheffing_hint(),
                     },
                   ] as const satisfies readonly {
                     key: BelgianDeductionKey;

@@ -30,6 +30,18 @@ describe("SummaryResult", () => {
     expect(screen.getByRole("button", { name: /reset/i })).toBeInTheDocument();
   });
 
+  it("shows the document-to-return filing checklist", () => {
+    const onReset = vi.fn();
+    render(<SummaryResult result={mockTaxResult} onResetInputs={onReset} />);
+    expect(screen.getByRole("heading", { name: /prepare your returns/i })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /mijn belastingdienst/i })).toHaveAttribute(
+      "href",
+      "https://mijn.belastingdienst.nl/",
+    );
+    expect(screen.getAllByText(/code 1250/i)).toHaveLength(2);
+    expect(screen.getByText(/not amounts to type into the returns/i)).toBeInTheDocument();
+  });
+
   it("calls onResetInputs when reset button is clicked", async () => {
     const onReset = vi.fn();
     render(<SummaryResult result={mockTaxResult} onResetInputs={onReset} />);
