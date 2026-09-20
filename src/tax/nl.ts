@@ -67,7 +67,12 @@ export function calculateNLTax(inputs: TaxInputs): NLTaxResult {
 
   const { nlFractionDutchMethod: nlFraction } = getNLFractions(inputs);
 
-  let nlTaxableIncome = Math.round(inputs.grossSalary * nlFraction);
+  // "Deel niet in NL belast": entered as its own field on the NL aangifte, separate from Loon.
+  // Computed independently of the 30% ruling, which is a distinct exemption on the form.
+  const nlTaxableIncomeBeforeRuling = Math.round(inputs.grossSalary * nlFraction);
+  const deelNietInNLBelast = inputs.grossSalary - nlTaxableIncomeBeforeRuling;
+
+  let nlTaxableIncome = nlTaxableIncomeBeforeRuling;
 
   if (inputs.thirtyPercentRuling) {
     // 30% of the income is tax-free; only 70% is taxed
@@ -96,6 +101,7 @@ export function calculateNLTax(inputs: TaxInputs): NLTaxResult {
 
   return {
     nlTaxableIncome,
+    deelNietInNLBelast,
     taxBeforeCredits,
     brackets,
     algemeneHeffingskorting: ahk,

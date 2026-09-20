@@ -10,6 +10,9 @@ export interface BracketLine {
 
 export interface NLTaxResult {
   nlTaxableIncome: number;
+  /** "Deel niet in NL belast" — the aangifte field for the portion of Loon not taxed in NL,
+   *  entered separately from Loon. Independent of the 30% ruling exemption. */
+  deelNietInNLBelast: number;
   taxBeforeCredits: number;
   brackets: BracketLine[];
   algemeneHeffingskorting: number;

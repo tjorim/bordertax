@@ -2380,6 +2380,11 @@ footer a:hover {
   color: var(--bt-be-light);
   font-size: 0.75rem;
 }
+.ref-td-mono-nl-xs {
+  font-family: var(--bt-font-mono);
+  color: var(--bt-nl-light);
+  font-size: 0.75rem;
+}
 
 /* Malus percentage cell */
 .ref-td-mono-danger {

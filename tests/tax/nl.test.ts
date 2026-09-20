@@ -50,6 +50,18 @@ describe("calculateNLTax", () => {
   it("computes NL fraction correctly when working split days", () => {
     const result = calculateNLTax({ ...base, daysWorkedNL: 110, daysWorkedBE: 110 });
     expect(result.nlTaxableIncome).toBeCloseTo(30000, 0);
+    expect(result.deelNietInNLBelast).toBeCloseTo(30000, 0);
+    expect(result.nlTaxableIncome + result.deelNietInNLBelast).toBe(base.grossSalary);
+  });
+
+  it("keeps the non-NL-taxed portion separate from the 30% ruling exemption", () => {
+    const withRuling = calculateNLTax({
+      ...base,
+      daysWorkedNL: 110,
+      daysWorkedBE: 110,
+      thirtyPercentRuling: true,
+    });
+    expect(withRuling.deelNietInNLBelast).toBe(30000);
   });
 
   it("applies 30% ruling by taxing only 70% of the NL income", () => {
@@ -152,6 +164,7 @@ describe("calculateNLTax", () => {
   it("returns correct structure", () => {
     const result = calculateNLTax({ ...base });
     expect(result).toHaveProperty("nlTaxableIncome");
+    expect(result).toHaveProperty("deelNietInNLBelast");
     expect(result).toHaveProperty("taxBeforeCredits");
     expect(result).toHaveProperty("brackets");
     expect(result).toHaveProperty("algemeneHeffingskorting");
