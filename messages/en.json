@@ -324,7 +324,7 @@
   "ref_ss_s2_warn": "Sick days increase your Belgian tax share. Example: 50 telework days, 25 sick days → NL fraction drops from 180/230 to 155/205. The share taxable in Belgium rises proportionally. Risk of double taxation!",
   "ref_ss_s2_tip": "Filing order: submit the NL return first, then calculate the BE return based on the actual amounts due.",
   "ref_ss_s3_intro": "The FPS Finance uses the following 3-step method for the Belgian return in a salary split:",
-  "ref_ss_be_formula": "STEP 1 — W (base)\n  W = NL taxable wage (annual statement)\n    − actual social insurance premiums due (NL SI)\n    − actual income tax due (after NL refund)\n    + employee share supplementary pension premium  [code 1285]\n    − benefit in kind company car (NL rules)\n    + benefit in kind company car (BE rules)\n    + fiscally exchanged gross wage (cafeteria plan)\n\nSTEP 2 — Y (taxable in Belgium)\n  Y = W × (days performed in BE ÷ total days performed)\n\nSTEP 3 — Z (exempt in Belgium)\n  Z = W − Y − [NL tax × (NL days ÷ total days)]",
+  "ref_ss_be_formula": "STEP 1 — W (declared wages, code 1250)\n  W = gross annual salary\n    − actual Dutch income tax and national-insurance contributions due\n      (after the Dutch refund)\n\nSTEP 2 — Y (non-exempt part, Box IV O.1)\n  Y = gross annual salary × (days worked in BE ÷ total workdays)\n\nSTEP 3 — Z (exempt part, Box IV O.2)\n  Z = W − Y\n\nThe Dutch tax is deducted wholly from the Dutch, exempt part; do not allocate it pro rata over Y and Z.",
   "ref_ss_s3_code_1250": "Total foreign professional income (= W, pro-rata)",
   "ref_ss_s3_code_vak4_o1": "Non-exempt part (= Y, taxable in BE)",
   "ref_ss_s3_code_vak4_o2": "Exempt part with progression reservation (= Z)",
