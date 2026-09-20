@@ -120,6 +120,16 @@ describe("calculateBETax", () => {
     expect(result!.beFraction).toBe(1);
   });
 
+  it("allocates Dutch tax only to the NL-exempt portion of the Belgian return", () => {
+    const result = calculateBETax(
+      { ...base, grossSalary: 10000, daysWorkedNL: 9, daysWorkedBE: 1 },
+      mockNL({ nlTaxableIncome: 9000, netTaxNL: 2000 }),
+    );
+    // Code 1250 is €8,000 after €2,000 NL tax. The €1,000 Belgian work share
+    // stays taxable in Belgium, leaving €7,000 (= 87.5%) as NL-exempt income.
+    expect(result!.vrijgesteld / result!.netProfessionalIncome).toBeCloseTo(0.875, 6);
+  });
+
   it("communal levy increases with higher communalTaxRate", () => {
     const low = calculateBETax(
       { ...base, daysWorkedNL: 200, daysWorkedBE: 20, communalTaxRate: 5 },
