@@ -13,7 +13,10 @@
  * Year-specific rates are in params.ts — that is the only file that needs updating each year.
  */
 import type { TaxInputs, NLTaxResult, BracketLine } from "./types";
-import { NL_THIRTY_PERCENT_RULING_TAXABLE_RESIDUAL } from "./constants";
+import {
+  isThirtyPercentRulingSupportedResident,
+  NL_THIRTY_PERCENT_RULING_TAXABLE_RESIDUAL,
+} from "./constants";
 import { TAX_PARAMS } from "./params";
 import type { NLBracket, NLYearParams } from "./params";
 import { getNLFractions } from "./workdays";
@@ -74,7 +77,10 @@ export function calculateNLTax(inputs: TaxInputs): NLTaxResult {
 
   let nlTaxableIncome = nlTaxableIncomeBeforeRuling;
 
-  if (inputs.thirtyPercentRuling) {
+  if (
+    isThirtyPercentRulingSupportedResident(inputs.residentCountry) &&
+    inputs.thirtyPercentRuling
+  ) {
     // 30% of the income is tax-free; only 70% is taxed
     nlTaxableIncome = Math.round(nlTaxableIncome * NL_THIRTY_PERCENT_RULING_TAXABLE_RESIDUAL);
   }

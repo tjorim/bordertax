@@ -37,6 +37,7 @@
   "input_workdays_other_hint": "E.g. customer installations abroad. Counted the same as BE days for Belgian tax.",
   "input_thirty_percent_ruling": "30% ruling applies (NL)",
   "input_thirty_percent_ruling_hint": "Expat rule: 30% of salary is tax free",
+  "input_thirty_percent_ruling_unavailable_be": "Not available for this Belgian-resident cross-border profile: the expat scheme normally requires living more than 150 km from the Dutch border before Dutch employment. A valid existing ruling from recruitment farther abroad is an exception that this calculator does not estimate.",
   "input_social_contributions": "Social contributions (€)",
   "input_aanvullend_pensioen": "Supplementary pension (€)",
   "input_dienstencheques": "Service vouchers (€)",

@@ -65,10 +65,18 @@ describe("calculateNLTax", () => {
   });
 
   it("applies 30% ruling by taxing only 70% of the NL income", () => {
-    const withRuling = calculateNLTax({ ...base, thirtyPercentRuling: true });
-    const withoutRuling = calculateNLTax({ ...base, thirtyPercentRuling: false });
+    const nlResident = { ...base, residentCountry: "NL" as unknown as TaxInputs["residentCountry"] };
+    const withRuling = calculateNLTax({ ...nlResident, thirtyPercentRuling: true });
+    const withoutRuling = calculateNLTax({ ...nlResident, thirtyPercentRuling: false });
     expect(withRuling.nlTaxableIncome).toBeCloseTo(withoutRuling.nlTaxableIncome * 0.7, 1);
     expect(withRuling.netTaxNL).toBeLessThan(withoutRuling.netTaxNL);
+  });
+
+  it("does not apply a stored 30% ruling selection for a Belgian resident", () => {
+    const withStoredSelection = calculateNLTax({ ...base, thirtyPercentRuling: true });
+    const withoutRuling = calculateNLTax({ ...base, thirtyPercentRuling: false });
+    expect(withStoredSelection.nlTaxableIncome).toBe(withoutRuling.nlTaxableIncome);
+    expect(withStoredSelection.netTaxNL).toBe(withoutRuling.netTaxNL);
   });
 
   it("uses lower netTaxNL for above-AOW-age taxpayers (lower social premium rate)", () => {

@@ -8,6 +8,7 @@ import {
   VALID_RESIDENT_COUNTRIES,
   VALID_CIVIL_STATUSES,
   VALID_BELGIAN_REGIONS,
+  isThirtyPercentRulingSupportedResident,
 } from "../tax/constants";
 import type { TaxFormApi } from "../App";
 import type { TaxInputs } from "../tax/types";
@@ -469,22 +470,37 @@ export default function InputPanel({ form }: Props) {
                 )}
             </Col>
 
-            <form.Field name="thirtyPercentRuling">
-              {(field) => (
-                <Col xs={12}>
-                  <Form.Check
-                    id="thirty-ruling"
-                    label={m.input_thirty_percent_ruling()}
-                    checked={field.value}
-                    onChange={(e) => field.handleChange(e.target.checked)}
-                    aria-describedby="thirty-ruling-hint"
-                  />
-                  <Form.Text id="thirty-ruling-hint" className="text-muted">
-                    {m.input_thirty_percent_ruling_hint()}
-                  </Form.Text>
-                </Col>
-              )}
-            </form.Field>
+            {isThirtyPercentRulingSupportedResident(values.residentCountry) ? (
+              <form.Field name="thirtyPercentRuling">
+                {(field) => (
+                  <Col xs={12}>
+                    <Form.Check
+                      id="thirty-ruling"
+                      label={m.input_thirty_percent_ruling()}
+                      checked={field.value}
+                      onChange={(e) => field.handleChange(e.target.checked)}
+                      aria-describedby="thirty-ruling-hint"
+                    />
+                    <Form.Text id="thirty-ruling-hint" className="text-muted">
+                      {m.input_thirty_percent_ruling_hint()}
+                    </Form.Text>
+                  </Col>
+                )}
+              </form.Field>
+            ) : (
+              <Col xs={12}>
+                <Form.Check
+                  id="thirty-ruling"
+                  label={m.input_thirty_percent_ruling()}
+                  checked={false}
+                  disabled
+                  aria-describedby="thirty-ruling-hint"
+                />
+                <Form.Text id="thirty-ruling-hint" className="text-muted">
+                  {m.input_thirty_percent_ruling_unavailable_be()}
+                </Form.Text>
+              </Col>
+            )}
 
             {values.residentCountry === "BE" && (
               <>

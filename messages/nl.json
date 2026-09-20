@@ -37,6 +37,7 @@
   "input_workdays_other_hint": "Bijv. klantinstallaties in het buitenland. Telt mee als BE-dagen voor de Belgische belasting.",
   "input_thirty_percent_ruling": "30%-regeling van toepassing (NL)",
   "input_thirty_percent_ruling_hint": "Expat-regeling: 30% van het loon is onbelast",
+  "input_thirty_percent_ruling_unavailable_be": "Niet beschikbaar voor dit profiel van een Belgische grensarbeider: de expatregeling vereist normaal dat u vóór uw Nederlandse dienstverband meer dan 150 km van de Nederlandse grens woonde. Een bestaande geldige beschikking na werving van verder weg is een uitzondering die deze calculator niet berekent.",
   "input_social_contributions": "Sociale bijdragen (€)",
   "input_aanvullend_pensioen": "Aanvullend pensioen (€)",
   "input_dienstencheques": "Dienstencheques (€)",

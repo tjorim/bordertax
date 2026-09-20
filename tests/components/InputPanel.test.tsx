@@ -129,11 +129,12 @@ describe("InputPanel", () => {
     expect(getForm().getFieldValue("belowAOWAge")).toBe(false);
   });
 
-  it("updates thirtyPercentRuling when checkbox is toggled", () => {
-    const { getForm } = renderInputPanel();
+  it("shows the 30% ruling as unavailable for Belgian-resident users", () => {
+    renderInputPanel();
     const thirtyPercentRuling = screen.getByRole("checkbox", { name: /30% ruling/i });
-    fireEvent.click(thirtyPercentRuling);
-    expect(getForm().getFieldValue("thirtyPercentRuling")).toBe(true);
+    expect(thirtyPercentRuling).toBeDisabled();
+    expect(thirtyPercentRuling).not.toBeChecked();
+    expect(screen.getByText(/not available for this belgian-resident cross-border profile/i)).toBeInTheDocument();
   });
 
   it("updates dependents count", () => {
