@@ -39,6 +39,10 @@ describe("SummaryResult", () => {
       "https://mijn.belastingdienst.nl/",
     );
     expect(screen.getAllByText(/code 1250/i)).toHaveLength(2);
+    expect(
+      screen.getByRole("columnheader", { name: /section o\.2.*netherlands/i }),
+    ).toBeInTheDocument();
+    expect(screen.getByText(/personal social contributions.*netherlands/i)).toBeInTheDocument();
     expect(screen.getByText(/not amounts to type into the returns/i)).toBeInTheDocument();
   });
 

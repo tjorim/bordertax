@@ -106,12 +106,22 @@ export default function FilingChecklist({ result }: Props) {
                 <td>{m.filing_be_1250_source()}</td>
               </tr>
               <tr>
+                <td>{m.filing_be_1257()}</td>
+                <td className="text-end">{fmt(inputs.socialContributions)}</td>
+                <td>{m.filing_source_health_insurer()}</td>
+              </tr>
+              <tr className="table-secondary">
+                <th colSpan={3} scope="colgroup">
+                  {m.filing_be_o2_title()}
+                </th>
+              </tr>
+              <tr>
                 <td>{m.filing_be_1250_nl()}</td>
                 <td className="text-end fw-semibold">{fmt(be.declaredIncome - nl.deelNietInNLBelast)}</td>
                 <td>{m.filing_be_1250_nl_source()}</td>
               </tr>
               <tr>
-                <td>{m.filing_be_1257()}</td>
+                <td>{m.filing_be_o2_1257()}</td>
                 <td className="text-end">{fmt(inputs.socialContributions)}</td>
                 <td>{m.filing_source_health_insurer()}</td>
               </tr>
