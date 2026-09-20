@@ -63,7 +63,7 @@ export default function BEResult({ result, residentCountry }: Props) {
           <tr className="fw-semibold">
             <td>
               {m.be_declared_income()}
-              <CodeBadge code="1250" />
+              <CodeBadge code="1250" description={m.code_desc_1250()} />
             </td>
             <td className="text-end">{fmt(result.declaredIncome)}</td>
           </tr>

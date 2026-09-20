@@ -11,10 +11,7 @@
  * Year-specific rates are in params.ts — that is the only file that needs updating each year.
  */
 import type { TaxInputs, BETaxResult, NLTaxResult } from "./types";
-import {
-  BE_PENSION_REDUCTION_RATE,
-  BE_TAX_FREE_ALLOWANCE_REDUCTION_RATE,
-} from "./constants";
+import { BE_PENSION_REDUCTION_RATE, BE_TAX_FREE_ALLOWANCE_REDUCTION_RATE } from "./constants";
 import { TAX_PARAMS } from "./params";
 import type { BEBracket, BEYearParams } from "./params";
 import { getNLFractions } from "./workdays";

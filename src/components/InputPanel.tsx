@@ -26,9 +26,8 @@ type BelgianDeductionKey =
   | "dienstencheques"
   | "roerendeVoorheffing";
 
-const allowEmptyNumber =
-  (handleChange: (value: number) => void) => (value: number | undefined) =>
-    handleChange(value as number);
+const allowEmptyNumber = (handleChange: (value: number) => void) => (value: number | undefined) =>
+  handleChange(value as number);
 
 export default function InputPanel({ form }: Props) {
   const [showFormulas, setShowFormulas] = useState(false);
@@ -44,9 +43,7 @@ export default function InputPanel({ form }: Props) {
   const nlBarW =
     maxWorkdaysInYear > 0 ? Math.min(100, (daysWorkedNL / maxWorkdaysInYear) * 100) : 0;
   const beBarW =
-    maxWorkdaysInYear > 0
-      ? Math.min(100 - nlBarW, (daysWorkedBE / maxWorkdaysInYear) * 100)
-      : 0;
+    maxWorkdaysInYear > 0 ? Math.min(100 - nlBarW, (daysWorkedBE / maxWorkdaysInYear) * 100) : 0;
   const otherBarW =
     maxWorkdaysInYear > 0
       ? Math.min(100 - nlBarW - beBarW, (daysWorkedOther / maxWorkdaysInYear) * 100)
@@ -268,7 +265,10 @@ export default function InputPanel({ form }: Props) {
               <Form.Text className="text-muted">{m.input_income_not_persisted_hint()}</Form.Text>
             </Col>
 
-            <form.Field name="grossSalary" validators={[{ run: z.number().min(0), triggers: ["change"] }]}>
+            <form.Field
+              name="grossSalary"
+              validators={[{ run: z.number().min(0), triggers: ["change"] }]}
+            >
               {(field) => {
                 const err = fieldError(field.errors as unknown[]);
                 return (
@@ -289,7 +289,10 @@ export default function InputPanel({ form }: Props) {
               }}
             </form.Field>
 
-            <form.Field name="withheldTaxNL" validators={[{ run: z.number().min(0), triggers: ["change"] }]}>
+            <form.Field
+              name="withheldTaxNL"
+              validators={[{ run: z.number().min(0), triggers: ["change"] }]}
+            >
               {(field) => {
                 const err = fieldError(field.errors as unknown[]);
                 return (
@@ -310,7 +313,10 @@ export default function InputPanel({ form }: Props) {
               }}
             </form.Field>
 
-            <form.Field name="daysWorkedNL" validators={[{ run: z.number().min(0), triggers: ["change"] }]}>
+            <form.Field
+              name="daysWorkedNL"
+              validators={[{ run: z.number().min(0), triggers: ["change"] }]}
+            >
               {(field) => {
                 const err = fieldError(field.errors as unknown[]);
                 return (
@@ -331,7 +337,10 @@ export default function InputPanel({ form }: Props) {
               }}
             </form.Field>
 
-            <form.Field name="daysWorkedBE" validators={[{ run: z.number().min(0), triggers: ["change"] }]}>
+            <form.Field
+              name="daysWorkedBE"
+              validators={[{ run: z.number().min(0), triggers: ["change"] }]}
+            >
               {(field) => {
                 const err = fieldError(field.errors as unknown[]);
                 return (
@@ -350,7 +359,10 @@ export default function InputPanel({ form }: Props) {
               }}
             </form.Field>
 
-            <form.Field name="daysWorkedOther" validators={[{ run: z.number().min(0), triggers: ["change"] }]}>
+            <form.Field
+              name="daysWorkedOther"
+              validators={[{ run: z.number().min(0), triggers: ["change"] }]}
+            >
               {(field) => {
                 const err = fieldError(field.errors as unknown[]);
                 return (
@@ -371,7 +383,10 @@ export default function InputPanel({ form }: Props) {
               }}
             </form.Field>
 
-            <form.Field name="sickDays" validators={[{ run: z.number().min(0), triggers: ["change"] }]}>
+            <form.Field
+              name="sickDays"
+              validators={[{ run: z.number().min(0), triggers: ["change"] }]}
+            >
               {(field) => {
                 const err = fieldError(field.errors as unknown[]);
                 return (
@@ -394,7 +409,10 @@ export default function InputPanel({ form }: Props) {
 
             <Col xs={12}>
               <div
-                className={clsx("bt-workday-bar", totalWorkdays > maxWorkdaysInYear && "bt-workday-bar--over")}
+                className={clsx(
+                  "bt-workday-bar",
+                  totalWorkdays > maxWorkdaysInYear && "bt-workday-bar--over",
+                )}
                 role="img"
                 aria-label={`${m.input_workdays_total()} ${totalWorkdays}`}
               >
@@ -403,9 +421,7 @@ export default function InputPanel({ form }: Props) {
                     className="bt-workday-bar__seg bt-workday-bar__seg--nl"
                     style={{ width: `${nlBarW}%` }}
                   >
-                    {nlBarW > 14 && (
-                      <span className="bt-workday-bar__label">{daysWorkedNL}</span>
-                    )}
+                    {nlBarW > 14 && <span className="bt-workday-bar__label">{daysWorkedNL}</span>}
                   </div>
                 )}
                 {beBarW > 0 && (
@@ -413,9 +429,7 @@ export default function InputPanel({ form }: Props) {
                     className="bt-workday-bar__seg bt-workday-bar__seg--be"
                     style={{ width: `${beBarW}%` }}
                   >
-                    {beBarW > 10 && (
-                      <span className="bt-workday-bar__label">{daysWorkedBE}</span>
-                    )}
+                    {beBarW > 10 && <span className="bt-workday-bar__label">{daysWorkedBE}</span>}
                   </div>
                 )}
                 {otherBarW > 0 && (
@@ -480,18 +494,21 @@ export default function InputPanel({ form }: Props) {
                       key: "socialContributions",
                       label: m.input_social_contributions(),
                       code: "1257",
+                      codeDescription: m.code_desc_1257(),
                       hint: undefined,
                     },
                     {
                       key: "aanvullendPensioen",
                       label: m.input_aanvullend_pensioen(),
                       code: "1285",
+                      codeDescription: m.code_desc_1285(),
                       hint: undefined,
                     },
                     {
                       key: "dienstencheques",
                       label: m.input_dienstencheques(),
                       code: "3364",
+                      codeDescription: m.code_desc_3364(),
                       hint:
                         values.year >= 2025 ? m.input_dienstencheques_hint_abolished() : undefined,
                     },
@@ -499,12 +516,14 @@ export default function InputPanel({ form }: Props) {
                       key: "roerendeVoorheffing",
                       label: m.input_roerende_voorheffing(),
                       code: "1437",
+                      codeDescription: m.code_desc_1437(),
                       hint: undefined,
                     },
                   ] as const satisfies readonly {
                     key: BelgianDeductionKey;
                     label: string;
                     code: string;
+                    codeDescription: string;
                     hint?: string;
                   }[]
                 ).map((fieldDef) => (
@@ -522,7 +541,10 @@ export default function InputPanel({ form }: Props) {
                             label={
                               <>
                                 {fieldDef.label}
-                                <CodeBadge code={fieldDef.code} />
+                                <CodeBadge
+                                  code={fieldDef.code}
+                                  description={fieldDef.codeDescription}
+                                />
                               </>
                             }
                             min={0}
