@@ -25,12 +25,6 @@
   color: rgba(200, 144, 26, 0.55) !important;
 }
 
-/* Dim working-calculation rows in the bracket table */
-.bt-table-brackets tbody tr:not(.table-secondary) td {
-  color: var(--bt-text-muted) !important;
-  font-size: 0.8rem;
-}
-
 /* 30% ruling notice */
 .bt-ruling-notice {
   display: flex;
@@ -43,24 +37,6 @@
   color: var(--bt-warning);
   font-size: 0.8rem;
   line-height: 1.4;
-}
-
-/* NL result: orange left border + larger amount on final row */
-.bt-nl-accent .bt-table-result .table-primary td {
-  border-left: 3px solid var(--bt-nl) !important;
-}
-.bt-nl-accent .bt-table-result .table-primary td:last-child {
-  font-size: 1rem !important;
-  color: var(--bt-nl-light) !important;
-}
-
-/* BE result: gold left border + larger amount on final row */
-.bt-be-accent .bt-table-result .table-primary td {
-  border-left: 3px solid var(--bt-be) !important;
-}
-.bt-be-accent .bt-table-result .table-primary td:last-child {
-  font-size: 1rem !important;
-  color: var(--bt-be-light) !important;
 }
 
 /* ── Light mode component overrides ──────────────────────────── */

@@ -1,6 +1,14 @@
+import { ArrowUp, ArrowDown } from "lucide-react";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { useMemo, useState } from "react";
-import { Table } from "react-bootstrap";
 import {
   columnVisibilityFeature,
   createColumnHelper,
@@ -71,6 +79,13 @@ function fmtK(n: number): string {
 }
 
 type Zone = "full" | "hybrid" | "kaderakkoord" | "above";
+
+const zoneCellClasses: Record<Zone, string> = {
+  full: "tw:border-s-3 tw:border-s-success/50",
+  hybrid: "tw:border-s-3 tw:border-s-info/40",
+  kaderakkoord: "tw:border-s-3 tw:border-s-threshold-purple/40",
+  above: "tw:border-s-3 tw:border-s-warning/35",
+};
 
 function getZone(ratio: number): Zone {
   if (ratio <= T_90) return "full";
@@ -619,7 +634,7 @@ const ratioColumns = ratioColumnHelper.columns([
       const bePct = Math.round(info.getValue() * 100);
       return (
         <>
-          <span className="bt-wfh-table-ratio">{bePct}%</span>
+          <span className="tw:font-mono tw:text-sm tw:font-semibold">{bePct}%</span>
           <span className="text-muted ms-2 small">
             {row.nlDays}d NL / {row.beDays}d BE
           </span>
@@ -654,19 +669,19 @@ const ratioColumns = ratioColumnHelper.columns([
   }),
   ratioColumnHelper.accessor("nlTax", {
     header: () => m.years_nl_tax(),
-    cell: (info) => <span className="text-danger small">−{fmt(info.getValue())}</span>,
+    cell: (info) => <span className="tw:text-danger small">−{fmt(info.getValue())}</span>,
   }),
   ratioColumnHelper.accessor("beTax", {
     header: () => m.years_be_tax(),
-    cell: (info) => <span className="text-danger small">−{fmt(info.getValue())}</span>,
+    cell: (info) => <span className="tw:text-danger small">−{fmt(info.getValue())}</span>,
   }),
   ratioColumnHelper.accessor("totalTax", {
     header: () => m.years_total_tax(),
-    cell: (info) => <span className="text-danger fw-semibold">−{fmt(info.getValue())}</span>,
+    cell: (info) => <span className="tw:text-danger fw-semibold">−{fmt(info.getValue())}</span>,
   }),
   ratioColumnHelper.accessor("netIncome", {
     header: () => m.years_net_income(),
-    cell: (info) => <span className="text-success fw-semibold">{fmt(info.getValue())}</span>,
+    cell: (info) => <span className="tw:text-success fw-semibold">{fmt(info.getValue())}</span>,
   }),
   ratioColumnHelper.accessor("effectiveRate", {
     header: () => m.years_effective_rate(),
@@ -753,14 +768,14 @@ function RatioTable({ data, currentIdx, optimalIdx, showBE }: RatioTableProps) {
   if (tableRows.length === 0) return null;
 
   return (
-    <Table bordered hover responsive className="bt-wfh-table">
-      <thead>
+    <Table bordered hover responsive className="tw:mt-2">
+      <TableHeader>
         {table.getHeaderGroups().map((headerGroup) => (
-          <tr key={headerGroup.id}>
+          <TableRow key={headerGroup.id}>
             {headerGroup.headers.map((header) => (
-              <th
+              <TableHead
                 key={header.id}
-                className={RATIO_NUMERIC_COLS.has(header.column.id) ? "text-end" : undefined}
+                className={RATIO_NUMERIC_COLS.has(header.column.id) ? "tw:text-end" : undefined}
                 aria-sort={
                   header.column.getIsSorted() === "asc"
                     ? "ascending"
@@ -777,48 +792,48 @@ function RatioTable({ data, currentIdx, optimalIdx, showBE }: RatioTableProps) {
                   >
                     {flexRender(header.column.columnDef.header, header.getContext())}
                     {header.column.getIsSorted() === "asc" && (
-                      <i className="bi bi-arrow-up ms-1" aria-hidden="true" />
+                      <ArrowUp className="tw:ms-1 tw:inline tw:size-3" aria-hidden="true" />
                     )}
                     {header.column.getIsSorted() === "desc" && (
-                      <i className="bi bi-arrow-down ms-1" aria-hidden="true" />
+                      <ArrowDown className="tw:ms-1 tw:inline tw:size-3" aria-hidden="true" />
                     )}
                   </button>
                 ) : (
                   flexRender(header.column.columnDef.header, header.getContext())
                 )}
-              </th>
+              </TableHead>
             ))}
-          </tr>
+          </TableRow>
         ))}
-      </thead>
-      <tbody>
+      </TableHeader>
+      <TableBody>
         {table.getRowModel().rows.map((row) => {
           const zone = getZone(row.original.beRatio);
-          const rowClass = row.original.isCurrent
-            ? "table-primary"
+          const rowVariant = row.original.isCurrent
+            ? "primary"
             : row.original.isOptimal
-              ? "table-success"
-              : undefined;
+              ? "success"
+              : "default";
           return (
-            <tr key={row.id} className={rowClass}>
+            <TableRow key={row.id} variant={rowVariant}>
               {row.getVisibleCells().map((cell) => (
-                <td
+                <TableCell
                   key={cell.id}
                   className={
                     cell.column.id === "beSplit"
-                      ? `bt-wfh-table-cell--${zone}`
+                      ? zoneCellClasses[zone]
                       : RATIO_NUMERIC_COLS.has(cell.column.id)
-                        ? "text-end"
+                        ? "tw:text-end"
                         : undefined
                   }
                 >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </td>
+                </TableCell>
               ))}
-            </tr>
+            </TableRow>
           );
         })}
-      </tbody>
+      </TableBody>
     </Table>
   );
 }

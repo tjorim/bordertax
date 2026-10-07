@@ -17,11 +17,3 @@ h6 {
   text-transform: uppercase;
   color: var(--bt-text-muted);
 }
-
-/* Monospace for all number-heavy cells */
-.table td:not(:first-child),
-.table th:not(:first-child) {
-  font-family: var(--bt-font-mono);
-  font-size: 0.8rem;
-  letter-spacing: -0.02em;
-}

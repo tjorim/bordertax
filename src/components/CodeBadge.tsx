@@ -15,7 +15,11 @@ export function CodeBadge({ code, description, system = "be" }: Props) {
   const title = `${prefix} ${code} — ${description}`;
   return (
     <span
-      className={system === "nl" ? "ref-td-mono-nl-xs ms-1" : "ref-td-mono-be-xs ms-1"}
+      className={
+        system === "nl"
+          ? "tw:font-mono tw:text-nl-light tw:text-xs tw:ms-1"
+          : "tw:font-mono tw:text-be-light tw:text-xs tw:ms-1"
+      }
       title={title}
       aria-label={title}
     >

@@ -447,29 +447,3 @@
   color: var(--bt-text);
   background: var(--bt-surface-2);
 }
-
-/* ── Table ────────────────────────────────────────────────────── */
-.bt-wfh-table {
-  margin-top: 0.5rem;
-  margin-bottom: 0;
-}
-
-/* Zone-coloured left border on each row's first cell */
-.bt-wfh-table-cell--full {
-  border-left: 3px solid rgba(34, 197, 94, 0.5) !important;
-}
-.bt-wfh-table-cell--hybrid {
-  border-left: 3px solid rgba(96, 165, 250, 0.4) !important;
-}
-.bt-wfh-table-cell--kaderakkoord {
-  border-left: 3px solid rgba(168, 85, 247, 0.4) !important;
-}
-.bt-wfh-table-cell--above {
-  border-left: 3px solid rgba(245, 158, 11, 0.35) !important;
-}
-
-.bt-wfh-table-ratio {
-  font-family: var(--bt-font-mono);
-  font-size: 0.88rem;
-  font-weight: 600;
-}

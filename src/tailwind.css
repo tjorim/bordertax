@@ -86,3 +86,18 @@
   --color-threshold-purple-bg: var(--bt-threshold-purple-bg);
   --color-threshold-purple-border: var(--bt-threshold-purple-border);
 }
+
+/* Preserve the established table typography and density during migration. */
+@theme {
+  --breakpoint-table: 36rem;
+  --text-table-heading: 0.67rem;
+  --text-table-number: 0.8rem;
+  --text-table-reference: 0.8rem;
+  --text-table-reference-xs: 0.78rem;
+  --text-table-reference-md: 0.85rem;
+  --tracking-table-heading: 0.09em;
+  --tracking-table-number: -0.02em;
+  --leading-table: 1.55;
+  --spacing-table-cell: 0.55rem;
+  --spacing-table-mobile: 0.45rem;
+}

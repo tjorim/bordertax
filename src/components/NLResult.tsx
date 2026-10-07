@@ -1,5 +1,12 @@
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Table } from "react-bootstrap";
 import clsx from "clsx";
 import type { NLTaxResult } from "../tax/types";
 import * as m from "../paraglide/messages.js";
@@ -36,104 +43,120 @@ export default function NLResult({
         </div>
       )}
 
-      <Table bordered size="sm" className="mb-3">
-        <tbody>
-          <tr>
-            <td>
+      <Table bordered className="tw:mb-3">
+        <TableBody>
+          <TableRow>
+            <TableCell>
               {m.nl_not_taxed_income()}
               <CodeBadge
                 code={m.nl_not_taxed_income()}
                 description={m.code_desc_deel_niet_in_nl_belast()}
                 system="nl"
               />
-            </td>
-            <td className="text-end">{fmt(result.deelNietInNLBelast)}</td>
-          </tr>
-          <tr>
-            <td>{m.nl_taxable_income()}</td>
-            <td className="text-end fw-semibold">{fmt(result.nlTaxableIncome)}</td>
-          </tr>
-        </tbody>
+            </TableCell>
+            <TableCell className="tw:text-end">{fmt(result.deelNietInNLBelast)}</TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>{m.nl_taxable_income()}</TableCell>
+            <TableCell className="tw:text-end fw-semibold">{fmt(result.nlTaxableIncome)}</TableCell>
+          </TableRow>
+        </TableBody>
       </Table>
 
       <p className="mb-1 fw-semibold small">{m.nl_bracket_calculation()}</p>
-      <Table bordered size="sm" className="mb-3 bt-table-brackets">
-        <thead className="table-light">
-          <tr>
-            <th>{m.nl_bracket()}</th>
-            <th className="text-end">{m.nl_rate()}</th>
-            <th className="text-end">{m.nl_amount()}</th>
-            <th className="text-end">{m.nl_tax()}</th>
-          </tr>
-        </thead>
-        <tbody>
+      <Table
+        bordered
+        className="tw:mb-3 tw:[&_tbody_tr:not([data-variant=secondary])_td]:text-text-muted tw:[&_tbody_tr:not([data-variant=secondary])_td]:text-table-number"
+      >
+        <TableHeader className="tw:bg-surface-3">
+          <TableRow>
+            <TableHead>{m.nl_bracket()}</TableHead>
+            <TableHead className="tw:text-end">{m.nl_rate()}</TableHead>
+            <TableHead className="tw:text-end">{m.nl_amount()}</TableHead>
+            <TableHead className="tw:text-end">{m.nl_tax()}</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
           {result.brackets.map((b) => (
-            <tr key={b.label}>
-              <td className="small">{b.label}</td>
-              <td className="text-end small">{pct(b.rate)}</td>
-              <td className="text-end small">{fmt(b.taxableAmount)}</td>
-              <td className="text-end small">{fmt(b.tax)}</td>
-            </tr>
+            <TableRow key={b.label}>
+              <TableCell className="small">{b.label}</TableCell>
+              <TableCell className="tw:text-end small">{pct(b.rate)}</TableCell>
+              <TableCell className="tw:text-end small">{fmt(b.taxableAmount)}</TableCell>
+              <TableCell className="tw:text-end small">{fmt(b.tax)}</TableCell>
+            </TableRow>
           ))}
-          <tr className="table-secondary">
-            <td colSpan={3}>{m.nl_tax_before_credits()}</td>
-            <td className="text-end">{fmt(result.taxBeforeCredits)}</td>
-          </tr>
-          <tr>
-            <td colSpan={3}>{m.nl_volksverzekeringen()}</td>
-            <td className="text-end">{fmt(result.volksverzekeringen)}</td>
-          </tr>
-          <tr className="table-secondary fw-semibold">
-            <td colSpan={3}>{m.nl_subtotal_before_credits()}</td>
-            <td className="text-end">{fmt(result.taxBeforeCredits + result.volksverzekeringen)}</td>
-          </tr>
-        </tbody>
+          <TableRow variant="secondary">
+            <TableCell colSpan={3}>{m.nl_tax_before_credits()}</TableCell>
+            <TableCell className="tw:text-end">{fmt(result.taxBeforeCredits)}</TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell colSpan={3}>{m.nl_volksverzekeringen()}</TableCell>
+            <TableCell className="tw:text-end">{fmt(result.volksverzekeringen)}</TableCell>
+          </TableRow>
+          <TableRow variant="secondary" className="fw-semibold">
+            <TableCell colSpan={3}>{m.nl_subtotal_before_credits()}</TableCell>
+            <TableCell className="tw:text-end">
+              {fmt(result.taxBeforeCredits + result.volksverzekeringen)}
+            </TableCell>
+          </TableRow>
+        </TableBody>
       </Table>
 
       <p className="mb-1 fw-semibold small">{m.nl_tax_credits()}</p>
-      <Table bordered size="sm" className="mb-3">
-        <tbody>
-          <tr>
-            <td>{m.nl_general_tax_credit()}</td>
-            <td className="text-end text-success">−{fmt(result.algemeneHeffingskorting)}</td>
-          </tr>
-          <tr>
-            <td>{m.nl_labour_tax_credit()}</td>
-            <td className="text-end text-success">−{fmt(result.arbeidskorting)}</td>
-          </tr>
-          <tr className="table-secondary fw-semibold">
-            <td>{m.nl_total_credits()}</td>
-            <td className="text-end text-success">−{fmt(result.totalCredits)}</td>
-          </tr>
-        </tbody>
+      <Table bordered className="tw:mb-3">
+        <TableBody>
+          <TableRow>
+            <TableCell>{m.nl_general_tax_credit()}</TableCell>
+            <TableCell className="tw:text-end tw:text-success">
+              −{fmt(result.algemeneHeffingskorting)}
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>{m.nl_labour_tax_credit()}</TableCell>
+            <TableCell className="tw:text-end tw:text-success">
+              −{fmt(result.arbeidskorting)}
+            </TableCell>
+          </TableRow>
+          <TableRow variant="secondary" className="fw-semibold">
+            <TableCell>{m.nl_total_credits()}</TableCell>
+            <TableCell className="tw:text-end">−{fmt(result.totalCredits)}</TableCell>
+          </TableRow>
+        </TableBody>
       </Table>
 
-      <Table bordered size="sm" className="bt-table-result">
-        <tbody>
-          <tr className="table-primary fw-bold">
-            <td>{m.nl_tax_payable()}</td>
-            <td className="text-end">{fmt(result.netTaxNL)}</td>
-          </tr>
-          <tr>
-            <td className="text-muted small">{m.nl_effective_rate()}</td>
-            <td className="text-end text-muted small">{pct(result.effectiveRateNL)}</td>
-          </tr>
+      <Table bordered>
+        <TableBody>
+          <TableRow variant="nl" className="fw-bold">
+            <TableCell>{m.nl_tax_payable()}</TableCell>
+            <TableCell className="tw:text-end">{fmt(result.netTaxNL)}</TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell className="text-muted small">{m.nl_effective_rate()}</TableCell>
+            <TableCell className="tw:text-end text-muted small">
+              {pct(result.effectiveRateNL)}
+            </TableCell>
+          </TableRow>
           {withheldTaxNL > 0 && (
             <>
-              <tr>
-                <td>{m.nl_withheld()}</td>
-                <td className="text-end">{fmt(withheldTaxNL)}</td>
-              </tr>
-              <tr className={clsx("fw-bold", nlBalance >= 0 ? "table-success" : "table-danger")}>
-                <td>{nlBalance >= 0 ? m.nl_balance_refund() : m.nl_balance_due()}</td>
-                <td className={clsx("text-end", nlBalance >= 0 ? "text-success" : "text-danger")}>
+              <TableRow>
+                <TableCell>{m.nl_withheld()}</TableCell>
+                <TableCell className="tw:text-end">{fmt(withheldTaxNL)}</TableCell>
+              </TableRow>
+              <TableRow variant={nlBalance >= 0 ? "success" : "danger"} className="fw-bold">
+                <TableCell>{nlBalance >= 0 ? m.nl_balance_refund() : m.nl_balance_due()}</TableCell>
+                <TableCell
+                  className={clsx(
+                    "tw:text-end",
+                    nlBalance >= 0 ? "tw:text-success" : "tw:text-danger",
+                  )}
+                >
                   {nlBalance >= 0 ? "+" : "−"}
                   {fmt(Math.abs(nlBalance))}
-                </td>
-              </tr>
+                </TableCell>
+              </TableRow>
             </>
           )}
-        </tbody>
+        </TableBody>
       </Table>
     </div>
   );

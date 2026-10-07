@@ -5,33 +5,15 @@
   color: var(--bt-nl-light) !important;
 }
 
-.bt-nl-accent .table-primary td,
-.bt-nl-accent .table-primary th {
-  background: rgba(224, 80, 32, 0.1) !important;
-  border-left: 2px solid var(--bt-nl-border) !important;
-}
-
 /* Belgian Gold tint on BE tab content */
 .bt-be-accent h6 {
   color: var(--bt-be-light) !important;
-}
-
-.bt-be-accent .table-primary td,
-.bt-be-accent .table-primary th {
-  background: rgba(200, 144, 26, 0.1) !important;
-  border-left: 2px solid var(--bt-be-border) !important;
 }
 
 /* ── Accordion open-state accent (neutral, both sections) ────── */
 
 .accordion-button:not(.collapsed) {
   border-left: 2px solid var(--bt-border-hover);
-}
-
-/* ── Year comparison active row ──────────────────────────────── */
-
-.table-primary > td:first-child {
-  border-left: 2px solid var(--bt-brand) !important;
 }
 
 /* ── Utility: number formatting ──────────────────────────────── */
@@ -84,10 +66,6 @@
   }
   .navbar-brand {
     font-size: 1.15rem !important;
-  }
-  .table td,
-  .table th {
-    padding: 0.45rem 0.5rem !important;
   }
 }
 
