@@ -4,8 +4,8 @@
 
 /* ── Subsection labels (p.fw-semibold.small) in result tabs ──── */
 
-.tab-content p.fw-semibold.small,
-.tab-content p.mb-1.fw-semibold.small {
+.bt-results-panel p.fw-semibold.small,
+.bt-results-panel p.mb-1.fw-semibold.small {
   font-family: var(--bt-font-body) !important;
   font-size: 0.68rem !important;
   font-weight: 600 !important;
@@ -43,10 +43,6 @@
 
 [data-bs-theme="light"] .accordion {
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-}
-
-[data-bs-theme="light"] .tab-content {
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
 }
 
 [data-bs-theme="light"] .bt-stat-card:hover {

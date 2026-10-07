@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Card, Col, Container, Navbar, Row } from "react-bootstrap";
+import { Card, Col, Container, Row } from "react-bootstrap";
 import * as m from "../paraglide/messages.js";
 import { AppNavbar } from "../components/AppNavbar";
 import { PageHero } from "../components/PageHero";
@@ -9,10 +9,10 @@ export default function ReferenceOverview() {
   return (
     <>
       <AppNavbar>
-        <Navbar.Text className="fw-semibold ref-nav-text">
+        <span className="ref-nav-text tw:font-mono tw:text-xs tw:font-semibold tw:tracking-wide tw:text-text-muted">
           <i className="bi bi-journals me-2" style={{ color: "var(--bt-be-light)" }} />
           {m.ref_overview_hub_title()}
-        </Navbar.Text>
+        </span>
       </AppNavbar>
 
       <Container fluid="lg" className="pb-5">
