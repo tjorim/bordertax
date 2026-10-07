@@ -57,7 +57,7 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
   }
 
   return (
-    <div className="bt-summary">
+    <div>
       {/* Actions */}
       <Stack direction="horizontal" gap={2} className="mb-3">
         <Button variant="outline-primary" size="sm" onClick={() => void copySummary()}>

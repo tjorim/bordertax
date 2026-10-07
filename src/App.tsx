@@ -2,9 +2,6 @@ import { formOptions, useForm, useSelector, type ReactFormType } from "@tanstack
 import { useEffect, useMemo, useState } from "react";
 import { Col, Container, Nav, Navbar, Row, Tab } from "react-bootstrap";
 import { ErrorBoundary, type FallbackProps } from "react-error-boundary";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap-icons/font/bootstrap-icons.css";
-import "./styles.css";
 
 import InputPanel from "./components/InputPanel";
 import NLResult from "./components/NLResult";
