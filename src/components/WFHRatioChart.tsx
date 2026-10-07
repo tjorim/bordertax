@@ -787,7 +787,7 @@ function RatioTable({ data, currentIdx, optimalIdx, showBE }: RatioTableProps) {
                   key={cell.id}
                   className={
                     cell.column.id === "beSplit"
-                      ? `bt-wfh-table-cell bt-wfh-table-cell--${zone}`
+                      ? `bt-wfh-table-cell--${zone}`
                       : RATIO_NUMERIC_COLS.has(cell.column.id)
                         ? "text-end"
                         : undefined

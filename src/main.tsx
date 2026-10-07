@@ -1,3 +1,4 @@
+import "./tailwind.css";
 import "@fontsource-variable/inter";
 import { RouterProvider } from "@tanstack/react-router";
 import { StrictMode } from "react";

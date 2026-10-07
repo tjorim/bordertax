@@ -1,8 +1,5 @@
 import { Link } from "@tanstack/react-router";
 import { Card, Col, Container, Navbar, Row } from "react-bootstrap";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap-icons/font/bootstrap-icons.css";
-import "../styles.css";
 import * as m from "../paraglide/messages.js";
 import { AppNavbar } from "../components/AppNavbar";
 import { PageHero } from "../components/PageHero";

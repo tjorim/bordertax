@@ -1,0 +1,10 @@
+/* Keep legacy source order, including !important overrides, in one layer. */
+@layer theme, legacy, components, utilities;
+@import "tailwindcss/theme.css" layer(theme) prefix(tw);
+@import "bootstrap/dist/css/bootstrap.min.css" layer(legacy);
+@import "bootstrap-icons/font/bootstrap-icons.css" layer(legacy);
+@import "./styles.css" layer(legacy);
+/* Bootstrap reboot owns the reset: deliberately omit Tailwind preflight. */
+@import "tailwindcss/utilities.css" layer(utilities) prefix(tw);
+
+@custom-variant dark (&:where([data-bs-theme="dark"], [data-bs-theme="dark"] *));
