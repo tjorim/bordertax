@@ -57,13 +57,9 @@ function mergeWithDefaults(raw: unknown): TaxInputs {
 }
 
 function loadInitialInputs(): TaxInputs {
-  const saved = localStorage.getItem(STORAGE_KEY);
-  if (!saved) {
-    return DEFAULT_INPUTS;
-  }
-
   try {
-    return mergeWithDefaults(JSON.parse(saved));
+    const saved = localStorage.getItem(STORAGE_KEY);
+    return saved ? mergeWithDefaults(JSON.parse(saved)) : DEFAULT_INPUTS;
   } catch {
     return DEFAULT_INPUTS;
   }
@@ -172,7 +168,11 @@ export default function App() {
   const [, setCurrentLocale] = useState(getLocale());
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(toPersistedInputs(inputs)));
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(toPersistedInputs(inputs)));
+    } catch {
+      // Storage is optional; keep the current calculation in memory.
+    }
   }, [inputs]);
 
   return (

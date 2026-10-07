@@ -32,6 +32,23 @@ describe("App", () => {
     setLocale("en", { reload: false });
   });
 
+  it.each(["getItem", "setItem"] as const)("works when storage %s fails", (method) => {
+    const spy = vi.spyOn(Storage.prototype, method).mockImplementation(() => {
+      throw new DOMException("Storage unavailable", "SecurityError");
+    });
+    try {
+      render(<App />);
+      expect(screen.getByRole("tab", { name: /summary/i })).toBeInTheDocument();
+      fireEvent.click(screen.getByRole("tab", { name: /year comparison/i }));
+      expect(screen.getByRole("tab", { name: /year comparison/i })).toHaveAttribute(
+        "aria-selected",
+        "true",
+      );
+    } finally {
+      spy.mockRestore();
+    }
+  });
+
   it("renders without crashing", () => {
     render(<App />);
     expect(document.body).toBeDefined();

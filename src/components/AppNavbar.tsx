@@ -22,7 +22,11 @@ function ThemeToggleButton() {
     const next = THEME_CYCLE[(THEME_CYCLE.indexOf(theme) + 1) % THEME_CYCLE.length]!;
     applyTheme(next);
     try {
-      localStorage.setItem(THEME_KEY, next);
+      try {
+        localStorage.setItem(THEME_KEY, next);
+      } catch {
+        // The selected theme still applies for this session.
+      }
     } catch {
       // Keep the in-memory theme change when persistence is unavailable.
     }
