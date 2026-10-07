@@ -1,4 +1,5 @@
-import { Badge, Table } from "react-bootstrap";
+import { Badge } from "@/components/ui/badge";
+import { Table } from "react-bootstrap";
 import clsx from "clsx";
 import type { NLTaxResult } from "../tax/types";
 import * as m from "../paraglide/messages.js";
@@ -22,7 +23,7 @@ export default function NLResult({
       <h6 className="text-muted mb-3">
         🇳🇱 {m.nl_title()}
         {thirtyPercentRuling && (
-          <Badge bg="warning" text="dark" className="ms-2 bt-ruling-badge">
+          <Badge variant="warning" className="tw:ms-2 tw:font-mono tw:align-middle">
             30%
           </Badge>
         )}

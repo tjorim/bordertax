@@ -1,5 +1,6 @@
+import { Badge } from "@/components/ui/badge";
 import { useMemo, useState } from "react";
-import { Badge, Table } from "react-bootstrap";
+import { Table } from "react-bootstrap";
 import clsx from "clsx";
 import {
   columnVisibilityFeature,
@@ -56,7 +57,7 @@ export default function MultiYearComparison({ rows, activeYear }: Props) {
             <>
               {info.getValue()}
               {info.getValue() === activeYear && (
-                <Badge bg="primary" className="ms-2">
+                <Badge variant="primary" className="tw:ms-2">
                   {m.years_active()}
                 </Badge>
               )}
@@ -186,7 +187,7 @@ export default function MultiYearComparison({ rows, activeYear }: Props) {
                   {header.column.getCanSort() ? (
                     <button
                       type="button"
-                      className="btn btn-link p-0 text-reset text-decoration-none"
+                      className="btn btn-link p-0 tw:text-inherit tw:no-underline"
                       onClick={header.column.getToggleSortingHandler()}
                     >
                       {flexRender(header.column.columnDef.header, header.getContext())}

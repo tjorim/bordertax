@@ -1,0 +1,107 @@
+/* ═══════════════════════════════════════════════════════════════
+   TABLE HIERARCHY — NL/BE result tabs
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Subsection labels (p.fw-semibold.small) in result tabs ──── */
+
+.tab-content p.fw-semibold.small,
+.tab-content p.mb-1.fw-semibold.small {
+  font-family: var(--bt-font-body) !important;
+  font-size: 0.68rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.09em !important;
+  text-transform: uppercase !important;
+  color: var(--bt-text-muted) !important;
+  margin-bottom: 0.4rem !important;
+}
+
+.bt-nl-accent p.fw-semibold.small,
+.bt-nl-accent p.mb-1.fw-semibold.small {
+  color: rgba(224, 80, 32, 0.55) !important;
+}
+
+.bt-be-accent p.fw-semibold.small,
+.bt-be-accent p.mb-1.fw-semibold.small {
+  color: rgba(200, 144, 26, 0.55) !important;
+}
+
+/* Dim working-calculation rows in the bracket table */
+.bt-table-brackets tbody tr:not(.table-secondary) td {
+  color: var(--bt-text-muted) !important;
+  font-size: 0.8rem;
+}
+
+/* 30% ruling notice */
+.bt-ruling-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--bt-r-sm);
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  color: var(--bt-warning);
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+/* NL result: orange left border + larger amount on final row */
+.bt-nl-accent .bt-table-result .table-primary td {
+  border-left: 3px solid var(--bt-nl) !important;
+}
+.bt-nl-accent .bt-table-result .table-primary td:last-child {
+  font-size: 1rem !important;
+  color: var(--bt-nl-light) !important;
+}
+
+/* BE result: gold left border + larger amount on final row */
+.bt-be-accent .bt-table-result .table-primary td {
+  border-left: 3px solid var(--bt-be) !important;
+}
+.bt-be-accent .bt-table-result .table-primary td:last-child {
+  font-size: 1rem !important;
+  color: var(--bt-be-light) !important;
+}
+
+/* ── Light mode component overrides ──────────────────────────── */
+
+[data-bs-theme="light"] .accordion {
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+[data-bs-theme="light"] .tab-content {
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+[data-bs-theme="light"] .bt-stat-card:hover {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+[data-bs-theme="light"] .bt-wfh-current {
+  stroke: rgba(0, 0, 0, 0.4);
+}
+
+[data-bs-theme="light"] .bt-wfh-current-dot {
+  fill: var(--bt-bg);
+  stroke: rgba(0, 0, 0, 0.7);
+}
+
+[data-bs-theme="light"] .bt-wfh-pulse {
+  stroke: rgba(0, 0, 0, 0.15);
+}
+
+[data-bs-theme="light"] .bt-wfh-scrubber {
+  stroke: rgba(0, 0, 0, 0.2);
+}
+
+[data-bs-theme="light"] .bt-wfh-dot {
+  stroke: var(--bt-bg);
+}
+
+[data-bs-theme="light"] .bt-year-chart__row:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+[data-bs-theme="light"] .bt-wfh-legend-dash--current {
+  border-top-color: rgba(0, 0, 0, 0.35);
+}

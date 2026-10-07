@@ -1,0 +1,19 @@
+/* ── Scrollbar ────────────────────────────────────────────────── */
+
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bt-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--bt-surface-4);
+  border-radius: 100px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--bt-border-hover);
+}

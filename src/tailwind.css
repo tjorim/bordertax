@@ -3,8 +3,86 @@
 @import "tailwindcss/theme.css" layer(theme) prefix(tw);
 @import "bootstrap/dist/css/bootstrap.min.css" layer(legacy);
 @import "bootstrap-icons/font/bootstrap-icons.css" layer(legacy);
+@import "./styles/tokens.css" layer(theme);
 @import "./styles.css" layer(legacy);
 /* Bootstrap reboot owns the reset: deliberately omit Tailwind preflight. */
 @import "tailwindcss/utilities.css" layer(utilities) prefix(tw);
 
 @custom-variant dark (&:where([data-bs-theme="dark"], [data-bs-theme="dark"] *));
+
+@theme inline {
+  --color-brand: var(--bt-brand);
+  --color-brand-light: var(--bt-brand-light);
+  --color-brand-dim: var(--bt-brand-dim);
+  --color-brand-border: var(--bt-brand-border);
+  --color-bg: var(--bt-bg);
+  --color-surface: var(--bt-surface);
+  --color-surface-2: var(--bt-surface-2);
+  --color-surface-3: var(--bt-surface-3);
+  --color-surface-4: var(--bt-surface-4);
+  --color-navbar-bg: var(--bt-navbar-bg);
+  --color-border: var(--bt-border);
+  --color-border-soft: var(--bt-border-soft);
+  --color-border-hover: var(--bt-border-hover);
+  --color-text: var(--bt-text);
+  --color-text-sub: var(--bt-text-sub);
+  --color-text-muted: var(--bt-text-muted);
+  --color-text-dim: var(--bt-text-dim);
+  --color-nl: var(--bt-nl);
+  --color-nl-light: var(--bt-nl-light);
+  --color-nl-dim: var(--bt-nl-dim);
+  --color-nl-glow: var(--bt-nl-glow);
+  --color-nl-border: var(--bt-nl-border);
+  --color-be: var(--bt-be);
+  --color-be-light: var(--bt-be-light);
+  --color-be-dim: var(--bt-be-dim);
+  --color-be-glow: var(--bt-be-glow);
+  --color-be-border: var(--bt-be-border);
+  --color-success: var(--bt-success);
+  --color-success-dim: var(--bt-success-dim);
+  --color-danger: var(--bt-danger);
+  --color-danger-dim: var(--bt-danger-dim);
+  --color-warning: var(--bt-warning);
+  --color-warning-dim: var(--bt-warning-dim);
+  --color-info: var(--bt-info);
+  --color-info-dim: var(--bt-info-dim);
+  --color-info-border: var(--bt-info-border);
+  --color-warning-border: var(--bt-warning-border);
+  --color-background: var(--bt-bg);
+  --color-foreground: var(--bt-text);
+  --color-card: var(--bt-surface);
+  --color-card-foreground: var(--bt-text);
+  --color-popover: var(--bt-surface-2);
+  --color-popover-foreground: var(--bt-text);
+  --color-primary: var(--bt-brand);
+  --color-primary-foreground: var(--bt-on-solid);
+  --color-secondary: var(--bt-surface-4);
+  --color-secondary-foreground: var(--bt-text-muted);
+  --color-muted: var(--bt-surface-2);
+  --color-muted-foreground: var(--bt-text-muted);
+  --color-accent: var(--bt-brand-dim);
+  --color-accent-foreground: var(--bt-brand-light);
+  --color-destructive: var(--bt-danger);
+  --color-ring: var(--bt-brand-border);
+  --color-input: var(--bt-border-hover);
+  --font-sans: var(--bt-font-body);
+  --font-mono: var(--bt-font-mono);
+  --radius-sm: var(--bt-r-sm);
+  --radius-md: var(--bt-r);
+  --radius-lg: var(--bt-r-lg);
+  --text-badge: 0.62rem;
+  --text-badge-label: 0.58rem;
+  --tracking-badge: 0.04em;
+}
+
+@theme inline {
+  --color-on-solid: var(--bt-on-solid);
+  --color-on-warning: var(--bt-on-warning);
+  --color-threshold-info-bg: var(--bt-threshold-info-bg);
+  --color-threshold-info-border: var(--bt-threshold-info-border);
+  --color-threshold-warning-bg: var(--bt-threshold-warning-bg);
+  --color-threshold-warning-border: var(--bt-threshold-warning-border);
+  --color-threshold-purple: var(--bt-threshold-purple);
+  --color-threshold-purple-bg: var(--bt-threshold-purple-bg);
+  --color-threshold-purple-border: var(--bt-threshold-purple-border);
+}

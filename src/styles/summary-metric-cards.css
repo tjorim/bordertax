@@ -1,0 +1,46 @@
+/* ── Summary Metric Cards ─────────────────────────────────────── */
+
+.bt-stat-card {
+  background: var(--bt-surface-2);
+  border: 1px solid var(--bt-border);
+  border-radius: var(--bt-r);
+  padding: 0.9rem 0.75rem;
+  transition:
+    border-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.bt-stat-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--bt-border-hover), transparent);
+}
+
+.bt-stat-card:hover {
+  border-color: var(--bt-border-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.bt-stat-card .small,
+.bt-stat-card .text-muted.small {
+  font-family: var(--bt-font-body) !important;
+  font-size: 0.7rem !important;
+  color: var(--bt-text-muted) !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.bt-stat-card .fs-5 {
+  font-family: var(--bt-font-mono);
+  font-size: 1.15rem !important;
+  letter-spacing: -0.03em;
+}

@@ -1,0 +1,27 @@
+/* ── Typography ───────────────────────────────────────────────── */
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-family: var(--bt-font-body);
+  letter-spacing: -0.01em;
+}
+
+h6 {
+  font-family: var(--bt-font-body);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--bt-text-muted);
+}
+
+/* Monospace for all number-heavy cells */
+.table td:not(:first-child),
+.table th:not(:first-child) {
+  font-family: var(--bt-font-mono);
+  font-size: 0.8rem;
+  letter-spacing: -0.02em;
+}

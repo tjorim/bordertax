@@ -1,0 +1,47 @@
+/* ═══════════════════════════════════════════════════════════════
+   WORKDAY VISUALIZER — InputPanel
+   ═══════════════════════════════════════════════════════════════ */
+
+.bt-workday-bar {
+  height: 26px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--bt-surface-3);
+  display: flex;
+  gap: 1px;
+  margin-bottom: 0.4rem;
+  border: 1px solid var(--bt-border);
+}
+
+.bt-workday-bar--over {
+  border-color: rgba(239, 68, 68, 0.4);
+  box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.15);
+}
+
+.bt-workday-bar__seg {
+  height: 100%;
+  transition: width 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.bt-workday-bar__seg--nl {
+  background: var(--bt-nl);
+}
+.bt-workday-bar__seg--be {
+  background: var(--bt-be);
+}
+.bt-workday-bar__seg--other {
+  background: var(--bt-text-dim);
+}
+
+.bt-workday-bar__label {
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: rgba(0, 0, 0, 0.6);
+  white-space: nowrap;
+  padding: 0 0.3rem;
+}

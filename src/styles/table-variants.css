@@ -1,0 +1,65 @@
+/* ── Table variants ───────────────────────────────────────────── */
+
+.table-secondary {
+  --bs-table-bg: var(--bt-surface-3) !important;
+  --bs-table-color: var(--bt-text) !important;
+}
+.table-secondary td,
+.table-secondary th {
+  background: var(--bt-surface-3) !important;
+  color: var(--bt-text) !important;
+}
+
+.table-primary {
+  --bs-table-bg: rgba(13, 148, 136, 0.09) !important;
+}
+.table-primary td,
+.table-primary th {
+  background: rgba(13, 148, 136, 0.09) !important;
+  color: var(--bt-text) !important;
+}
+
+.table-success {
+  --bs-table-bg: var(--bt-success-dim) !important;
+}
+.table-success td,
+.table-success th {
+  background: var(--bt-success-dim) !important;
+  color: var(--bt-text) !important;
+}
+
+.table-danger {
+  --bs-table-bg: var(--bt-danger-dim) !important;
+}
+.table-danger td,
+.table-danger th {
+  background: var(--bt-danger-dim) !important;
+  color: var(--bt-text) !important;
+}
+
+.table-light {
+  --bs-table-bg: var(--bt-surface-3) !important;
+}
+.table-light td,
+.table-light th {
+  background: var(--bt-surface-3) !important;
+  color: var(--bt-text-muted) !important;
+}
+
+.table-hover > tbody > tr:hover > * {
+  background: rgba(255, 255, 255, 0.028) !important;
+  color: var(--bt-text) !important;
+}
+
+/* Responsive table wrapper */
+.table-responsive {
+  border-radius: var(--bt-r);
+  border: 1px solid var(--bt-border);
+  background: var(--bt-surface);
+}
+
+/* Bordered table inside a responsive wrapper — drop the outer table border to avoid double-border */
+.table-responsive > .table-bordered,
+.table-responsive > .table.border {
+  border: 0 !important;
+}

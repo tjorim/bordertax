@@ -1,0 +1,60 @@
+/* ── Tab Navigation ───────────────────────────────────────────── */
+
+.nav-tabs {
+  --bs-nav-tabs-border-color: var(--bt-border);
+  --bs-nav-tabs-link-active-bg: var(--bt-surface);
+  --bs-nav-tabs-link-active-color: var(--bt-text);
+  --bs-nav-tabs-link-active-border-color: var(--bt-border) var(--bt-border) var(--bt-surface);
+  border-bottom: 1px solid var(--bt-border) !important;
+  gap: 0.2rem;
+  /* Scroll horizontally on narrow screens instead of wrapping */
+  flex-wrap: nowrap !important;
+  overflow-x: auto;
+  overflow-y: visible;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Firefox */
+}
+
+.nav-tabs::-webkit-scrollbar {
+  display: none; /* Chrome/Safari — tabs scroll silently */
+}
+
+.nav-tabs .nav-item {
+  flex-shrink: 0;
+}
+
+.nav-tabs .nav-link {
+  color: var(--bt-text-muted) !important;
+  border: 1px solid transparent !important;
+  border-radius: var(--bt-r-sm) var(--bt-r-sm) 0 0 !important;
+  font-size: 0.78rem !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.03em;
+  padding: 0.45rem 0.85rem !important;
+  transition:
+    color 0.15s,
+    background 0.15s,
+    border-color 0.15s !important;
+}
+
+.nav-tabs .nav-link:hover {
+  color: var(--bt-text-sub) !important;
+  background: var(--bt-surface-2) !important;
+  border-color: var(--bt-border) var(--bt-border) transparent !important;
+}
+
+.nav-tabs .nav-link.active {
+  color: var(--bt-text) !important;
+  background: var(--bt-surface) !important;
+  border-color: var(--bt-border) var(--bt-border) var(--bt-surface) !important;
+  font-weight: 600 !important;
+}
+
+.tab-content {
+  background: var(--bt-surface);
+  border: 1px solid var(--bt-border);
+  border-top: none;
+  border-radius: 0 0 var(--bt-r) var(--bt-r);
+  padding: 1.25rem;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+}

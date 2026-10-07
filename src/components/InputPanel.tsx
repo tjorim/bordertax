@@ -1,8 +1,9 @@
+import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import { useSelector } from "@tanstack/react-form";
 import clsx from "clsx";
 import { z } from "zod";
-import { Accordion, Alert, Badge, Button, Col, Form, Row } from "react-bootstrap";
+import { Accordion, Alert, Button, Col, Form, Row } from "react-bootstrap";
 import {
   VALID_YEARS,
   VALID_RESIDENT_COUNTRIES,
@@ -114,8 +115,8 @@ export default function InputPanel({ form }: Props) {
                     <Form.Label htmlFor="civil-status">
                       {m.input_civil_status()}{" "}
                       <Badge
-                        bg="secondary"
-                        className="ms-1 fw-normal"
+                        variant="label"
+                        className="tw:ms-1"
                         aria-label={m.input_civil_status_not_used()}
                       >
                         {m.input_civil_status_not_used()}
@@ -186,8 +187,8 @@ export default function InputPanel({ form }: Props) {
                         <Form.Label htmlFor="belgian-region">
                           {m.input_belgian_region()}{" "}
                           <Badge
-                            bg="secondary"
-                            className="ms-1 fw-normal"
+                            variant="label"
+                            className="tw:ms-1"
                             aria-label={m.input_belgian_region_not_used()}
                           >
                             {m.input_belgian_region_not_used()}
@@ -229,7 +230,7 @@ export default function InputPanel({ form }: Props) {
                           label={
                             <>
                               {m.input_municipal_tax()}{" "}
-                              <Badge bg="secondary" className="ms-1">
+                              <Badge variant="label" className="tw:ms-1">
                                 %
                               </Badge>
                             </>

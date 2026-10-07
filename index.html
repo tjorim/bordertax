@@ -15,23 +15,7 @@
       name="description"
       content="Tax calculator for Belgian residents working in the Netherlands — NL Box 1 income tax and Belgian personenbelasting via exemption with progression."
     />
-    <script>
-      (function () {
-        // Mirrors src/theme.ts applyTheme() so first paint matches hydrated theme.
-        var stored;
-        try {
-          stored = localStorage.getItem("bt-theme");
-        } catch (e) {
-          stored = null;
-        }
-        var theme = stored === "light" || stored === "dark" || stored === "auto" ? stored : "auto";
-        var prefersDark =
-          typeof window.matchMedia === "function" &&
-          window.matchMedia("(prefers-color-scheme: dark)").matches;
-        var effective = theme === "auto" ? (prefersDark ? "dark" : "light") : theme;
-        document.documentElement.setAttribute("data-bs-theme", effective);
-      })();
-    </script>
+    <!-- theme-bootstrap -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
