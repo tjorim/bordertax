@@ -1,0 +1,38 @@
+/* ── Unified focus ring ───────────────────────────────────────── */
+/* Single definition; applied consistently to every focusable element */
+
+:focus-visible {
+  outline: 2px solid var(--bt-brand-border) !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 4px var(--bt-brand-dim) !important;
+}
+
+/* Suppress the default :focus ring (only show on keyboard nav) */
+:focus:not(:focus-visible) {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.accordion-button:focus {
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+.accordion-button:focus-visible {
+  outline: 2px solid var(--bt-brand-border) !important;
+  outline-offset: -2px !important;
+  box-shadow: 0 0 0 4px var(--bt-brand-dim) !important;
+}
+
+.accordion-button::after {
+  filter: brightness(0.6) invert(1);
+}
+
+.accordion-button:not(.collapsed)::after {
+  filter: brightness(0.5) invert(1);
+}
+
+.accordion-body {
+  background: var(--bt-surface) !important;
+  padding: 1.1rem 1.15rem !important;
+}

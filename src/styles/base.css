@@ -1,0 +1,31 @@
+/* ── Base ─────────────────────────────────────────────────────── */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  color-scheme: dark;
+}
+
+[data-bs-theme="light"] {
+  color-scheme: light;
+}
+
+body {
+  background-color: var(--bt-bg);
+  background-image:
+    radial-gradient(ellipse 70% 45% at 15% 0%, rgba(13, 148, 136, 0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 55% 40% at 85% 100%, rgba(13, 148, 136, 0.04) 0%, transparent 60%);
+  min-height: 100vh;
+  color: var(--bt-text);
+  font-family: var(--bt-font-body);
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 15px;
+  line-height: 1.55;
+}

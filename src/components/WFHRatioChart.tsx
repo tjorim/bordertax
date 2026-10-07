@@ -1,5 +1,6 @@
+import { Badge } from "@/components/ui/badge";
 import { useMemo, useState } from "react";
-import { Badge, Table } from "react-bootstrap";
+import { Table } from "react-bootstrap";
 import {
   columnVisibilityFeature,
   createColumnHelper,
@@ -174,9 +175,21 @@ export default function WFHRatioChart({ inputs }: Props) {
       { x1: T_49, x2: 1, fill: "rgba(245, 158, 11, 0.025)" },
     ];
     const chipRows: ChipRow[] = [
-      { x: T_90, label: m.wfh_threshold_10_label({}, { locale }), color: "rgba(96, 165, 250, 0.9)" },
-      { x: T_25, label: m.wfh_threshold_25_label({}, { locale }), color: "rgba(245, 158, 11, 0.9)" },
-      { x: T_49, label: m.wfh_threshold_49_label({}, { locale }), color: "rgba(168, 85, 247, 0.9)" },
+      {
+        x: T_90,
+        label: m.wfh_threshold_10_label({}, { locale }),
+        color: "rgba(96, 165, 250, 0.9)",
+      },
+      {
+        x: T_25,
+        label: m.wfh_threshold_25_label({}, { locale }),
+        color: "rgba(245, 158, 11, 0.9)",
+      },
+      {
+        x: T_49,
+        label: m.wfh_threshold_49_label({}, { locale }),
+        color: "rgba(168, 85, 247, 0.9)",
+      },
     ];
     const currentPoint: XYPoint[] = [{ x: currentBeRatio, y: currentNet }];
     const optimalPoint: XYPoint[] = showOptimalMarker ? [{ x: optimalBeRatio, y: optimalNet }] : [];
@@ -611,23 +624,29 @@ const ratioColumns = ratioColumnHelper.columns([
             {row.nlDays}d NL / {row.beDays}d BE
           </span>
           {row.isCurrent && (
-            <Badge bg="primary" className="ms-2">
+            <Badge variant="primary" className="tw:ms-2">
               {m.years_active()}
             </Badge>
           )}
           {row.isOptimal && !row.isCurrent && (
-            <Badge bg="success" className="ms-2">
+            <Badge variant="success" className="tw:ms-2">
               {m.wfh_optimal()}
             </Badge>
           )}
           {row.threshold === "90-norm" && (
-            <Badge className="ms-2 bt-wfh-badge-10">{m.wfh_threshold_10_label()}</Badge>
+            <Badge variant="thresholdInfo" className="tw:ms-2">
+              {m.wfh_threshold_10_label()}
+            </Badge>
           )}
           {row.threshold === "hybrid" && (
-            <Badge className="ms-2 bt-wfh-badge-25">{m.wfh_threshold_25_label()}</Badge>
+            <Badge variant="thresholdWarning" className="tw:ms-2">
+              {m.wfh_threshold_25_label()}
+            </Badge>
           )}
           {row.threshold === "kaderakkoord" && (
-            <Badge className="ms-2 bt-wfh-badge-49">{m.wfh_threshold_49_label()}</Badge>
+            <Badge variant="thresholdPurple" className="tw:ms-2">
+              {m.wfh_threshold_49_label()}
+            </Badge>
           )}
         </>
       );
@@ -753,7 +772,7 @@ function RatioTable({ data, currentIdx, optimalIdx, showBE }: RatioTableProps) {
                 {header.column.getCanSort() ? (
                   <button
                     type="button"
-                    className="btn btn-link p-0 text-reset text-decoration-none"
+                    className="btn btn-link p-0 tw:text-inherit tw:no-underline"
                     onClick={header.column.getToggleSortingHandler()}
                   >
                     {flexRender(header.column.columnDef.header, header.getContext())}

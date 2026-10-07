@@ -1,0 +1,24 @@
+/* ═══════════════════════════════════════════════════════════════
+   ACCESSIBILITY — prefers-reduced-motion
+   Cuts all transitions and animations to instant for users who
+   have enabled "Reduce motion" in their OS accessibility settings.
+   ═══════════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Specifically zero out the named animations */
+  .bt-summary-hero__amount,
+  .tab-pane.active,
+  .bt-main-row > .col-lg-5,
+  .bt-main-row > .col-lg-7 {
+    animation: none !important;
+  }
+}

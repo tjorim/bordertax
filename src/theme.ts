@@ -13,7 +13,7 @@ export function loadTheme(): Theme {
 }
 
 export function applyTheme(theme: Theme): void {
-  // Mirrors the inline boot script in index.html to avoid a theme flash before hydration.
+  // Vite also compiles this source into the blocking head script before first paint.
   const effective =
     theme === "auto"
       ? typeof window !== "undefined" &&

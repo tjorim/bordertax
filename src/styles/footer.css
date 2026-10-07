@@ -1,0 +1,22 @@
+/* ── Footer ───────────────────────────────────────────────────── */
+
+footer {
+  border-color: var(--bt-border) !important;
+  color: var(--bt-text-muted) !important;
+  font-size: 0.78rem;
+  letter-spacing: 0.01em;
+}
+
+footer a {
+  color: var(--bt-text-muted) !important;
+  text-decoration: none;
+  border-bottom: 1px solid var(--bt-border);
+  transition:
+    color 0.15s,
+    border-color 0.15s;
+}
+
+footer a:hover {
+  color: var(--bt-text-sub) !important;
+  border-bottom-color: var(--bt-text-muted);
+}

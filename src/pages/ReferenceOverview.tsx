@@ -21,7 +21,7 @@ export default function ReferenceOverview() {
         <Row className="g-4 justify-content-center">
           {REFERENCE_PAGES.map((page) => (
             <Col key={page.route} xs={12} md={5}>
-              <Link to={page.route} className="text-decoration-none">
+              <Link to={page.route} className="tw:no-underline">
                 <Card
                   className="h-100 ref-overview-card"
                   style={{ border: `1px solid ${page.borderColor}` }}

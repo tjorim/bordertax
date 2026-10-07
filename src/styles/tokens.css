@@ -1,0 +1,112 @@
+/* ═══════════════════════════════════════════════════════════════
+   BORDERTAX  ·  Grenspost Design System
+   Dual-nation precision for cross-border tax professionals
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Design Tokens ────────────────────────────────────────────── */
+
+:root {
+  /* Brand — teal identity for a finance/tax tool */
+  --bt-brand: #0d9488;
+  --bt-brand-light: #14b8a6;
+  --bt-brand-dim: rgba(13, 148, 136, 0.12);
+  --bt-brand-border: rgba(13, 148, 136, 0.35);
+
+  /* Surfaces — dark mode defaults */
+  --bt-bg: #07090f;
+  --bt-surface: #0d1220;
+  --bt-surface-2: #121829;
+  --bt-surface-3: #1a2235;
+  --bt-surface-4: #222c42;
+  --bt-navbar-bg: rgba(7, 9, 15, 0.92);
+
+  /* Borders */
+  --bt-border: rgba(255, 255, 255, 0.065);
+  --bt-border-soft: rgba(255, 255, 255, 0.045);
+  --bt-border-hover: rgba(255, 255, 255, 0.13);
+
+  /* Text */
+  --bt-text: #d4e4f5;
+  --bt-text-sub: #8ba8c5;
+  --bt-text-muted: #7090b0;
+  --bt-text-dim: #4e6884;
+
+  /* Dutch Orange — demoted to per-tab accent only */
+  --bt-nl: #e05020;
+  --bt-nl-light: #f07040;
+  --bt-nl-dim: rgba(224, 80, 32, 0.12);
+  --bt-nl-glow: rgba(224, 80, 32, 0.25);
+  --bt-nl-border: rgba(224, 80, 32, 0.35);
+
+  /* Belgian Gold — demoted to per-tab accent only */
+  --bt-be: #c8901a;
+  --bt-be-light: #e0a830;
+  --bt-be-dim: rgba(200, 144, 26, 0.12);
+  --bt-be-glow: rgba(200, 144, 26, 0.25);
+  --bt-be-border: rgba(200, 144, 26, 0.35);
+
+  /* Semantic */
+  --bt-success: #22c55e;
+  --bt-success-dim: rgba(34, 197, 94, 0.1);
+  --bt-danger: #ef4444;
+  --bt-danger-dim: rgba(239, 68, 68, 0.1);
+  --bt-warning: #f59e0b;
+  --bt-warning-dim: rgba(245, 158, 11, 0.1);
+  --bt-info: #60a5fa;
+  --bt-info-dim: rgba(96, 165, 250, 0.1);
+  --bt-info-border: rgba(96, 165, 250, 0.25);
+  --bt-warning-border: rgba(245, 158, 11, 0.3);
+
+  /* Typography */
+  --bt-font-body: "Inter Variable", system-ui, -apple-system, sans-serif;
+  --bt-font-mono: "Space Mono", "Courier New", monospace;
+
+  /* Radii */
+  --bt-r: 8px;
+  --bt-r-sm: 5px;
+  --bt-r-lg: 14px;
+}
+
+/* ── Light mode token overrides ───────────────────────────────── */
+
+[data-bs-theme="light"] {
+  --bt-brand-light: #0f766e;
+  --bt-bg: #f8f9fa;
+  --bt-surface: #ffffff;
+  --bt-surface-2: #f0f4f8;
+  --bt-surface-3: #e4eaf1;
+  --bt-surface-4: #d8e2ec;
+  --bt-navbar-bg: rgba(248, 249, 250, 0.95);
+
+  --bt-border: rgba(0, 0, 0, 0.1);
+  --bt-border-soft: rgba(0, 0, 0, 0.06);
+  --bt-border-hover: rgba(0, 0, 0, 0.18);
+
+  --bt-text: #0f1923;
+  --bt-text-sub: #2e4560;
+  --bt-text-muted: #4a6480;
+  --bt-text-dim: #7a9ab8;
+
+  --bt-success: #16a34a;
+  --bt-success-dim: rgba(22, 163, 74, 0.1);
+  --bt-danger: #dc2626;
+  --bt-danger-dim: rgba(220, 38, 38, 0.08);
+  --bt-warning: #d97706;
+  --bt-warning-dim: rgba(217, 119, 6, 0.08);
+  --bt-warning-border: rgba(217, 119, 6, 0.3);
+  --bt-info: #2563eb;
+  --bt-info-dim: rgba(37, 99, 235, 0.08);
+  --bt-info-border: rgba(37, 99, 235, 0.25);
+}
+
+:root {
+  --bt-on-solid: #ffffff;
+  --bt-on-warning: #212529;
+  --bt-threshold-info-bg: rgba(96, 165, 250, 0.15);
+  --bt-threshold-info-border: rgba(96, 165, 250, 0.3);
+  --bt-threshold-warning-bg: rgba(245, 158, 11, 0.12);
+  --bt-threshold-warning-border: rgba(245, 158, 11, 0.28);
+  --bt-threshold-purple: #a855f7;
+  --bt-threshold-purple-bg: rgba(168, 85, 247, 0.12);
+  --bt-threshold-purple-border: rgba(168, 85, 247, 0.28);
+}

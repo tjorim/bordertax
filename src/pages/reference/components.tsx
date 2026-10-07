@@ -1,4 +1,5 @@
-import { Accordion, Badge, Card } from "react-bootstrap";
+import { Badge } from "@/components/ui/badge";
+import { Accordion, Card } from "react-bootstrap";
 
 // ── Shared styled sub-components for reference pages ────────────
 
@@ -37,8 +38,7 @@ export function SectionCard({
 }
 
 function CountryBadge({ variant, children }: { variant: "nl" | "be"; children: React.ReactNode }) {
-  const className = variant === "nl" ? "ref-badge-nl" : "ref-badge-be";
-  return <Badge className={className}>{children}</Badge>;
+  return <Badge variant={variant}>{children}</Badge>;
 }
 
 export function NlBadge({ children }: { children: React.ReactNode }) {
@@ -108,12 +108,15 @@ export function DocLink({
   maxWidth?: number;
 }) {
   return (
-    <a href={href} target="_blank" rel="noreferrer" className="text-decoration-none">
+    <a href={href} target="_blank" rel="noreferrer" className="tw:no-underline">
       <div
         className="ref-link-card ref-link-card-body p-3 rounded d-flex align-items-center gap-3"
         style={maxWidth ? { maxWidth } : undefined}
       >
-        <i className="bi bi-file-earmark-pdf-fill fs-2" style={{ color: "#e74c3c", flexShrink: 0 }} />
+        <i
+          className="bi bi-file-earmark-pdf-fill fs-2"
+          style={{ color: "#e74c3c", flexShrink: 0 }}
+        />
         <div>
           <div className="fw-semibold small ref-text">{title}</div>
           <div className="ref-footnote">{sub}</div>

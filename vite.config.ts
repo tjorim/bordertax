@@ -3,6 +3,7 @@ import tailwindcss from "@tailwindcss/vite";
 import reactPlugin from "@vitejs/plugin-react";
 import { resolve } from "node:path";
 import { defineConfig } from "vite";
+import { themeBootstrapPlugin } from "./scripts/theme-bootstrap.ts";
 
 export default defineConfig({
   resolve: {
@@ -11,6 +12,7 @@ export default defineConfig({
     },
   },
   plugins: [
+    themeBootstrapPlugin(),
     paraglideVitePlugin({
       project: "./project.inlang",
       outdir: "./src/paraglide",

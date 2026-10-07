@@ -1,0 +1,17 @@
+/* ── Text colors ──────────────────────────────────────────────── */
+
+.text-success {
+  color: var(--bt-success) !important;
+}
+.text-danger {
+  color: var(--bt-danger) !important;
+}
+.text-warning {
+  color: var(--bt-warning) !important;
+}
+.text-muted {
+  color: var(--bt-text-muted) !important;
+}
+.text-secondary {
+  color: var(--bt-text-sub) !important;
+}
