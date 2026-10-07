@@ -1,4 +1,5 @@
-import { Alert, Table } from "react-bootstrap";
+import { Table, TableBody, TableRow, TableCell } from "@/components/ui/table";
+import { Alert } from "react-bootstrap";
 import type { BETaxResult, TaxInputs } from "../tax/types";
 import * as m from "../paraglide/messages.js";
 import { fmtExact as fmt, pctExact as pct } from "./format.js";
@@ -35,105 +36,117 @@ export default function BEResult({ result, residentCountry }: Props) {
       )}
 
       <p className="mb-1 fw-semibold small">{m.be_income_split()}</p>
-      <Table bordered size="sm" className="mb-3">
-        <tbody>
-          <tr>
-            <td>🇳🇱 {m.be_exempt_nl_income()}</td>
-            <td className="text-end">{fmt(result.nlExemptIncome)}</td>
-            <td className="text-end text-muted small">{pct(1 - result.beFraction)}</td>
-          </tr>
-          <tr>
-            <td>🇧🇪 {m.be_taxable_be_income()}</td>
-            <td className="text-end">{fmt(result.beIncome)}</td>
-            <td className="text-end text-muted small">{pct(result.beFraction)}</td>
-          </tr>
-        </tbody>
+      <Table bordered className="tw:mb-3">
+        <TableBody>
+          <TableRow>
+            <TableCell>🇳🇱 {m.be_exempt_nl_income()}</TableCell>
+            <TableCell className="tw:text-end">{fmt(result.nlExemptIncome)}</TableCell>
+            <TableCell className="tw:text-end text-muted small">
+              {pct(1 - result.beFraction)}
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>🇧🇪 {m.be_taxable_be_income()}</TableCell>
+            <TableCell className="tw:text-end">{fmt(result.beIncome)}</TableCell>
+            <TableCell className="tw:text-end text-muted small">{pct(result.beFraction)}</TableCell>
+          </TableRow>
+        </TableBody>
       </Table>
 
       <p className="mb-1 fw-semibold small">
         {m.be_exemption_with_progression()}{" "}
         <span className="text-muted fw-normal">({m.be_progression_hint()})</span>
       </p>
-      <Table bordered size="sm" className="mb-3">
-        <tbody>
-          <tr>
-            <td>{m.be_total_gross_income()}</td>
-            <td className="text-end">{fmt(result.nlExemptIncome + result.beIncome)}</td>
-          </tr>
-          <tr className="fw-semibold">
-            <td>
+      <Table bordered className="tw:mb-3">
+        <TableBody>
+          <TableRow>
+            <TableCell>{m.be_total_gross_income()}</TableCell>
+            <TableCell className="tw:text-end">
+              {fmt(result.nlExemptIncome + result.beIncome)}
+            </TableCell>
+          </TableRow>
+          <TableRow className="fw-semibold">
+            <TableCell>
               {m.be_declared_income()}
               <CodeBadge code="1250" description={m.code_desc_1250()} />
-            </td>
-            <td className="text-end">{fmt(result.declaredIncome)}</td>
-          </tr>
-          <tr>
-            <td>{m.be_professional_expenses()}</td>
-            <td className="text-end text-success">−{fmt(result.professionalExpenses)}</td>
-          </tr>
-          <tr className="fw-semibold">
-            <td>{m.be_net_taxable_income()}</td>
-            <td className="text-end">{fmt(result.netProfessionalIncome)}</td>
-          </tr>
-          <tr>
-            <td>{m.be_tax_on_total()}</td>
-            <td className="text-end">{fmt(result.basisbelasting)}</td>
-          </tr>
-          <tr>
-            <td>{m.be_personal_allowance()}</td>
-            <td className="text-end text-success">−{fmt(result.belastingvrijeSomReduction)}</td>
-          </tr>
-          <tr className="fw-semibold">
-            <td>{m.be_tax_after_allowance()}</td>
-            <td className="text-end">{fmt(result.omTeSlane)}</td>
-          </tr>
-          <tr>
-            <td>{m.be_exemption_reduction()}</td>
-            <td className="text-end text-success">−{fmt(result.vrijstellingReduction)}</td>
-          </tr>
-          <tr className="fw-semibold">
-            <td>{m.be_tax_before_split()}</td>
-            <td className="text-end">{fmt(result.hoofdsom)}</td>
-          </tr>
-          <tr>
-            <td>{m.be_federal_part()}</td>
-            <td className="text-end">{fmt(result.gereduceerde)}</td>
-          </tr>
-          <tr>
-            <td>{m.be_regional_part()}</td>
-            <td className="text-end">{fmt(result.gewestelijke)}</td>
-          </tr>
-        </tbody>
+            </TableCell>
+            <TableCell className="tw:text-end">{fmt(result.declaredIncome)}</TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>{m.be_professional_expenses()}</TableCell>
+            <TableCell className="tw:text-end tw:text-success">
+              −{fmt(result.professionalExpenses)}
+            </TableCell>
+          </TableRow>
+          <TableRow className="fw-semibold">
+            <TableCell>{m.be_net_taxable_income()}</TableCell>
+            <TableCell className="tw:text-end">{fmt(result.netProfessionalIncome)}</TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>{m.be_tax_on_total()}</TableCell>
+            <TableCell className="tw:text-end">{fmt(result.basisbelasting)}</TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>{m.be_personal_allowance()}</TableCell>
+            <TableCell className="tw:text-end tw:text-success">
+              −{fmt(result.belastingvrijeSomReduction)}
+            </TableCell>
+          </TableRow>
+          <TableRow className="fw-semibold">
+            <TableCell>{m.be_tax_after_allowance()}</TableCell>
+            <TableCell className="tw:text-end">{fmt(result.omTeSlane)}</TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>{m.be_exemption_reduction()}</TableCell>
+            <TableCell className="tw:text-end tw:text-success">
+              −{fmt(result.vrijstellingReduction)}
+            </TableCell>
+          </TableRow>
+          <TableRow className="fw-semibold">
+            <TableCell>{m.be_tax_before_split()}</TableCell>
+            <TableCell className="tw:text-end">{fmt(result.hoofdsom)}</TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>{m.be_federal_part()}</TableCell>
+            <TableCell className="tw:text-end">{fmt(result.gereduceerde)}</TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>{m.be_regional_part()}</TableCell>
+            <TableCell className="tw:text-end">{fmt(result.gewestelijke)}</TableCell>
+          </TableRow>
+        </TableBody>
       </Table>
 
       <p className="mb-1 fw-semibold small">{m.be_final_calculation()}</p>
-      <Table bordered size="sm" className="bt-table-result">
-        <tbody>
-          <tr>
-            <td>{m.be_federal_tax()}</td>
-            <td className="text-end">{fmt(result.saldoFederaal)}</td>
-          </tr>
-          <tr>
-            <td>{m.be_regional_tax()}</td>
-            <td className="text-end">{fmt(result.saldoGewestelijk)}</td>
-          </tr>
-          <tr>
-            <td>{m.be_municipal_tax()}</td>
-            <td className="text-end">{fmt(result.communalTax)}</td>
-          </tr>
-          <tr>
-            <td>{m.be_municipal_tax_on_exempt()}</td>
-            <td className="text-end">{fmt(result.communalTaxOnVrijgesteld)}</td>
-          </tr>
-          <tr className="table-primary fw-bold">
-            <td>{m.be_tax_payable()}</td>
-            <td className="text-end">{fmt(result.netTaxBE)}</td>
-          </tr>
-          <tr>
-            <td className="text-muted small">{m.be_effective_rate()}</td>
-            <td className="text-end text-muted small">{pct(result.effectiveRateBE)}</td>
-          </tr>
-        </tbody>
+      <Table bordered>
+        <TableBody>
+          <TableRow>
+            <TableCell>{m.be_federal_tax()}</TableCell>
+            <TableCell className="tw:text-end">{fmt(result.saldoFederaal)}</TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>{m.be_regional_tax()}</TableCell>
+            <TableCell className="tw:text-end">{fmt(result.saldoGewestelijk)}</TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>{m.be_municipal_tax()}</TableCell>
+            <TableCell className="tw:text-end">{fmt(result.communalTax)}</TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>{m.be_municipal_tax_on_exempt()}</TableCell>
+            <TableCell className="tw:text-end">{fmt(result.communalTaxOnVrijgesteld)}</TableCell>
+          </TableRow>
+          <TableRow variant="be" className="fw-bold">
+            <TableCell>{m.be_tax_payable()}</TableCell>
+            <TableCell className="tw:text-end">{fmt(result.netTaxBE)}</TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell className="text-muted small">{m.be_effective_rate()}</TableCell>
+            <TableCell className="tw:text-end text-muted small">
+              {pct(result.effectiveRateBE)}
+            </TableCell>
+          </TableRow>
+        </TableBody>
       </Table>
 
       <Alert variant="warning" className="mt-3 small mb-0">

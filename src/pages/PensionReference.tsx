@@ -1,4 +1,12 @@
-import { Accordion, Col, Container, Navbar, Row, Table } from "react-bootstrap";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from "@/components/ui/table";
+import { Accordion, Col, Container, Navbar, Row } from "react-bootstrap";
 import * as m from "../paraglide/messages.js";
 import {
   BeBadge,
@@ -115,29 +123,37 @@ export default function PensionReference() {
               <div className="mt-4 mb-2 small fw-semibold ref-subsection-label">
                 {m.ref_pension_max_amounts()}
               </div>
-              <Table size="sm" className="ref-table-sm">
-                <thead className="ref-thead">
-                  <tr>
-                    <th>{m.ref_table_type()}</th>
-                    <th>{m.ref_table_pct()}</th>
-                    <th>{m.ref_table_gross_monthly()}</th>
-                    <th>{m.ref_table_holiday_pay()}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr className="ref-tr">
-                    <td>{m.ref_pension_aow_ongehuwd()}</td>
-                    <td className="ref-td-mono-nl">70%</td>
-                    <td className="ref-td-mono">{m.ref_pension_aow_ongehuwd_monthly()}</td>
-                    <td className="ref-td-mono">{m.ref_pension_aow_ongehuwd_holiday()}</td>
-                  </tr>
-                  <tr className="ref-tr">
-                    <td>{m.ref_pension_aow_gehuwd()}</td>
-                    <td className="ref-td-mono-nl">50%</td>
-                    <td className="ref-td-mono">{m.ref_pension_aow_gehuwd_monthly()}</td>
-                    <td className="ref-td-mono">{m.ref_pension_aow_gehuwd_holiday()}</td>
-                  </tr>
-                </tbody>
+              <Table className="tw:text-table-reference">
+                <TableHeader className="tw:bg-surface-3">
+                  <TableRow>
+                    <TableHead>{m.ref_table_type()}</TableHead>
+                    <TableHead>{m.ref_table_pct()}</TableHead>
+                    <TableHead>{m.ref_table_gross_monthly()}</TableHead>
+                    <TableHead>{m.ref_table_holiday_pay()}</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  <TableRow>
+                    <TableCell>{m.ref_pension_aow_ongehuwd()}</TableCell>
+                    <TableCell className="tw:font-mono tw:text-text">70%</TableCell>
+                    <TableCell className="tw:font-mono">
+                      {m.ref_pension_aow_ongehuwd_monthly()}
+                    </TableCell>
+                    <TableCell className="tw:font-mono">
+                      {m.ref_pension_aow_ongehuwd_holiday()}
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>{m.ref_pension_aow_gehuwd()}</TableCell>
+                    <TableCell className="tw:font-mono tw:text-text">50%</TableCell>
+                    <TableCell className="tw:font-mono">
+                      {m.ref_pension_aow_gehuwd_monthly()}
+                    </TableCell>
+                    <TableCell className="tw:font-mono">
+                      {m.ref_pension_aow_gehuwd_holiday()}
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
               </Table>
 
               <div className="mt-3 p-3 rounded ref-example-block">
@@ -168,28 +184,28 @@ export default function PensionReference() {
 
               <Accordion flush className="mt-2">
                 <RefAccordionItem eventKey="aow-history" title={m.ref_pension_aow_history()}>
-                    <Table size="sm" className="ref-table-sub">
-                      <tbody>
-                        {[
-                          ["2012", m.ref_pension_aow_h2012()],
-                          ["2013", m.ref_pension_aow_h2013()],
-                          ["2014–2015", m.ref_pension_aow_h2014_2015()],
-                          ["2016", m.ref_pension_aow_h2016()],
-                          ["2017", m.ref_pension_aow_h2017()],
-                          ["2018", m.ref_pension_aow_h2018()],
-                          ["2019–2021", m.ref_pension_aow_h2019_2021()],
-                          ["2022", m.ref_pension_aow_h2022()],
-                          ["2023", m.ref_pension_aow_h2023()],
-                          ["2024–2027", m.ref_pension_aow_h2024_2027()],
-                          ["2028–2031", m.ref_pension_aow_h2028_2031()],
-                        ].map(([yr, age]) => (
-                          <tr key={yr} className="ref-tr">
-                            <td>{yr}</td>
-                            <td className="ref-td-mono">{age}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </Table>
+                  <Table className="tw:text-table-reference-xs">
+                    <TableBody>
+                      {[
+                        ["2012", m.ref_pension_aow_h2012()],
+                        ["2013", m.ref_pension_aow_h2013()],
+                        ["2014–2015", m.ref_pension_aow_h2014_2015()],
+                        ["2016", m.ref_pension_aow_h2016()],
+                        ["2017", m.ref_pension_aow_h2017()],
+                        ["2018", m.ref_pension_aow_h2018()],
+                        ["2019–2021", m.ref_pension_aow_h2019_2021()],
+                        ["2022", m.ref_pension_aow_h2022()],
+                        ["2023", m.ref_pension_aow_h2023()],
+                        ["2024–2027", m.ref_pension_aow_h2024_2027()],
+                        ["2028–2031", m.ref_pension_aow_h2028_2031()],
+                      ].map(([yr, age]) => (
+                        <TableRow key={yr}>
+                          <TableCell>{yr}</TableCell>
+                          <TableCell className="tw:font-mono">{age}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
                 </RefAccordionItem>
               </Accordion>
             </SectionCard>
@@ -415,25 +431,25 @@ export default function PensionReference() {
               <div className="small fw-semibold mb-2 ref-subsection-label">
                 {m.ref_pension_be_earliest()}
               </div>
-              <Table size="sm" className="ref-table-sm">
-                <thead className="ref-thead">
-                  <tr>
-                    <th>{m.ref_table_age()}</th>
-                    <th>{m.ref_table_career()}</th>
-                  </tr>
-                </thead>
-                <tbody>
+              <Table className="tw:text-table-reference">
+                <TableHeader className="tw:bg-surface-3">
+                  <TableRow>
+                    <TableHead>{m.ref_table_age()}</TableHead>
+                    <TableHead>{m.ref_table_career()}</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
                   {[
                     [m.ref_pension_be_age_60(), m.ref_pension_be_career_60()],
                     [m.ref_pension_be_age_61_62(), m.ref_pension_be_career_61_62()],
                     [m.ref_pension_be_age_63_64(), m.ref_pension_be_career_63_64()],
                   ].map(([age, career]) => (
-                    <tr key={age} className="ref-tr">
-                      <td className="ref-td-mono-be">{age}</td>
-                      <td className="ref-td-sub">{career}</td>
-                    </tr>
+                    <TableRow key={age}>
+                      <TableCell className="tw:font-mono tw:text-text">{age}</TableCell>
+                      <TableCell className="tw:text-text">{career}</TableCell>
+                    </TableRow>
                   ))}
-                </tbody>
+                </TableBody>
               </Table>
               <TipBox>{m.ref_pension_be_tip_nl_years()}</TipBox>
             </Col>
@@ -442,39 +458,43 @@ export default function PensionReference() {
               <div className="small fw-semibold mb-2 ref-subsection-label">
                 {m.ref_pension_be_ziv()}
               </div>
-              <p className="small mb-2 ref-text-sub">
+              <p className="small tw:mb-2 ref-text-sub">
                 <strong>{m.ref_pension_ziv_alleenstaand()}</strong>
               </p>
-              <Table size="sm" className="ref-table-xs">
-                <tbody>
+              <Table className="tw:text-table-reference-xs">
+                <TableBody>
                   {[
                     ["< €2.078,46/mnd", m.ref_pension_ziv_rule_geen1()],
                     ["€2.078,46 – €2.154,94", m.ref_pension_ziv_rule_prog1()],
                     ["> €2.154,94/mnd", m.ref_pension_ziv_rule_355_1()],
                   ].map(([range, rule]) => (
-                    <tr key={range} className="ref-tr">
-                      <td className="ref-td-mono-be-xs">{range}</td>
-                      <td className="ref-td-sub">{rule}</td>
-                    </tr>
+                    <TableRow key={range}>
+                      <TableCell className="tw:font-mono tw:text-text tw:text-xs">
+                        {range}
+                      </TableCell>
+                      <TableCell className="tw:text-text">{rule}</TableCell>
+                    </TableRow>
                   ))}
-                </tbody>
+                </TableBody>
               </Table>
               <p className="small mt-3 mb-2 ref-text-sub">
                 <strong>{m.ref_pension_ziv_gezin()}</strong>
               </p>
-              <Table size="sm" className="ref-table-xs">
-                <tbody>
+              <Table className="tw:text-table-reference-xs">
+                <TableBody>
                   {[
                     ["< €2.463,25/mnd", m.ref_pension_ziv_rule_geen2()],
                     ["€2.463,25 – €2.553,89", m.ref_pension_ziv_rule_prog2()],
                     ["> €2.553,89/mnd", m.ref_pension_ziv_rule_355_2()],
                   ].map(([range, rule]) => (
-                    <tr key={range} className="ref-tr">
-                      <td className="ref-td-mono-be-xs">{range}</td>
-                      <td className="ref-td-sub">{rule}</td>
-                    </tr>
+                    <TableRow key={range}>
+                      <TableCell className="tw:font-mono tw:text-text tw:text-xs">
+                        {range}
+                      </TableCell>
+                      <TableCell className="tw:text-text">{rule}</TableCell>
+                    </TableRow>
                   ))}
-                </tbody>
+                </TableBody>
               </Table>
               <WarnBox>{m.ref_pension_ziv_warn()}</WarnBox>
             </Col>
@@ -490,14 +510,14 @@ export default function PensionReference() {
               accent="be"
             >
               <p className="small mb-3 ref-text-sub">{m.ref_pension_be2027_intro()}</p>
-              <Table size="sm" className="ref-table-sm">
-                <thead className="ref-thead">
-                  <tr>
-                    <th>{m.ref_table_age()}</th>
-                    <th>{m.ref_table_career_156()}</th>
-                  </tr>
-                </thead>
-                <tbody>
+              <Table className="tw:text-table-reference">
+                <TableHeader className="tw:bg-surface-3">
+                  <TableRow>
+                    <TableHead>{m.ref_table_age()}</TableHead>
+                    <TableHead>{m.ref_table_career_156()}</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
                   {[
                     [m.ref_pension_be2027_age_60(), m.ref_pension_be2027_row_60_a()],
                     [m.ref_pension_be2027_age_60(), m.ref_pension_be2027_row_60_b()],
@@ -509,13 +529,13 @@ export default function PensionReference() {
                   ].map((row) => {
                     const [age, career] = row;
                     return (
-                      <tr key={String(age) + String(career)} className="ref-tr">
-                        <td className="ref-td-mono-be">{age}</td>
-                        <td className="ref-td-sub">{career}</td>
-                      </tr>
+                      <TableRow key={String(age) + String(career)}>
+                        <TableCell className="tw:font-mono tw:text-text">{age}</TableCell>
+                        <TableCell className="tw:text-text">{career}</TableCell>
+                      </TableRow>
                     );
                   })}
-                </tbody>
+                </TableBody>
               </Table>
             </SectionCard>
           </Col>
@@ -527,25 +547,27 @@ export default function PensionReference() {
               accent="be"
             >
               <p className="small mb-3 ref-text-sub">{m.ref_pension_malus_intro()}</p>
-              <Table size="sm" className="ref-table-ref">
-                <thead className="ref-thead">
-                  <tr>
-                    <th>{m.ref_table_birth_year()}</th>
-                    <th>{m.ref_table_malus_per_year()}</th>
-                  </tr>
-                </thead>
-                <tbody>
+              <Table className="tw:text-table-reference-md">
+                <TableHeader className="tw:bg-surface-3">
+                  <TableRow>
+                    <TableHead>{m.ref_table_birth_year()}</TableHead>
+                    <TableHead>{m.ref_table_malus_per_year()}</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
                   {[
                     [m.ref_pension_malus_1961(), "2%"],
                     [m.ref_pension_malus_1966(), "4%"],
                     [m.ref_pension_malus_1975(), "5%"],
                   ].map(([yr, malus]) => (
-                    <tr key={yr} className="ref-tr">
-                      <td className="ref-td-sub">{yr}</td>
-                      <td className="ref-td-mono-danger">{malus}</td>
-                    </tr>
+                    <TableRow key={yr}>
+                      <TableCell className="tw:text-text">{yr}</TableCell>
+                      <TableCell className="tw:font-mono tw:text-text tw:font-bold">
+                        {malus}
+                      </TableCell>
+                    </TableRow>
                   ))}
-                </tbody>
+                </TableBody>
               </Table>
             </SectionCard>
           </Col>
@@ -553,25 +575,25 @@ export default function PensionReference() {
           <Col md={4}>
             <SectionCard title={m.ref_pension_s_bonus()} icon="bi-arrow-up-circle-fill" accent="be">
               <p className="small mb-3 ref-text-sub">{m.ref_pension_bonus_intro()}</p>
-              <Table size="sm" className="ref-table-ref">
-                <thead className="ref-thead">
-                  <tr>
-                    <th>{m.ref_table_birth_year()}</th>
-                    <th>{m.ref_table_bonus_per_year()}</th>
-                  </tr>
-                </thead>
-                <tbody>
+              <Table className="tw:text-table-reference-md">
+                <TableHeader className="tw:bg-surface-3">
+                  <TableRow>
+                    <TableHead>{m.ref_table_birth_year()}</TableHead>
+                    <TableHead>{m.ref_table_bonus_per_year()}</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
                   {[
                     [m.ref_pension_bonus_1962(), "2%"],
                     [m.ref_pension_bonus_1963(), "4%"],
                     [m.ref_pension_bonus_1973(), "5%"],
                   ].map(([yr, bonus]) => (
-                    <tr key={yr} className="ref-tr">
-                      <td className="ref-td-sub">{yr}</td>
-                      <td className="ref-td-mono-success fw-bold">{bonus}</td>
-                    </tr>
+                    <TableRow key={yr}>
+                      <TableCell className="tw:text-text">{yr}</TableCell>
+                      <TableCell className="tw:font-mono tw:text-text fw-bold">{bonus}</TableCell>
+                    </TableRow>
                   ))}
-                </tbody>
+                </TableBody>
               </Table>
             </SectionCard>
           </Col>
@@ -591,7 +613,7 @@ export default function PensionReference() {
               <div className="small fw-semibold mb-2 ref-subsection-label">
                 {m.ref_pension_art64()}
               </div>
-              <p className="small mb-2 ref-text-sub">{m.ref_pension_art64_intro()}</p>
+              <p className="small tw:mb-2 ref-text-sub">{m.ref_pension_art64_intro()}</p>
               <ol className="small mb-0 ref-list-sub">
                 <li>{m.ref_pension_art64_li1()}</li>
                 <li>{m.ref_pension_art64_li2()}</li>
@@ -647,14 +669,14 @@ export default function PensionReference() {
         <SectionCard title={m.ref_pension_s_disability()} icon="bi-bandaid-fill" accent="nl">
           <Row className="g-3">
             <Col md={6}>
-              <p className="small mb-2 ref-text-sub">{m.ref_pension_disability_intro1()}</p>
+              <p className="small tw:mb-2 ref-text-sub">{m.ref_pension_disability_intro1()}</p>
               <ul className="small ref-list-sub">
                 <li>{m.ref_pension_disability_li1()}</li>
                 <li>{m.ref_pension_disability_li2()}</li>
               </ul>
             </Col>
             <Col md={6}>
-              <p className="small mb-2 ref-text-sub">{m.ref_pension_disability_intro2()}</p>
+              <p className="small tw:mb-2 ref-text-sub">{m.ref_pension_disability_intro2()}</p>
               <ul className="small mb-0 ref-list-sub">
                 <li>{m.ref_pension_disability_li3()}</li>
                 <li>{m.ref_pension_disability_li4()}</li>

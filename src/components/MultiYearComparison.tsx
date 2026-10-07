@@ -1,6 +1,14 @@
+import { ArrowUp, ArrowDown } from "lucide-react";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { useMemo, useState } from "react";
-import { Table } from "react-bootstrap";
 import clsx from "clsx";
 import {
   columnVisibilityFeature,
@@ -72,22 +80,26 @@ export default function MultiYearComparison({ rows, activeYear }: Props) {
         columnHelper.accessor((row) => row.result.nl.netTaxNL, {
           id: "nlTax",
           header: () => m.years_nl_tax(),
-          cell: (info) => <span className="text-danger">-{fmt(info.getValue())}</span>,
+          cell: (info) => <span className="tw:text-danger">-{fmt(info.getValue())}</span>,
         }),
         columnHelper.accessor((row) => row.result.be?.netTaxBE ?? 0, {
           id: "beTax",
           header: () => m.years_be_tax(),
-          cell: (info) => <span className="text-danger">-{fmt(info.getValue())}</span>,
+          cell: (info) => <span className="tw:text-danger">-{fmt(info.getValue())}</span>,
         }),
         columnHelper.accessor((row) => row.result.totalTax, {
           id: "totalTax",
           header: () => m.years_total_tax(),
-          cell: (info) => <span className="text-danger fw-semibold">-{fmt(info.getValue())}</span>,
+          cell: (info) => (
+            <span className="tw:text-danger fw-semibold">-{fmt(info.getValue())}</span>
+          ),
         }),
         columnHelper.accessor((row) => row.result.netIncome, {
           id: "netIncome",
           header: () => m.years_net_income(),
-          cell: (info) => <span className="text-success fw-semibold">{fmt(info.getValue())}</span>,
+          cell: (info) => (
+            <span className="tw:text-success fw-semibold">{fmt(info.getValue())}</span>
+          ),
         }),
         columnHelper.accessor((row) => row.result.effectiveRateTotal, {
           id: "effectiveRate",
@@ -169,13 +181,13 @@ export default function MultiYearComparison({ rows, activeYear }: Props) {
 
       {/* Detail table */}
       <Table bordered hover responsive>
-        <thead>
+        <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id}>
+            <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
-                <th
+                <TableHead
                   key={header.id}
-                  className={NUMERIC_COLS.has(header.column.id) ? "text-end" : undefined}
+                  className={NUMERIC_COLS.has(header.column.id) ? "tw:text-end" : undefined}
                   aria-sort={
                     header.column.getIsSorted() === "asc"
                       ? "ascending"
@@ -192,37 +204,38 @@ export default function MultiYearComparison({ rows, activeYear }: Props) {
                     >
                       {flexRender(header.column.columnDef.header, header.getContext())}
                       {header.column.getIsSorted() === "asc" && (
-                        <i className="bi bi-arrow-up ms-1" aria-hidden="true" />
+                        <ArrowUp className="tw:ms-1 tw:inline tw:size-3" aria-hidden="true" />
                       )}
                       {header.column.getIsSorted() === "desc" && (
-                        <i className="bi bi-arrow-down ms-1" aria-hidden="true" />
+                        <ArrowDown className="tw:ms-1 tw:inline tw:size-3" aria-hidden="true" />
                       )}
                     </button>
                   ) : (
                     flexRender(header.column.columnDef.header, header.getContext())
                   )}
-                </th>
+                </TableHead>
               ))}
-            </tr>
+            </TableRow>
           ))}
-        </thead>
-        <tbody>
+        </TableHeader>
+        <TableBody>
           {table.getRowModel().rows.map((row) => (
-            <tr
+            <TableRow
               key={row.id}
-              className={row.original.year === activeYear ? "table-primary" : undefined}
+              variant={row.original.year === activeYear ? "primary" : "default"}
+              data-state={row.original.year === activeYear ? "selected" : undefined}
             >
               {row.getVisibleCells().map((cell) => (
-                <td
+                <TableCell
                   key={cell.id}
-                  className={NUMERIC_COLS.has(cell.column.id) ? "text-end" : undefined}
+                  className={NUMERIC_COLS.has(cell.column.id) ? "tw:text-end" : undefined}
                 >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </td>
+                </TableCell>
               ))}
-            </tr>
+            </TableRow>
           ))}
-        </tbody>
+        </TableBody>
       </Table>
       <p className="text-muted small mb-0">{m.years_description()}</p>
     </div>

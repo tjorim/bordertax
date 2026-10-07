@@ -1,4 +1,12 @@
-import { Accordion, Col, Container, Navbar, Row, Table } from "react-bootstrap";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from "@/components/ui/table";
+import { Accordion, Col, Container, Navbar, Row } from "react-bootstrap";
 import * as m from "../paraglide/messages.js";
 import {
   BeBadge,
@@ -54,32 +62,52 @@ export default function SalarySplitReference() {
             {/* ── 2. Dagentelling ────────────────────────────────── */}
             <SectionCard title={m.ref_ss_s2_title()} icon="bi-calendar3" accent="neutral">
               <p className="mb-3 ref-text-sub">{m.ref_ss_s2_intro()}</p>
-              <Table responsive className="mb-3 ref-table-ref">
-                <thead className="ref-thead">
-                  <tr>
-                    <th>{m.ref_table_component()}</th>
-                    <th>
+              <Table responsive className="tw:mb-3 tw:text-table-reference-md">
+                <TableHeader className="tw:bg-surface-3">
+                  <TableRow>
+                    <TableHead>{m.ref_table_component()}</TableHead>
+                    <TableHead>
                       <NlBadge>{m.ref_ss_col_nl()}</NlBadge>
-                    </th>
-                    <th>
+                    </TableHead>
+                    <TableHead>
                       <BeBadge>{m.ref_ss_col_be()}</BeBadge>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
                   {[
-                    { id: "row1", comp: m.ref_ss_s2_row1_comp(), nl: m.ref_ss_s2_row1_nl(), be: m.ref_ss_s2_row1_be() },
-                    { id: "row2", comp: m.ref_ss_s2_row2_comp(), nl: m.ref_ss_s2_row2_nl(), be: m.ref_ss_s2_row2_be() },
-                    { id: "row3", comp: m.ref_ss_s2_row3_comp(), nl: m.ref_ss_s2_row3_nl(), be: m.ref_ss_s2_row3_be() },
-                    { id: "row4", comp: m.ref_ss_s2_row4_comp(), nl: m.ref_ss_s2_row4_nl(), be: m.ref_ss_s2_row4_be() },
+                    {
+                      id: "row1",
+                      comp: m.ref_ss_s2_row1_comp(),
+                      nl: m.ref_ss_s2_row1_nl(),
+                      be: m.ref_ss_s2_row1_be(),
+                    },
+                    {
+                      id: "row2",
+                      comp: m.ref_ss_s2_row2_comp(),
+                      nl: m.ref_ss_s2_row2_nl(),
+                      be: m.ref_ss_s2_row2_be(),
+                    },
+                    {
+                      id: "row3",
+                      comp: m.ref_ss_s2_row3_comp(),
+                      nl: m.ref_ss_s2_row3_nl(),
+                      be: m.ref_ss_s2_row3_be(),
+                    },
+                    {
+                      id: "row4",
+                      comp: m.ref_ss_s2_row4_comp(),
+                      nl: m.ref_ss_s2_row4_nl(),
+                      be: m.ref_ss_s2_row4_be(),
+                    },
                   ].map(({ id, comp, nl, be }) => (
-                    <tr key={id} className="ref-tr">
-                      <td className="ref-td-label">{comp}</td>
-                      <td>{nl}</td>
-                      <td>{be}</td>
-                    </tr>
+                    <TableRow key={id}>
+                      <TableCell className="tw:text-text tw:font-medium">{comp}</TableCell>
+                      <TableCell>{nl}</TableCell>
+                      <TableCell>{be}</TableCell>
+                    </TableRow>
                   ))}
-                </tbody>
+                </TableBody>
               </Table>
               <WarnBox>{m.ref_ss_s2_warn()}</WarnBox>
               <TipBox>{m.ref_ss_s2_tip()}</TipBox>
@@ -91,29 +119,29 @@ export default function SalarySplitReference() {
               <Formula>{m.ref_ss_be_formula()}</Formula>
               <div className="mt-3">
                 <p className="mb-2 small ref-text-sub">{m.ref_ss_be_codes_title()}</p>
-                <Table size="sm" className="ref-table-sm">
-                  <tbody>
-                    <tr className="ref-tr">
-                      <td className="ref-td-mono-be">1250 / 2250</td>
-                      <td>{m.ref_ss_s3_code_1250()}</td>
-                    </tr>
-                    <tr className="ref-tr">
-                      <td className="ref-td-mono-be">Vak IV O.1</td>
-                      <td>{m.ref_ss_s3_code_vak4_o1()}</td>
-                    </tr>
-                    <tr className="ref-tr">
-                      <td className="ref-td-mono-be">Vak IV O.2</td>
-                      <td>{m.ref_ss_s3_code_vak4_o2()}</td>
-                    </tr>
-                    <tr className="ref-tr">
-                      <td className="ref-td-mono-be">*254 / *255</td>
-                      <td>{m.ref_ss_s3_code_254()}</td>
-                    </tr>
-                    <tr className="ref-tr">
-                      <td className="ref-td-mono-be">*257</td>
-                      <td>{m.ref_ss_s3_code_257()}</td>
-                    </tr>
-                  </tbody>
+                <Table className="tw:text-table-reference">
+                  <TableBody>
+                    <TableRow>
+                      <TableCell className="tw:font-mono tw:text-text">1250 / 2250</TableCell>
+                      <TableCell>{m.ref_ss_s3_code_1250()}</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell className="tw:font-mono tw:text-text">Vak IV O.1</TableCell>
+                      <TableCell>{m.ref_ss_s3_code_vak4_o1()}</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell className="tw:font-mono tw:text-text">Vak IV O.2</TableCell>
+                      <TableCell>{m.ref_ss_s3_code_vak4_o2()}</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell className="tw:font-mono tw:text-text">*254 / *255</TableCell>
+                      <TableCell>{m.ref_ss_s3_code_254()}</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell className="tw:font-mono tw:text-text">*257</TableCell>
+                      <TableCell>{m.ref_ss_s3_code_257()}</TableCell>
+                    </TableRow>
+                  </TableBody>
                 </Table>
               </div>
               <WarnBox>
@@ -134,60 +162,72 @@ export default function SalarySplitReference() {
           <Col lg={5}>
             {/* ── 4. NL Belastingtarieven 2026 ──────────────────── */}
             <SectionCard title={m.ref_ss_s4_title()} icon="bi-percent" accent="nl">
-              <Table size="sm" responsive className="ref-table-sm">
-                <thead className="ref-thead">
-                  <tr>
-                    <th>{m.ref_table_bracket()}</th>
-                    <th>{m.ref_table_rate()}</th>
-                    <th>{m.ref_table_buildup()}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr className="ref-tr">
-                    <td>{m.ref_ss_s4_bracket1()}</td>
-                    <td className="ref-td-mono-nl">{m.ref_ss_s4_rate1()}</td>
-                    <td className="ref-td-sub">{m.ref_ss_s4_buildup1()}</td>
-                  </tr>
-                  <tr className="ref-tr">
-                    <td>{m.ref_ss_s4_bracket2()}</td>
-                    <td className="ref-td-mono-nl">{m.ref_ss_s4_rate2()}</td>
-                    <td className="ref-td-sub">{m.ref_ss_s4_enkel_lb()}</td>
-                  </tr>
-                  <tr className="ref-tr">
-                    <td>{m.ref_ss_s4_bracket3()}</td>
-                    <td className="ref-td-mono-nl">{m.ref_ss_s4_rate3()}</td>
-                    <td className="ref-td-sub">{m.ref_ss_s4_enkel_lb()}</td>
-                  </tr>
-                </tbody>
+              <Table responsive className="tw:text-table-reference">
+                <TableHeader className="tw:bg-surface-3">
+                  <TableRow>
+                    <TableHead>{m.ref_table_bracket()}</TableHead>
+                    <TableHead>{m.ref_table_rate()}</TableHead>
+                    <TableHead>{m.ref_table_buildup()}</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  <TableRow>
+                    <TableCell>{m.ref_ss_s4_bracket1()}</TableCell>
+                    <TableCell className="tw:font-mono tw:text-text">
+                      {m.ref_ss_s4_rate1()}
+                    </TableCell>
+                    <TableCell className="tw:text-text">{m.ref_ss_s4_buildup1()}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>{m.ref_ss_s4_bracket2()}</TableCell>
+                    <TableCell className="tw:font-mono tw:text-text">
+                      {m.ref_ss_s4_rate2()}
+                    </TableCell>
+                    <TableCell className="tw:text-text">{m.ref_ss_s4_enkel_lb()}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>{m.ref_ss_s4_bracket3()}</TableCell>
+                    <TableCell className="tw:font-mono tw:text-text">
+                      {m.ref_ss_s4_rate3()}
+                    </TableCell>
+                    <TableCell className="tw:text-text">{m.ref_ss_s4_enkel_lb()}</TableCell>
+                  </TableRow>
+                </TableBody>
               </Table>
               <p className="mt-3 mb-2 small ref-text-sub">{m.ref_ss_heffingskortingen_title()}</p>
-              <Table size="sm" className="ref-table-sm">
-                <tbody>
-                  <tr className="ref-tr">
-                    <td>{m.ref_ss_ahk()}</td>
-                    <td className="ref-td-mono-success text-end">{m.ref_ss_s4_ahk_max()}</td>
-                  </tr>
-                  <tr className="ref-tr">
-                    <td className="ref-td-indent">{m.ref_ss_ahk_expires()}</td>
-                    <td />
-                  </tr>
-                  <tr className="ref-tr">
-                    <td>{m.ref_ss_arbeidskorting()}</td>
-                    <td className="ref-td-mono-success text-end">
+              <Table className="tw:text-table-reference">
+                <TableBody>
+                  <TableRow>
+                    <TableCell>{m.ref_ss_ahk()}</TableCell>
+                    <TableCell className="tw:font-mono tw:text-text tw:text-end">
+                      {m.ref_ss_s4_ahk_max()}
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className="tw:text-text tw:text-xs">
+                      {m.ref_ss_ahk_expires()}
+                    </TableCell>
+                    <TableCell />
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>{m.ref_ss_arbeidskorting()}</TableCell>
+                    <TableCell className="tw:font-mono tw:text-text tw:text-end">
                       {m.ref_ss_s4_arbeidskorting_max()}
-                    </td>
-                  </tr>
-                  <tr className="ref-tr">
-                    <td className="ref-td-indent">{m.ref_ss_arbeidskorting_zero()}</td>
-                    <td />
-                  </tr>
-                  <tr className="ref-tr">
-                    <td>{m.ref_ss_combinatiekorting()}</td>
-                    <td className="ref-td-mono-success text-end">
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className="tw:text-text tw:text-xs">
+                      {m.ref_ss_arbeidskorting_zero()}
+                    </TableCell>
+                    <TableCell />
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>{m.ref_ss_combinatiekorting()}</TableCell>
+                    <TableCell className="tw:font-mono tw:text-text tw:text-end">
                       {m.ref_ss_s4_combinatiekorting_max()}
-                    </td>
-                  </tr>
-                </tbody>
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
               </Table>
               <p className="mt-2 small ref-footnote">{m.ref_ss_vv_footnote()}</p>
             </SectionCard>
@@ -195,29 +235,33 @@ export default function SalarySplitReference() {
             {/* ── 5. Kaderovereenkomst Telewerk (SZ) ────────────── */}
             <SectionCard title={m.ref_ss_s5_title()} icon="bi-house-check-fill" accent="neutral">
               <p className="mb-3 ref-section-intro">{m.ref_ss_s5_intro()}</p>
-              <Table size="sm" className="ref-table-sm">
-                <tbody>
-                  <tr className="ref-tr">
-                    <td>{m.ref_ss_s5_row_effective()}</td>
-                    <td className="ref-td-mono">{m.ref_ss_s5_effective_date_value()}</td>
-                  </tr>
-                  <tr className="ref-tr">
-                    <td>{m.ref_ss_s5_row_max_telework()}</td>
-                    <td className="ref-td-mono-success fw-bold">49%</td>
-                  </tr>
-                  <tr className="ref-tr">
-                    <td>{m.ref_ss_s5_row_a1_validity()}</td>
-                    <td className="ref-td-mono">{m.ref_ss_s5_a1_validity_value()}</td>
-                  </tr>
-                  <tr className="ref-tr">
-                    <td>{m.ref_ss_s5_row_apply_at()}</td>
-                    <td>{m.ref_ss_s5_apply_at_value()}</td>
-                  </tr>
-                  <tr className="ref-tr">
-                    <td>{m.ref_ss_s5_row_retro()}</td>
-                    <td className="ref-td-mono">{m.ref_ss_s5_retro_value()}</td>
-                  </tr>
-                </tbody>
+              <Table className="tw:text-table-reference">
+                <TableBody>
+                  <TableRow>
+                    <TableCell>{m.ref_ss_s5_row_effective()}</TableCell>
+                    <TableCell className="tw:font-mono">
+                      {m.ref_ss_s5_effective_date_value()}
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>{m.ref_ss_s5_row_max_telework()}</TableCell>
+                    <TableCell className="tw:font-mono tw:text-text fw-bold">49%</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>{m.ref_ss_s5_row_a1_validity()}</TableCell>
+                    <TableCell className="tw:font-mono">
+                      {m.ref_ss_s5_a1_validity_value()}
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>{m.ref_ss_s5_row_apply_at()}</TableCell>
+                    <TableCell>{m.ref_ss_s5_apply_at_value()}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>{m.ref_ss_s5_row_retro()}</TableCell>
+                    <TableCell className="tw:font-mono">{m.ref_ss_s5_retro_value()}</TableCell>
+                  </TableRow>
+                </TableBody>
               </Table>
               <p className="mt-2 mb-1 small fw-semibold">{m.ref_ss_conditions()}</p>
               <ul className="mb-0 small ref-list-sub">
@@ -233,27 +277,27 @@ export default function SalarySplitReference() {
               <p className="mb-2 ref-section-intro">{m.ref_ss_s6_intro()}</p>
               <Accordion flush>
                 <RefAccordionItem eventKey="0" title={m.ref_ss_strong_evidence()}>
-                    <ul className="mb-0 ref-list-sub">
-                      <li>{m.ref_ss_s6_ev1()}</li>
-                      <li>{m.ref_ss_s6_ev2()}</li>
-                      <li>{m.ref_ss_s6_ev3()}</li>
-                      <li>{m.ref_ss_s6_ev4()}</li>
-                      <li>{m.ref_ss_s6_ev5()}</li>
-                      <li>{m.ref_ss_s6_ev6()}</li>
-                      <li>{m.ref_ss_s6_ev7()}</li>
-                    </ul>
+                  <ul className="mb-0 ref-list-sub">
+                    <li>{m.ref_ss_s6_ev1()}</li>
+                    <li>{m.ref_ss_s6_ev2()}</li>
+                    <li>{m.ref_ss_s6_ev3()}</li>
+                    <li>{m.ref_ss_s6_ev4()}</li>
+                    <li>{m.ref_ss_s6_ev5()}</li>
+                    <li>{m.ref_ss_s6_ev6()}</li>
+                    <li>{m.ref_ss_s6_ev7()}</li>
+                  </ul>
                 </RefAccordionItem>
                 <RefAccordionItem
                   eventKey="1"
                   title={m.ref_ss_insufficient_evidence()}
                   style={{ marginTop: 2 }}
                 >
-                    <ul className="mb-0 ref-list-muted">
-                      <li>{m.ref_ss_s6_insuf1()}</li>
-                      <li>{m.ref_ss_s6_insuf2()}</li>
-                      <li>{m.ref_ss_s6_insuf3()}</li>
-                    </ul>
-                    <p className="mt-2 mb-0 ref-footnote">{m.ref_ss_s6_source_note()}</p>
+                  <ul className="mb-0 ref-list-muted">
+                    <li>{m.ref_ss_s6_insuf1()}</li>
+                    <li>{m.ref_ss_s6_insuf2()}</li>
+                    <li>{m.ref_ss_s6_insuf3()}</li>
+                  </ul>
+                  <p className="mt-2 mb-0 ref-footnote">{m.ref_ss_s6_source_note()}</p>
                 </RefAccordionItem>
               </Accordion>
             </SectionCard>
@@ -310,8 +354,10 @@ export default function SalarySplitReference() {
                   <StatRow label={m.ref_ss_label_z_o2()} value="€34.401" />
                   <StatRow label={m.ref_ss_label_be_te_betalen()} value="€3.277" highlight />
                 </div>
-                <div className="ref-scenario-result-success mt-3 p-2 rounded text-center">
-                  <span className="ref-td-mono-success fw-bold">{m.ref_ss_netto_voordeel_a()}</span>
+                <div className="ref-scenario-result-success mt-3 p-2 rounded tw:text-center">
+                  <span className="tw:font-mono tw:text-success fw-bold">
+                    {m.ref_ss_netto_voordeel_a()}
+                  </span>
                   <div className="ref-footnote">{m.ref_ss_netto_voordeel_a_sub()}</div>
                 </div>
               </div>
@@ -351,8 +397,10 @@ export default function SalarySplitReference() {
                   <StatRow label={m.ref_ss_label_z_o2()} value="€33.150" />
                   <StatRow label={m.ref_ss_label_be_te_betalen()} value="€3.600" highlight />
                 </div>
-                <div className="ref-scenario-result-warning mt-3 p-2 rounded text-center">
-                  <span className="ref-td-mono-warning">{m.ref_ss_netto_voordeel_b()}</span>
+                <div className="ref-scenario-result-warning mt-3 p-2 rounded tw:text-center">
+                  <span className="tw:font-mono tw:text-warning tw:font-bold">
+                    {m.ref_ss_netto_voordeel_b()}
+                  </span>
                   <div className="ref-footnote">{m.ref_ss_netto_voordeel_b_sub()}</div>
                 </div>
               </div>
@@ -364,35 +412,35 @@ export default function SalarySplitReference() {
             <h6 className="mb-3 small fw-semibold ref-subsection-label">
               {m.ref_ss_comparison_all()}
             </h6>
-            <Table responsive className="ref-table-ref">
-              <thead className="ref-thead">
-                <tr>
-                  <th>{m.ref_table_scenario()}</th>
-                  <th>{m.ref_table_be_payable()}</th>
-                  <th>{m.ref_table_nl_refund()}</th>
-                  <th>{m.ref_table_net_diff()}</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="ref-tr">
-                  <td>{m.ref_ss_scenario_100pct_office()}</td>
-                  <td className="ref-td-mono">€600</td>
-                  <td className="ref-td-mono">€0</td>
-                  <td className="ref-text-muted">—</td>
-                </tr>
-                <tr className="ref-tr">
-                  <td>{m.ref_ss_scenario_50_no_sick()}</td>
-                  <td className="ref-td-mono">€3.277</td>
-                  <td className="ref-td-mono-success">+€4.314</td>
-                  <td className="ref-td-mono-success fw-bold">+€1.037 ✓</td>
-                </tr>
-                <tr className="ref-tr">
-                  <td>{m.ref_ss_scenario_50_25_sick()}</td>
-                  <td className="ref-td-mono">€3.600</td>
-                  <td className="ref-td-mono-success">+€4.314</td>
-                  <td className="ref-td-mono-warning">+€714 ⚠️</td>
-                </tr>
-              </tbody>
+            <Table responsive className="tw:text-table-reference-md">
+              <TableHeader className="tw:bg-surface-3">
+                <TableRow>
+                  <TableHead>{m.ref_table_scenario()}</TableHead>
+                  <TableHead>{m.ref_table_be_payable()}</TableHead>
+                  <TableHead>{m.ref_table_nl_refund()}</TableHead>
+                  <TableHead>{m.ref_table_net_diff()}</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <TableRow>
+                  <TableCell>{m.ref_ss_scenario_100pct_office()}</TableCell>
+                  <TableCell className="tw:font-mono">€600</TableCell>
+                  <TableCell className="tw:font-mono">€0</TableCell>
+                  <TableCell className="tw:text-text">—</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>{m.ref_ss_scenario_50_no_sick()}</TableCell>
+                  <TableCell className="tw:font-mono">€3.277</TableCell>
+                  <TableCell className="tw:font-mono tw:text-text">+€4.314</TableCell>
+                  <TableCell className="tw:font-mono tw:text-text fw-bold">+€1.037 ✓</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>{m.ref_ss_scenario_50_25_sick()}</TableCell>
+                  <TableCell className="tw:font-mono">€3.600</TableCell>
+                  <TableCell className="tw:font-mono tw:text-text">+€4.314</TableCell>
+                  <TableCell className="tw:font-mono tw:text-text tw:font-bold">+€714 ⚠️</TableCell>
+                </TableRow>
+              </TableBody>
             </Table>
             <p className="small mb-0 ref-footnote">{m.ref_ss_s7_footnote()}</p>
           </div>

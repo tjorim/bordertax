@@ -1,3 +1,11 @@
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from "@/components/ui/table";
 import { useEffect, useState } from "react";
 import { Alert, Button, Col, Row, Stack } from "react-bootstrap";
 import clsx from "clsx";
@@ -207,39 +215,39 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
         return (
           <div className="mt-4">
             <h6 className="mb-2">{m.summary_sourcing_title()}</h6>
-            <table className="table table-sm table-bordered mb-1 small">
-              <thead>
-                <tr>
-                  <th scope="col">{m.summary_sourcing_method_col()}</th>
-                  <th scope="col" className="text-center">
+            <Table bordered className="tw:mb-1 small">
+              <TableHeader>
+                <TableRow>
+                  <TableHead scope="col">{m.summary_sourcing_method_col()}</TableHead>
+                  <TableHead scope="col" className="tw:text-center">
                     {m.summary_sourcing_nl_fraction()}
-                  </th>
-                  <th scope="col" className="text-center">
+                  </TableHead>
+                  <TableHead scope="col" className="tw:text-center">
                     {m.summary_sourcing_be_fraction()}
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>🇳🇱 {m.summary_sourcing_nl_method()}</td>
-                  <td className="text-center">
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <TableRow>
+                  <TableCell>🇳🇱 {m.summary_sourcing_nl_method()}</TableCell>
+                  <TableCell className="tw:text-center">
                     {totalWithSick > 0 ? pct(result.nlFractionDutchMethod) : "—"}
-                  </td>
-                  <td className="text-center">
+                  </TableCell>
+                  <TableCell className="tw:text-center">
                     {totalWithSick > 0 ? pct(1 - result.nlFractionDutchMethod) : "—"}
-                  </td>
-                </tr>
-                <tr>
-                  <td>🇧🇪 {m.summary_sourcing_be_method()}</td>
-                  <td className="text-center">
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>🇧🇪 {m.summary_sourcing_be_method()}</TableCell>
+                  <TableCell className="tw:text-center">
                     {totalNoSick > 0 ? pct(result.nlFractionBelgianMethod) : "—"}
-                  </td>
-                  <td className="text-center">
+                  </TableCell>
+                  <TableCell className="tw:text-center">
                     {totalNoSick > 0 ? pct(1 - result.nlFractionBelgianMethod) : "—"}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
             <p className="text-muted small mb-0">{m.summary_sourcing_nl_formula()}</p>
             <p className="text-muted small mb-0">{m.summary_sourcing_be_formula()}</p>
             {showOverlapNote && (
@@ -264,13 +272,20 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
               <span className="bt-breakdown__value text-danger">−{fmt(nl.netTaxNL)}</span>
             </div>
             <div
-              className={clsx("bt-breakdown__row", nlBalance >= 0 ? "bt-breakdown__row--ok" : "bt-breakdown__row--warn")}
+              className={clsx(
+                "bt-breakdown__row",
+                nlBalance >= 0 ? "bt-breakdown__row--ok" : "bt-breakdown__row--warn",
+              )}
             >
               <span className="bt-breakdown__label bt-breakdown__label--strong">
                 🇳🇱 {m.summary_nl_balance()}
               </span>
               <span
-                className={clsx("bt-breakdown__value", "bt-breakdown__label--strong", nlBalance >= 0 ? "text-success" : "text-danger")}
+                className={clsx(
+                  "bt-breakdown__value",
+                  "bt-breakdown__label--strong",
+                  nlBalance >= 0 ? "text-success" : "text-danger",
+                )}
               >
                 {fmtSigned(nlBalance)}
               </span>
@@ -284,7 +299,10 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
           </div>
 
           <div
-            className={clsx("bt-balance", netResult >= 0 ? "bt-balance--refund" : "bt-balance--owe")}
+            className={clsx(
+              "bt-balance",
+              netResult >= 0 ? "bt-balance--refund" : "bt-balance--owe",
+            )}
           >
             <div className="bt-balance__label">
               <i

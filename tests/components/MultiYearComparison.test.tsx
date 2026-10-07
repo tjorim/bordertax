@@ -43,7 +43,7 @@ describe("MultiYearComparison", () => {
       .map((el) => el.closest("td"))
       .find((el) => el !== null);
     const activeRow = activeYearCell?.closest("tr");
-    expect(activeRow).toHaveClass("table-primary");
+    expect(activeRow).toHaveAttribute("data-state", "selected");
   });
 
   it("renders table with column headers", () => {
