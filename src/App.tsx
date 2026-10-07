@@ -1,6 +1,7 @@
 import { formOptions, useForm, useSelector, type ReactFormType } from "@tanstack/react-form";
 import { useEffect, useMemo, useState } from "react";
-import { Col, Container, Nav, Navbar, Row, Tab } from "react-bootstrap";
+import { BarChart3, House, PieChart } from "lucide-react";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "./components/ui/tabs";
 import { ErrorBoundary, type FallbackProps } from "react-error-boundary";
 
 import InputPanel from "./components/InputPanel";
@@ -79,43 +80,33 @@ function ResultsTabs({ inputs, onResetInputs }: ResultsTabsProps) {
   );
 
   return (
-    <Tab.Container defaultActiveKey="summary">
-      <Nav variant="tabs" className="mb-3">
-        <Nav.Item>
-          <Nav.Link eventKey="summary" aria-label={m.tabs_summary()}>
-            <i className="bi bi-pie-chart-fill me-1" />
-            {m.tabs_summary()}
-          </Nav.Link>
-        </Nav.Item>
-        <Nav.Item>
-          <Nav.Link eventKey="nl" aria-label={m.tabs_nl()}>
-            🇳🇱 {m.tabs_nl()}
-          </Nav.Link>
-        </Nav.Item>
-        <Nav.Item>
-          <Nav.Link eventKey="be" aria-label={m.tabs_be()}>
-            🇧🇪 {m.tabs_be()}
-          </Nav.Link>
-        </Nav.Item>
-        <Nav.Item>
-          <Nav.Link eventKey="years" aria-label={m.tabs_year_comparison()}>
-            <i className="bi bi-bar-chart-line-fill me-1" />
-            {m.tabs_year_comparison()}
-          </Nav.Link>
-        </Nav.Item>
-        <Nav.Item>
-          <Nav.Link eventKey="wfh" aria-label={m.tabs_wfh_ratio()}>
-            <i className="bi bi-house-fill me-1" />
-            {m.tabs_wfh_ratio()}
-          </Nav.Link>
-        </Nav.Item>
-      </Nav>
+    <Tabs defaultValue="summary">
+      <TabsList aria-label="Results">
+        <TabsTrigger value="summary" aria-label={m.tabs_summary()}>
+          <PieChart className="tw:size-3" aria-hidden="true" />
+          {m.tabs_summary()}
+        </TabsTrigger>
+        <TabsTrigger value="nl" aria-label={m.tabs_nl()}>
+          🇳🇱 {m.tabs_nl()}
+        </TabsTrigger>
+        <TabsTrigger value="be" aria-label={m.tabs_be()}>
+          🇧🇪 {m.tabs_be()}
+        </TabsTrigger>
+        <TabsTrigger value="years" aria-label={m.tabs_year_comparison()}>
+          <BarChart3 className="tw:size-3" aria-hidden="true" />
+          {m.tabs_year_comparison()}
+        </TabsTrigger>
+        <TabsTrigger value="wfh" aria-label={m.tabs_wfh_ratio()}>
+          <House className="tw:size-3" aria-hidden="true" />
+          {m.tabs_wfh_ratio()}
+        </TabsTrigger>
+      </TabsList>
 
-      <Tab.Content>
-        <Tab.Pane eventKey="summary">
+      <div>
+        <TabsContent value="summary">
           <SummaryResult result={result} onResetInputs={onResetInputs} />
-        </Tab.Pane>
-        <Tab.Pane eventKey="nl" className="bt-nl-accent">
+        </TabsContent>
+        <TabsContent value="nl" className="bt-nl-accent">
           <NLResult
             result={result.nl}
             withheldTaxNL={inputs.withheldTaxNL}
@@ -124,18 +115,18 @@ function ResultsTabs({ inputs, onResetInputs }: ResultsTabsProps) {
               inputs.thirtyPercentRuling
             }
           />
-        </Tab.Pane>
-        <Tab.Pane eventKey="be" className="bt-be-accent">
+        </TabsContent>
+        <TabsContent value="be" className="bt-be-accent">
           <BEResult result={result.be} residentCountry={inputs.residentCountry} />
-        </Tab.Pane>
-        <Tab.Pane eventKey="years">
+        </TabsContent>
+        <TabsContent value="years">
           <MultiYearComparison rows={comparisonResults} activeYear={inputs.year} />
-        </Tab.Pane>
-        <Tab.Pane eventKey="wfh">
+        </TabsContent>
+        <TabsContent value="wfh">
           <WFHRatioChart inputs={inputs} />
-        </Tab.Pane>
-      </Tab.Content>
-    </Tab.Container>
+        </TabsContent>
+      </div>
+    </Tabs>
   );
 }
 
@@ -175,26 +166,26 @@ export default function App() {
   return (
     <>
       <AppNavbar onLocaleSwitch={() => setCurrentLocale(getLocale())}>
-        <Navbar.Text className="text-secondary small">
+        <span className="tw:font-mono tw:text-xs tw:tracking-wide tw:text-text-muted">
           {m.app_tax_year()} {inputs.year}
-        </Navbar.Text>
+        </span>
       </AppNavbar>
 
-      <Container fluid="lg" className="pb-5">
-        <Row className="g-4 bt-main-row">
+      <main className="tw:mx-auto tw:max-w-6xl tw:px-3 tw:pb-12">
+        <div className="tw:grid tw:grid-cols-1 tw:gap-6 tw:shell:grid-cols-12">
           {/* ── Left column: inputs ────────────────────────────── */}
-          <Col lg={5}>
+          <div className="tw:min-w-0 tw:shell:col-span-5">
             <InputPanel form={form} />
-          </Col>
+          </div>
 
           {/* ── Right column: results ──────────────────────────── */}
-          <Col lg={7}>
+          <div className="tw:min-w-0 tw:shell:col-span-7">
             <ErrorBoundary FallbackComponent={ResultsErrorFallback}>
               <ResultsTabs inputs={inputs} onResetInputs={() => form.reset(DEFAULT_INPUTS)} />
             </ErrorBoundary>
-          </Col>
-        </Row>
-      </Container>
+          </div>
+        </div>
+      </main>
 
       <PageFooter variant="main">
         {m.footer_disclaimer()}

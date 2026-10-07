@@ -101,3 +101,23 @@
   --spacing-table-cell: 0.55rem;
   --spacing-table-mobile: 0.45rem;
 }
+
+@layer components {
+  .bt-results-panel {
+    animation: fadeReveal 0.22s ease-out;
+  }
+  @keyframes fadeReveal {
+    from {
+      opacity: 0;
+      transform: translateY(5px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+@theme {
+  --breakpoint-shell: 62rem;
+}

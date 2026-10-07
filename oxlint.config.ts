@@ -9,10 +9,6 @@ export default defineConfig({
   // Remove each entry when its component migrates; new files get the strict rule.
   overrides: [
     {
-      files: ["src/components/AppNavbar.tsx"],
-      rules: { "shadcn/no-inline-styles": ["error", { allow: ["color"] }] },
-    },
-    {
       files: ["src/components/SummaryResult.tsx"],
       rules: { "shadcn/no-inline-styles": ["error", { allow: ["width"] }] },
     },

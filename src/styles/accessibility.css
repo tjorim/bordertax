@@ -15,10 +15,7 @@
   }
 
   /* Specifically zero out the named animations */
-  .bt-summary-hero__amount,
-  .tab-pane.active,
-  .bt-main-row > .col-lg-5,
-  .bt-main-row > .col-lg-7 {
+  .bt-summary-hero__amount {
     animation: none !important;
   }
 }

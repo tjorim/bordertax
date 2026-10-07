@@ -1,5 +1,23 @@
 import { useEffect, useState } from "react";
-import { Button, Container, Nav, NavDropdown, Navbar } from "react-bootstrap";
+import {
+  BookOpen,
+  Calculator,
+  ChevronDown,
+  SunMoon,
+  Menu,
+  Moon,
+  PiggyBank,
+  Sun,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Button } from "./ui/button";
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "./ui/collapsible";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "./ui/dropdown-menu";
 import { Link } from "@tanstack/react-router";
 import { getLocale, setLocale } from "../paraglide/runtime.js";
 import * as m from "../paraglide/messages.js";
@@ -29,21 +47,17 @@ function ThemeToggleButton() {
     setThemeState(next);
   };
 
-  const icon =
-    theme === "light" ? "bi-sun-fill" : theme === "dark" ? "bi-moon-fill" : "bi-circle-half";
+  const Icon = theme === "light" ? Sun : theme === "dark" ? Moon : SunMoon;
   const label =
     theme === "light" ? m.theme_light() : theme === "dark" ? m.theme_dark() : m.theme_auto();
 
   return (
     <Button
-      variant="outline-secondary"
-      size="sm"
-      className="ms-2"
       onClick={cycleTheme}
       aria-label={`${m.theme_toggle_label()}: ${label}`}
       title={`${m.theme_toggle_label()}: ${label} (click to cycle)`}
     >
-      <i className={`bi ${icon}`} />
+      <Icon className="tw:size-4" aria-hidden="true" />
     </Button>
   );
 }
@@ -73,9 +87,6 @@ function LanguageToggleButton({ onSwitch }: { onSwitch?: () => void } = {}) {
 
   return (
     <Button
-      variant="outline-light"
-      size="sm"
-      className="ms-3"
       onClick={() => {
         const nextLocale = locale === "en" ? "nl" : "en";
         if (onSwitch) {
@@ -102,38 +113,86 @@ interface AppNavbarProps {
 }
 
 export function AppNavbar({ children, onLocaleSwitch }: AppNavbarProps) {
+  const [desktop, setDesktop] = useState(() => window.innerWidth >= 992);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  useEffect(() => {
+    const sync = () => setDesktop(window.innerWidth >= 992);
+    sync();
+    window.addEventListener("resize", sync);
+    return () => window.removeEventListener("resize", sync);
+  }, []);
   return (
-    <Navbar expand="lg" className="mb-4">
-      <Container>
-        <Navbar.Brand>🇧🇪&thinsp;🇳🇱</Navbar.Brand>
-        <Navbar.Toggle aria-controls="app-navbar-nav" />
-        <Navbar.Collapse id="app-navbar-nav">
-          <Nav className="me-auto">
-            <Nav.Link as={Link} to="/" activeProps={{ className: "active" }}>
-              Bordertax
-            </Nav.Link>
-            <NavDropdown
-              title={
-                <>
-                  <i className="bi bi-book me-1" />
-                  {m.ref_overview_hub_title()}
-                </>
-              }
-              id="ref-nav-dropdown"
+    <Collapsible
+      open={desktop || mobileOpen}
+      onOpenChange={(open) => setMobileOpen(open)}
+      render={<header />}
+      className="tw:sticky tw:top-0 tw:z-40 tw:mb-6 tw:border-b tw:border-border tw:bg-navbar-bg tw:backdrop-blur-xl"
+    >
+      <div aria-hidden="true" className="tw:flex tw:h-0.5 tw:opacity-75">
+        <span className="tw:w-1/2 tw:bg-nl" />
+        <span className="tw:w-1/2 tw:bg-be" />
+      </div>
+      <div className="tw:mx-auto tw:flex tw:max-w-6xl tw:flex-wrap tw:items-center tw:gap-3 tw:px-3 tw:py-3">
+        <span className="tw:text-xl tw:font-bold" aria-label="Belgium and Netherlands">
+          🇧🇪&thinsp;🇳🇱
+        </span>
+        <CollapsibleTrigger
+          render={<Button />}
+          aria-label="Toggle navigation"
+          className="tw:ml-auto tw:shell:hidden"
+        >
+          <Menu className="tw:size-5" aria-hidden="true" />
+        </CollapsibleTrigger>
+        <CollapsibleContent
+          id="app-navbar-nav"
+          keepMounted
+          className="tw:hidden tw:w-full tw:flex-col tw:gap-3 tw:data-open:flex tw:shell:flex tw:shell:w-auto tw:shell:flex-1 tw:shell:flex-row tw:shell:items-center"
+        >
+          <nav
+            aria-label="Main navigation"
+            className="tw:flex tw:flex-col tw:gap-3 tw:shell:mr-auto tw:shell:flex-row tw:shell:items-center"
+          >
+            <Link
+              to="/"
+              className="tw:text-text-sub tw:no-underline tw:hover:text-text tw:focus-visible:outline-2 tw:focus-visible:outline-ring"
+              activeProps={{ className: "tw:text-text" }}
             >
-              {REFERENCE_PAGES.map((page) => (
-                <NavDropdown.Item key={page.route} as={Link} to={page.route}>
-                  <i className={`bi ${page.icon} me-2`} style={{ color: page.iconColor }} />
-                  {page.titleFn()}
-                </NavDropdown.Item>
-              ))}
-            </NavDropdown>
-          </Nav>
-          {children}
-          <ThemeToggleButton />
-          <LanguageToggleButton onSwitch={onLocaleSwitch} />
-        </Navbar.Collapse>
-      </Container>
-    </Navbar>
+              Bordertax
+            </Link>
+            <DropdownMenu>
+              <DropdownMenuTrigger render={<Button />} className="tw:border-transparent">
+                <BookOpen className="tw:size-4" aria-hidden="true" />
+                {m.ref_overview_hub_title()}
+                <ChevronDown className="tw:size-3" aria-hidden="true" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                {REFERENCE_PAGES.map((page) => {
+                  const Icon = page.route === "/reference/salary-split" ? Calculator : PiggyBank;
+                  return (
+                    <DropdownMenuItem key={page.route} render={<Link to={page.route} />}>
+                      <Icon
+                        className={cn(
+                          "tw:size-4",
+                          page.route === "/reference/salary-split"
+                            ? "tw:text-nl-light"
+                            : "tw:text-be-light",
+                        )}
+                        aria-hidden="true"
+                      />
+                      {page.titleFn()}
+                    </DropdownMenuItem>
+                  );
+                })}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </nav>
+          <div className="tw:flex tw:items-center tw:gap-3">
+            {children}
+            <ThemeToggleButton />
+            <LanguageToggleButton onSwitch={onLocaleSwitch} />
+          </div>
+        </CollapsibleContent>
+      </div>
+    </Collapsible>
   );
 }

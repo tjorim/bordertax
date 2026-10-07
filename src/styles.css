@@ -2,14 +2,11 @@
 @import "./styles/bootstrap-theme.css";
 @import "./styles/base.css";
 @import "./styles/typography.css";
-@import "./styles/navbar.css";
 @import "./styles/containers-layout.css";
 @import "./styles/accordion.css";
 @import "./styles/unified-focus-ring.css";
 @import "./styles/form-controls.css";
 @import "./styles/buttons.css";
-@import "./styles/tab-navigation.css";
-@import "./styles/tab-pane-animations.css";
 @import "./styles/alerts.css";
 @import "./styles/progress-bars.css";
 @import "./styles/text-colors.css";

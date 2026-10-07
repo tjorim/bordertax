@@ -24,48 +24,17 @@
   letter-spacing: -0.02em;
 }
 
-/* ── Loading / entrance animation (scoped to main layout) ────── */
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.bt-main-row > .col-lg-5 {
-  animation: slideUp 0.35s ease-out 0.05s both;
-}
-
-.bt-main-row > .col-lg-7 {
-  animation: slideUp 0.35s ease-out 0.15s both;
-}
-
 /* ── Responsive refinements ──────────────────────────────────── */
 
 @media (max-width: 992px) {
-  .tab-content {
-    padding: 1rem;
-  }
   .accordion-body {
     padding: 0.9rem !important;
-  }
-  .bt-main-row > .col-lg-5,
-  .bt-main-row > .col-lg-7 {
-    animation: none;
   }
 }
 
 @media (max-width: 576px) {
   body {
     font-size: 14px;
-  }
-  .navbar-brand {
-    font-size: 1.15rem !important;
   }
 }
 

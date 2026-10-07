@@ -6,7 +6,7 @@ import {
   TableHead,
   TableCell,
 } from "@/components/ui/table";
-import { Accordion, Col, Container, Navbar, Row } from "react-bootstrap";
+import { Accordion, Col, Container, Row } from "react-bootstrap";
 import * as m from "../paraglide/messages.js";
 import {
   BeBadge,
@@ -32,10 +32,10 @@ export default function SalarySplitReference() {
   return (
     <>
       <AppNavbar>
-        <Navbar.Text className="fw-semibold ref-nav-text">
+        <span className="ref-nav-text tw:font-mono tw:text-xs tw:font-semibold tw:tracking-wide tw:text-text-muted">
           <i className="bi bi-book-fill me-2" style={{ color: "var(--bt-be-light)" }} />
           {m.ref_ss_nav_title()}
-        </Navbar.Text>
+        </span>
       </AppNavbar>
 
       <Container fluid="lg" className="pb-5">
