@@ -7,7 +7,7 @@ export function Accordion({ className, ...props }: AccordionPrimitive.Root.Props
     <AccordionPrimitive.Root
       data-slot="accordion"
       className={cn(
-        "tw:overflow-hidden tw:rounded-lg tw:border tw:border-border tw:bg-surface tw:shadow-lg tw:dark:shadow-2xl",
+        "overflow-hidden rounded-lg border border-border bg-surface shadow-lg dark:shadow-2xl",
         className,
       )}
       {...props}
@@ -17,7 +17,7 @@ export function Accordion({ className, ...props }: AccordionPrimitive.Root.Props
 export function AccordionItem({ className, ...props }: AccordionPrimitive.Item.Props) {
   return (
     <AccordionPrimitive.Item
-      className={cn("tw:border-t tw:border-border tw:first:border-t-0", className)}
+      className={cn("border-t border-border first:border-t-0", className)}
       {...props}
     />
   );
@@ -28,10 +28,10 @@ export function AccordionTrigger({
   ...props
 }: AccordionPrimitive.Trigger.Props) {
   return (
-    <AccordionPrimitive.Header className="tw:m-0">
+    <AccordionPrimitive.Header className="m-0">
       <AccordionPrimitive.Trigger
         className={cn(
-          "tw:group tw:flex tw:w-full tw:items-center tw:gap-2 tw:border-s-2 tw:border-transparent tw:bg-surface tw:px-4.5 tw:py-3.5 tw:text-start tw:text-control tw:font-semibold tw:tracking-wide tw:text-text tw:transition-colors tw:data-panel-open:border-s-border-hover tw:data-panel-open:border-b tw:data-panel-open:border-b-border tw:data-panel-open:bg-surface-2 tw:focus-visible:outline-2 tw:focus-visible:-outline-offset-2 tw:focus-visible:outline-ring",
+          "group flex w-full items-center gap-2 border-s-2 border-transparent bg-surface px-4.5 py-3.5 text-start text-control font-semibold tracking-wide text-text transition-colors data-panel-open:border-s-border-hover data-panel-open:border-b data-panel-open:border-b-border data-panel-open:bg-surface-2 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring",
           className,
         )}
         {...props}
@@ -39,7 +39,7 @@ export function AccordionTrigger({
         {children}
         <ChevronDown
           aria-hidden="true"
-          className="tw:ms-auto tw:size-4 tw:shrink-0 tw:transition-transform tw:group-data-panel-open:rotate-180"
+          className="ms-auto size-4 shrink-0 transition-transform group-data-panel-open:rotate-180"
         />
       </AccordionPrimitive.Trigger>
     </AccordionPrimitive.Header>
@@ -48,7 +48,7 @@ export function AccordionTrigger({
 export function AccordionContent({ className, ...props }: AccordionPrimitive.Panel.Props) {
   return (
     <AccordionPrimitive.Panel
-      className={cn("tw:bg-surface tw:p-3.5 tw:shell:px-4.5 tw:shell:py-4.5", className)}
+      className={cn("bg-surface p-3.5 shell:px-4.5 shell:py-4.5", className)}
       {...props}
     />
   );

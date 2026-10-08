@@ -19,32 +19,29 @@ export function SectionCard({
   children: React.ReactNode;
 }) {
   const accents = {
-    nl: "tw:border-nl-border",
-    be: "tw:border-be-border",
-    neutral: "tw:border-border",
+    nl: "border-nl-border",
+    be: "border-be-border",
+    neutral: "border-border",
   };
   const iconAccents = {
-    nl: "tw:text-nl-border",
-    be: "tw:text-be-border",
-    neutral: "tw:text-border",
+    nl: "text-nl-border",
+    be: "text-be-border",
+    neutral: "text-border",
   };
   const borderClass = accents[accent ?? "neutral"];
 
   return (
-    <Card className={cn("tw:mb-6", borderClass)}>
+    <Card className={cn("mb-6", borderClass)}>
       <CardHeader className={borderClass}>
-        <h5 className="tw:mb-0 tw:font-semibold">
+        <h5 className="mb-0 font-semibold">
           <Icon
             aria-hidden="true"
-            className={cn(
-              "tw:inline tw:size-5 tw:me-2 tw:align-text-bottom",
-              iconAccents[accent ?? "neutral"],
-            )}
+            className={cn("inline size-5 me-2 align-text-bottom", iconAccents[accent ?? "neutral"])}
           />
           {title}
         </h5>
       </CardHeader>
-      <CardContent className="tw:pt-4">{children}</CardContent>
+      <CardContent className="pt-4">{children}</CardContent>
     </Card>
   );
 }
@@ -74,12 +71,12 @@ export function StatRow({
 }) {
   return (
     <div
-      className={`tw:flex tw:justify-between tw:items-baseline tw:py-2 tw:px-4 ref-stat-row${highlight ? " ref-stat-row--highlight" : ""}`}
+      className={`flex justify-between items-baseline py-2 px-4 ref-stat-row${highlight ? " ref-stat-row--highlight" : ""}`}
     >
       <span className="ref-stat-row__label">{label}</span>
-      <div className="tw:text-end">
+      <div className="text-end">
         <span
-          className={`ref-stat-row__value${highlight ? " ref-stat-row__value--highlight" : " tw:font-medium"}`}
+          className={`ref-stat-row__value${highlight ? " ref-stat-row__value--highlight" : " font-medium"}`}
         >
           {value}
         </span>
@@ -91,10 +88,10 @@ export function StatRow({
 
 export function TipBox({ children }: { children: React.ReactNode }) {
   return (
-    <div role="note" className="tw:p-4 tw:rounded-md tw:mb-4 ref-tip-box">
+    <div role="note" className="p-4 rounded-md mb-4 ref-tip-box">
       <Lightbulb
         aria-hidden="true"
-        className="tw:inline tw:size-4 tw:shrink-0 tw:align-text-bottom tw:me-2 tw:text-info"
+        className="inline size-4 shrink-0 align-text-bottom me-2 text-info"
       />
       {children}
     </div>
@@ -103,10 +100,10 @@ export function TipBox({ children }: { children: React.ReactNode }) {
 
 export function WarnBox({ children }: { children: React.ReactNode }) {
   return (
-    <div role="alert" className="tw:p-4 tw:rounded-md tw:mb-4 ref-warn-box">
+    <div role="alert" className="p-4 rounded-md mb-4 ref-warn-box">
       <TriangleAlert
         aria-hidden="true"
-        className="tw:inline tw:size-4 tw:shrink-0 tw:align-text-bottom tw:me-2 tw:text-warning"
+        className="inline size-4 shrink-0 align-text-bottom me-2 text-warning"
       />
       {children}
     </div>
@@ -125,24 +122,24 @@ export function DocLink({
   className?: string;
 }) {
   return (
-    <a href={href} target="_blank" rel="noreferrer" className="tw:no-underline">
+    <a href={href} target="_blank" rel="noreferrer" className="no-underline">
       <div
         className={cn(
-          "ref-link-card ref-link-card-body tw:p-4 tw:rounded-md tw:flex tw:items-center tw:gap-4",
+          "ref-link-card ref-link-card-body p-4 rounded-md flex items-center gap-4",
           className,
         )}
       >
         <FileText
           aria-hidden="true"
-          className="tw:inline tw:size-8 tw:shrink-0 tw:align-text-bottom tw:text-danger"
+          className="inline size-8 shrink-0 align-text-bottom text-danger"
         />
         <div>
-          <div className="tw:font-semibold tw:text-sm ref-text">{title}</div>
+          <div className="font-semibold text-sm ref-text">{title}</div>
           <div className="ref-footnote">{sub}</div>
         </div>
         <ExternalLink
           aria-hidden="true"
-          className="tw:inline tw:size-4 tw:shrink-0 tw:align-text-bottom tw:ms-auto tw:text-text-muted tw:size-3.5"
+          className="inline size-4 shrink-0 align-text-bottom ms-auto text-text-muted size-3.5"
         />
       </div>
     </a>
@@ -163,7 +160,7 @@ export function RefAccordionItem({
   return (
     <AccordionItem value={value} className={className}>
       <AccordionTrigger>
-        <span className="tw:text-sm tw:font-semibold">{title}</span>
+        <span className="text-sm font-semibold">{title}</span>
       </AccordionTrigger>
       <AccordionContent className="ref-accordion-body">{children}</AccordionContent>
     </AccordionItem>

@@ -1,10 +1,10 @@
 @layer theme, base, components, utilities;
-@import "tailwindcss/theme.css" layer(theme) prefix(tw);
+@import "tailwindcss/theme.css" layer(theme);
 @import "./styles/tokens.css" layer(theme);
 @import "./styles/reset.css" layer(base);
 @import "./styles/app.css" layer(components);
 /* A small application reset preserves the established typography. */
-@import "tailwindcss/utilities.css" layer(utilities) prefix(tw);
+@import "tailwindcss/utilities.css" layer(utilities);
 
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
@@ -134,4 +134,16 @@
 @theme {
   --text-stat: 1.15rem;
   --text-section-label: 0.68rem;
+}
+
+/* Layout helpers for the generated dialog primitives (the lint rules forbid arbitrary values). */
+@utility dialog-viewport {
+  width: 100%;
+  max-width: calc(100% - 2rem);
+}
+@utility grid-rows-header {
+  grid-template-rows: auto 1fr;
+}
+@utility grid-rows-header-media {
+  grid-template-rows: auto auto 1fr;
 }

@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { useMemo, useState } from "react";
-import clsx from "clsx";
+import { cn } from "@/lib/utils";
 import {
   columnVisibilityFeature,
   createColumnHelper,
@@ -66,7 +66,7 @@ export default function MultiYearComparison({ rows, activeYear }: Props) {
             <>
               {info.getValue()}
               {info.getValue() === activeYear && (
-                <Badge variant="primary" className="tw:ms-2">
+                <Badge variant="primary" className="ms-2">
                   {m.years_active()}
                 </Badge>
               )}
@@ -81,25 +81,25 @@ export default function MultiYearComparison({ rows, activeYear }: Props) {
         columnHelper.accessor((row) => row.result.nl.netTaxNL, {
           id: "nlTax",
           header: () => m.years_nl_tax(),
-          cell: (info) => <span className="tw:text-danger">-{fmt(info.getValue())}</span>,
+          cell: (info) => <span className="text-danger">-{fmt(info.getValue())}</span>,
         }),
         columnHelper.accessor((row) => row.result.be?.netTaxBE ?? 0, {
           id: "beTax",
           header: () => m.years_be_tax(),
-          cell: (info) => <span className="tw:text-danger">-{fmt(info.getValue())}</span>,
+          cell: (info) => <span className="text-danger">-{fmt(info.getValue())}</span>,
         }),
         columnHelper.accessor((row) => row.result.totalTax, {
           id: "totalTax",
           header: () => m.years_total_tax(),
           cell: (info) => (
-            <span className="tw:text-danger tw:font-semibold">-{fmt(info.getValue())}</span>
+            <span className="text-danger font-semibold">-{fmt(info.getValue())}</span>
           ),
         }),
         columnHelper.accessor((row) => row.result.netIncome, {
           id: "netIncome",
           header: () => m.years_net_income(),
           cell: (info) => (
-            <span className="tw:text-success tw:font-semibold">{fmt(info.getValue())}</span>
+            <span className="text-success font-semibold">{fmt(info.getValue())}</span>
           ),
         }),
         columnHelper.accessor((row) => row.result.effectiveRateTotal, {
@@ -121,7 +121,7 @@ export default function MultiYearComparison({ rows, activeYear }: Props) {
 
   return (
     <div>
-      <h6 className="tw:text-text-muted tw:mb-4">{m.years_title()}</h6>
+      <h6 className="text-text-muted mb-4">{m.years_title()}</h6>
 
       {/* Visual year chart */}
       <div className="bt-year-chart">
@@ -136,7 +136,7 @@ export default function MultiYearComparison({ rows, activeYear }: Props) {
           return (
             <div
               key={year}
-              className={clsx("bt-year-chart__row", isActive && "bt-year-chart__row--active")}
+              className={cn("bt-year-chart__row", isActive && "bt-year-chart__row--active")}
             >
               <div className="bt-year-chart__label">
                 {year}
@@ -188,7 +188,7 @@ export default function MultiYearComparison({ rows, activeYear }: Props) {
               {headerGroup.headers.map((header) => (
                 <TableHead
                   key={header.id}
-                  className={NUMERIC_COLS.has(header.column.id) ? "tw:text-end" : undefined}
+                  className={NUMERIC_COLS.has(header.column.id) ? "text-end" : undefined}
                   aria-sort={
                     header.column.getIsSorted() === "asc"
                       ? "ascending"
@@ -200,15 +200,15 @@ export default function MultiYearComparison({ rows, activeYear }: Props) {
                   {header.column.getCanSort() ? (
                     <button
                       type="button"
-                      className=" tw:border-0 tw:bg-transparent tw:text-brand-light tw:p-0 tw:text-inherit tw:no-underline"
+                      className=" border-0 bg-transparent text-brand-light p-0 text-inherit no-underline"
                       onClick={header.column.getToggleSortingHandler()}
                     >
                       {flexRender(header.column.columnDef.header, header.getContext())}
                       {header.column.getIsSorted() === "asc" && (
-                        <ArrowUp className="tw:ms-1 tw:inline tw:size-3" aria-hidden="true" />
+                        <ArrowUp className="ms-1 inline size-3" aria-hidden="true" />
                       )}
                       {header.column.getIsSorted() === "desc" && (
-                        <ArrowDown className="tw:ms-1 tw:inline tw:size-3" aria-hidden="true" />
+                        <ArrowDown className="ms-1 inline size-3" aria-hidden="true" />
                       )}
                     </button>
                   ) : (
@@ -229,7 +229,7 @@ export default function MultiYearComparison({ rows, activeYear }: Props) {
               {row.getVisibleCells().map((cell) => (
                 <TableCell
                   key={cell.id}
-                  className={NUMERIC_COLS.has(cell.column.id) ? "tw:text-end" : undefined}
+                  className={NUMERIC_COLS.has(cell.column.id) ? "text-end" : undefined}
                 >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </TableCell>
@@ -238,7 +238,7 @@ export default function MultiYearComparison({ rows, activeYear }: Props) {
           ))}
         </TableBody>
       </Table>
-      <p className="tw:text-text-muted tw:text-sm tw:mb-0">{m.years_description()}</p>
+      <p className="text-text-muted text-sm mb-0">{m.years_description()}</p>
     </div>
   );
 }

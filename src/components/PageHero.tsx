@@ -5,8 +5,8 @@ interface PageHeroProps {
 
 export function PageHero({ title, subtitle }: PageHeroProps) {
   return (
-    <div className="tw:text-center tw:mb-12 tw:mt-2">
-      <h1 className="tw:mb-2 ref-hero-title">
+    <div className="text-center mb-12 mt-2">
+      <h1 className="mb-2 ref-hero-title">
         <span aria-hidden="true">🇧🇪&thinsp;🇳🇱&nbsp; </span>
         {title}
       </h1>

@@ -6,7 +6,7 @@ interface PageFooterProps {
 export function PageFooter({ children, variant = "reference" }: PageFooterProps) {
   const className =
     variant === "main"
-      ? "tw:text-center tw:text-text-muted tw:text-sm tw:py-4 tw:border-t tw:border-border tw:mt-6"
-      : "tw:text-center tw:text-sm tw:py-4 tw:mt-2 ref-page-footer";
+      ? "text-center text-text-muted text-sm py-4 border-t border-border mt-6"
+      : "text-center text-sm py-4 mt-2 ref-page-footer";
   return <footer className={className}>{children}</footer>;
 }

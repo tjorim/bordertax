@@ -71,30 +71,24 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
   return (
     <div>
       {/* Actions */}
-      <div className="tw:flex tw:flex-wrap tw:items-center tw:gap-2 tw:mb-4">
+      <div className="flex flex-wrap items-center gap-2 mb-4">
         <Button variant="outline-primary" size="sm" onClick={() => void copySummary()}>
-          <Clipboard
-            aria-hidden="true"
-            className="tw:inline tw:size-4 tw:shrink-0 tw:align-text-bottom tw:me-1"
-          />
+          <Clipboard aria-hidden="true" className="inline size-4 shrink-0 align-text-bottom me-1" />
           {m.summary_copy()}
         </Button>
         <Button variant="outline-secondary" size="sm" onClick={onResetInputs}>
-          <RotateCcw
-            aria-hidden="true"
-            className="tw:inline tw:size-4 tw:shrink-0 tw:align-text-bottom tw:me-1"
-          />
+          <RotateCcw aria-hidden="true" className="inline size-4 shrink-0 align-text-bottom me-1" />
           {m.summary_reset()}
         </Button>
       </div>
 
       {copyStatus === "success" && (
-        <Alert variant="success" className="tw:py-2 tw:mb-4">
+        <Alert variant="success" className="py-2 mb-4">
           {m.summary_copy_success()}
         </Alert>
       )}
       {copyStatus === "error" && (
-        <Alert variant="warning" className="tw:py-2 tw:mb-4">
+        <Alert variant="warning" className="py-2 mb-4">
           {m.summary_copy_error()}
         </Alert>
       )}
@@ -145,18 +139,18 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
           <div className="bt-alloc__legend-item">
             <span className="bt-alloc__legend-dot bt-alloc__legend-dot--net" />
             <span className="bt-alloc__legend-label">{m.summary_net_label()}</span>
-            <span className="bt-alloc__legend-value tw:text-success">{fmt(netIncome)}</span>
+            <span className="bt-alloc__legend-value text-success">{fmt(netIncome)}</span>
           </div>
           <div className="bt-alloc__legend-item">
             <span className="bt-alloc__legend-dot bt-alloc__legend-dot--nl" />
             <span className="bt-alloc__legend-label">🇳🇱 {m.summary_dutch_tax()}</span>
-            <span className="bt-alloc__legend-value tw:text-danger">−{fmt(nl.netTaxNL)}</span>
+            <span className="bt-alloc__legend-value text-danger">−{fmt(nl.netTaxNL)}</span>
           </div>
           {be && be.netTaxBE > 0 && (
             <div className="bt-alloc__legend-item">
               <span className="bt-alloc__legend-dot bt-alloc__legend-dot--be" />
               <span className="bt-alloc__legend-label">🇧🇪 {m.summary_belgian_tax()}</span>
-              <span className="bt-alloc__legend-value tw:text-danger">−{fmt(be.netTaxBE)}</span>
+              <span className="bt-alloc__legend-value text-danger">−{fmt(be.netTaxBE)}</span>
             </div>
           )}
         </div>
@@ -170,19 +164,19 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
         </div>
         <div className="bt-breakdown__row">
           <span className="bt-breakdown__label">🇳🇱 {m.summary_dutch_tax()}</span>
-          <span className="bt-breakdown__value tw:text-danger">−{fmt(nl.netTaxNL)}</span>
+          <span className="bt-breakdown__value text-danger">−{fmt(nl.netTaxNL)}</span>
         </div>
         {be && be.netTaxBE > 0 && (
           <div className="bt-breakdown__row">
             <span className="bt-breakdown__label">🇧🇪 {m.summary_belgian_tax()}</span>
-            <span className="bt-breakdown__value tw:text-danger">−{fmt(be.netTaxBE)}</span>
+            <span className="bt-breakdown__value text-danger">−{fmt(be.netTaxBE)}</span>
           </div>
         )}
         <div className="bt-breakdown__row bt-breakdown__row--total">
           <span className="bt-breakdown__label bt-breakdown__label--strong">
             {m.summary_total_tax()}
           </span>
-          <span className="bt-breakdown__value tw:text-danger bt-breakdown__label--strong">
+          <span className="bt-breakdown__value text-danger bt-breakdown__label--strong">
             −{fmt(totalTax)}
           </span>
         </div>
@@ -193,33 +187,33 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
       </div>
 
       {/* Stat cards */}
-      <div className="tw:grid tw:grid-cols-12 tw:mt-4 tw:text-center tw:gap-4">
-        <div className="tw:col-span-4">
+      <div className="grid grid-cols-12 mt-4 text-center gap-4">
+        <div className="col-span-4">
           <div className="bt-stat-card">
-            <div className="tw:text-text-muted tw:text-label tw:font-medium tw:uppercase tw:tracking-wide">
+            <div className="text-text-muted text-label font-medium uppercase tracking-wide">
               {m.summary_net_monthly()}
             </div>
-            <div className="tw:font-mono tw:text-stat tw:tracking-tight tw:font-bold tw:text-success">
+            <div className="font-mono text-stat tracking-tight font-bold text-success">
               {fmt(netIncome / 12)}
             </div>
           </div>
         </div>
-        <div className="tw:col-span-4">
+        <div className="col-span-4">
           <div className="bt-stat-card">
-            <div className="tw:text-text-muted tw:text-label tw:font-medium tw:uppercase tw:tracking-wide">
+            <div className="text-text-muted text-label font-medium uppercase tracking-wide">
               {m.summary_effective_rate()}
             </div>
-            <div className="tw:font-mono tw:text-stat tw:tracking-tight tw:font-bold">
+            <div className="font-mono text-stat tracking-tight font-bold">
               {pct(effectiveRateTotal)}
             </div>
           </div>
         </div>
-        <div className="tw:col-span-4">
+        <div className="col-span-4">
           <div className="bt-stat-card">
-            <div className="tw:text-text-muted tw:text-label tw:font-medium tw:uppercase tw:tracking-wide">
+            <div className="text-text-muted text-label font-medium uppercase tracking-wide">
               {m.summary_net_daily()}
             </div>
-            <div className="tw:font-mono tw:text-stat tw:tracking-tight tw:font-bold tw:text-success">
+            <div className="font-mono text-stat tracking-tight font-bold text-success">
               {totalWorkdays > 0 ? fmt(netIncome / totalWorkdays) : "—"}
             </div>
           </div>
@@ -233,16 +227,16 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
         const { totalWithSick, totalNoSick, sickDays, daysBE } = getNLFractions(result.inputs);
         const showOverlapNote = sickDays > 0 && daysBE > 0;
         return (
-          <div className="tw:mt-6">
-            <h6 className="tw:mb-2">{m.summary_sourcing_title()}</h6>
-            <Table bordered className="tw:mb-1 tw:text-sm">
+          <div className="mt-6">
+            <h6 className="mb-2">{m.summary_sourcing_title()}</h6>
+            <Table bordered className="mb-1 text-sm">
               <TableHeader>
                 <TableRow>
                   <TableHead scope="col">{m.summary_sourcing_method_col()}</TableHead>
-                  <TableHead scope="col" className="tw:text-center">
+                  <TableHead scope="col" className="text-center">
                     {m.summary_sourcing_nl_fraction()}
                   </TableHead>
-                  <TableHead scope="col" className="tw:text-center">
+                  <TableHead scope="col" className="text-center">
                     {m.summary_sourcing_be_fraction()}
                   </TableHead>
                 </TableRow>
@@ -250,34 +244,28 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
               <TableBody>
                 <TableRow>
                   <TableCell>🇳🇱 {m.summary_sourcing_nl_method()}</TableCell>
-                  <TableCell className="tw:text-center">
+                  <TableCell className="text-center">
                     {totalWithSick > 0 ? pct(result.nlFractionDutchMethod) : "—"}
                   </TableCell>
-                  <TableCell className="tw:text-center">
+                  <TableCell className="text-center">
                     {totalWithSick > 0 ? pct(1 - result.nlFractionDutchMethod) : "—"}
                   </TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell>🇧🇪 {m.summary_sourcing_be_method()}</TableCell>
-                  <TableCell className="tw:text-center">
+                  <TableCell className="text-center">
                     {totalNoSick > 0 ? pct(result.nlFractionBelgianMethod) : "—"}
                   </TableCell>
-                  <TableCell className="tw:text-center">
+                  <TableCell className="text-center">
                     {totalNoSick > 0 ? pct(1 - result.nlFractionBelgianMethod) : "—"}
                   </TableCell>
                 </TableRow>
               </TableBody>
             </Table>
-            <p className="tw:text-text-muted tw:text-sm tw:mb-0">
-              {m.summary_sourcing_nl_formula()}
-            </p>
-            <p className="tw:text-text-muted tw:text-sm tw:mb-0">
-              {m.summary_sourcing_be_formula()}
-            </p>
+            <p className="text-text-muted text-sm mb-0">{m.summary_sourcing_nl_formula()}</p>
+            <p className="text-text-muted text-sm mb-0">{m.summary_sourcing_be_formula()}</p>
             {showOverlapNote && (
-              <p className="tw:text-warning tw:text-sm tw:mb-0 tw:mt-1">
-                {m.summary_sourcing_overlap_note()}
-              </p>
+              <p className="text-warning text-sm mb-0 mt-1">{m.summary_sourcing_overlap_note()}</p>
             )}
           </div>
         );
@@ -285,8 +273,8 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
 
       {/* Fiscal balance (if NL tax was withheld) */}
       {withheldTaxNL > 0 && (
-        <div className="tw:mt-6">
-          <h6 className="tw:mb-4">{m.summary_eindafrekening()}</h6>
+        <div className="mt-6">
+          <h6 className="mb-4">{m.summary_eindafrekening()}</h6>
 
           <div className="bt-breakdown">
             <div className="bt-breakdown__row">
@@ -295,7 +283,7 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
             </div>
             <div className="bt-breakdown__row">
               <span className="bt-breakdown__label">🇳🇱 {m.summary_nl_owed()}</span>
-              <span className="bt-breakdown__value tw:text-danger">−{fmt(nl.netTaxNL)}</span>
+              <span className="bt-breakdown__value text-danger">−{fmt(nl.netTaxNL)}</span>
             </div>
             <div
               className={cn(
@@ -310,7 +298,7 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
                 className={cn(
                   "bt-breakdown__value",
                   "bt-breakdown__label--strong",
-                  nlBalance >= 0 ? "tw:text-success" : "tw:text-danger",
+                  nlBalance >= 0 ? "text-success" : "text-danger",
                 )}
               >
                 {fmtSigned(nlBalance)}
@@ -319,7 +307,7 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
             {be && be.netTaxBE > 0 && (
               <div className="bt-breakdown__row">
                 <span className="bt-breakdown__label">🇧🇪 {m.summary_be_owed()}</span>
-                <span className="bt-breakdown__value tw:text-danger">−{fmt(be.netTaxBE)}</span>
+                <span className="bt-breakdown__value text-danger">−{fmt(be.netTaxBE)}</span>
               </div>
             )}
           </div>
@@ -329,9 +317,9 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
           >
             <div className="bt-balance__label">
               {netResult >= 0 ? (
-                <CircleArrowDown aria-hidden="true" className="tw:size-4 tw:me-2" />
+                <CircleArrowDown aria-hidden="true" className="size-4 me-2" />
               ) : (
-                <CircleArrowUp aria-hidden="true" className="tw:size-4 tw:me-2" />
+                <CircleArrowUp aria-hidden="true" className="size-4 me-2" />
               )}
               {m.summary_net_result()}
             </div>
