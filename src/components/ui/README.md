@@ -1,5 +1,5 @@
 Generate Base UI primitives here with `pnpm dlx shadcn@latest add <component>`.
-`components.json` pins the `base-nova` Base UI style, Lucide icons and `@/lib/utils`;
+`components.json` pins the `base-mira` Base UI style, Lucide icons and `@/lib/utils`;
 the root `tsconfig.json` declares the `@/*` alias so the CLI writes to this folder.
 Move any file the CLI writes elsewhere into `src/components/ui` and check its
 imports, then restyle it with Bordertax tokens and run `pnpm lint`.

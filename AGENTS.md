@@ -3,7 +3,7 @@
 The app lives at the repository root. UI components belong in
 `src/components/ui`, use Base UI (`@base-ui/react`) and Lucide icons, and use
 `cn` from `@/lib/utils` for conditional/merged class names. `components.json`
-pins shadcn to `base-nova` and Lucide. Generate primitives on demand with
+pins shadcn to `base-mira` and Lucide. Generate primitives on demand with
 `pnpm dlx shadcn@latest add <component>`, then own and restyle the copied source.
 Keep the Base UI style explicit; do not reinitialize the app or accept a CLI
 reset/theme replacement. Verify generated paths and imports: components belong
