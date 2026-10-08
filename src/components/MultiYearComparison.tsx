@@ -1,3 +1,4 @@
+import { DistributionSegment } from "@/components/ui/distribution-segment";
 import { ArrowUp, ArrowDown } from "lucide-react";
 import {
   Table,
@@ -91,14 +92,14 @@ export default function MultiYearComparison({ rows, activeYear }: Props) {
           id: "totalTax",
           header: () => m.years_total_tax(),
           cell: (info) => (
-            <span className="tw:text-danger fw-semibold">-{fmt(info.getValue())}</span>
+            <span className="tw:text-danger tw:font-semibold">-{fmt(info.getValue())}</span>
           ),
         }),
         columnHelper.accessor((row) => row.result.netIncome, {
           id: "netIncome",
           header: () => m.years_net_income(),
           cell: (info) => (
-            <span className="tw:text-success fw-semibold">{fmt(info.getValue())}</span>
+            <span className="tw:text-success tw:font-semibold">{fmt(info.getValue())}</span>
           ),
         }),
         columnHelper.accessor((row) => row.result.effectiveRateTotal, {
@@ -120,7 +121,7 @@ export default function MultiYearComparison({ rows, activeYear }: Props) {
 
   return (
     <div>
-      <h6 className="text-muted mb-3">{m.years_title()}</h6>
+      <h6 className="tw:text-text-muted tw:mb-4">{m.years_title()}</h6>
 
       {/* Visual year chart */}
       <div className="bt-year-chart">
@@ -142,18 +143,18 @@ export default function MultiYearComparison({ rows, activeYear }: Props) {
                 {isActive && <span className="bt-year-chart__active-dot" />}
               </div>
               <div className="bt-year-chart__bar">
-                <div
+                <DistributionSegment
                   className="bt-year-chart__seg bt-year-chart__seg--net"
-                  style={{ width: `${netPct}%` }}
+                  percent={netPct}
                 />
-                <div
+                <DistributionSegment
                   className="bt-year-chart__seg bt-year-chart__seg--nl"
-                  style={{ width: `${nlPct}%` }}
+                  percent={nlPct}
                 />
                 {bePct > 0 && (
-                  <div
+                  <DistributionSegment
                     className="bt-year-chart__seg bt-year-chart__seg--be"
-                    style={{ width: `${bePct}%` }}
+                    percent={bePct}
                   />
                 )}
               </div>
@@ -199,7 +200,7 @@ export default function MultiYearComparison({ rows, activeYear }: Props) {
                   {header.column.getCanSort() ? (
                     <button
                       type="button"
-                      className="btn btn-link p-0 tw:text-inherit tw:no-underline"
+                      className=" tw:border-0 tw:bg-transparent tw:text-brand-light tw:p-0 tw:text-inherit tw:no-underline"
                       onClick={header.column.getToggleSortingHandler()}
                     >
                       {flexRender(header.column.columnDef.header, header.getContext())}
@@ -237,7 +238,7 @@ export default function MultiYearComparison({ rows, activeYear }: Props) {
           ))}
         </TableBody>
       </Table>
-      <p className="text-muted small mb-0">{m.years_description()}</p>
+      <p className="tw:text-text-muted tw:text-sm tw:mb-0">{m.years_description()}</p>
     </div>
   );
 }

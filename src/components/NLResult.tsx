@@ -1,3 +1,4 @@
+import { Star } from "lucide-react";
 import {
   Table,
   TableHeader,
@@ -27,7 +28,7 @@ export default function NLResult({
   const nlBalance = withheldTaxNL - result.netTaxNL;
   return (
     <div>
-      <h6 className="text-muted mb-3">
+      <h6 className="tw:text-text-muted tw:mb-4">
         🇳🇱 {m.nl_title()}
         {thirtyPercentRuling && (
           <Badge variant="warning" className="tw:ms-2 tw:font-mono tw:align-middle">
@@ -37,8 +38,11 @@ export default function NLResult({
       </h6>
 
       {thirtyPercentRuling && (
-        <div className="bt-ruling-notice mb-3">
-          <i className="bi bi-star-fill me-2" />
+        <div className="bt-ruling-notice tw:mb-4">
+          <Star
+            aria-hidden="true"
+            className="tw:inline tw:size-4 tw:shrink-0 tw:align-text-bottom tw:me-2"
+          />
           {m.input_thirty_percent_ruling_hint()}
         </div>
       )}
@@ -58,12 +62,16 @@ export default function NLResult({
           </TableRow>
           <TableRow>
             <TableCell>{m.nl_taxable_income()}</TableCell>
-            <TableCell className="tw:text-end fw-semibold">{fmt(result.nlTaxableIncome)}</TableCell>
+            <TableCell className="tw:text-end tw:font-semibold">
+              {fmt(result.nlTaxableIncome)}
+            </TableCell>
           </TableRow>
         </TableBody>
       </Table>
 
-      <p className="mb-1 fw-semibold small">{m.nl_bracket_calculation()}</p>
+      <p className="tw:mb-1 tw:font-semibold tw:text-section-label tw:uppercase tw:tracking-table-heading">
+        {m.nl_bracket_calculation()}
+      </p>
       <Table
         bordered
         className="tw:mb-3 tw:[&_tbody_tr:not([data-variant=secondary])_td]:text-text-muted tw:[&_tbody_tr:not([data-variant=secondary])_td]:text-table-number"
@@ -79,10 +87,10 @@ export default function NLResult({
         <TableBody>
           {result.brackets.map((b) => (
             <TableRow key={b.label}>
-              <TableCell className="small">{b.label}</TableCell>
-              <TableCell className="tw:text-end small">{pct(b.rate)}</TableCell>
-              <TableCell className="tw:text-end small">{fmt(b.taxableAmount)}</TableCell>
-              <TableCell className="tw:text-end small">{fmt(b.tax)}</TableCell>
+              <TableCell className="tw:text-sm">{b.label}</TableCell>
+              <TableCell className="tw:text-end tw:text-sm">{pct(b.rate)}</TableCell>
+              <TableCell className="tw:text-end tw:text-sm">{fmt(b.taxableAmount)}</TableCell>
+              <TableCell className="tw:text-end tw:text-sm">{fmt(b.tax)}</TableCell>
             </TableRow>
           ))}
           <TableRow variant="secondary">
@@ -93,7 +101,7 @@ export default function NLResult({
             <TableCell colSpan={3}>{m.nl_volksverzekeringen()}</TableCell>
             <TableCell className="tw:text-end">{fmt(result.volksverzekeringen)}</TableCell>
           </TableRow>
-          <TableRow variant="secondary" className="fw-semibold">
+          <TableRow variant="secondary" className="tw:font-semibold">
             <TableCell colSpan={3}>{m.nl_subtotal_before_credits()}</TableCell>
             <TableCell className="tw:text-end">
               {fmt(result.taxBeforeCredits + result.volksverzekeringen)}
@@ -102,7 +110,9 @@ export default function NLResult({
         </TableBody>
       </Table>
 
-      <p className="mb-1 fw-semibold small">{m.nl_tax_credits()}</p>
+      <p className="tw:mb-1 tw:font-semibold tw:text-section-label tw:uppercase tw:tracking-table-heading">
+        {m.nl_tax_credits()}
+      </p>
       <Table bordered className="tw:mb-3">
         <TableBody>
           <TableRow>
@@ -117,7 +127,7 @@ export default function NLResult({
               −{fmt(result.arbeidskorting)}
             </TableCell>
           </TableRow>
-          <TableRow variant="secondary" className="fw-semibold">
+          <TableRow variant="secondary" className="tw:font-semibold">
             <TableCell>{m.nl_total_credits()}</TableCell>
             <TableCell className="tw:text-end">−{fmt(result.totalCredits)}</TableCell>
           </TableRow>
@@ -126,13 +136,13 @@ export default function NLResult({
 
       <Table bordered>
         <TableBody>
-          <TableRow variant="nl" className="fw-bold">
+          <TableRow variant="nl" className="tw:font-bold">
             <TableCell>{m.nl_tax_payable()}</TableCell>
             <TableCell className="tw:text-end">{fmt(result.netTaxNL)}</TableCell>
           </TableRow>
           <TableRow>
-            <TableCell className="text-muted small">{m.nl_effective_rate()}</TableCell>
-            <TableCell className="tw:text-end text-muted small">
+            <TableCell className="tw:text-text-muted tw:text-sm">{m.nl_effective_rate()}</TableCell>
+            <TableCell className="tw:text-end tw:text-text-muted tw:text-sm">
               {pct(result.effectiveRateNL)}
             </TableCell>
           </TableRow>
@@ -142,7 +152,7 @@ export default function NLResult({
                 <TableCell>{m.nl_withheld()}</TableCell>
                 <TableCell className="tw:text-end">{fmt(withheldTaxNL)}</TableCell>
               </TableRow>
-              <TableRow variant={nlBalance >= 0 ? "success" : "danger"} className="fw-bold">
+              <TableRow variant={nlBalance >= 0 ? "success" : "danger"} className="tw:font-bold">
                 <TableCell>{nlBalance >= 0 ? m.nl_balance_refund() : m.nl_balance_due()}</TableCell>
                 <TableCell
                   className={clsx(

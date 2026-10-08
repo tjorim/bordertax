@@ -10,12 +10,6 @@
   color: var(--bt-be-light) !important;
 }
 
-/* ── Accordion open-state accent (neutral, both sections) ────── */
-
-.accordion-button:not(.collapsed) {
-  border-left: 2px solid var(--bt-border-hover);
-}
-
 /* ── Utility: number formatting ──────────────────────────────── */
 
 .bt-number {
@@ -25,12 +19,6 @@
 }
 
 /* ── Responsive refinements ──────────────────────────────────── */
-
-@media (max-width: 992px) {
-  .accordion-body {
-    padding: 0.9rem !important;
-  }
-}
 
 @media (max-width: 576px) {
   body {

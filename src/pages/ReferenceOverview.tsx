@@ -1,5 +1,8 @@
+import { cn } from "@/lib/utils";
+import { Card, CardContent, CardTitle, CardDescription } from "@/components/ui/card";
+import { ArrowRight, Library } from "lucide-react";
 import { Link } from "@tanstack/react-router";
-import { Card, Col, Container, Row } from "react-bootstrap";
+
 import * as m from "../paraglide/messages.js";
 import { AppNavbar } from "../components/AppNavbar";
 import { PageHero } from "../components/PageHero";
@@ -10,43 +13,51 @@ export default function ReferenceOverview() {
     <>
       <AppNavbar>
         <span className="ref-nav-text tw:font-mono tw:text-xs tw:font-semibold tw:tracking-wide tw:text-text-muted">
-          <i className="bi bi-journals me-2" style={{ color: "var(--bt-be-light)" }} />
+          <Library
+            aria-hidden="true"
+            className="tw:inline tw:size-4 tw:shrink-0 tw:align-text-bottom tw:me-2 tw:text-be-light"
+          />
           {m.ref_overview_hub_title()}
         </span>
       </AppNavbar>
 
-      <Container fluid="lg" className="pb-5">
+      <div className="tw:mx-auto tw:w-full tw:max-w-6xl tw:px-5 tw:pb-12">
         <PageHero title={m.ref_overview_page_title()} subtitle={m.ref_overview_subtitle()} />
 
-        <Row className="g-4 justify-content-center">
+        <div className="tw:mx-auto tw:grid tw:max-w-reference-cards tw:grid-cols-1 tw:gap-6 tw:md:grid-cols-2">
           {REFERENCE_PAGES.map((page) => (
-            <Col key={page.route} xs={12} md={5}>
+            <div key={page.route} className="tw:min-w-0">
               <Link to={page.route} className="tw:no-underline">
                 <Card
-                  className="h-100 ref-overview-card"
-                  style={{ border: `1px solid ${page.borderColor}` }}
+                  className={cn(
+                    "tw:h-full tw:cursor-pointer tw:transition-colors tw:hover:border-border-hover",
+                    page.borderClass,
+                  )}
                 >
-                  <Card.Body className="p-4">
-                    <div className="mb-3">
-                      <i
-                        className={`bi ${page.icon}`}
-                        style={{ fontSize: "2rem", color: page.iconColor }}
-                      />
+                  <CardContent className="tw:p-6">
+                    <div className="tw:mb-4">
+                      <page.icon aria-hidden="true" className={cn("tw:size-8", page.accentClass)} />
                     </div>
-                    <Card.Title className="fw-bold mb-2 ref-overview-card__title">
+                    <CardTitle className="tw:font-bold tw:mb-2 ref-overview-card__title">
                       {page.titleFn()}
-                    </Card.Title>
-                    <Card.Text className="ref-overview-card__text">{page.descFn()}</Card.Text>
-                    <span className="small fw-semibold" style={{ color: page.accentColor }}>
-                      {m.ref_nav_read_more()} <i className="bi bi-arrow-right ms-1" />
+                    </CardTitle>
+                    <CardDescription className="ref-overview-card__text">
+                      {page.descFn()}
+                    </CardDescription>
+                    <span className={cn("tw:text-sm tw:font-semibold", page.accentClass)}>
+                      {m.ref_nav_read_more()}{" "}
+                      <ArrowRight
+                        aria-hidden="true"
+                        className="tw:inline tw:size-4 tw:shrink-0 tw:align-text-bottom tw:ms-1"
+                      />
                     </span>
-                  </Card.Body>
+                  </CardContent>
                 </Card>
               </Link>
-            </Col>
+            </div>
           ))}
-        </Row>
-      </Container>
+        </div>
+      </div>
     </>
   );
 }

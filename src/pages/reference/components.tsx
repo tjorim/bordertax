@@ -1,38 +1,50 @@
+import type { LucideIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
+import { Card, CardHeader, CardContent } from "@/components/ui/card";
+import { ExternalLink, FileText, Lightbulb, TriangleAlert } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Accordion, Card } from "react-bootstrap";
 
 // ── Shared styled sub-components for reference pages ────────────
 
 export function SectionCard({
   title,
-  icon,
+  icon: Icon,
   accent,
   children,
 }: {
   title: string;
-  icon: string;
+  icon: LucideIcon;
   accent?: "nl" | "be" | "neutral";
   children: React.ReactNode;
 }) {
-  const borderColor =
-    accent === "nl"
-      ? "var(--bt-nl-border)"
-      : accent === "be"
-        ? "var(--bt-be-border)"
-        : "var(--bt-border)";
+  const accents = {
+    nl: "tw:border-nl-border",
+    be: "tw:border-be-border",
+    neutral: "tw:border-border",
+  };
+  const iconAccents = {
+    nl: "tw:text-nl-border",
+    be: "tw:text-be-border",
+    neutral: "tw:text-border",
+  };
+  const borderClass = accents[accent ?? "neutral"];
 
   return (
-    <Card className="mb-4 ref-section-card" style={{ border: `1px solid ${borderColor}` }}>
-      <Card.Header
-        className="ref-section-card__header"
-        style={{ borderBottom: `1px solid ${borderColor}` }}
-      >
-        <h5 className="mb-0 fw-semibold">
-          <i className={`bi ${icon} me-2`} style={{ color: borderColor }} />
+    <Card className={cn("tw:mb-6", borderClass)}>
+      <CardHeader className={borderClass}>
+        <h5 className="tw:mb-0 tw:font-semibold">
+          <Icon
+            aria-hidden="true"
+            className={cn(
+              "tw:inline tw:size-5 tw:me-2 tw:align-text-bottom",
+              iconAccents[accent ?? "neutral"],
+            )}
+          />
           {title}
         </h5>
-      </Card.Header>
-      <Card.Body className="pt-3">{children}</Card.Body>
+      </CardHeader>
+      <CardContent className="tw:pt-4">{children}</CardContent>
     </Card>
   );
 }
@@ -62,13 +74,12 @@ export function StatRow({
 }) {
   return (
     <div
-      className={`d-flex justify-content-between align-items-baseline py-2 px-3 ref-stat-row${highlight ? " ref-stat-row--highlight" : ""}`}
+      className={`tw:flex tw:justify-between tw:items-baseline tw:py-2 tw:px-4 ref-stat-row${highlight ? " ref-stat-row--highlight" : ""}`}
     >
       <span className="ref-stat-row__label">{label}</span>
-      <div className="text-end">
+      <div className="tw:text-end">
         <span
-          className={`ref-stat-row__value${highlight ? " ref-stat-row__value--highlight" : ""}`}
-          style={highlight ? undefined : { fontWeight: 500 }}
+          className={`ref-stat-row__value${highlight ? " ref-stat-row__value--highlight" : " tw:font-medium"}`}
         >
           {value}
         </span>
@@ -80,8 +91,11 @@ export function StatRow({
 
 export function TipBox({ children }: { children: React.ReactNode }) {
   return (
-    <div role="note" className="p-3 rounded mb-3 ref-tip-box">
-      <i className="bi bi-lightbulb-fill me-2" style={{ color: "var(--bt-info)" }} />
+    <div role="note" className="tw:p-4 tw:rounded-md tw:mb-4 ref-tip-box">
+      <Lightbulb
+        aria-hidden="true"
+        className="tw:inline tw:size-4 tw:shrink-0 tw:align-text-bottom tw:me-2 tw:text-info"
+      />
       {children}
     </div>
   );
@@ -89,8 +103,11 @@ export function TipBox({ children }: { children: React.ReactNode }) {
 
 export function WarnBox({ children }: { children: React.ReactNode }) {
   return (
-    <div role="alert" className="p-3 rounded mb-3 ref-warn-box">
-      <i className="bi bi-exclamation-triangle-fill me-2" style={{ color: "var(--bt-warning)" }} />
+    <div role="alert" className="tw:p-4 tw:rounded-md tw:mb-4 ref-warn-box">
+      <TriangleAlert
+        aria-hidden="true"
+        className="tw:inline tw:size-4 tw:shrink-0 tw:align-text-bottom tw:me-2 tw:text-warning"
+      />
       {children}
     </div>
   );
@@ -100,50 +117,55 @@ export function DocLink({
   href,
   title,
   sub,
-  maxWidth,
+  className,
 }: {
   href: string;
   title: string;
   sub: string;
-  maxWidth?: number;
+  className?: string;
 }) {
   return (
     <a href={href} target="_blank" rel="noreferrer" className="tw:no-underline">
       <div
-        className="ref-link-card ref-link-card-body p-3 rounded d-flex align-items-center gap-3"
-        style={maxWidth ? { maxWidth } : undefined}
+        className={cn(
+          "ref-link-card ref-link-card-body tw:p-4 tw:rounded-md tw:flex tw:items-center tw:gap-4",
+          className,
+        )}
       >
-        <i
-          className="bi bi-file-earmark-pdf-fill fs-2"
-          style={{ color: "#e74c3c", flexShrink: 0 }}
+        <FileText
+          aria-hidden="true"
+          className="tw:inline tw:size-8 tw:shrink-0 tw:align-text-bottom tw:text-danger"
         />
         <div>
-          <div className="fw-semibold small ref-text">{title}</div>
+          <div className="tw:font-semibold tw:text-sm ref-text">{title}</div>
           <div className="ref-footnote">{sub}</div>
         </div>
-        <i className="bi bi-box-arrow-up-right ms-auto ref-icon-muted-sm" aria-hidden="true" />
+        <ExternalLink
+          aria-hidden="true"
+          className="tw:inline tw:size-4 tw:shrink-0 tw:align-text-bottom tw:ms-auto tw:text-text-muted tw:size-3.5"
+        />
       </div>
     </a>
   );
 }
 
 export function RefAccordionItem({
-  eventKey,
+  value,
   title,
   children,
-  style,
+  className,
 }: {
-  eventKey: string;
+  value: string;
   title: string;
   children: React.ReactNode;
-  style?: React.CSSProperties;
+  className?: string;
 }) {
   return (
-    <Accordion.Item eventKey={eventKey} className="ref-accordion-item" style={style}>
-      <Accordion.Header>
-        <span className="small fw-semibold">{title}</span>
-      </Accordion.Header>
-      <Accordion.Body className="ref-accordion-body">{children}</Accordion.Body>
-    </Accordion.Item>
+    <AccordionItem value={value} className={className}>
+      <AccordionTrigger>
+        <span className="tw:text-sm tw:font-semibold">{title}</span>
+      </AccordionTrigger>
+      <AccordionContent className="ref-accordion-body">{children}</AccordionContent>
+    </AccordionItem>
   );
 }

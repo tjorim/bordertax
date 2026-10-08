@@ -1,5 +1,6 @@
+import { Input } from "@/components/ui/input";
+import { FieldLabel, FieldHint } from "@/components/ui/field";
 import type { ReactNode } from "react";
-import { Form } from "react-bootstrap";
 
 export function fieldError(errors: unknown[] | undefined): string | undefined {
   if (!errors?.length) return undefined;
@@ -40,12 +41,14 @@ export function NumberField({
   hintId,
   error,
 }: NumberFieldProps) {
-  const describedBy = hint && hintId ? hintId : undefined;
+  const errorId = `${id}-error`;
+  const describedBy = [hint && hintId, error && errorId].filter(Boolean).join(" ") || undefined;
 
   return (
-    <Form.Group controlId={id}>
-      <Form.Label>{label}</Form.Label>
-      <Form.Control
+    <div>
+      <FieldLabel htmlFor={id}>{label}</FieldLabel>
+      <Input
+        id={id}
         type="number"
         min={min}
         max={max}
@@ -60,16 +63,20 @@ export function NumberField({
           onChange(Number.isNaN(n) ? undefined : n);
         }}
         onBlur={onBlur}
-        isInvalid={!!error}
+        aria-invalid={!!error}
         aria-describedby={describedBy}
       />
       {hint && hintId && (
-        <Form.Text id={hintId} className="text-muted">
+        <FieldHint id={hintId} className="tw:text-text-muted">
           {hint}
-        </Form.Text>
+        </FieldHint>
       )}
-      {error && <Form.Control.Feedback type="invalid">{error}</Form.Control.Feedback>}
-    </Form.Group>
+      {error && (
+        <div id={errorId} className="tw:mt-1 tw:text-hint tw:text-danger">
+          {error}
+        </div>
+      )}
+    </div>
   );
 }
 

@@ -7,20 +7,20 @@ export async function themeBootScript(): Promise<string> {
   const source = await readFile(new NodeURL("../src/theme.ts", import.meta.url), "utf8");
   const { code } = await transformWithOxc(
     `(() => {\n${source.replace(/^export /gm, "")}\napplyTheme(loadTheme());\n})();`,
-    "theme-bootstrap.ts",
+    "theme-init.ts",
     { lang: "ts" },
   );
   return code;
 }
 
-export function themeBootstrapPlugin(): Plugin {
+export function themeInitPlugin(): Plugin {
   return {
-    name: "bordertax-theme-bootstrap",
+    name: "bordertax-theme-init",
     transformIndexHtml: {
       order: "pre",
       async handler(html) {
         return html.replace(
-          "<!-- theme-bootstrap -->",
+          "<!-- theme-init -->",
           `<script>${await themeBootScript()}</script>`,
         );
       },

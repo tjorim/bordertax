@@ -1,3 +1,5 @@
+import { Alert } from "@/components/ui/alert";
+import { ClipboardCheck, TriangleAlert } from "lucide-react";
 import {
   Table,
   TableHeader,
@@ -6,7 +8,7 @@ import {
   TableHead,
   TableCell,
 } from "@/components/ui/table";
-import { Alert } from "react-bootstrap";
+
 import type { TaxResult } from "../tax/types";
 import * as m from "../paraglide/messages.js";
 import { fmtExact as fmt } from "./format.js";
@@ -20,34 +22,40 @@ export default function FilingChecklist({ result }: Props) {
   const { inputs, nl, be } = result;
 
   return (
-    <section className="mt-4" aria-labelledby="filing-checklist-title">
-      <h5 id="filing-checklist-title" className="mb-2">
-        <i className="bi bi-clipboard-check me-2" />
+    <section className="tw:mt-6" aria-labelledby="filing-checklist-title">
+      <h5 id="filing-checklist-title" className="tw:mb-2">
+        <ClipboardCheck
+          aria-hidden="true"
+          className="tw:inline tw:size-4 tw:shrink-0 tw:align-text-bottom tw:me-2"
+        />
         {m.filing_title()}
       </h5>
-      <p className="text-muted small mb-3">{m.filing_intro()}</p>
+      <p className="tw:text-text-muted tw:text-sm tw:mb-4">{m.filing_intro()}</p>
 
-      <Alert variant="warning" role="note" className="small py-2">
-        <i className="bi bi-exclamation-triangle me-2" />
+      <Alert variant="warning" role="note" className="tw:text-sm tw:py-2">
+        <TriangleAlert
+          aria-hidden="true"
+          className="tw:inline tw:size-4 tw:shrink-0 tw:align-text-bottom tw:me-2"
+        />
         {m.filing_estimate_notice()}
       </Alert>
 
-      <h6 className="mb-1">{m.filing_documents_title()}</h6>
-      <ul className="small mb-4">
+      <h6 className="tw:mb-1">{m.filing_documents_title()}</h6>
+      <ul className="tw:text-sm tw:mb-6">
         <li>{m.filing_document_jaaropgave()}</li>
         <li>{m.filing_document_workdays()}</li>
         <li>{m.filing_document_deductions()}</li>
       </ul>
 
-      <h6 className="mb-1">🇳🇱 {m.filing_nl_title()}</h6>
-      <p className="small tw:mb-2">
+      <h6 className="tw:mb-1">🇳🇱 {m.filing_nl_title()}</h6>
+      <p className="tw:text-sm tw:mb-2">
         {m.filing_nl_intro()}{" "}
         <a href="https://mijn.belastingdienst.nl/" target="_blank" rel="noreferrer">
           Mijn Belastingdienst
         </a>
         .
       </p>
-      <Table bordered className="small tw:mb-2">
+      <Table bordered className="tw:text-sm tw:mb-2">
         <TableHeader className="tw:bg-surface-3">
           <TableRow>
             <TableHead>{m.filing_field()}</TableHead>
@@ -78,17 +86,19 @@ export default function FilingChecklist({ result }: Props) {
           </TableRow>
           <TableRow>
             <TableCell>{m.nl_not_taxed_income()}</TableCell>
-            <TableCell className="tw:text-end fw-semibold">{fmt(nl.deelNietInNLBelast)}</TableCell>
+            <TableCell className="tw:text-end tw:font-semibold">
+              {fmt(nl.deelNietInNLBelast)}
+            </TableCell>
             <TableCell>{m.filing_source_calculated_workdays()}</TableCell>
           </TableRow>
         </TableBody>
       </Table>
-      <p className="text-muted small mb-4">{m.filing_nl_result_notice()}</p>
+      <p className="tw:text-text-muted tw:text-sm tw:mb-6">{m.filing_nl_result_notice()}</p>
 
       {be && (
         <>
-          <h6 className="mb-1">🇧🇪 {m.filing_be_title()}</h6>
-          <p className="small tw:mb-2">
+          <h6 className="tw:mb-1">🇧🇪 {m.filing_be_title()}</h6>
+          <p className="tw:text-sm tw:mb-2">
             {m.filing_be_intro()}{" "}
             <a
               href="https://financien.belgium.be/nl/E-services/Tax-on-web?language=nl"
@@ -99,7 +109,7 @@ export default function FilingChecklist({ result }: Props) {
             </a>
             .
           </p>
-          <Table bordered className="small tw:mb-2">
+          <Table bordered className="tw:text-sm tw:mb-2">
             <TableHeader className="tw:bg-surface-3">
               <TableRow>
                 <TableHead>{m.filing_field()}</TableHead>
@@ -110,7 +120,9 @@ export default function FilingChecklist({ result }: Props) {
             <TableBody>
               <TableRow>
                 <TableCell>{m.filing_be_1250()}</TableCell>
-                <TableCell className="tw:text-end fw-semibold">{fmt(be.declaredIncome)}</TableCell>
+                <TableCell className="tw:text-end tw:font-semibold">
+                  {fmt(be.declaredIncome)}
+                </TableCell>
                 <TableCell>{m.filing_be_1250_source()}</TableCell>
               </TableRow>
               <TableRow>
@@ -129,7 +141,7 @@ export default function FilingChecklist({ result }: Props) {
               </TableRow>
               <TableRow>
                 <TableCell>{m.filing_be_1250_nl()}</TableCell>
-                <TableCell className="tw:text-end fw-semibold">
+                <TableCell className="tw:text-end tw:font-semibold">
                   {fmt(Math.max(0, be.declaredIncome - be.beIncome))}
                 </TableCell>
                 <TableCell>{m.filing_be_1250_nl_source()}</TableCell>
@@ -151,7 +163,7 @@ export default function FilingChecklist({ result }: Props) {
               </TableRow>
             </TableBody>
           </Table>
-          <p className="text-muted small mb-0">{m.filing_be_result_notice()}</p>
+          <p className="tw:text-text-muted tw:text-sm tw:mb-0">{m.filing_be_result_notice()}</p>
         </>
       )}
     </section>

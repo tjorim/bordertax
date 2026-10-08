@@ -2,29 +2,6 @@
    TABLE HIERARCHY — NL/BE result tabs
    ═══════════════════════════════════════════════════════════════ */
 
-/* ── Subsection labels (p.fw-semibold.small) in result tabs ──── */
-
-.bt-results-panel p.fw-semibold.small,
-.bt-results-panel p.mb-1.fw-semibold.small {
-  font-family: var(--bt-font-body) !important;
-  font-size: 0.68rem !important;
-  font-weight: 600 !important;
-  letter-spacing: 0.09em !important;
-  text-transform: uppercase !important;
-  color: var(--bt-text-muted) !important;
-  margin-bottom: 0.4rem !important;
-}
-
-.bt-nl-accent p.fw-semibold.small,
-.bt-nl-accent p.mb-1.fw-semibold.small {
-  color: rgba(224, 80, 32, 0.55) !important;
-}
-
-.bt-be-accent p.fw-semibold.small,
-.bt-be-accent p.mb-1.fw-semibold.small {
-  color: rgba(200, 144, 26, 0.55) !important;
-}
-
 /* 30% ruling notice */
 .bt-ruling-notice {
   display: flex;
@@ -41,39 +18,35 @@
 
 /* ── Light mode component overrides ──────────────────────────── */
 
-[data-bs-theme="light"] .accordion {
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-}
-
-[data-bs-theme="light"] .bt-stat-card:hover {
+[data-theme="light"] .bt-stat-card:hover {
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
 
-[data-bs-theme="light"] .bt-wfh-current {
+[data-theme="light"] .bt-wfh-current {
   stroke: rgba(0, 0, 0, 0.4);
 }
 
-[data-bs-theme="light"] .bt-wfh-current-dot {
+[data-theme="light"] .bt-wfh-current-dot {
   fill: var(--bt-bg);
   stroke: rgba(0, 0, 0, 0.7);
 }
 
-[data-bs-theme="light"] .bt-wfh-pulse {
+[data-theme="light"] .bt-wfh-pulse {
   stroke: rgba(0, 0, 0, 0.15);
 }
 
-[data-bs-theme="light"] .bt-wfh-scrubber {
+[data-theme="light"] .bt-wfh-scrubber {
   stroke: rgba(0, 0, 0, 0.2);
 }
 
-[data-bs-theme="light"] .bt-wfh-dot {
+[data-theme="light"] .bt-wfh-dot {
   stroke: var(--bt-bg);
 }
 
-[data-bs-theme="light"] .bt-year-chart__row:hover {
+[data-theme="light"] .bt-year-chart__row:hover {
   background: rgba(0, 0, 0, 0.04);
 }
 
-[data-bs-theme="light"] .bt-wfh-legend-dash--current {
+[data-theme="light"] .bt-wfh-legend-dash--current {
   border-top-color: rgba(0, 0, 0, 0.35);
 }
