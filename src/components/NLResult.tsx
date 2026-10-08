@@ -8,7 +8,7 @@ import {
   TableCell,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import clsx from "clsx";
+import { cn } from "@/lib/utils";
 import type { NLTaxResult } from "../tax/types";
 import * as m from "../paraglide/messages.js";
 import { fmtExact as fmt, pctExact as pct } from "./format.js";
@@ -148,7 +148,7 @@ export default function NLResult({
               <TableRow variant={nlBalance >= 0 ? "success" : "danger"} className="font-bold">
                 <TableCell>{nlBalance >= 0 ? m.nl_balance_refund() : m.nl_balance_due()}</TableCell>
                 <TableCell
-                  className={clsx("text-end", nlBalance >= 0 ? "text-success" : "text-danger")}
+                  className={cn("text-end", nlBalance >= 0 ? "text-success" : "text-danger")}
                 >
                   {nlBalance >= 0 ? "+" : "−"}
                   {fmt(Math.abs(nlBalance))}

@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { useMemo, useState } from "react";
-import clsx from "clsx";
+import { cn } from "@/lib/utils";
 import {
   columnVisibilityFeature,
   createColumnHelper,
@@ -136,7 +136,7 @@ export default function MultiYearComparison({ rows, activeYear }: Props) {
           return (
             <div
               key={year}
-              className={clsx("bt-year-chart__row", isActive && "bt-year-chart__row--active")}
+              className={cn("bt-year-chart__row", isActive && "bt-year-chart__row--active")}
             >
               <div className="bt-year-chart__label">
                 {year}

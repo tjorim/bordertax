@@ -1,7 +1,6 @@
-import { clsx, type ClassValue } from "clsx";
-import { extendTailwindMerge } from "tailwind-merge";
+import { createCn } from "cn/config";
 
-const twMerge = extendTailwindMerge({
+export const cn = createCn({
   extend: {
     theme: {
       spacing: ["table-cell", "table-mobile"],
@@ -30,7 +29,3 @@ const twMerge = extendTailwindMerge({
     },
   },
 });
-
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
