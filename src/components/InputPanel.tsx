@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/accordion";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { FieldLabel, FieldHint, NativeSelect, CheckboxField } from "@/components/ui/field";
+import { FieldLabel, FieldDescription, NativeSelect, CheckboxField } from "@/components/ui/field";
 import { Coins, EyeOff, Info, User } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
@@ -67,17 +67,14 @@ export default function InputPanel({ form }: Props) {
       {/* ── Section 1: Situation ─────────────────────────────── */}
       <AccordionItem value="0">
         <AccordionTrigger>
-          <User
-            aria-hidden="true"
-            className="tw:inline tw:size-4 tw:shrink-0 tw:align-text-bottom tw:me-2"
-          />
+          <User aria-hidden="true" className="inline size-4 shrink-0 align-text-bottom me-2" />
           {m.input_personal_situation()}
         </AccordionTrigger>
         <AccordionContent>
-          <div className="tw:grid tw:grid-cols-12 tw:gap-4">
+          <div className="grid grid-cols-12 gap-4">
             <form.Field name="year">
               {(field) => (
-                <div className="tw:col-span-12 tw:table:col-span-6">
+                <div className="col-span-12 table:col-span-6">
                   <FieldLabel htmlFor="tax-year">{m.input_tax_year()}</FieldLabel>
                   <NativeSelect
                     id="tax-year"
@@ -100,7 +97,7 @@ export default function InputPanel({ form }: Props) {
             {VALID_RESIDENT_COUNTRIES.length > 1 && (
               <form.Field name="residentCountry">
                 {(field) => (
-                  <div className="tw:col-span-12 tw:table:col-span-6">
+                  <div className="col-span-12 table:col-span-6">
                     <FieldLabel htmlFor="resident-country">{m.input_resident_country()}</FieldLabel>
                     <NativeSelect
                       id="resident-country"
@@ -125,12 +122,12 @@ export default function InputPanel({ form }: Props) {
             {VALID_CIVIL_STATUSES.length > 1 && (
               <form.Field name="civilStatus">
                 {(field) => (
-                  <div className="tw:col-span-12 tw:table:col-span-6">
+                  <div className="col-span-12 table:col-span-6">
                     <FieldLabel htmlFor="civil-status">
                       {m.input_civil_status()}{" "}
                       <Badge
                         variant="label"
-                        className="tw:ms-1"
+                        className="ms-1"
                         aria-label={m.input_civil_status_not_used()}
                       >
                         {m.input_civil_status_not_used()}
@@ -163,7 +160,7 @@ export default function InputPanel({ form }: Props) {
               {(field) => {
                 const err = fieldError(field.errors as unknown[]);
                 return (
-                  <div className="tw:col-span-12 tw:table:col-span-6">
+                  <div className="col-span-12 table:col-span-6">
                     <NumberField
                       id="dependent-children"
                       label={m.input_dependents()}
@@ -181,7 +178,7 @@ export default function InputPanel({ form }: Props) {
 
             <form.Field name="belowAOWAge">
               {(field) => (
-                <div className="tw:col-span-12">
+                <div className="col-span-12">
                   <CheckboxField
                     id="aow-age"
                     label={m.input_below_aow_age()}
@@ -197,12 +194,12 @@ export default function InputPanel({ form }: Props) {
                 {VALID_BELGIAN_REGIONS.length > 1 && (
                   <form.Field name="belgianRegion">
                     {(field) => (
-                      <div className="tw:col-span-12 tw:table:col-span-6">
+                      <div className="col-span-12 table:col-span-6">
                         <FieldLabel htmlFor="belgian-region">
                           {m.input_belgian_region()}{" "}
                           <Badge
                             variant="label"
-                            className="tw:ms-1"
+                            className="ms-1"
                             aria-label={m.input_belgian_region_not_used()}
                           >
                             {m.input_belgian_region_not_used()}
@@ -238,13 +235,13 @@ export default function InputPanel({ form }: Props) {
                   {(field) => {
                     const err = fieldError(field.errors as unknown[]);
                     return (
-                      <div className="tw:col-span-12 tw:table:col-span-6">
+                      <div className="col-span-12 table:col-span-6">
                         <NumberField
                           id="communal-tax-rate"
                           label={
                             <>
                               {m.input_municipal_tax()}{" "}
-                              <Badge variant="label" className="tw:ms-1">
+                              <Badge variant="label" className="ms-1">
                                 %
                               </Badge>
                             </>
@@ -272,18 +269,15 @@ export default function InputPanel({ form }: Props) {
       {/* ── Section 2: Income ────────────────────────────────── */}
       <AccordionItem value="1">
         <AccordionTrigger>
-          <Coins
-            aria-hidden="true"
-            className="tw:inline tw:size-4 tw:shrink-0 tw:align-text-bottom tw:me-2"
-          />
+          <Coins aria-hidden="true" className="inline size-4 shrink-0 align-text-bottom me-2" />
           {m.input_income()}
         </AccordionTrigger>
         <AccordionContent>
-          <div className="tw:grid tw:grid-cols-12 tw:gap-4">
-            <div className="tw:col-span-12">
-              <FieldHint className="tw:text-text-muted">
+          <div className="grid grid-cols-12 gap-4">
+            <div className="col-span-12">
+              <FieldDescription className="text-text-muted">
                 {m.input_income_not_persisted_hint()}
-              </FieldHint>
+              </FieldDescription>
             </div>
 
             <form.Field
@@ -293,7 +287,7 @@ export default function InputPanel({ form }: Props) {
               {(field) => {
                 const err = fieldError(field.errors as unknown[]);
                 return (
-                  <div className="tw:col-span-12">
+                  <div className="col-span-12">
                     <CurrencyField
                       id="gross-salary"
                       label={m.input_gross_salary()}
@@ -317,7 +311,7 @@ export default function InputPanel({ form }: Props) {
               {(field) => {
                 const err = fieldError(field.errors as unknown[]);
                 return (
-                  <div className="tw:col-span-12">
+                  <div className="col-span-12">
                     <CurrencyField
                       id="withheldTaxNL"
                       label={m.input_withheld_tax_nl()}
@@ -341,7 +335,7 @@ export default function InputPanel({ form }: Props) {
               {(field) => {
                 const err = fieldError(field.errors as unknown[]);
                 return (
-                  <div className="tw:col-span-12 tw:table:col-span-6">
+                  <div className="col-span-12 table:col-span-6">
                     <NumberField
                       id="days-worked-nl"
                       label={m.input_workdays_nl()}
@@ -365,7 +359,7 @@ export default function InputPanel({ form }: Props) {
               {(field) => {
                 const err = fieldError(field.errors as unknown[]);
                 return (
-                  <div className="tw:col-span-12 tw:table:col-span-6">
+                  <div className="col-span-12 table:col-span-6">
                     <NumberField
                       id="days-worked-be"
                       label={m.input_workdays_be()}
@@ -389,7 +383,7 @@ export default function InputPanel({ form }: Props) {
               {(field) => {
                 const err = fieldError(field.errors as unknown[]);
                 return (
-                  <div className="tw:col-span-12 tw:table:col-span-6">
+                  <div className="col-span-12 table:col-span-6">
                     <NumberField
                       id="daysWorkedOther"
                       label={m.input_workdays_other()}
@@ -413,7 +407,7 @@ export default function InputPanel({ form }: Props) {
               {(field) => {
                 const err = fieldError(field.errors as unknown[]);
                 return (
-                  <div className="tw:col-span-12 tw:table:col-span-6">
+                  <div className="col-span-12 table:col-span-6">
                     <NumberField
                       id="sickDays"
                       label={m.input_sick_days()}
@@ -430,7 +424,7 @@ export default function InputPanel({ form }: Props) {
               }}
             </form.Field>
 
-            <div className="tw:col-span-12">
+            <div className="col-span-12">
               <div
                 className={cn(
                   "bt-workday-bar",
@@ -462,23 +456,23 @@ export default function InputPanel({ form }: Props) {
                   />
                 )}
               </div>
-              <FieldHint
+              <FieldDescription
                 role="status"
                 className={cn(
                   totalWorkdays === 0 || totalWorkdays > maxWorkdaysInYear
-                    ? "tw:text-warning"
-                    : "tw:text-text-muted",
+                    ? "text-warning"
+                    : "text-text-muted",
                 )}
               >
                 {m.input_workdays_total()} {totalWorkdays}
                 {totalWorkdays === 0 && ` — ${m.input_workdays_total_zero_warning()}`}
                 {totalWorkdays > maxWorkdaysInYear && ` — ${m.input_workdays_total_high_warning()}`}
-              </FieldHint>
-              <FieldHint className="tw:text-text-muted tw:block tw:mt-1">
+              </FieldDescription>
+              <FieldDescription className="text-text-muted block mt-1">
                 {m.input_workdays_typical()}
-              </FieldHint>
+              </FieldDescription>
               {values.residentCountry === "BE" && totalWorkdays > 0 && beFraction >= 0.5 && (
-                <Alert variant="warning" className="tw:mt-2 tw:py-2 tw:text-sm tw:mb-0">
+                <Alert variant="warning" className="mt-2 py-2 text-sm mb-0">
                   {m.input_social_security_above_50()}
                 </Alert>
               )}
@@ -486,7 +480,7 @@ export default function InputPanel({ form }: Props) {
                 totalWorkdays > 0 &&
                 beFraction >= 0.25 &&
                 beFraction < 0.5 && (
-                  <Alert variant="info" className="tw:mt-2 tw:py-2 tw:text-sm tw:mb-0">
+                  <Alert variant="info" className="mt-2 py-2 text-sm mb-0">
                     {m.input_social_security_kaderakkoord()}
                   </Alert>
                 )}
@@ -495,7 +489,7 @@ export default function InputPanel({ form }: Props) {
             {isThirtyPercentRulingSupportedResident(values.residentCountry) ? (
               <form.Field name="thirtyPercentRuling">
                 {(field) => (
-                  <div className="tw:col-span-12">
+                  <div className="col-span-12">
                     <CheckboxField
                       id="thirty-ruling"
                       label={m.input_thirty_percent_ruling()}
@@ -503,14 +497,14 @@ export default function InputPanel({ form }: Props) {
                       onCheckedChange={(checked) => field.handleChange(checked)}
                       aria-describedby="thirty-ruling-hint"
                     />
-                    <FieldHint id="thirty-ruling-hint" className="tw:text-text-muted">
+                    <FieldDescription id="thirty-ruling-hint" className="text-text-muted">
                       {m.input_thirty_percent_ruling_hint()}
-                    </FieldHint>
+                    </FieldDescription>
                   </div>
                 )}
               </form.Field>
             ) : (
-              <div className="tw:col-span-12">
+              <div className="col-span-12">
                 <CheckboxField
                   id="thirty-ruling"
                   label={m.input_thirty_percent_ruling()}
@@ -518,9 +512,9 @@ export default function InputPanel({ form }: Props) {
                   disabled
                   aria-describedby="thirty-ruling-hint"
                 />
-                <FieldHint id="thirty-ruling-hint" className="tw:text-text-muted">
+                <FieldDescription id="thirty-ruling-hint" className="text-text-muted">
                   {m.input_thirty_percent_ruling_unavailable_be()}
-                </FieldHint>
+                </FieldDescription>
               </div>
             )}
 
@@ -573,7 +567,7 @@ export default function InputPanel({ form }: Props) {
                     {(field) => {
                       const err = fieldError(field.errors as unknown[]);
                       return (
-                        <div className="tw:col-span-12 tw:table:col-span-6">
+                        <div className="col-span-12 table:col-span-6">
                           <CurrencyField
                             id={fieldDef.key}
                             label={
@@ -601,7 +595,7 @@ export default function InputPanel({ form }: Props) {
               </>
             )}
 
-            <div className="tw:col-span-12">
+            <div className="col-span-12">
               <Button
                 variant="outline-secondary"
                 size="sm"
@@ -610,9 +604,9 @@ export default function InputPanel({ form }: Props) {
                 aria-controls="formulas-panel"
               >
                 {showFormulas ? (
-                  <EyeOff aria-hidden="true" className="tw:size-4" />
+                  <EyeOff aria-hidden="true" className="size-4" />
                 ) : (
-                  <Info aria-hidden="true" className="tw:size-4" />
+                  <Info aria-hidden="true" className="size-4" />
                 )}
                 {showFormulas ? m.hide_formulas() : m.show_formulas()}
               </Button>
@@ -621,10 +615,10 @@ export default function InputPanel({ form }: Props) {
                   id="formulas-panel"
                   role="region"
                   aria-label={m.formulas_panel_label()}
-                  className="tw:mt-2 tw:text-sm tw:text-text-muted tw:border tw:border-border tw:rounded-md tw:p-2"
+                  className="mt-2 text-sm text-text-muted border border-border rounded-md p-2"
                 >
-                  <p className="tw:mb-1">{m.summary_sourcing_nl_formula()}</p>
-                  <p className="tw:mb-0">{m.summary_sourcing_be_formula()}</p>
+                  <p className="mb-1">{m.summary_sourcing_nl_formula()}</p>
+                  <p className="mb-0">{m.summary_sourcing_be_formula()}</p>
                 </div>
               )}
             </div>

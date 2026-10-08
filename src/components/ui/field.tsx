@@ -7,15 +7,15 @@ export function FieldLabel({ className, ...props }: ComponentProps<"label">) {
   return (
     <label
       className={cn(
-        "tw:mb-1.5 tw:inline-block tw:text-label tw:font-semibold tw:uppercase tw:tracking-table-heading tw:text-text-muted",
+        "mb-1.5 inline-block text-label font-semibold uppercase tracking-table-heading text-text-muted",
         className,
       )}
       {...props}
     />
   );
 }
-export function FieldHint({ className, ...props }: ComponentProps<"div">) {
-  return <div className={cn("tw:mt-1 tw:text-hint tw:text-text-muted", className)} {...props} />;
+export function FieldDescription({ className, ...props }: ComponentProps<"div">) {
+  return <div className={cn("mt-1 text-hint text-text-muted", className)} {...props} />;
 }
 export function NativeSelect({ className, ...props }: ComponentProps<"select">) {
   return <select className={cn(inputClasses, className)} {...props} />;
@@ -27,9 +27,9 @@ export function CheckboxField({
   ...props
 }: ComponentProps<typeof Checkbox> & { id: string; label: ReactNode }) {
   return (
-    <div className={cn("tw:flex tw:items-start tw:gap-2 tw:py-0.5", className)}>
-      <Checkbox id={id} className="tw:mt-1" {...props} />
-      <label htmlFor={id} className="tw:text-sm tw:text-text">
+    <div className={cn("flex items-start gap-2 py-0.5", className)}>
+      <Checkbox id={id} className="mt-1" {...props} />
+      <label htmlFor={id} className="text-sm text-text">
         {label}
       </label>
     </div>

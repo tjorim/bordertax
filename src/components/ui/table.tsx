@@ -17,18 +17,18 @@ function Table({
     <div
       data-slot="table-container"
       className={cn(
-        "tw:relative tw:w-full tw:overflow-x-auto",
-        bordered && !responsive && "tw:rounded-sm",
-        responsive && "tw:rounded-md tw:border tw:border-border tw:bg-surface",
+        "relative w-full overflow-x-auto",
+        bordered && !responsive && "rounded-sm",
+        responsive && "rounded-md border border-border bg-surface",
       )}
     >
       <table
         data-slot="table"
         className={cn(
-          "tw:w-full tw:border-collapse tw:caption-bottom tw:text-sm tw:leading-table tw:text-text",
-          bordered && "tw:[&_td]:border-x tw:[&_th]:border-x tw:[&_tr]:border-y",
-          bordered && !responsive && "tw:border tw:border-border tw:rounded-sm tw:overflow-hidden",
-          hover && "tw:[&_tbody_tr:hover]:bg-on-solid/3",
+          "w-full border-collapse caption-bottom text-sm leading-table text-text",
+          bordered && "[&_td]:border-x [&_th]:border-x [&_tr]:border-y",
+          bordered && !responsive && "border border-border rounded-sm overflow-hidden",
+          hover && "[&_tbody_tr:hover]:bg-on-solid/3",
           className,
         )}
         {...props}
@@ -38,7 +38,7 @@ function Table({
 }
 
 function TableHeader({ className, ...props }: React.ComponentProps<"thead">) {
-  return <thead data-slot="table-header" className={cn("tw:bg-surface-3", className)} {...props} />;
+  return <thead data-slot="table-header" className={cn("bg-surface-3", className)} {...props} />;
 }
 
 function TableBody({ className, ...props }: React.ComponentProps<"tbody">) {
@@ -49,7 +49,7 @@ function TableFooter({ className, ...props }: React.ComponentProps<"tfoot">) {
   return (
     <tfoot
       data-slot="table-footer"
-      className={cn("tw:bg-surface-3 tw:font-medium", className)}
+      className={cn("bg-surface-3 font-medium", className)}
       {...props}
     />
   );
@@ -57,12 +57,12 @@ function TableFooter({ className, ...props }: React.ComponentProps<"tfoot">) {
 
 const rowVariants = {
   default: "",
-  primary: "tw:bg-brand/9 tw:[&>:first-child]:border-s-2 tw:[&>:first-child]:border-s-brand",
-  secondary: "tw:bg-surface-3",
-  success: "tw:bg-success-dim",
-  danger: "tw:bg-danger-dim",
-  nl: "tw:[&>td]:bg-nl/10 tw:[&>td]:border-s-3 tw:[&>td]:border-s-nl tw:[&>td:last-child]:text-base tw:[&>td:last-child]:leading-table tw:[&>td:last-child]:text-nl-light",
-  be: "tw:[&>td]:bg-be/10 tw:[&>td]:border-s-3 tw:[&>td]:border-s-be tw:[&>td:last-child]:text-base tw:[&>td:last-child]:leading-table tw:[&>td:last-child]:text-be-light",
+  primary: "bg-brand/9 [&>:first-child]:border-s-2 [&>:first-child]:border-s-brand",
+  secondary: "bg-surface-3",
+  success: "bg-success-dim",
+  danger: "bg-danger-dim",
+  nl: "[&>td]:bg-nl/10 [&>td]:border-s-3 [&>td]:border-s-nl [&>td:last-child]:text-base [&>td:last-child]:leading-table [&>td:last-child]:text-nl-light",
+  be: "[&>td]:bg-be/10 [&>td]:border-s-3 [&>td]:border-s-be [&>td:last-child]:text-base [&>td:last-child]:leading-table [&>td:last-child]:text-be-light",
 };
 
 function TableRow({
@@ -74,21 +74,20 @@ function TableRow({
     <tr
       data-slot="table-row"
       data-variant={variant}
-      className={cn("tw:border-b tw:border-border", rowVariants[variant], className)}
+      className={cn("border-b border-border", rowVariants[variant], className)}
       {...props}
     />
   );
 }
 
-const cellClasses =
-  "tw:border-border tw:px-2 tw:py-table-mobile tw:table:px-3 tw:table:py-table-cell tw:align-top";
+const cellClasses = "border-border px-2 py-table-mobile table:px-3 table:py-table-cell align-top";
 
 function TableHead({ className, ...props }: React.ComponentProps<"th">) {
   return (
     <th
       data-slot="table-head"
       className={cn(
-        "tw:border-border tw:align-top tw:px-3 tw:py-table-cell tw:font-sans tw:text-table-heading tw:font-semibold tw:uppercase tw:tracking-table-heading tw:not-first:tracking-table-number tw:text-text-muted tw:whitespace-nowrap",
+        "border-border align-top px-3 py-table-cell font-sans text-table-heading font-semibold uppercase tracking-table-heading not-first:tracking-table-number text-text-muted whitespace-nowrap",
         className,
       )}
       {...props}
@@ -102,7 +101,7 @@ function TableCell({ className, ...props }: React.ComponentProps<"td">) {
       data-slot="table-cell"
       className={cn(
         cellClasses,
-        "tw:not-first:font-mono tw:not-first:text-table-number tw:not-first:tracking-table-number tw:leading-table tw:text-text",
+        "not-first:font-mono not-first:text-table-number not-first:tracking-table-number leading-table text-text",
         className,
       )}
       {...props}
@@ -114,7 +113,7 @@ function TableCaption({ className, ...props }: React.ComponentProps<"caption">) 
   return (
     <caption
       data-slot="table-caption"
-      className={cn("tw:mt-4 tw:text-sm tw:text-text-muted", className)}
+      className={cn("mt-4 text-sm text-text-muted", className)}
       {...props}
     />
   );

@@ -1,26 +1,30 @@
 import type { ComponentProps } from "react";
+import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
-const variants = {
-  warning: "tw:border-warning tw:bg-warning-dim",
-  success: "tw:border-success tw:bg-success-dim",
-  info: "tw:border-info tw:bg-info-dim",
-  danger: "tw:border-danger tw:bg-danger-dim",
-};
+const alertVariants = cva("mb-4 rounded-sm border-s-3 px-3.5 py-2.5 text-control text-text", {
+  variants: {
+    variant: {
+      warning: "border-warning bg-warning-dim",
+      success: "border-success bg-success-dim",
+      info: "border-info bg-info-dim",
+      danger: "border-danger bg-danger-dim",
+    },
+  },
+  defaultVariants: { variant: "info" },
+});
 export function Alert({
   className,
-  variant = "info",
+  variant,
   ...props
-}: ComponentProps<"div"> & { variant?: keyof typeof variants }) {
+}: ComponentProps<"div"> & VariantProps<typeof alertVariants>) {
   return (
     <div
       data-slot="alert"
       role="alert"
-      className={cn(
-        "tw:mb-4 tw:rounded-sm tw:border-s-3 tw:px-3.5 tw:py-2.5 tw:text-control tw:text-text",
-        variants[variant],
-        className,
-      )}
+      className={cn(alertVariants({ variant }), className)}
       {...props}
     />
   );
 }
+
+export { alertVariants };

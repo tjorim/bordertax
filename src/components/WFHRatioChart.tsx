@@ -82,10 +82,10 @@ function fmtK(n: number): string {
 type Zone = "full" | "hybrid" | "kaderakkoord" | "above";
 
 const zoneCellClasses: Record<Zone, string> = {
-  full: "tw:border-s-3 tw:border-s-success/50",
-  hybrid: "tw:border-s-3 tw:border-s-info/40",
-  kaderakkoord: "tw:border-s-3 tw:border-s-threshold-purple/40",
-  above: "tw:border-s-3 tw:border-s-warning/35",
+  full: "border-s-3 border-s-success/50",
+  hybrid: "border-s-3 border-s-info/40",
+  kaderakkoord: "border-s-3 border-s-threshold-purple/40",
+  above: "border-s-3 border-s-warning/35",
 };
 
 function getZone(ratio: number): Zone {
@@ -433,11 +433,9 @@ export default function WFHRatioChart({ inputs }: Props) {
       <div className="bt-wfh-empty">
         <ChartNoAxesCombined
           aria-hidden="true"
-          className="tw:inline tw:size-4 tw:shrink-0 tw:align-text-bottom tw:text-text-muted tw:me-2 tw:size-6"
+          className="inline size-4 shrink-0 align-text-bottom text-text-muted me-2 size-6"
         />
-        <p className="tw:text-text-muted tw:text-sm tw:mb-0">
-          {m.input_workdays_total_zero_warning()}
-        </p>
+        <p className="text-text-muted text-sm mb-0">{m.input_workdays_total_zero_warning()}</p>
       </div>
     );
   }
@@ -447,8 +445,8 @@ export default function WFHRatioChart({ inputs }: Props) {
       {/* ── Header ──────────────────────────────────────────────────── */}
       <div className="bt-wfh-header">
         <div>
-          <h6 className="tw:text-text-muted tw:mb-0">{m.wfh_title()}</h6>
-          <p className="tw:text-text-muted tw:text-sm tw:mb-0 tw:mt-1">{m.wfh_description()}</p>
+          <h6 className="text-text-muted mb-0">{m.wfh_title()}</h6>
+          <p className="text-text-muted text-sm mb-0 mt-1">{m.wfh_description()}</p>
         </div>
         <div className={`bt-wfh-zone-pill bt-wfh-zone-pill--${currentZone}`}>
           🏠 {Math.round(currentBeRatio * 100)}% BE
@@ -477,16 +475,16 @@ export default function WFHRatioChart({ inputs }: Props) {
         {/* ── Legend — directly below chart, above readout ──────────── */}
         <div className="bt-year-chart__legend bt-wfh-legend">
           <span className="bt-year-chart__legend-item">
-            <span className="bt-year-chart__legend-dot tw:bg-success" />
+            <span className="bt-year-chart__legend-dot bg-success" />
             {m.summary_net_income()}
           </span>
           <span className="bt-year-chart__legend-item">
-            <span className="bt-year-chart__legend-dot tw:bg-nl" />
+            <span className="bt-year-chart__legend-dot bg-nl" />
             🇳🇱 {m.summary_dutch_tax()}
           </span>
           {showBE && (
             <span className="bt-year-chart__legend-item">
-              <span className="bt-year-chart__legend-dot tw:bg-be" />
+              <span className="bt-year-chart__legend-dot bg-be" />
               🇧🇪 {m.summary_belgian_tax()}
             </span>
           )}
@@ -526,7 +524,7 @@ export default function WFHRatioChart({ inputs }: Props) {
                 )}
                 🏢 {Math.round((1 - displayPoint.beRatio) * 100)}% NL · 🏠{" "}
                 {Math.round(displayPoint.beRatio * 100)}% BE
-                <span className="tw:text-text-muted bt-wfh-readout__days">
+                <span className="text-text-muted bt-wfh-readout__days">
                   ({displayPoint.nlDays}d / {displayPoint.beDays}d)
                 </span>
               </span>
@@ -553,7 +551,7 @@ export default function WFHRatioChart({ inputs }: Props) {
               </span>
             </>
           ) : (
-            <span className="tw:text-text-muted tw:text-sm">{m.wfh_hover_hint()}</span>
+            <span className="text-text-muted text-sm">{m.wfh_hover_hint()}</span>
           )}
         </div>
 
@@ -562,7 +560,7 @@ export default function WFHRatioChart({ inputs }: Props) {
           <div className="bt-wfh-delta">
             <CircleArrowUp
               aria-hidden="true"
-              className="tw:inline tw:size-4 tw:shrink-0 tw:align-text-bottom tw:me-1"
+              className="inline size-4 shrink-0 align-text-bottom me-1"
             />
             ↑ <strong>{fmt(delta)}</strong>/yr more at {Math.round(data[optimalIdx]!.beRatio * 100)}
             % BE
@@ -577,29 +575,23 @@ export default function WFHRatioChart({ inputs }: Props) {
         aria-expanded={tableOpen}
       >
         {tableOpen ? (
-          <ChevronUp aria-hidden="true" className="tw:inline tw:size-4 tw:me-1" />
+          <ChevronUp aria-hidden="true" className="inline size-4 me-1" />
         ) : (
-          <ChevronDown aria-hidden="true" className="tw:inline tw:size-4 tw:me-1" />
+          <ChevronDown aria-hidden="true" className="inline size-4 me-1" />
         )}
         {tableOpen ? m.wfh_table_hide() : m.wfh_table_show()}
       </button>
 
       {/* ── Kaderakkoord note ────────────────────────────────────────── */}
-      <p className="tw:text-text-muted tw:text-sm tw:mt-2 tw:mb-0">
-        <Info
-          aria-hidden="true"
-          className="tw:inline tw:size-4 tw:shrink-0 tw:align-text-bottom tw:me-1"
-        />
+      <p className="text-text-muted text-sm mt-2 mb-0">
+        <Info aria-hidden="true" className="inline size-4 shrink-0 align-text-bottom me-1" />
         {m.wfh_kaderakkoord_note()}
       </p>
 
       {/* ── Qualifying taxpayer note (only relevant at ≤10% BE) ─────── */}
       {currentZone === "full" && (
-        <p className="tw:text-text-muted tw:text-sm tw:mt-1 tw:mb-0">
-          <Info
-            aria-hidden="true"
-            className="tw:inline tw:size-4 tw:shrink-0 tw:align-text-bottom tw:me-1"
-          />
+        <p className="text-text-muted text-sm mt-1 mb-0">
+          <Info aria-hidden="true" className="inline size-4 shrink-0 align-text-bottom me-1" />
           {m.wfh_qualifying_taxpayer_note()}
         </p>
       )}
@@ -651,32 +643,32 @@ const ratioColumns = ratioColumnHelper.columns([
       const bePct = Math.round(info.getValue() * 100);
       return (
         <>
-          <span className="tw:font-mono tw:text-sm tw:font-semibold">{bePct}%</span>
-          <span className="tw:text-text-muted tw:ms-2 tw:text-sm">
+          <span className="font-mono text-sm font-semibold">{bePct}%</span>
+          <span className="text-text-muted ms-2 text-sm">
             {row.nlDays}d NL / {row.beDays}d BE
           </span>
           {row.isCurrent && (
-            <Badge variant="primary" className="tw:ms-2">
+            <Badge variant="primary" className="ms-2">
               {m.years_active()}
             </Badge>
           )}
           {row.isOptimal && !row.isCurrent && (
-            <Badge variant="success" className="tw:ms-2">
+            <Badge variant="success" className="ms-2">
               {m.wfh_optimal()}
             </Badge>
           )}
           {row.threshold === "90-norm" && (
-            <Badge variant="thresholdInfo" className="tw:ms-2">
+            <Badge variant="thresholdInfo" className="ms-2">
               {m.wfh_threshold_10_label()}
             </Badge>
           )}
           {row.threshold === "hybrid" && (
-            <Badge variant="thresholdWarning" className="tw:ms-2">
+            <Badge variant="thresholdWarning" className="ms-2">
               {m.wfh_threshold_25_label()}
             </Badge>
           )}
           {row.threshold === "kaderakkoord" && (
-            <Badge variant="thresholdPurple" className="tw:ms-2">
+            <Badge variant="thresholdPurple" className="ms-2">
               {m.wfh_threshold_49_label()}
             </Badge>
           )}
@@ -686,27 +678,23 @@ const ratioColumns = ratioColumnHelper.columns([
   }),
   ratioColumnHelper.accessor("nlTax", {
     header: () => m.years_nl_tax(),
-    cell: (info) => <span className="tw:text-danger tw:text-sm">−{fmt(info.getValue())}</span>,
+    cell: (info) => <span className="text-danger text-sm">−{fmt(info.getValue())}</span>,
   }),
   ratioColumnHelper.accessor("beTax", {
     header: () => m.years_be_tax(),
-    cell: (info) => <span className="tw:text-danger tw:text-sm">−{fmt(info.getValue())}</span>,
+    cell: (info) => <span className="text-danger text-sm">−{fmt(info.getValue())}</span>,
   }),
   ratioColumnHelper.accessor("totalTax", {
     header: () => m.years_total_tax(),
-    cell: (info) => (
-      <span className="tw:text-danger tw:font-semibold">−{fmt(info.getValue())}</span>
-    ),
+    cell: (info) => <span className="text-danger font-semibold">−{fmt(info.getValue())}</span>,
   }),
   ratioColumnHelper.accessor("netIncome", {
     header: () => m.years_net_income(),
-    cell: (info) => (
-      <span className="tw:text-success tw:font-semibold">{fmt(info.getValue())}</span>
-    ),
+    cell: (info) => <span className="text-success font-semibold">{fmt(info.getValue())}</span>,
   }),
   ratioColumnHelper.accessor("effectiveRate", {
     header: () => m.years_effective_rate(),
-    cell: (info) => <span className="tw:text-text-muted tw:text-sm">{pct(info.getValue())}</span>,
+    cell: (info) => <span className="text-text-muted text-sm">{pct(info.getValue())}</span>,
   }),
 ]);
 
@@ -789,14 +777,14 @@ function RatioTable({ data, currentIdx, optimalIdx, showBE }: RatioTableProps) {
   if (tableRows.length === 0) return null;
 
   return (
-    <Table bordered hover responsive className="tw:mt-2">
+    <Table bordered hover responsive className="mt-2">
       <TableHeader>
         {table.getHeaderGroups().map((headerGroup) => (
           <TableRow key={headerGroup.id}>
             {headerGroup.headers.map((header) => (
               <TableHead
                 key={header.id}
-                className={RATIO_NUMERIC_COLS.has(header.column.id) ? "tw:text-end" : undefined}
+                className={RATIO_NUMERIC_COLS.has(header.column.id) ? "text-end" : undefined}
                 aria-sort={
                   header.column.getIsSorted() === "asc"
                     ? "ascending"
@@ -808,15 +796,15 @@ function RatioTable({ data, currentIdx, optimalIdx, showBE }: RatioTableProps) {
                 {header.column.getCanSort() ? (
                   <button
                     type="button"
-                    className="tw:border-0 tw:bg-transparent tw:p-0 tw:text-inherit tw:no-underline"
+                    className="border-0 bg-transparent p-0 text-inherit no-underline"
                     onClick={header.column.getToggleSortingHandler()}
                   >
                     {flexRender(header.column.columnDef.header, header.getContext())}
                     {header.column.getIsSorted() === "asc" && (
-                      <ArrowUp className="tw:ms-1 tw:inline tw:size-3" aria-hidden="true" />
+                      <ArrowUp className="ms-1 inline size-3" aria-hidden="true" />
                     )}
                     {header.column.getIsSorted() === "desc" && (
-                      <ArrowDown className="tw:ms-1 tw:inline tw:size-3" aria-hidden="true" />
+                      <ArrowDown className="ms-1 inline size-3" aria-hidden="true" />
                     )}
                   </button>
                 ) : (
@@ -844,7 +832,7 @@ function RatioTable({ data, currentIdx, optimalIdx, showBE }: RatioTableProps) {
                     cell.column.id === "beSplit"
                       ? zoneCellClasses[zone]
                       : RATIO_NUMERIC_COLS.has(cell.column.id)
-                        ? "tw:text-end"
+                        ? "text-end"
                         : undefined
                   }
                 >

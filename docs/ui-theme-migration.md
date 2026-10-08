@@ -10,8 +10,8 @@ class or state is needed.
 `src/tailwind.css` uses `@theme inline` so utilities resolve the palette at the
 styled element, including light overrides. All existing color families also have
 direct tokens (`brand`, `surface-2`, `nl-light`, `be-border`, `success-dim`, etc.).
-Use prefixed utilities such as `tw:bg-background`, `tw:text-foreground`,
-`tw:border-border`, `tw:font-mono` and `tw:rounded-md`.
+Use utilities such as `bg-background`, `text-foreground`,
+`border-border`, `font-mono` and `rounded-md`.
 
 | Semantic token                    | Existing design token                |
 | --------------------------------- | ------------------------------------ |
@@ -71,7 +71,7 @@ not automated accessibility coverage. Keyboard checks verify the theme button's
 accessible name and auto → light → dark → auto cycle and the 2px focus outline,
 2px offset and 4px brand halo.
 
-Temporary `container tw:p-0` and `tab-content tw:p-0` probes both computed to
+Temporary `container p-0` and `tab-content p-0` probes both computed to
 zero padding in both themes and widths. Legacy controls retained 12px container
 horizontal padding and 20px desktop / 16px mobile tab-content padding. Probes
 were removed immediately and are absent from application markup.

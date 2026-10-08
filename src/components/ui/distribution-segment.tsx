@@ -18,13 +18,13 @@ export function DistributionSegment({
       width={`${Math.max(0, Math.min(100, percent))}%`}
       height="100%"
       aria-hidden="true"
-      className={cn("tw:block tw:shrink-0 tw:overflow-hidden", className)}
+      className={cn("block shrink-0 overflow-hidden", className)}
       {...props}
     >
       {title && <title>{title}</title>}
       {children && (
         <foreignObject width="100%" height="100%">
-          <div className="tw:flex tw:h-full tw:items-center tw:justify-center">{children}</div>
+          <div className="flex h-full items-center justify-center">{children}</div>
         </foreignObject>
       )}
     </svg>

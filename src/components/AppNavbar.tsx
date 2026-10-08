@@ -53,11 +53,12 @@ function ThemeToggleButton() {
 
   return (
     <Button
+      variant="outline"
       onClick={cycleTheme}
       aria-label={`${m.theme_toggle_label()}: ${label}`}
       title={`${m.theme_toggle_label()}: ${label} (click to cycle)`}
     >
-      <Icon className="tw:size-4" aria-hidden="true" />
+      <Icon className="size-4" aria-hidden="true" />
     </Button>
   );
 }
@@ -87,6 +88,7 @@ function LanguageToggleButton({ onSwitch }: { onSwitch?: () => void } = {}) {
 
   return (
     <Button
+      variant="outline"
       onClick={() => {
         const nextLocale = locale === "en" ? "nl" : "en";
         if (onSwitch) {
@@ -126,44 +128,47 @@ export function AppNavbar({ children, onLocaleSwitch }: AppNavbarProps) {
       open={desktop || mobileOpen}
       onOpenChange={(open) => setMobileOpen(open)}
       render={<header />}
-      className="tw:sticky tw:top-0 tw:z-40 tw:mb-6 tw:border-b tw:border-border tw:bg-navbar-bg tw:backdrop-blur-xl"
+      className="sticky top-0 z-40 mb-6 border-b border-border bg-navbar-bg backdrop-blur-xl"
     >
-      <div aria-hidden="true" className="tw:flex tw:h-0.5 tw:opacity-75">
-        <span className="tw:w-1/2 tw:bg-nl" />
-        <span className="tw:w-1/2 tw:bg-be" />
+      <div aria-hidden="true" className="flex h-0.5 opacity-75">
+        <span className="w-1/2 bg-nl" />
+        <span className="w-1/2 bg-be" />
       </div>
-      <div className="tw:mx-auto tw:flex tw:max-w-6xl tw:flex-wrap tw:items-center tw:gap-3 tw:px-3 tw:py-3">
-        <span className="tw:text-xl tw:font-bold" aria-label="Belgium and Netherlands">
+      <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-3 px-3 py-3">
+        <span className="text-xl font-bold" aria-label="Belgium and Netherlands">
           🇧🇪&thinsp;🇳🇱
         </span>
         <CollapsibleTrigger
-          render={<Button />}
+          render={<Button variant="outline" />}
           aria-label="Toggle navigation"
-          className="tw:ml-auto tw:shell:hidden"
+          className="ml-auto shell:hidden"
         >
-          <Menu className="tw:size-5" aria-hidden="true" />
+          <Menu className="size-5" aria-hidden="true" />
         </CollapsibleTrigger>
         <CollapsibleContent
           id="app-navbar-nav"
           keepMounted
-          className="tw:hidden tw:w-full tw:flex-col tw:gap-3 tw:data-open:flex tw:shell:flex tw:shell:w-auto tw:shell:flex-1 tw:shell:flex-row tw:shell:items-center"
+          className="hidden w-full flex-col gap-3 data-open:flex shell:flex shell:w-auto shell:flex-1 shell:flex-row shell:items-center"
         >
           <nav
             aria-label="Main navigation"
-            className="tw:flex tw:flex-col tw:gap-3 tw:shell:mr-auto tw:shell:flex-row tw:shell:items-center"
+            className="flex flex-col gap-3 shell:mr-auto shell:flex-row shell:items-center"
           >
             <Link
               to="/"
-              className="tw:text-text-sub tw:no-underline tw:hover:text-text tw:focus-visible:outline-2 tw:focus-visible:outline-ring"
-              activeProps={{ className: "tw:text-text" }}
+              className="text-text-sub no-underline hover:text-text focus-visible:outline-2 focus-visible:outline-ring"
+              activeProps={{ className: "text-text" }}
             >
               Bordertax
             </Link>
             <DropdownMenu>
-              <DropdownMenuTrigger render={<Button />} className="tw:border-transparent">
-                <BookOpen className="tw:size-4" aria-hidden="true" />
+              <DropdownMenuTrigger
+                render={<Button variant="outline" />}
+                className="border-transparent"
+              >
+                <BookOpen className="size-4" aria-hidden="true" />
                 {m.ref_overview_hub_title()}
-                <ChevronDown className="tw:size-3" aria-hidden="true" />
+                <ChevronDown className="size-3" aria-hidden="true" />
               </DropdownMenuTrigger>
               <DropdownMenuContent>
                 {REFERENCE_PAGES.map((page) => {
@@ -172,10 +177,10 @@ export function AppNavbar({ children, onLocaleSwitch }: AppNavbarProps) {
                     <DropdownMenuItem key={page.route} render={<Link to={page.route} />}>
                       <Icon
                         className={cn(
-                          "tw:size-4",
+                          "size-4",
                           page.route === "/reference/salary-split"
-                            ? "tw:text-nl-light"
-                            : "tw:text-be-light",
+                            ? "text-nl-light"
+                            : "text-be-light",
                         )}
                         aria-hidden="true"
                       />
@@ -186,7 +191,7 @@ export function AppNavbar({ children, onLocaleSwitch }: AppNavbarProps) {
               </DropdownMenuContent>
             </DropdownMenu>
           </nav>
-          <div className="tw:flex tw:items-center tw:gap-3">
+          <div className="flex items-center gap-3">
             {children}
             <ThemeToggleButton />
             <LanguageToggleButton onSwitch={onLocaleSwitch} />

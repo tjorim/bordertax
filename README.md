@@ -38,7 +38,7 @@ npm run build
 
 ### Interface
 
-The interface uses Tailwind CSS v4 (with `tw:` utilities), Base UI behaviour
+The interface uses Tailwind CSS v4 (unprefixed utilities), Base UI behaviour
 primitives, owned shadcn `base-nova` components and Lucide SVG icons. Semantic
 light/dark tokens live in `src/styles/tokens.css`; the root `data-theme`
 attribute is set by shared boot-time and runtime theme logic in `src/theme.ts`.

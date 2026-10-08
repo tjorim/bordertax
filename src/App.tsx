@@ -84,7 +84,7 @@ function ResultsTabs({ inputs, onResetInputs }: ResultsTabsProps) {
     <Tabs defaultValue="summary">
       <TabsList aria-label="Results">
         <TabsTrigger value="summary" aria-label={m.tabs_summary()}>
-          <PieChart className="tw:size-3" aria-hidden="true" />
+          <PieChart className="size-3" aria-hidden="true" />
           {m.tabs_summary()}
         </TabsTrigger>
         <TabsTrigger value="nl" aria-label={m.tabs_nl()}>
@@ -94,11 +94,11 @@ function ResultsTabs({ inputs, onResetInputs }: ResultsTabsProps) {
           🇧🇪 {m.tabs_be()}
         </TabsTrigger>
         <TabsTrigger value="years" aria-label={m.tabs_year_comparison()}>
-          <BarChart3 className="tw:size-3" aria-hidden="true" />
+          <BarChart3 className="size-3" aria-hidden="true" />
           {m.tabs_year_comparison()}
         </TabsTrigger>
         <TabsTrigger value="wfh" aria-label={m.tabs_wfh_ratio()}>
-          <House className="tw:size-3" aria-hidden="true" />
+          <House className="size-3" aria-hidden="true" />
           {m.tabs_wfh_ratio()}
         </TabsTrigger>
       </TabsList>
@@ -134,18 +134,13 @@ function ResultsTabs({ inputs, onResetInputs }: ResultsTabsProps) {
 function ResultsErrorFallback({ error }: FallbackProps) {
   const message = error instanceof Error ? error.message : String(error);
   return (
-    <div className="tw:p-6 tw:text-center">
-      <TriangleAlert
-        aria-hidden="true"
-        className="tw:mx-auto tw:size-8 tw:text-warning tw:mb-4 tw:block"
-      />
+    <div className="p-6 text-center">
+      <TriangleAlert aria-hidden="true" className="mx-auto size-8 text-warning mb-4 block" />
       <h5>{m.results_error_title()}</h5>
-      <p className="tw:text-text-muted tw:text-sm tw:mb-4">{m.results_error_description()}</p>
-      <details className="tw:text-start tw:text-sm tw:text-text-muted">
-        <summary className="tw:mb-1">{m.results_error_details()}</summary>
-        <pre className="tw:border tw:border-border tw:rounded-md tw:p-2 tw:text-sm tw:overflow-auto">
-          {message}
-        </pre>
+      <p className="text-text-muted text-sm mb-4">{m.results_error_description()}</p>
+      <details className="text-start text-sm text-text-muted">
+        <summary className="mb-1">{m.results_error_details()}</summary>
+        <pre className="border border-border rounded-md p-2 text-sm overflow-auto">{message}</pre>
       </details>
     </div>
   );
@@ -172,20 +167,20 @@ export default function App() {
   return (
     <>
       <AppNavbar onLocaleSwitch={() => setCurrentLocale(getLocale())}>
-        <span className="tw:font-mono tw:text-xs tw:tracking-wide tw:text-text-muted">
+        <span className="font-mono text-xs tracking-wide text-text-muted">
           {m.app_tax_year()} {inputs.year}
         </span>
       </AppNavbar>
 
-      <main className="tw:mx-auto tw:max-w-6xl tw:px-3 tw:pb-12">
-        <div className="tw:grid tw:grid-cols-1 tw:gap-6 tw:shell:grid-cols-12">
+      <main className="mx-auto max-w-6xl px-3 pb-12">
+        <div className="grid grid-cols-1 gap-6 shell:grid-cols-12">
           {/* ── Left column: inputs ────────────────────────────── */}
-          <div className="tw:min-w-0 tw:shell:col-span-5">
+          <div className="min-w-0 shell:col-span-5">
             <InputPanel form={form} />
           </div>
 
           {/* ── Right column: results ──────────────────────────── */}
-          <div className="tw:min-w-0 tw:shell:col-span-7">
+          <div className="min-w-0 shell:col-span-7">
             <ErrorBoundary FallbackComponent={ResultsErrorFallback}>
               <ResultsTabs inputs={inputs} onResetInputs={() => form.reset(DEFAULT_INPUTS)} />
             </ErrorBoundary>

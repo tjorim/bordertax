@@ -5,10 +5,10 @@ export const DropdownMenuTrigger = Menu.Trigger;
 export function DropdownMenuContent({ className, ...props }: Menu.Popup.Props) {
   return (
     <Menu.Portal>
-      <Menu.Positioner sideOffset={4} className="tw:z-50">
+      <Menu.Positioner sideOffset={4} className="z-50">
         <Menu.Popup
           className={cn(
-            "tw:min-w-48 tw:rounded-md tw:border tw:border-border tw:bg-popover tw:p-1 tw:text-popover-foreground tw:shadow-lg tw:outline-none",
+            "min-w-48 rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-lg outline-none",
             className,
           )}
           {...props}
@@ -21,7 +21,7 @@ export function DropdownMenuItem({ className, ...props }: Menu.Item.Props) {
   return (
     <Menu.Item
       className={cn(
-        "tw:flex tw:items-center tw:gap-2 tw:rounded-sm tw:px-3 tw:py-2 tw:text-sm tw:text-text tw:no-underline tw:outline-none tw:data-highlighted:bg-accent",
+        "flex items-center gap-2 rounded-sm px-3 py-2 text-sm text-text no-underline outline-none data-highlighted:bg-accent",
         className,
       )}
       {...props}

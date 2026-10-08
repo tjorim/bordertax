@@ -1,5 +1,5 @@
 import { Input } from "@/components/ui/input";
-import { FieldLabel, FieldHint } from "@/components/ui/field";
+import { FieldLabel, FieldDescription } from "@/components/ui/field";
 import type { ReactNode } from "react";
 
 export function fieldError(errors: unknown[] | undefined): string | undefined {
@@ -67,12 +67,12 @@ export function NumberField({
         aria-describedby={describedBy}
       />
       {hint && hintId && (
-        <FieldHint id={hintId} className="tw:text-text-muted">
+        <FieldDescription id={hintId} className="text-text-muted">
           {hint}
-        </FieldHint>
+        </FieldDescription>
       )}
       {error && (
-        <div id={errorId} className="tw:mt-1 tw:text-hint tw:text-danger">
+        <div id={errorId} className="mt-1 text-hint text-danger">
           {error}
         </div>
       )}

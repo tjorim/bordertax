@@ -17,8 +17,8 @@ export function CodeBadge({ code, description, system = "be" }: Props) {
     <span
       className={
         system === "nl"
-          ? "tw:font-mono tw:text-nl-light tw:text-xs tw:ms-1"
-          : "tw:font-mono tw:text-be-light tw:text-xs tw:ms-1"
+          ? "font-mono text-nl-light text-xs ms-1"
+          : "font-mono text-be-light text-xs ms-1"
       }
       title={title}
       aria-label={title}
