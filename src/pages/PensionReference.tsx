@@ -1,3 +1,24 @@
+import { cn } from "@/lib/utils";
+import { Accordion } from "@/components/ui/accordion";
+import {
+  Archive,
+  Bandage,
+  Building,
+  CalendarCheck,
+  CircleArrowDown,
+  CircleArrowUp,
+  CircleMinus,
+  BadgeAlert,
+  DoorOpen,
+  FileText,
+  Flag,
+  Heart,
+  HeartPulse,
+  Hourglass,
+  Layers,
+  PiggyBank,
+  Receipt,
+} from "lucide-react";
 import {
   Table,
   TableHeader,
@@ -6,7 +27,7 @@ import {
   TableHead,
   TableCell,
 } from "@/components/ui/table";
-import { Accordion, Col, Container, Row } from "react-bootstrap";
+
 import * as m from "../paraglide/messages.js";
 import {
   BeBadge,
@@ -29,65 +50,75 @@ export default function PensionReference() {
     <>
       <AppNavbar>
         <span className="ref-nav-text tw:font-mono tw:text-xs tw:font-semibold tw:tracking-wide tw:text-text-muted">
-          <i className="bi bi-piggy-bank-fill me-2" style={{ color: "var(--bt-be-light)" }} />
+          <PiggyBank
+            aria-hidden="true"
+            className="tw:inline tw:size-4 tw:shrink-0 tw:align-text-bottom tw:me-2 tw:text-be-light"
+          />
           {m.ref_pension_nav_title()}
         </span>
       </AppNavbar>
 
-      <Container fluid="lg" className="pb-5">
+      <div className="tw:mx-auto tw:w-full tw:max-w-6xl tw:px-5 tw:pb-12">
         <PageHero title={m.ref_pension_hero_title()} subtitle={m.ref_pension_hero_subtitle()} />
 
         {/* ── 3-pijler overzicht ────────────────────────────────── */}
-        <SectionCard title={m.ref_pension_s1_title()} icon="bi-layers-fill" accent="neutral">
-          <Row className="g-3">
+        <SectionCard title={m.ref_pension_s1_title()} icon={Layers} accent="neutral">
+          <div className="tw:grid tw:grid-cols-12 tw:gap-4">
             {[
               {
                 pijler: m.ref_pension_p1_pillar(),
                 nl: m.ref_pension_p1_nl(),
                 be: m.ref_pension_p1_be(),
-                color: "var(--bt-info)",
+                colorClass: "tw:text-info",
+                borderClass: "tw:border-info/25",
               },
               {
                 pijler: m.ref_pension_p2_pillar(),
                 nl: m.ref_pension_p2_nl(),
                 be: m.ref_pension_p2_be(),
-                color: "var(--bt-success)",
+                colorClass: "tw:text-success",
+                borderClass: "tw:border-success/25",
               },
               {
                 pijler: m.ref_pension_p3_pillar(),
                 nl: m.ref_pension_p3_nl(),
                 be: m.ref_pension_p3_be(),
-                color: "var(--bt-warning)",
+                colorClass: "tw:text-warning",
+                borderClass: "tw:border-warning/25",
               },
-            ].map(({ pijler, nl, be, color }) => (
-              <Col md={4} key={pijler}>
+            ].map(({ pijler, nl, be, colorClass, borderClass }) => (
+              <div key={pijler} className="tw:col-span-12 tw:md:col-span-4">
                 <div
-                  className="p-3 rounded h-100 ref-pillar-card"
-                  style={{ border: `1px solid ${color}40` }}
+                  className={cn(
+                    "tw:p-4 tw:rounded-sm tw:h-full tw:border tw:bg-surface-3",
+                    borderClass,
+                  )}
                 >
-                  <div className="fw-bold mb-2 small ref-pillar-label" style={{ color }}>
+                  <div
+                    className={cn("tw:font-bold tw:mb-2 tw:text-sm ref-pillar-label", colorClass)}
+                  >
                     {pijler}
                   </div>
-                  <div className="mb-2">
-                    <NlBadge>🇳🇱 NL</NlBadge> <span className="small ref-text-sub">{nl}</span>
+                  <div className="tw:mb-2">
+                    <NlBadge>🇳🇱 NL</NlBadge> <span className="tw:text-sm ref-text-sub">{nl}</span>
                   </div>
                   <div>
-                    <BeBadge>🇧🇪 BE</BeBadge> <span className="small ref-text-sub">{be}</span>
+                    <BeBadge>🇧🇪 BE</BeBadge> <span className="tw:text-sm ref-text-sub">{be}</span>
                   </div>
                 </div>
-              </Col>
+              </div>
             ))}
-          </Row>
+          </div>
           <WarnBox>
             <strong>{m.ref_pension_term_confusion_title()}</strong>{" "}
             {m.ref_pension_term_confusion_body()}
           </WarnBox>
         </SectionCard>
 
-        <Row className="g-4">
-          <Col lg={6}>
+        <div className="tw:grid tw:grid-cols-12 tw:gap-6">
+          <div className="tw:col-span-12 tw:shell:col-span-6">
             {/* ── AOW ────────────────────────────────────────────── */}
-            <SectionCard title={m.ref_pension_s_aow()} icon="bi-flag-fill" accent="nl">
+            <SectionCard title={m.ref_pension_s_aow()} icon={Flag} accent="nl">
               <StatRow label={m.ref_pension_aow_opbouw()} value="2%" />
               <StatRow
                 label={m.ref_pension_aow_volledig()}
@@ -120,7 +151,7 @@ export default function PensionReference() {
                 value={m.ref_pension_aow_betaling_value()}
               />
 
-              <div className="mt-4 mb-2 small fw-semibold ref-subsection-label">
+              <div className="tw:mt-6 tw:mb-2 tw:text-sm tw:font-semibold ref-subsection-label">
                 {m.ref_pension_max_amounts()}
               </div>
               <Table className="tw:text-table-reference">
@@ -156,8 +187,8 @@ export default function PensionReference() {
                 </TableBody>
               </Table>
 
-              <div className="mt-3 p-3 rounded ref-example-block">
-                <div className="small fw-semibold mb-2 ref-text-muted">
+              <div className="tw:mt-4 tw:p-4 tw:rounded-md ref-example-block">
+                <div className="tw:text-sm tw:font-semibold tw:mb-2 ref-text-muted">
                   {m.ref_pension_example_30yr()}
                 </div>
                 <StatRow
@@ -177,13 +208,13 @@ export default function PensionReference() {
                 />
               </div>
 
-              <div className="mt-3">
+              <div className="tw:mt-4">
                 <TipBox>{m.ref_pension_tip_partner()}</TipBox>
                 <TipBox>{m.ref_pension_tip_aanvragen()}</TipBox>
               </div>
 
-              <Accordion flush className="mt-2">
-                <RefAccordionItem eventKey="aow-history" title={m.ref_pension_aow_history()}>
+              <Accordion className="tw:mt-2">
+                <RefAccordionItem value="aow-history" title={m.ref_pension_aow_history()}>
                   <Table className="tw:text-table-reference-xs">
                     <TableBody>
                       {[
@@ -211,7 +242,7 @@ export default function PensionReference() {
             </SectionCard>
 
             {/* ── ANW ────────────────────────────────────────────── */}
-            <SectionCard title={m.ref_pension_s_anw()} icon="bi-heart-pulse-fill" accent="nl">
+            <SectionCard title={m.ref_pension_s_anw()} icon={HeartPulse} accent="nl">
               <StatRow
                 label={m.ref_pension_anw_uitkering()}
                 value={m.ref_pension_anw_uitkering_value()}
@@ -231,7 +262,7 @@ export default function PensionReference() {
                 sub={m.ref_pension_anw_wezen_sub()}
               />
 
-              <div className="mt-3 small fw-semibold mb-2 ref-subsection-label">
+              <div className="tw:mt-4 tw:text-sm tw:font-semibold tw:mb-2 ref-subsection-label">
                 {m.ref_pension_extra_earnings_anw()}
               </div>
               <StatRow
@@ -256,29 +287,21 @@ export default function PensionReference() {
             </SectionCard>
 
             {/* ── Bijverdienen bij AOW ───────────────────────────── */}
-            <SectionCard
-              title={m.ref_pension_s_aow_work()}
-              icon="bi-exclamation-diamond-fill"
-              accent="nl"
-            >
+            <SectionCard title={m.ref_pension_s_aow_work()} icon={BadgeAlert} accent="nl">
               <WarnBox>{m.ref_pension_aow_work_warn()}</WarnBox>
-              <ul className="small mb-0 ref-list-sub">
+              <ul className="tw:text-sm tw:mb-0 ref-list-sub">
                 <li>{m.ref_pension_aow_work_li1()}</li>
                 <li>{m.ref_pension_aow_work_li2()}</li>
                 <li>{m.ref_pension_aow_work_li3()}</li>
               </ul>
               <TipBox>{m.ref_pension_aow_work_tip()}</TipBox>
             </SectionCard>
-          </Col>
+          </div>
 
-          <Col lg={6}>
+          <div className="tw:col-span-12 tw:shell:col-span-6">
             {/* ── Aanvullend pensioen NL ─────────────────────────── */}
-            <SectionCard
-              title={m.ref_pension_s_supplementary()}
-              icon="bi-building-fill"
-              accent="nl"
-            >
-              <p className="small mb-3 ref-text-sub">{m.ref_pension_sup_intro()}</p>
+            <SectionCard title={m.ref_pension_s_supplementary()} icon={Building} accent="nl">
+              <p className="tw:text-sm tw:mb-4 ref-text-sub">{m.ref_pension_sup_intro()}</p>
               <StatRow
                 label={m.ref_pension_sup_pensioenpot()}
                 value={m.ref_pension_sup_pensioenpot_value()}
@@ -304,10 +327,10 @@ export default function PensionReference() {
 
               <TipBox>{m.ref_pension_sup_tip()}</TipBox>
 
-              <div className="mt-2 mb-2 small fw-semibold ref-subsection-label">
+              <div className="tw:mt-2 tw:mb-2 tw:text-sm tw:font-semibold ref-subsection-label">
                 {m.ref_pension_wtp_title()}
               </div>
-              <ul className="small mb-3 ref-list-sub">
+              <ul className="tw:text-sm tw:mb-4 ref-list-sub">
                 <li>{m.ref_pension_wtp_li1()}</li>
                 <li>{m.ref_pension_wtp_li2()}</li>
                 <li>{m.ref_pension_wtp_li3()}</li>
@@ -315,16 +338,16 @@ export default function PensionReference() {
                 <li>{m.ref_pension_wtp_li5()}</li>
               </ul>
 
-              <div className="mt-2 mb-2 small fw-semibold ref-subsection-label">
+              <div className="tw:mt-2 tw:mb-2 tw:text-sm tw:font-semibold ref-subsection-label">
                 {m.ref_pension_divorce()}
               </div>
-              <p className="small mb-1 ref-text-sub">{m.ref_pension_divorce_p()}</p>
+              <p className="tw:text-sm tw:mb-1 ref-text-sub">{m.ref_pension_divorce_p()}</p>
               <WarnBox>{m.ref_pension_divorce_warn()}</WarnBox>
             </SectionCard>
 
             {/* ── RVU ────────────────────────────────────────────── */}
-            <SectionCard title={m.ref_pension_s_rvu()} icon="bi-door-open-fill" accent="nl">
-              <p className="small mb-3 ref-text-sub">{m.ref_pension_rvu_intro()}</p>
+            <SectionCard title={m.ref_pension_s_rvu()} icon={DoorOpen} accent="nl">
+              <p className="tw:text-sm tw:mb-4 ref-text-sub">{m.ref_pension_rvu_intro()}</p>
               <StatRow
                 label={m.ref_pension_rvu_max()}
                 value={m.ref_pension_rvu_max_value()}
@@ -338,7 +361,7 @@ export default function PensionReference() {
                 label={m.ref_pension_rvu_uitbetaling()}
                 value={m.ref_pension_rvu_uitbetaling_value()}
               />
-              <ul className="small mt-3 mb-0 ref-list-sub">
+              <ul className="tw:text-sm tw:mt-4 tw:mb-0 ref-list-sub">
                 <li>{m.ref_pension_rvu_li1()}</li>
                 <li>{m.ref_pension_rvu_li2()}</li>
                 <li>{m.ref_pension_rvu_li3()}</li>
@@ -348,12 +371,8 @@ export default function PensionReference() {
             </SectionCard>
 
             {/* ── Inhoudingen op pensioen ────────────────────────── */}
-            <SectionCard
-              title={m.ref_pension_s_deductions()}
-              icon="bi-dash-circle-fill"
-              accent="nl"
-            >
-              <p className="small mb-3 ref-text-sub">{m.ref_pension_ded_intro()}</p>
+            <SectionCard title={m.ref_pension_s_deductions()} icon={CircleMinus} accent="nl">
+              <p className="tw:text-sm tw:mb-4 ref-text-sub">{m.ref_pension_ded_intro()}</p>
               <StatRow label={m.ref_pension_ded_zorg()} value={m.ref_pension_ded_zorg_value()} />
               <StatRow
                 label={m.ref_pension_ded_verdrag()}
@@ -375,14 +394,14 @@ export default function PensionReference() {
               />
               <TipBox>{m.ref_pension_ded_tip()}</TipBox>
             </SectionCard>
-          </Col>
-        </Row>
+          </div>
+        </div>
 
         {/* ── Belgisch rustpensioen ────────────────────────────────── */}
-        <SectionCard title={m.ref_pension_s_be()} icon="bi-flag-fill" accent="be">
-          <Row className="g-4">
-            <Col md={4}>
-              <div className="small fw-semibold mb-2 ref-subsection-label">
+        <SectionCard title={m.ref_pension_s_be()} icon={Flag} accent="be">
+          <div className="tw:grid tw:grid-cols-12 tw:gap-6">
+            <div className="tw:col-span-12 tw:md:col-span-4">
+              <div className="tw:text-sm tw:font-semibold tw:mb-2 ref-subsection-label">
                 {m.ref_pension_be_params()}
               </div>
               <StatRow
@@ -425,10 +444,10 @@ export default function PensionReference() {
               />
 
               <WarnBox>{m.ref_pension_be_warn_aanvraag()}</WarnBox>
-            </Col>
+            </div>
 
-            <Col md={4}>
-              <div className="small fw-semibold mb-2 ref-subsection-label">
+            <div className="tw:col-span-12 tw:md:col-span-4">
+              <div className="tw:text-sm tw:font-semibold tw:mb-2 ref-subsection-label">
                 {m.ref_pension_be_earliest()}
               </div>
               <Table className="tw:text-table-reference">
@@ -452,13 +471,13 @@ export default function PensionReference() {
                 </TableBody>
               </Table>
               <TipBox>{m.ref_pension_be_tip_nl_years()}</TipBox>
-            </Col>
+            </div>
 
-            <Col md={4}>
-              <div className="small fw-semibold mb-2 ref-subsection-label">
+            <div className="tw:col-span-12 tw:md:col-span-4">
+              <div className="tw:text-sm tw:font-semibold tw:mb-2 ref-subsection-label">
                 {m.ref_pension_be_ziv()}
               </div>
-              <p className="small tw:mb-2 ref-text-sub">
+              <p className="tw:text-sm tw:mb-2 ref-text-sub">
                 <strong>{m.ref_pension_ziv_alleenstaand()}</strong>
               </p>
               <Table className="tw:text-table-reference-xs">
@@ -477,7 +496,7 @@ export default function PensionReference() {
                   ))}
                 </TableBody>
               </Table>
-              <p className="small mt-3 mb-2 ref-text-sub">
+              <p className="tw:text-sm tw:mt-4 tw:mb-2 ref-text-sub">
                 <strong>{m.ref_pension_ziv_gezin()}</strong>
               </p>
               <Table className="tw:text-table-reference-xs">
@@ -497,19 +516,15 @@ export default function PensionReference() {
                 </TableBody>
               </Table>
               <WarnBox>{m.ref_pension_ziv_warn()}</WarnBox>
-            </Col>
-          </Row>
+            </div>
+          </div>
         </SectionCard>
 
         {/* ── Hervorming 2027 + Malus/Bonus ───────────────────────── */}
-        <Row className="g-4">
-          <Col md={4}>
-            <SectionCard
-              title={m.ref_pension_s_be_2027()}
-              icon="bi-calendar-check-fill"
-              accent="be"
-            >
-              <p className="small mb-3 ref-text-sub">{m.ref_pension_be2027_intro()}</p>
+        <div className="tw:grid tw:grid-cols-12 tw:gap-6">
+          <div className="tw:col-span-12 tw:md:col-span-4">
+            <SectionCard title={m.ref_pension_s_be_2027()} icon={CalendarCheck} accent="be">
+              <p className="tw:text-sm tw:mb-4 ref-text-sub">{m.ref_pension_be2027_intro()}</p>
               <Table className="tw:text-table-reference">
                 <TableHeader className="tw:bg-surface-3">
                   <TableRow>
@@ -538,15 +553,11 @@ export default function PensionReference() {
                 </TableBody>
               </Table>
             </SectionCard>
-          </Col>
+          </div>
 
-          <Col md={4}>
-            <SectionCard
-              title={m.ref_pension_s_malus()}
-              icon="bi-arrow-down-circle-fill"
-              accent="be"
-            >
-              <p className="small mb-3 ref-text-sub">{m.ref_pension_malus_intro()}</p>
+          <div className="tw:col-span-12 tw:md:col-span-4">
+            <SectionCard title={m.ref_pension_s_malus()} icon={CircleArrowDown} accent="be">
+              <p className="tw:text-sm tw:mb-4 ref-text-sub">{m.ref_pension_malus_intro()}</p>
               <Table className="tw:text-table-reference-md">
                 <TableHeader className="tw:bg-surface-3">
                   <TableRow>
@@ -570,11 +581,11 @@ export default function PensionReference() {
                 </TableBody>
               </Table>
             </SectionCard>
-          </Col>
+          </div>
 
-          <Col md={4}>
-            <SectionCard title={m.ref_pension_s_bonus()} icon="bi-arrow-up-circle-fill" accent="be">
-              <p className="small mb-3 ref-text-sub">{m.ref_pension_bonus_intro()}</p>
+          <div className="tw:col-span-12 tw:md:col-span-4">
+            <SectionCard title={m.ref_pension_s_bonus()} icon={CircleArrowUp} accent="be">
+              <p className="tw:text-sm tw:mb-4 ref-text-sub">{m.ref_pension_bonus_intro()}</p>
               <Table className="tw:text-table-reference-md">
                 <TableHeader className="tw:bg-surface-3">
                   <TableRow>
@@ -590,42 +601,44 @@ export default function PensionReference() {
                   ].map(([yr, bonus]) => (
                     <TableRow key={yr}>
                       <TableCell className="tw:text-text">{yr}</TableCell>
-                      <TableCell className="tw:font-mono tw:text-text fw-bold">{bonus}</TableCell>
+                      <TableCell className="tw:font-mono tw:text-text tw:font-bold">
+                        {bonus}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
             </SectionCard>
-          </Col>
-        </Row>
+          </div>
+        </div>
 
         {/* ── Inkomenshiaat & grensarbeiderspensioen ──────────────── */}
-        <Row className="g-4">
-          <Col md={6}>
-            <SectionCard title={m.ref_pension_s_gap()} icon="bi-hourglass-split" accent="neutral">
-              <p className="small mb-3 ref-text-sub">{m.ref_pension_gap_intro()}</p>
-              <ul className="small mb-3 ref-list-sub">
+        <div className="tw:grid tw:grid-cols-12 tw:gap-6">
+          <div className="tw:col-span-12 tw:md:col-span-6">
+            <SectionCard title={m.ref_pension_s_gap()} icon={Hourglass} accent="neutral">
+              <p className="tw:text-sm tw:mb-4 ref-text-sub">{m.ref_pension_gap_intro()}</p>
+              <ul className="tw:text-sm tw:mb-4 ref-list-sub">
                 <li>{m.ref_pension_gap_li1()}</li>
                 <li>{m.ref_pension_gap_li2()}</li>
                 <li>{m.ref_pension_gap_li3()}</li>
               </ul>
 
-              <div className="small fw-semibold mb-2 ref-subsection-label">
+              <div className="tw:text-sm tw:font-semibold tw:mb-2 ref-subsection-label">
                 {m.ref_pension_art64()}
               </div>
-              <p className="small tw:mb-2 ref-text-sub">{m.ref_pension_art64_intro()}</p>
-              <ol className="small mb-0 ref-list-sub">
+              <p className="tw:text-sm tw:mb-2 ref-text-sub">{m.ref_pension_art64_intro()}</p>
+              <ol className="tw:text-sm tw:mb-0 ref-list-sub">
                 <li>{m.ref_pension_art64_li1()}</li>
                 <li>{m.ref_pension_art64_li2()}</li>
               </ol>
               <WarnBox>{m.ref_pension_art64_warn()}</WarnBox>
             </SectionCard>
-          </Col>
+          </div>
 
-          <Col md={6}>
-            <SectionCard title={m.ref_pension_s_border()} icon="bi-archive-fill" accent="be">
-              <p className="small mb-3 ref-text-sub">{m.ref_pension_border_intro()}</p>
-              <ul className="small mb-3 ref-list-sub">
+          <div className="tw:col-span-12 tw:md:col-span-6">
+            <SectionCard title={m.ref_pension_s_border()} icon={Archive} accent="be">
+              <p className="tw:text-sm tw:mb-4 ref-text-sub">{m.ref_pension_border_intro()}</p>
+              <ul className="tw:text-sm tw:mb-4 ref-list-sub">
                 <li>{m.ref_pension_border_li1()}</li>
                 <li>{m.ref_pension_border_li2()}</li>
                 <li>{m.ref_pension_border_li3()}</li>
@@ -634,17 +647,17 @@ export default function PensionReference() {
               </ul>
               <TipBox>{m.ref_pension_border_tip()}</TipBox>
             </SectionCard>
-          </Col>
-        </Row>
+          </div>
+        </div>
 
         {/* ── Overlevingspensioen BE ───────────────────────────────── */}
-        <SectionCard title={m.ref_pension_s_survivor()} icon="bi-heart-fill" accent="be">
-          <Row className="g-3">
-            <Col md={6}>
-              <div className="small fw-semibold mb-2 ref-subsection-label">
+        <SectionCard title={m.ref_pension_s_survivor()} icon={Heart} accent="be">
+          <div className="tw:grid tw:grid-cols-12 tw:gap-4">
+            <div className="tw:col-span-12 tw:md:col-span-6">
+              <div className="tw:text-sm tw:font-semibold tw:mb-2 ref-subsection-label">
                 {m.ref_pension_conditions()}
               </div>
-              <ul className="small ref-list-sub">
+              <ul className="tw:text-sm ref-list-sub">
                 <li>{m.ref_pension_survivor_li1()}</li>
                 <li>{m.ref_pension_survivor_li2()}</li>
                 <li>{m.ref_pension_survivor_li3()}</li>
@@ -652,73 +665,69 @@ export default function PensionReference() {
                 <li>{m.ref_pension_survivor_li5()}</li>
                 <li>{m.ref_pension_survivor_li6()}</li>
               </ul>
-            </Col>
-            <Col md={6}>
-              <div className="small fw-semibold mb-2 ref-subsection-label">
+            </div>
+            <div className="tw:col-span-12 tw:md:col-span-6">
+              <div className="tw:text-sm tw:font-semibold tw:mb-2 ref-subsection-label">
                 {m.ref_pension_special_situations()}
               </div>
-              <ul className="small mb-0 ref-list-sub">
+              <ul className="tw:text-sm tw:mb-0 ref-list-sub">
                 <li>{m.ref_pension_survivor_sp_li1()}</li>
                 <li>{m.ref_pension_survivor_sp_li2()}</li>
               </ul>
-            </Col>
-          </Row>
+            </div>
+          </div>
         </SectionCard>
 
         {/* ── Arbeidsongeschiktheid & AOW ──────────────────────────── */}
-        <SectionCard title={m.ref_pension_s_disability()} icon="bi-bandaid-fill" accent="nl">
-          <Row className="g-3">
-            <Col md={6}>
-              <p className="small tw:mb-2 ref-text-sub">{m.ref_pension_disability_intro1()}</p>
-              <ul className="small ref-list-sub">
+        <SectionCard title={m.ref_pension_s_disability()} icon={Bandage} accent="nl">
+          <div className="tw:grid tw:grid-cols-12 tw:gap-4">
+            <div className="tw:col-span-12 tw:md:col-span-6">
+              <p className="tw:text-sm tw:mb-2 ref-text-sub">{m.ref_pension_disability_intro1()}</p>
+              <ul className="tw:text-sm ref-list-sub">
                 <li>{m.ref_pension_disability_li1()}</li>
                 <li>{m.ref_pension_disability_li2()}</li>
               </ul>
-            </Col>
-            <Col md={6}>
-              <p className="small tw:mb-2 ref-text-sub">{m.ref_pension_disability_intro2()}</p>
-              <ul className="small mb-0 ref-list-sub">
+            </div>
+            <div className="tw:col-span-12 tw:md:col-span-6">
+              <p className="tw:text-sm tw:mb-2 ref-text-sub">{m.ref_pension_disability_intro2()}</p>
+              <ul className="tw:text-sm tw:mb-0 ref-list-sub">
                 <li>{m.ref_pension_disability_li3()}</li>
                 <li>{m.ref_pension_disability_li4()}</li>
                 <li>{m.ref_pension_disability_li5()}</li>
               </ul>
-            </Col>
-          </Row>
+            </div>
+          </div>
         </SectionCard>
 
         {/* ── Belasting op pensioen ────────────────────────────────── */}
-        <SectionCard title={m.ref_pension_s_tax()} icon="bi-receipt-cutoff" accent="neutral">
-          <p className="small mb-3 ref-text-sub">{m.ref_pension_tax_intro()}</p>
-          <Row className="g-3">
-            <Col md={6}>
-              <div className="small fw-semibold mb-2 ref-subsection-label">
+        <SectionCard title={m.ref_pension_s_tax()} icon={Receipt} accent="neutral">
+          <p className="tw:text-sm tw:mb-4 ref-text-sub">{m.ref_pension_tax_intro()}</p>
+          <div className="tw:grid tw:grid-cols-12 tw:gap-4">
+            <div className="tw:col-span-12 tw:md:col-span-6">
+              <div className="tw:text-sm tw:font-semibold tw:mb-2 ref-subsection-label">
                 {m.ref_pension_exception_nl()}
               </div>
-              <ul className="small mb-0 ref-list-sub">
+              <ul className="tw:text-sm tw:mb-0 ref-list-sub">
                 <li>{m.ref_pension_tax_exc_li1()}</li>
                 <li>{m.ref_pension_tax_exc_li2()}</li>
                 <li>{m.ref_pension_tax_exc_li3()}</li>
                 <li>{m.ref_pension_tax_exc_li4()}</li>
               </ul>
-            </Col>
-            <Col md={6}>
+            </div>
+            <div className="tw:col-span-12 tw:md:col-span-6">
               <TipBox>{m.ref_pension_tax_tip1()}</TipBox>
               <TipBox>{m.ref_pension_tax_tip2()}</TipBox>
-            </Col>
-          </Row>
+            </div>
+          </div>
         </SectionCard>
 
         {/* ── Bronbestand ─────────────────────────────────────────── */}
-        <SectionCard
-          title={m.ref_pension_s_source()}
-          icon="bi-file-earmark-pdf-fill"
-          accent="neutral"
-        >
+        <SectionCard title={m.ref_pension_s_source()} icon={FileText} accent="neutral">
           <DocLink
             href="/docs/ACV-Pensioen-Infosessie-2026.pdf"
             title={m.ref_pension_source_doc_title()}
             sub={m.ref_pension_source_doc_sub()}
-            maxWidth={480}
+            className="tw:max-w-lg"
           />
         </SectionCard>
 
@@ -733,7 +742,7 @@ export default function PensionReference() {
             acvgrensarbeiders.be
           </a>
         </PageFooter>
-      </Container>
+      </div>
     </>
   );
 }

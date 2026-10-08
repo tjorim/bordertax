@@ -1,14 +1,12 @@
-/* Keep legacy source order, including !important overrides, in one layer. */
-@layer theme, legacy, components, utilities;
+@layer theme, base, components, utilities;
 @import "tailwindcss/theme.css" layer(theme) prefix(tw);
-@import "bootstrap/dist/css/bootstrap.min.css" layer(legacy);
-@import "bootstrap-icons/font/bootstrap-icons.css" layer(legacy);
 @import "./styles/tokens.css" layer(theme);
-@import "./styles.css" layer(legacy);
-/* Bootstrap reboot owns the reset: deliberately omit Tailwind preflight. */
+@import "./styles/reset.css" layer(base);
+@import "./styles/app.css" layer(components);
+/* A small application reset preserves the established typography. */
 @import "tailwindcss/utilities.css" layer(utilities) prefix(tw);
 
-@custom-variant dark (&:where([data-bs-theme="dark"], [data-bs-theme="dark"] *));
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 @theme inline {
   --color-brand: var(--bt-brand);
@@ -120,4 +118,20 @@
 
 @theme {
   --breakpoint-shell: 62rem;
+}
+
+@theme {
+  --text-control: 0.84rem;
+  --text-label: 0.7rem;
+  --text-hint: 0.72rem;
+  --text-form-input: 0.85rem;
+}
+
+@theme {
+  --container-reference-cards: 66.375rem;
+}
+
+@theme {
+  --text-stat: 1.15rem;
+  --text-section-label: 0.68rem;
 }

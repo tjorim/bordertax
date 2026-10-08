@@ -1,3 +1,4 @@
+import { TriangleAlert } from "lucide-react";
 import { formOptions, useForm, useSelector, type ReactFormType } from "@tanstack/react-form";
 import { useEffect, useMemo, useState } from "react";
 import { BarChart3, House, PieChart } from "lucide-react";
@@ -133,13 +134,18 @@ function ResultsTabs({ inputs, onResetInputs }: ResultsTabsProps) {
 function ResultsErrorFallback({ error }: FallbackProps) {
   const message = error instanceof Error ? error.message : String(error);
   return (
-    <div className="p-4 text-center">
-      <i className="bi bi-exclamation-triangle-fill text-warning fs-2 mb-3 d-block" />
+    <div className="tw:p-6 tw:text-center">
+      <TriangleAlert
+        aria-hidden="true"
+        className="tw:mx-auto tw:size-8 tw:text-warning tw:mb-4 tw:block"
+      />
       <h5>{m.results_error_title()}</h5>
-      <p className="text-muted small mb-3">{m.results_error_description()}</p>
-      <details className="text-start small text-muted">
-        <summary className="mb-1">{m.results_error_details()}</summary>
-        <pre className="border rounded p-2 small overflow-auto">{message}</pre>
+      <p className="tw:text-text-muted tw:text-sm tw:mb-4">{m.results_error_description()}</p>
+      <details className="tw:text-start tw:text-sm tw:text-text-muted">
+        <summary className="tw:mb-1">{m.results_error_details()}</summary>
+        <pre className="tw:border tw:border-border tw:rounded-md tw:p-2 tw:text-sm tw:overflow-auto">
+          {message}
+        </pre>
       </details>
     </div>
   );

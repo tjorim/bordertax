@@ -1,9 +1,20 @@
+import { DistributionSegment } from "@/components/ui/distribution-segment";
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from "@/components/ui/accordion";
+import { Alert } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { FieldLabel, FieldHint, NativeSelect, CheckboxField } from "@/components/ui/field";
+import { Coins, EyeOff, Info, User } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import { useSelector } from "@tanstack/react-form";
-import clsx from "clsx";
+import { cn } from "@/lib/utils";
 import { z } from "zod";
-import { Accordion, Alert, Button, Col, Form, Row } from "react-bootstrap";
+
 import {
   VALID_YEARS,
   VALID_RESIDENT_COUNTRIES,
@@ -52,20 +63,23 @@ export default function InputPanel({ form }: Props) {
       : 0;
 
   return (
-    <Accordion defaultActiveKey={["0", "1", "2"]} alwaysOpen>
+    <Accordion defaultValue={["0", "1", "2"]} multiple>
       {/* ── Section 1: Situation ─────────────────────────────── */}
-      <Accordion.Item eventKey="0">
-        <Accordion.Header>
-          <i className="bi bi-person-fill me-2" />
+      <AccordionItem value="0">
+        <AccordionTrigger>
+          <User
+            aria-hidden="true"
+            className="tw:inline tw:size-4 tw:shrink-0 tw:align-text-bottom tw:me-2"
+          />
           {m.input_personal_situation()}
-        </Accordion.Header>
-        <Accordion.Body>
-          <Row className="g-3">
+        </AccordionTrigger>
+        <AccordionContent>
+          <div className="tw:grid tw:grid-cols-12 tw:gap-4">
             <form.Field name="year">
               {(field) => (
-                <Col xs={12} sm={6}>
-                  <Form.Label htmlFor="tax-year">{m.input_tax_year()}</Form.Label>
-                  <Form.Select
+                <div className="tw:col-span-12 tw:table:col-span-6">
+                  <FieldLabel htmlFor="tax-year">{m.input_tax_year()}</FieldLabel>
+                  <NativeSelect
                     id="tax-year"
                     value={field.value}
                     onChange={(e) =>
@@ -78,17 +92,17 @@ export default function InputPanel({ form }: Props) {
                         {y}
                       </option>
                     ))}
-                  </Form.Select>
-                </Col>
+                  </NativeSelect>
+                </div>
               )}
             </form.Field>
 
             {VALID_RESIDENT_COUNTRIES.length > 1 && (
               <form.Field name="residentCountry">
                 {(field) => (
-                  <Col xs={12} sm={6}>
-                    <Form.Label htmlFor="resident-country">{m.input_resident_country()}</Form.Label>
-                    <Form.Select
+                  <div className="tw:col-span-12 tw:table:col-span-6">
+                    <FieldLabel htmlFor="resident-country">{m.input_resident_country()}</FieldLabel>
+                    <NativeSelect
                       id="resident-country"
                       value={field.value}
                       onChange={(e) =>
@@ -102,8 +116,8 @@ export default function InputPanel({ form }: Props) {
                       {(VALID_RESIDENT_COUNTRIES as readonly string[]).includes("NL") && (
                         <option value="NL">🇳🇱 {m.input_resident_country_nl()}</option>
                       )}
-                    </Form.Select>
-                  </Col>
+                    </NativeSelect>
+                  </div>
                 )}
               </form.Field>
             )}
@@ -111,8 +125,8 @@ export default function InputPanel({ form }: Props) {
             {VALID_CIVIL_STATUSES.length > 1 && (
               <form.Field name="civilStatus">
                 {(field) => (
-                  <Col xs={12} sm={6}>
-                    <Form.Label htmlFor="civil-status">
+                  <div className="tw:col-span-12 tw:table:col-span-6">
+                    <FieldLabel htmlFor="civil-status">
                       {m.input_civil_status()}{" "}
                       <Badge
                         variant="label"
@@ -121,8 +135,8 @@ export default function InputPanel({ form }: Props) {
                       >
                         {m.input_civil_status_not_used()}
                       </Badge>
-                    </Form.Label>
-                    <Form.Select
+                    </FieldLabel>
+                    <NativeSelect
                       id="civil-status"
                       value={field.value}
                       onChange={(e) =>
@@ -136,8 +150,8 @@ export default function InputPanel({ form }: Props) {
                       {(VALID_CIVIL_STATUSES as readonly string[]).includes("married") && (
                         <option value="married">{m.input_civil_status_married()}</option>
                       )}
-                    </Form.Select>
-                  </Col>
+                    </NativeSelect>
+                  </div>
                 )}
               </form.Field>
             )}
@@ -149,7 +163,7 @@ export default function InputPanel({ form }: Props) {
               {(field) => {
                 const err = fieldError(field.errors as unknown[]);
                 return (
-                  <Col xs={12} sm={6}>
+                  <div className="tw:col-span-12 tw:table:col-span-6">
                     <NumberField
                       id="dependent-children"
                       label={m.input_dependents()}
@@ -160,21 +174,21 @@ export default function InputPanel({ form }: Props) {
                       onBlur={field.handleBlur}
                       error={err}
                     />
-                  </Col>
+                  </div>
                 );
               }}
             </form.Field>
 
             <form.Field name="belowAOWAge">
               {(field) => (
-                <Col xs={12}>
-                  <Form.Check
+                <div className="tw:col-span-12">
+                  <CheckboxField
                     id="aow-age"
                     label={m.input_below_aow_age()}
                     checked={field.value}
-                    onChange={(e) => field.handleChange(e.target.checked)}
+                    onCheckedChange={(checked) => field.handleChange(checked)}
                   />
-                </Col>
+                </div>
               )}
             </form.Field>
 
@@ -183,8 +197,8 @@ export default function InputPanel({ form }: Props) {
                 {VALID_BELGIAN_REGIONS.length > 1 && (
                   <form.Field name="belgianRegion">
                     {(field) => (
-                      <Col xs={12} sm={6}>
-                        <Form.Label htmlFor="belgian-region">
+                      <div className="tw:col-span-12 tw:table:col-span-6">
+                        <FieldLabel htmlFor="belgian-region">
                           {m.input_belgian_region()}{" "}
                           <Badge
                             variant="label"
@@ -193,8 +207,8 @@ export default function InputPanel({ form }: Props) {
                           >
                             {m.input_belgian_region_not_used()}
                           </Badge>
-                        </Form.Label>
-                        <Form.Select
+                        </FieldLabel>
+                        <NativeSelect
                           id="belgian-region"
                           value={field.value}
                           onChange={(e) =>
@@ -211,8 +225,8 @@ export default function InputPanel({ form }: Props) {
                           {(VALID_BELGIAN_REGIONS as readonly string[]).includes("brussels") && (
                             <option value="brussels">{m.input_belgian_region_brussels()}</option>
                           )}
-                        </Form.Select>
-                      </Col>
+                        </NativeSelect>
+                      </div>
                     )}
                   </form.Field>
                 )}
@@ -224,7 +238,7 @@ export default function InputPanel({ form }: Props) {
                   {(field) => {
                     const err = fieldError(field.errors as unknown[]);
                     return (
-                      <Col xs={12} sm={6}>
+                      <div className="tw:col-span-12 tw:table:col-span-6">
                         <NumberField
                           id="communal-tax-rate"
                           label={
@@ -245,27 +259,32 @@ export default function InputPanel({ form }: Props) {
                           hintId="communal-tax-hint"
                           error={err}
                         />
-                      </Col>
+                      </div>
                     );
                   }}
                 </form.Field>
               </>
             )}
-          </Row>
-        </Accordion.Body>
-      </Accordion.Item>
+          </div>
+        </AccordionContent>
+      </AccordionItem>
 
       {/* ── Section 2: Income ────────────────────────────────── */}
-      <Accordion.Item eventKey="1">
-        <Accordion.Header>
-          <i className="bi bi-cash-coin me-2" />
+      <AccordionItem value="1">
+        <AccordionTrigger>
+          <Coins
+            aria-hidden="true"
+            className="tw:inline tw:size-4 tw:shrink-0 tw:align-text-bottom tw:me-2"
+          />
           {m.input_income()}
-        </Accordion.Header>
-        <Accordion.Body>
-          <Row className="g-3">
-            <Col xs={12}>
-              <Form.Text className="text-muted">{m.input_income_not_persisted_hint()}</Form.Text>
-            </Col>
+        </AccordionTrigger>
+        <AccordionContent>
+          <div className="tw:grid tw:grid-cols-12 tw:gap-4">
+            <div className="tw:col-span-12">
+              <FieldHint className="tw:text-text-muted">
+                {m.input_income_not_persisted_hint()}
+              </FieldHint>
+            </div>
 
             <form.Field
               name="grossSalary"
@@ -274,7 +293,7 @@ export default function InputPanel({ form }: Props) {
               {(field) => {
                 const err = fieldError(field.errors as unknown[]);
                 return (
-                  <Col xs={12}>
+                  <div className="tw:col-span-12">
                     <CurrencyField
                       id="gross-salary"
                       label={m.input_gross_salary()}
@@ -286,7 +305,7 @@ export default function InputPanel({ form }: Props) {
                       hintId="gross-salary-hint"
                       error={err}
                     />
-                  </Col>
+                  </div>
                 );
               }}
             </form.Field>
@@ -298,7 +317,7 @@ export default function InputPanel({ form }: Props) {
               {(field) => {
                 const err = fieldError(field.errors as unknown[]);
                 return (
-                  <Col xs={12}>
+                  <div className="tw:col-span-12">
                     <CurrencyField
                       id="withheldTaxNL"
                       label={m.input_withheld_tax_nl()}
@@ -310,7 +329,7 @@ export default function InputPanel({ form }: Props) {
                       hintId="withheld-tax-nl-hint"
                       error={err}
                     />
-                  </Col>
+                  </div>
                 );
               }}
             </form.Field>
@@ -322,7 +341,7 @@ export default function InputPanel({ form }: Props) {
               {(field) => {
                 const err = fieldError(field.errors as unknown[]);
                 return (
-                  <Col xs={12} sm={6}>
+                  <div className="tw:col-span-12 tw:table:col-span-6">
                     <NumberField
                       id="days-worked-nl"
                       label={m.input_workdays_nl()}
@@ -334,7 +353,7 @@ export default function InputPanel({ form }: Props) {
                       hintId="workdays-nl-hint"
                       error={err}
                     />
-                  </Col>
+                  </div>
                 );
               }}
             </form.Field>
@@ -346,7 +365,7 @@ export default function InputPanel({ form }: Props) {
               {(field) => {
                 const err = fieldError(field.errors as unknown[]);
                 return (
-                  <Col xs={12} sm={6}>
+                  <div className="tw:col-span-12 tw:table:col-span-6">
                     <NumberField
                       id="days-worked-be"
                       label={m.input_workdays_be()}
@@ -358,7 +377,7 @@ export default function InputPanel({ form }: Props) {
                       hintId="workdays-be-hint"
                       error={err}
                     />
-                  </Col>
+                  </div>
                 );
               }}
             </form.Field>
@@ -370,7 +389,7 @@ export default function InputPanel({ form }: Props) {
               {(field) => {
                 const err = fieldError(field.errors as unknown[]);
                 return (
-                  <Col xs={12} sm={6}>
+                  <div className="tw:col-span-12 tw:table:col-span-6">
                     <NumberField
                       id="daysWorkedOther"
                       label={m.input_workdays_other()}
@@ -382,7 +401,7 @@ export default function InputPanel({ form }: Props) {
                       hintId="days-other-hint"
                       error={err}
                     />
-                  </Col>
+                  </div>
                 );
               }}
             </form.Field>
@@ -394,7 +413,7 @@ export default function InputPanel({ form }: Props) {
               {(field) => {
                 const err = fieldError(field.errors as unknown[]);
                 return (
-                  <Col xs={12} sm={6}>
+                  <div className="tw:col-span-12 tw:table:col-span-6">
                     <NumberField
                       id="sickDays"
                       label={m.input_sick_days()}
@@ -406,14 +425,14 @@ export default function InputPanel({ form }: Props) {
                       hintId="sick-days-hint"
                       error={err}
                     />
-                  </Col>
+                  </div>
                 );
               }}
             </form.Field>
 
-            <Col xs={12}>
+            <div className="tw:col-span-12">
               <div
-                className={clsx(
+                className={cn(
                   "bt-workday-bar",
                   totalWorkdays > maxWorkdaysInYear && "bt-workday-bar--over",
                 )}
@@ -421,45 +440,45 @@ export default function InputPanel({ form }: Props) {
                 aria-label={`${m.input_workdays_total()} ${totalWorkdays}`}
               >
                 {nlBarW > 0 && (
-                  <div
+                  <DistributionSegment
                     className="bt-workday-bar__seg bt-workday-bar__seg--nl"
-                    style={{ width: `${nlBarW}%` }}
+                    percent={nlBarW}
                   >
                     {nlBarW > 14 && <span className="bt-workday-bar__label">{daysWorkedNL}</span>}
-                  </div>
+                  </DistributionSegment>
                 )}
                 {beBarW > 0 && (
-                  <div
+                  <DistributionSegment
                     className="bt-workday-bar__seg bt-workday-bar__seg--be"
-                    style={{ width: `${beBarW}%` }}
+                    percent={beBarW}
                   >
                     {beBarW > 10 && <span className="bt-workday-bar__label">{daysWorkedBE}</span>}
-                  </div>
+                  </DistributionSegment>
                 )}
                 {otherBarW > 0 && (
-                  <div
+                  <DistributionSegment
                     className="bt-workday-bar__seg bt-workday-bar__seg--other"
-                    style={{ width: `${otherBarW}%` }}
+                    percent={otherBarW}
                   />
                 )}
               </div>
-              <Form.Text
+              <FieldHint
                 role="status"
-                className={clsx(
+                className={cn(
                   totalWorkdays === 0 || totalWorkdays > maxWorkdaysInYear
-                    ? "text-warning"
-                    : "text-muted",
+                    ? "tw:text-warning"
+                    : "tw:text-text-muted",
                 )}
               >
                 {m.input_workdays_total()} {totalWorkdays}
                 {totalWorkdays === 0 && ` — ${m.input_workdays_total_zero_warning()}`}
                 {totalWorkdays > maxWorkdaysInYear && ` — ${m.input_workdays_total_high_warning()}`}
-              </Form.Text>
-              <Form.Text className="text-muted d-block mt-1">
+              </FieldHint>
+              <FieldHint className="tw:text-text-muted tw:block tw:mt-1">
                 {m.input_workdays_typical()}
-              </Form.Text>
+              </FieldHint>
               {values.residentCountry === "BE" && totalWorkdays > 0 && beFraction >= 0.5 && (
-                <Alert variant="warning" className="mt-2 py-2 small mb-0">
+                <Alert variant="warning" className="tw:mt-2 tw:py-2 tw:text-sm tw:mb-0">
                   {m.input_social_security_above_50()}
                 </Alert>
               )}
@@ -467,42 +486,42 @@ export default function InputPanel({ form }: Props) {
                 totalWorkdays > 0 &&
                 beFraction >= 0.25 &&
                 beFraction < 0.5 && (
-                  <Alert variant="info" className="mt-2 py-2 small mb-0">
+                  <Alert variant="info" className="tw:mt-2 tw:py-2 tw:text-sm tw:mb-0">
                     {m.input_social_security_kaderakkoord()}
                   </Alert>
                 )}
-            </Col>
+            </div>
 
             {isThirtyPercentRulingSupportedResident(values.residentCountry) ? (
               <form.Field name="thirtyPercentRuling">
                 {(field) => (
-                  <Col xs={12}>
-                    <Form.Check
+                  <div className="tw:col-span-12">
+                    <CheckboxField
                       id="thirty-ruling"
                       label={m.input_thirty_percent_ruling()}
                       checked={field.value}
-                      onChange={(e) => field.handleChange(e.target.checked)}
+                      onCheckedChange={(checked) => field.handleChange(checked)}
                       aria-describedby="thirty-ruling-hint"
                     />
-                    <Form.Text id="thirty-ruling-hint" className="text-muted">
+                    <FieldHint id="thirty-ruling-hint" className="tw:text-text-muted">
                       {m.input_thirty_percent_ruling_hint()}
-                    </Form.Text>
-                  </Col>
+                    </FieldHint>
+                  </div>
                 )}
               </form.Field>
             ) : (
-              <Col xs={12}>
-                <Form.Check
+              <div className="tw:col-span-12">
+                <CheckboxField
                   id="thirty-ruling"
                   label={m.input_thirty_percent_ruling()}
                   checked={false}
                   disabled
                   aria-describedby="thirty-ruling-hint"
                 />
-                <Form.Text id="thirty-ruling-hint" className="text-muted">
+                <FieldHint id="thirty-ruling-hint" className="tw:text-text-muted">
                   {m.input_thirty_percent_ruling_unavailable_be()}
-                </Form.Text>
-              </Col>
+                </FieldHint>
+              </div>
             )}
 
             {values.residentCountry === "BE" && (
@@ -554,7 +573,7 @@ export default function InputPanel({ form }: Props) {
                     {(field) => {
                       const err = fieldError(field.errors as unknown[]);
                       return (
-                        <Col xs={12} sm={6}>
+                        <div className="tw:col-span-12 tw:table:col-span-6">
                           <CurrencyField
                             id={fieldDef.key}
                             label={
@@ -574,7 +593,7 @@ export default function InputPanel({ form }: Props) {
                             hint={fieldDef.hint}
                             hintId={fieldDef.hint ? `${fieldDef.key}-hint` : undefined}
                           />
-                        </Col>
+                        </div>
                       );
                     }}
                   </form.Field>
@@ -582,7 +601,7 @@ export default function InputPanel({ form }: Props) {
               </>
             )}
 
-            <Col xs={12}>
+            <div className="tw:col-span-12">
               <Button
                 variant="outline-secondary"
                 size="sm"
@@ -590,7 +609,11 @@ export default function InputPanel({ form }: Props) {
                 aria-expanded={showFormulas}
                 aria-controls="formulas-panel"
               >
-                <i className={`bi bi-${showFormulas ? "eye-slash" : "info-circle"} me-1`} />
+                {showFormulas ? (
+                  <EyeOff aria-hidden="true" className="tw:size-4" />
+                ) : (
+                  <Info aria-hidden="true" className="tw:size-4" />
+                )}
                 {showFormulas ? m.hide_formulas() : m.show_formulas()}
               </Button>
               {showFormulas && (
@@ -598,16 +621,16 @@ export default function InputPanel({ form }: Props) {
                   id="formulas-panel"
                   role="region"
                   aria-label={m.formulas_panel_label()}
-                  className="mt-2 small text-muted border rounded p-2"
+                  className="tw:mt-2 tw:text-sm tw:text-text-muted tw:border tw:border-border tw:rounded-md tw:p-2"
                 >
-                  <p className="mb-1">{m.summary_sourcing_nl_formula()}</p>
-                  <p className="mb-0">{m.summary_sourcing_be_formula()}</p>
+                  <p className="tw:mb-1">{m.summary_sourcing_nl_formula()}</p>
+                  <p className="tw:mb-0">{m.summary_sourcing_be_formula()}</p>
                 </div>
               )}
-            </Col>
-          </Row>
-        </Accordion.Body>
-      </Accordion.Item>
+            </div>
+          </div>
+        </AccordionContent>
+      </AccordionItem>
     </Accordion>
   );
 }

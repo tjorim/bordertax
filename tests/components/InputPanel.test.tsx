@@ -132,9 +132,11 @@ describe("InputPanel", () => {
   it("shows the 30% ruling as unavailable for Belgian-resident users", () => {
     renderInputPanel();
     const thirtyPercentRuling = screen.getByRole("checkbox", { name: /30% ruling/i });
-    expect(thirtyPercentRuling).toBeDisabled();
+    expect(thirtyPercentRuling).toHaveAttribute("aria-disabled", "true");
     expect(thirtyPercentRuling).not.toBeChecked();
-    expect(screen.getByText(/not available for this belgian-resident cross-border profile/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/not available for this belgian-resident cross-border profile/i),
+    ).toBeInTheDocument();
   });
 
   it("updates dependents count", () => {
@@ -153,7 +155,7 @@ describe("InputPanel", () => {
     // Zod validator marks the input as invalid. TanStack Form v2 runs validators
     // through an async pipeline even for sync schemas, so the error state lands
     // a tick after the change event rather than within the same act() flush.
-    await waitFor(() => expect(dependentChildren).toHaveClass("is-invalid"));
+    await waitFor(() => expect(dependentChildren).toHaveAttribute("aria-invalid", "true"));
   });
 
   it("shows total workdays count", () => {

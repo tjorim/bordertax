@@ -12,6 +12,12 @@ const twMerge = extendTailwindMerge({
       "font-size": [
         {
           text: [
+            "stat",
+            "section-label",
+            "control",
+            "label",
+            "hint",
+            "form-input",
             "badge",
             "badge-label",
             "table-heading",

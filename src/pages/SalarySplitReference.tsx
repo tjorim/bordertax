@@ -1,3 +1,14 @@
+import { Accordion } from "@/components/ui/accordion";
+import {
+  BookOpen,
+  Calculator,
+  Calendar,
+  FileText,
+  Flag,
+  FolderOpen,
+  House,
+  Percent,
+} from "lucide-react";
 import {
   Table,
   TableHeader,
@@ -6,7 +17,7 @@ import {
   TableHead,
   TableCell,
 } from "@/components/ui/table";
-import { Accordion, Col, Container, Row } from "react-bootstrap";
+
 import * as m from "../paraglide/messages.js";
 import {
   BeBadge,
@@ -23,7 +34,7 @@ import { PageHero } from "../components/PageHero";
 import { PageFooter } from "../components/PageFooter";
 
 function Formula({ children }: { children: React.ReactNode }) {
-  return <pre className="p-3 rounded mb-0 ref-formula">{children}</pre>;
+  return <pre className="tw:p-4 tw:rounded-md tw:mb-0 ref-formula">{children}</pre>;
 }
 
 // ── Main page ────────────────────────────────────────────────────
@@ -33,12 +44,15 @@ export default function SalarySplitReference() {
     <>
       <AppNavbar>
         <span className="ref-nav-text tw:font-mono tw:text-xs tw:font-semibold tw:tracking-wide tw:text-text-muted">
-          <i className="bi bi-book-fill me-2" style={{ color: "var(--bt-be-light)" }} />
+          <BookOpen
+            aria-hidden="true"
+            className="tw:inline tw:size-4 tw:shrink-0 tw:align-text-bottom tw:me-2 tw:text-be-light"
+          />
           {m.ref_ss_nav_title()}
         </span>
       </AppNavbar>
 
-      <Container fluid="lg" className="pb-5">
+      <div className="tw:mx-auto tw:w-full tw:max-w-6xl tw:px-5 tw:pb-12">
         <PageHero title={m.ref_ss_hero_title()} subtitle={m.ref_ss_hero_subtitle()} />
 
         {/* ── Alert: geen neutralisatieregeling ─────────────────── */}
@@ -46,13 +60,13 @@ export default function SalarySplitReference() {
           <strong>{m.ref_ss_tax_vs_ss_title()}</strong> {m.ref_ss_tax_vs_ss_body()}
         </WarnBox>
 
-        <Row className="g-4">
-          <Col lg={7}>
+        <div className="tw:grid tw:grid-cols-12 tw:gap-6">
+          <div className="tw:col-span-12 tw:shell:col-span-7">
             {/* ── 1. Hoofdregel ──────────────────────────────────── */}
-            <SectionCard title={m.ref_ss_s1_title()} icon="bi-flag-fill" accent="neutral">
-              <p className="mb-3 ref-text-sub">{m.ref_ss_s1_intro()}</p>
+            <SectionCard title={m.ref_ss_s1_title()} icon={Flag} accent="neutral">
+              <p className="tw:mb-4 ref-text-sub">{m.ref_ss_s1_intro()}</p>
               <Formula>{m.ref_ss_s1_formula()}</Formula>
-              <div className="mt-3 d-flex gap-2 flex-wrap">
+              <div className="tw:mt-4 tw:flex tw:gap-2 tw:flex-wrap">
                 <TipBox>{m.ref_ss_s1_tip_20pct()}</TipBox>
               </div>
               <TipBox>{m.ref_ss_s1_tip_60_40()}</TipBox>
@@ -60,8 +74,8 @@ export default function SalarySplitReference() {
             </SectionCard>
 
             {/* ── 2. Dagentelling ────────────────────────────────── */}
-            <SectionCard title={m.ref_ss_s2_title()} icon="bi-calendar3" accent="neutral">
-              <p className="mb-3 ref-text-sub">{m.ref_ss_s2_intro()}</p>
+            <SectionCard title={m.ref_ss_s2_title()} icon={Calendar} accent="neutral">
+              <p className="tw:mb-4 ref-text-sub">{m.ref_ss_s2_intro()}</p>
               <Table responsive className="tw:mb-3 tw:text-table-reference-md">
                 <TableHeader className="tw:bg-surface-3">
                   <TableRow>
@@ -114,11 +128,11 @@ export default function SalarySplitReference() {
             </SectionCard>
 
             {/* ── 3. FOD Berekeningsformule ──────────────────────── */}
-            <SectionCard title={m.ref_ss_s3_title()} icon="bi-calculator-fill" accent="be">
-              <p className="mb-3 ref-text-sub">{m.ref_ss_s3_intro()}</p>
+            <SectionCard title={m.ref_ss_s3_title()} icon={Calculator} accent="be">
+              <p className="tw:mb-4 ref-text-sub">{m.ref_ss_s3_intro()}</p>
               <Formula>{m.ref_ss_be_formula()}</Formula>
-              <div className="mt-3">
-                <p className="mb-2 small ref-text-sub">{m.ref_ss_be_codes_title()}</p>
+              <div className="tw:mt-4">
+                <p className="tw:mb-2 tw:text-sm ref-text-sub">{m.ref_ss_be_codes_title()}</p>
                 <Table className="tw:text-table-reference">
                   <TableBody>
                     <TableRow>
@@ -157,11 +171,11 @@ export default function SalarySplitReference() {
                 {m.ref_ss_s3_consult_specialist()}
               </WarnBox>
             </SectionCard>
-          </Col>
+          </div>
 
-          <Col lg={5}>
+          <div className="tw:col-span-12 tw:shell:col-span-5">
             {/* ── 4. NL Belastingtarieven 2026 ──────────────────── */}
-            <SectionCard title={m.ref_ss_s4_title()} icon="bi-percent" accent="nl">
+            <SectionCard title={m.ref_ss_s4_title()} icon={Percent} accent="nl">
               <Table responsive className="tw:text-table-reference">
                 <TableHeader className="tw:bg-surface-3">
                   <TableRow>
@@ -194,7 +208,9 @@ export default function SalarySplitReference() {
                   </TableRow>
                 </TableBody>
               </Table>
-              <p className="mt-3 mb-2 small ref-text-sub">{m.ref_ss_heffingskortingen_title()}</p>
+              <p className="tw:mt-4 tw:mb-2 tw:text-sm ref-text-sub">
+                {m.ref_ss_heffingskortingen_title()}
+              </p>
               <Table className="tw:text-table-reference">
                 <TableBody>
                   <TableRow>
@@ -229,12 +245,12 @@ export default function SalarySplitReference() {
                   </TableRow>
                 </TableBody>
               </Table>
-              <p className="mt-2 small ref-footnote">{m.ref_ss_vv_footnote()}</p>
+              <p className="tw:mt-2 tw:text-sm ref-footnote">{m.ref_ss_vv_footnote()}</p>
             </SectionCard>
 
             {/* ── 5. Kaderovereenkomst Telewerk (SZ) ────────────── */}
-            <SectionCard title={m.ref_ss_s5_title()} icon="bi-house-check-fill" accent="neutral">
-              <p className="mb-3 ref-section-intro">{m.ref_ss_s5_intro()}</p>
+            <SectionCard title={m.ref_ss_s5_title()} icon={House} accent="neutral">
+              <p className="tw:mb-4 ref-section-intro">{m.ref_ss_s5_intro()}</p>
               <Table className="tw:text-table-reference">
                 <TableBody>
                   <TableRow>
@@ -245,7 +261,7 @@ export default function SalarySplitReference() {
                   </TableRow>
                   <TableRow>
                     <TableCell>{m.ref_ss_s5_row_max_telework()}</TableCell>
-                    <TableCell className="tw:font-mono tw:text-text fw-bold">49%</TableCell>
+                    <TableCell className="tw:font-mono tw:text-text tw:font-bold">49%</TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell>{m.ref_ss_s5_row_a1_validity()}</TableCell>
@@ -263,8 +279,8 @@ export default function SalarySplitReference() {
                   </TableRow>
                 </TableBody>
               </Table>
-              <p className="mt-2 mb-1 small fw-semibold">{m.ref_ss_conditions()}</p>
-              <ul className="mb-0 small ref-list-sub">
+              <p className="tw:mt-2 tw:mb-1 tw:text-sm tw:font-semibold">{m.ref_ss_conditions()}</p>
+              <ul className="tw:mb-0 tw:text-sm ref-list-sub">
                 <li>{m.ref_ss_s5_cond1()}</li>
                 <li>{m.ref_ss_s5_cond2()}</li>
                 <li>{m.ref_ss_s5_cond3()}</li>
@@ -273,11 +289,11 @@ export default function SalarySplitReference() {
             </SectionCard>
 
             {/* ── 6. Bewijslast ─────────────────────────────────── */}
-            <SectionCard title={m.ref_ss_s6_title()} icon="bi-folder2-open" accent="neutral">
-              <p className="mb-2 ref-section-intro">{m.ref_ss_s6_intro()}</p>
-              <Accordion flush>
-                <RefAccordionItem eventKey="0" title={m.ref_ss_strong_evidence()}>
-                  <ul className="mb-0 ref-list-sub">
+            <SectionCard title={m.ref_ss_s6_title()} icon={FolderOpen} accent="neutral">
+              <p className="tw:mb-2 ref-section-intro">{m.ref_ss_s6_intro()}</p>
+              <Accordion>
+                <RefAccordionItem value="0" title={m.ref_ss_strong_evidence()}>
+                  <ul className="tw:mb-0 ref-list-sub">
                     <li>{m.ref_ss_s6_ev1()}</li>
                     <li>{m.ref_ss_s6_ev2()}</li>
                     <li>{m.ref_ss_s6_ev3()}</li>
@@ -288,30 +304,30 @@ export default function SalarySplitReference() {
                   </ul>
                 </RefAccordionItem>
                 <RefAccordionItem
-                  eventKey="1"
+                  value="1"
                   title={m.ref_ss_insufficient_evidence()}
-                  style={{ marginTop: 2 }}
+                  className="tw:mt-0.5"
                 >
-                  <ul className="mb-0 ref-list-muted">
+                  <ul className="tw:mb-0 ref-list-muted">
                     <li>{m.ref_ss_s6_insuf1()}</li>
                     <li>{m.ref_ss_s6_insuf2()}</li>
                     <li>{m.ref_ss_s6_insuf3()}</li>
                   </ul>
-                  <p className="mt-2 mb-0 ref-footnote">{m.ref_ss_s6_source_note()}</p>
+                  <p className="tw:mt-2 tw:mb-0 ref-footnote">{m.ref_ss_s6_source_note()}</p>
                 </RefAccordionItem>
               </Accordion>
             </SectionCard>
-          </Col>
-        </Row>
+          </div>
+        </div>
 
         {/* ── 7. Worked Examples ──────────────────────────────────── */}
-        <SectionCard title={m.ref_ss_s7_title()} icon="bi-calculator" accent="be">
-          <p className="mb-3 ref-section-intro">{m.ref_ss_s7_intro()}</p>
-          <Row className="g-3">
+        <SectionCard title={m.ref_ss_s7_title()} icon={Calculator} accent="be">
+          <p className="tw:mb-4 ref-section-intro">{m.ref_ss_s7_intro()}</p>
+          <div className="tw:grid tw:grid-cols-12 tw:gap-4">
             {/* Basisdata */}
-            <Col md={4}>
-              <div className="p-3 rounded h-100 ref-example-block">
-                <h6 className="mb-3 small fw-semibold ref-subsection-label">
+            <div className="tw:col-span-12 tw:md:col-span-4">
+              <div className="tw:p-4 tw:rounded-md tw:h-full ref-example-block">
+                <h6 className="tw:mb-4 tw:text-sm tw:font-semibold ref-subsection-label">
                   {m.ref_ss_base_data()}
                 </h6>
                 <StatRow label={m.ref_ss_label_fiscal_loon_nl()} value="€53.299" />
@@ -322,12 +338,12 @@ export default function SalarySplitReference() {
                 <StatRow label={m.ref_ss_label_werkdagen_be()} value="50" />
                 <StatRow label={m.ref_ss_label_breuk_be()} value="180 / 230" />
               </div>
-            </Col>
+            </div>
 
             {/* Scenario A: geen ziektedagen */}
-            <Col md={4}>
-              <div className="ref-scenario-panel-nl p-3 rounded h-100">
-                <h6 className="mb-3 small fw-semibold ref-subsection-label ref-text-nl">
+            <div className="tw:col-span-12 tw:md:col-span-4">
+              <div className="ref-scenario-panel-nl tw:p-4 tw:rounded-md tw:h-full">
+                <h6 className="tw:mb-4 tw:text-sm tw:font-semibold ref-subsection-label ref-text-nl">
                   {m.ref_ss_scenario_a_title()}
                 </h6>
                 <StatRow
@@ -341,8 +357,8 @@ export default function SalarySplitReference() {
                   sub={m.ref_ss_example_sub_be_share()}
                 />
                 <StatRow label={m.ref_ss_label_nl_teruggaaf()} value="€4.314" highlight />
-                <div className="mt-3 ref-scenario-divider">
-                  <h6 className="mb-2 small fw-semibold ref-subsection-label ref-text-be">
+                <div className="tw:mt-4 ref-scenario-divider">
+                  <h6 className="tw:mb-2 tw:text-sm tw:font-semibold ref-subsection-label ref-text-be">
                     {m.ref_ss_be_declaration()}
                   </h6>
                   <StatRow
@@ -354,19 +370,19 @@ export default function SalarySplitReference() {
                   <StatRow label={m.ref_ss_label_z_o2()} value="€34.401" />
                   <StatRow label={m.ref_ss_label_be_te_betalen()} value="€3.277" highlight />
                 </div>
-                <div className="ref-scenario-result-success mt-3 p-2 rounded tw:text-center">
-                  <span className="tw:font-mono tw:text-success fw-bold">
+                <div className="ref-scenario-result-success tw:mt-4 tw:p-2 tw:rounded-md tw:text-center">
+                  <span className="tw:font-mono tw:text-success tw:font-bold">
                     {m.ref_ss_netto_voordeel_a()}
                   </span>
                   <div className="ref-footnote">{m.ref_ss_netto_voordeel_a_sub()}</div>
                 </div>
               </div>
-            </Col>
+            </div>
 
             {/* Scenario B: 25 ziektedagen */}
-            <Col md={4}>
-              <div className="ref-scenario-panel-be p-3 rounded h-100">
-                <h6 className="mb-3 small fw-semibold ref-subsection-label ref-text-warning">
+            <div className="tw:col-span-12 tw:md:col-span-4">
+              <div className="ref-scenario-panel-be tw:p-4 tw:rounded-md tw:h-full">
+                <h6 className="tw:mb-4 tw:text-sm tw:font-semibold ref-subsection-label ref-text-warning">
                   {m.ref_ss_scenario_b_title()}
                 </h6>
                 <StatRow
@@ -384,8 +400,8 @@ export default function SalarySplitReference() {
                   value="€4.314"
                   sub={m.ref_ss_example_unchanged()}
                 />
-                <div className="mt-3 ref-scenario-divider">
-                  <h6 className="mb-2 small fw-semibold ref-subsection-label ref-text-be">
+                <div className="tw:mt-4 ref-scenario-divider">
+                  <h6 className="tw:mb-2 tw:text-sm tw:font-semibold ref-subsection-label ref-text-be">
                     {m.ref_ss_be_declaration()}
                   </h6>
                   <StatRow
@@ -397,19 +413,19 @@ export default function SalarySplitReference() {
                   <StatRow label={m.ref_ss_label_z_o2()} value="€33.150" />
                   <StatRow label={m.ref_ss_label_be_te_betalen()} value="€3.600" highlight />
                 </div>
-                <div className="ref-scenario-result-warning mt-3 p-2 rounded tw:text-center">
+                <div className="ref-scenario-result-warning tw:mt-4 tw:p-2 tw:rounded-md tw:text-center">
                   <span className="tw:font-mono tw:text-warning tw:font-bold">
                     {m.ref_ss_netto_voordeel_b()}
                   </span>
                   <div className="ref-footnote">{m.ref_ss_netto_voordeel_b_sub()}</div>
                 </div>
               </div>
-            </Col>
-          </Row>
+            </div>
+          </div>
 
           {/* Vergelijking tabel */}
-          <div className="mt-4">
-            <h6 className="mb-3 small fw-semibold ref-subsection-label">
+          <div className="tw:mt-6">
+            <h6 className="tw:mb-4 tw:text-sm tw:font-semibold ref-subsection-label">
               {m.ref_ss_comparison_all()}
             </h6>
             <Table responsive className="tw:text-table-reference-md">
@@ -432,7 +448,9 @@ export default function SalarySplitReference() {
                   <TableCell>{m.ref_ss_scenario_50_no_sick()}</TableCell>
                   <TableCell className="tw:font-mono">€3.277</TableCell>
                   <TableCell className="tw:font-mono tw:text-text">+€4.314</TableCell>
-                  <TableCell className="tw:font-mono tw:text-text fw-bold">+€1.037 ✓</TableCell>
+                  <TableCell className="tw:font-mono tw:text-text tw:font-bold">
+                    +€1.037 ✓
+                  </TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell>{m.ref_ss_scenario_50_25_sick()}</TableCell>
@@ -442,29 +460,29 @@ export default function SalarySplitReference() {
                 </TableRow>
               </TableBody>
             </Table>
-            <p className="small mb-0 ref-footnote">{m.ref_ss_s7_footnote()}</p>
+            <p className="tw:text-sm tw:mb-0 ref-footnote">{m.ref_ss_s7_footnote()}</p>
           </div>
         </SectionCard>
 
         {/* ── Bronbestanden ───────────────────────────────────────── */}
-        <SectionCard title={m.ref_ss_s8_title()} icon="bi-file-earmark-pdf-fill" accent="neutral">
-          <p className="mb-3 ref-section-intro">{m.ref_ss_s8_intro()}</p>
-          <Row className="g-3">
-            <Col sm={6}>
+        <SectionCard title={m.ref_ss_s8_title()} icon={FileText} accent="neutral">
+          <p className="tw:mb-4 ref-section-intro">{m.ref_ss_s8_intro()}</p>
+          <div className="tw:grid tw:grid-cols-12 tw:gap-4">
+            <div className="tw:col-span-12 tw:table:col-span-6">
               <DocLink
                 href="/docs/ACV-Checklist-Grensarbeiders-2026.pdf"
                 title={m.ref_ss_doc1_title()}
                 sub={m.ref_ss_doc1_sub()}
               />
-            </Col>
-            <Col sm={6}>
+            </div>
+            <div className="tw:col-span-12 tw:table:col-span-6">
               <DocLink
                 href="/docs/ACV-Telewerk-Infosessie-2026.pdf"
                 title={m.ref_ss_doc2_title()}
                 sub={m.ref_ss_doc2_sub()}
               />
-            </Col>
-          </Row>
+            </div>
+          </div>
         </SectionCard>
 
         <PageFooter>
@@ -478,7 +496,7 @@ export default function SalarySplitReference() {
             acvgrensarbeiders.be
           </a>
         </PageFooter>
-      </Container>
+      </div>
     </>
   );
 }

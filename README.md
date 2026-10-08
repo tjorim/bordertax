@@ -36,6 +36,22 @@ npm run build
 
 ## Architecture
 
+### Interface
+
+The interface uses Tailwind CSS v4 (with `tw:` utilities), Base UI behaviour
+primitives, owned shadcn `base-nova` components and Lucide SVG icons. Semantic
+light/dark tokens live in `src/styles/tokens.css`; the root `data-theme`
+attribute is set by shared boot-time and runtime theme logic in `src/theme.ts`.
+There are no Bootstrap dependencies, global widget styles or icon fonts.
+
+Components live in `src/components/ui`. Use `cn` from `src/lib/utils.ts` and
+follow [AGENTS.md](AGENTS.md) when adding or changing UI. The complete icon
+mapping and outline decisions are in [docs/icon-migration.md](docs/icon-migration.md).
+
+Run `pnpm lint`, `pnpm typecheck`, `pnpm test` and `pnpm build` before submitting
+changes. Stop the dev server and run generation/build checks sequentially;
+Paraglide writes generated modules and declarations during these commands.
+
 ### Backend writes & idempotency
 
 Bordertax is currently a **client-side-only calculator**. All tax

@@ -12,15 +12,7 @@
 /* ── Reference pages ──────────────────────────────────────────── */
 
 /* SectionCard */
-.ref-section-card {
-  background: var(--bt-surface-2);
-  border-radius: var(--bt-r-lg);
-}
 
-.ref-section-card__header {
-  background: var(--bt-surface-3);
-  border-radius: var(--bt-r-lg) var(--bt-r-lg) 0 0;
-}
 
 /* TipBox / WarnBox */
 .ref-tip-box {
@@ -67,10 +59,6 @@
 }
 
 /* Navbar brand */
-.ref-nav-brand {
-  font-size: 0.95rem;
-  opacity: 0.8;
-}
 
 /* Hero section */
 .ref-hero-title {
@@ -92,10 +80,6 @@
 }
 
 /* Accordion */
-.ref-accordion-item {
-  background: var(--bt-surface-3);
-  border: 1px solid var(--bt-border);
-}
 
 .ref-accordion-body {
   background: var(--bt-surface-3);
@@ -113,10 +97,6 @@
 }
 
 /* Pillar card */
-.ref-pillar-card {
-  background: var(--bt-surface-3);
-  border-radius: var(--bt-r-sm);
-}
 
 .ref-pillar-label {
   font-weight: 700;
@@ -144,12 +124,6 @@
 }
 
 /* Overview card */
-.ref-overview-card {
-  background: var(--bt-surface-2);
-  border-radius: var(--bt-r-lg);
-  cursor: pointer;
-  transition: border-color 0.15s;
-}
 
 .ref-overview-card__title {
   color: var(--bt-text);
@@ -244,7 +218,3 @@
 }
 
 /* Small external-link icon */
-.ref-icon-muted-sm {
-  color: var(--bt-text-muted);
-  font-size: 0.8rem;
-}

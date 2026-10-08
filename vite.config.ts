@@ -3,7 +3,7 @@ import tailwindcss from "@tailwindcss/vite";
 import reactPlugin from "@vitejs/plugin-react";
 import { resolve } from "node:path";
 import { defineConfig } from "vite";
-import { themeBootstrapPlugin } from "./scripts/theme-bootstrap.ts";
+import { themeInitPlugin } from "./scripts/theme-init.ts";
 
 export default defineConfig({
   resolve: {
@@ -12,7 +12,7 @@ export default defineConfig({
     },
   },
   plugins: [
-    themeBootstrapPlugin(),
+    themeInitPlugin(),
     paraglideVitePlugin({
       project: "./project.inlang",
       outdir: "./src/paraglide",
@@ -89,9 +89,6 @@ export default defineConfig({
           if (id.includes("node_modules")) {
             if (id.includes("react") || id.includes("react-dom")) {
               return "vendor-react";
-            }
-            if (id.includes("react-bootstrap") || id.includes("bootstrap")) {
-              return "vendor-ui";
             }
           }
         },

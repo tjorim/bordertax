@@ -1,9 +1,9 @@
 # Tailwind theme migration (issue #250)
 
 The existing Grenspost palette lives in `src/styles/tokens.css`. Dark remains the
-`:root` default; `[data-bs-theme="light"]` overrides the same variables. Tailwind's
-`dark` variant matches `[data-bs-theme="dark"]` and its descendants. Keep this
-attribute during Bootstrap coexistence: no second theme class or state is needed.
+`:root` default; `[data-theme="light"]` overrides the same variables. Tailwind's
+`dark` variant matches `[data-theme="dark"]` and its descendants. No second theme
+class or state is needed.
 
 ## Token mapping
 
@@ -35,7 +35,7 @@ so merging a text color does not discard the custom font size.
 ## One theme initializer
 
 `src/theme.ts` owns storage validation and effective theme resolution.
-`scripts/theme-bootstrap.ts` compiles that source with Vite's TypeScript
+`scripts/theme-init.ts` compiles that source with Vite's TypeScript
 transformer, removes module exports and wraps it in an IIFE calling
 `applyTheme(loadTheme())`. Vite injects this synchronous inline script at the
 `index.html` head marker in development and production, before the app and
@@ -44,27 +44,15 @@ of the theme algorithm. Keep `theme.ts` self-contained for this boot compilation
 The existing navbar still handles persisted changes and live system preference
 changes when auto is selected.
 
-## Component migration and progress
+## Component migration
 
-`src/styles.css` is now an ordered import manifest. Remaining Bootstrap rules
-are grouped under `src/styles/` by component; they stay in the same legacy layer
-and source order as Bootstrap and Bootstrap Icons. `bootstrap-theme.css` is the
-temporary variable bridge. Bootstrap reboot remains the only reset.
+Bootstrap, React Bootstrap and Bootstrap Icons are removed. `src/tailwind.css` is
+the only stylesheet entry; `src/styles/` holds the remaining application styles
+in the `components` layer, and `reset.css` is the single application reset.
+Lucide icons replace the icon font (see `docs/icon-migration.md`), and oxlint
+enforces strict `no-unknown-classes` with no legacy allow-list.
 
-All React Bootstrap Badge consumers now use the copied and restyled Base UI
-badge in `src/components/ui/badge.tsx`: input labels, year comparison, NL ruling,
-WFH thresholds and country labels on reference pages. The badge section and its
-form-label, threshold, ruling and country overrides have been deleted. Other
-Bootstrap component restyles remain until their corresponding migration.
-The legacy class inventory reads the split CSS files dynamically.
-
-The original stylesheet was 2,394 lines. The import manifest is 29 lines; the
-remaining legacy sections total 2,187 lines, with 112 shared palette lines moved
-to `tokens.css`. Moving rules alone is not migration progress: track the sum of
-the legacy section files (excluding shared tokens), and delete rules as their
-components migrate. Ten badge rule blocks were removed in this change.
-
-The existing focus rules are preserved in `unified-focus-ring.css`, including
+Focus rings keep the 2px outline, 2px offset and 4px brand halo, including
 the accordion's inset offset. Numeric table cells and `bt-number` retain their
 monospace and tabular-number treatment. Badge labels are spans by default and
 introduce no extra focus stops or dialog/menu behavior.

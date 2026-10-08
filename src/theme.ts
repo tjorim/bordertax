@@ -22,5 +22,5 @@ export function applyTheme(theme: Theme): void {
         ? "dark"
         : "light"
       : theme;
-  document.documentElement.setAttribute("data-bs-theme", effective);
+  document.documentElement.setAttribute("data-theme", effective);
 }

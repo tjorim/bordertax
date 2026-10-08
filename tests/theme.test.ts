@@ -1,11 +1,11 @@
 import { runInNewContext } from "node:vm";
 import { describe, expect, it, vi, afterEach } from "vitest";
-import { themeBootScript } from "../scripts/theme-bootstrap";
+import { themeBootScript } from "../scripts/theme-init";
 import { applyTheme, loadTheme, THEME_KEY } from "../src/theme";
 
 afterEach(() => vi.restoreAllMocks());
 
-describe("theme bootstrap and runtime agree", () => {
+describe("theme initialization and runtime agree", () => {
   it.each(["light", "dark", "auto", "invalid", null])(
     "resolves stored %s before hydration",
     async (stored) => {
@@ -22,10 +22,10 @@ describe("theme bootstrap and runtime agree", () => {
           document: { documentElement: { setAttribute } },
         });
         expect(setAttribute).toHaveBeenCalledWith(
-          "data-bs-theme",
-          document.documentElement.getAttribute("data-bs-theme"),
+          "data-theme",
+          document.documentElement.getAttribute("data-theme"),
         );
-        expect(document.documentElement.getAttribute("data-bs-theme")).toBe(
+        expect(document.documentElement.getAttribute("data-theme")).toBe(
           stored === "light" || stored === "dark" ? stored : prefersDark ? "dark" : "light",
         );
       }
@@ -43,7 +43,7 @@ describe("theme bootstrap and runtime agree", () => {
       window: {},
       document: { documentElement: { setAttribute } },
     });
-    expect(setAttribute).toHaveBeenCalledWith("data-bs-theme", "light");
+    expect(setAttribute).toHaveBeenCalledWith("data-theme", "light");
     vi.spyOn(localStorage, "getItem").mockImplementation(() => {
       throw new Error("blocked");
     });

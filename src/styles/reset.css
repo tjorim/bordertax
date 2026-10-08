@@ -1,0 +1,77 @@
+/* App reset: retain document and form defaults without a framework reset. */
+body {
+  margin: 0;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0 0 0.5rem;
+  font-weight: 500;
+  line-height: 1.2;
+}
+h1 {
+  font-size: 2.5rem;
+}
+h2 {
+  font-size: 2rem;
+}
+h3 {
+  font-size: 1.75rem;
+}
+h4 {
+  font-size: 1.5rem;
+}
+h5 {
+  font-size: 1.25rem;
+}
+p {
+  margin: 0 0 1rem;
+}
+ol,
+ul {
+  margin: 0 0 1rem;
+  padding-left: 2rem;
+}
+button,
+input,
+select,
+textarea {
+  margin: 0;
+  font: inherit;
+  color: inherit;
+}
+button {
+  cursor: pointer;
+}
+button:disabled {
+  cursor: default;
+}
+a {
+  color: var(--bt-brand-light);
+  text-decoration: underline;
+}
+a:hover {
+  color: var(--bt-text);
+}
+svg {
+  vertical-align: middle;
+}
+strong {
+  font-weight: 700;
+}
+small {
+  font-size: 0.875em;
+}
+hr {
+  margin: 1rem 0;
+  border: 0;
+  border-top: 1px solid currentColor;
+  opacity: 0.25;
+}
+:focus-visible {
+  outline: 2px solid var(--bt-brand-border);
+  outline-offset: 2px;
+}

@@ -1,3 +1,4 @@
+import { ChartNoAxesCombined, ChevronDown, ChevronUp, CircleArrowUp, Info } from "lucide-react";
 import { ArrowUp, ArrowDown } from "lucide-react";
 import {
   Table,
@@ -430,8 +431,13 @@ export default function WFHRatioChart({ inputs }: Props) {
   if (nlbeDays === 0) {
     return (
       <div className="bt-wfh-empty">
-        <i className="bi bi-bar-chart-line text-muted me-2" style={{ fontSize: "1.5rem" }} />
-        <p className="text-muted small mb-0">{m.input_workdays_total_zero_warning()}</p>
+        <ChartNoAxesCombined
+          aria-hidden="true"
+          className="tw:inline tw:size-4 tw:shrink-0 tw:align-text-bottom tw:text-text-muted tw:me-2 tw:size-6"
+        />
+        <p className="tw:text-text-muted tw:text-sm tw:mb-0">
+          {m.input_workdays_total_zero_warning()}
+        </p>
       </div>
     );
   }
@@ -441,8 +447,8 @@ export default function WFHRatioChart({ inputs }: Props) {
       {/* ── Header ──────────────────────────────────────────────────── */}
       <div className="bt-wfh-header">
         <div>
-          <h6 className="text-muted mb-0">{m.wfh_title()}</h6>
-          <p className="text-muted small mb-0 mt-1">{m.wfh_description()}</p>
+          <h6 className="tw:text-text-muted tw:mb-0">{m.wfh_title()}</h6>
+          <p className="tw:text-text-muted tw:text-sm tw:mb-0 tw:mt-1">{m.wfh_description()}</p>
         </div>
         <div className={`bt-wfh-zone-pill bt-wfh-zone-pill--${currentZone}`}>
           🏠 {Math.round(currentBeRatio * 100)}% BE
@@ -471,19 +477,16 @@ export default function WFHRatioChart({ inputs }: Props) {
         {/* ── Legend — directly below chart, above readout ──────────── */}
         <div className="bt-year-chart__legend bt-wfh-legend">
           <span className="bt-year-chart__legend-item">
-            <span
-              className="bt-year-chart__legend-dot"
-              style={{ background: "var(--bt-success)" }}
-            />
+            <span className="bt-year-chart__legend-dot tw:bg-success" />
             {m.summary_net_income()}
           </span>
           <span className="bt-year-chart__legend-item">
-            <span className="bt-year-chart__legend-dot" style={{ background: "var(--bt-nl)" }} />
+            <span className="bt-year-chart__legend-dot tw:bg-nl" />
             🇳🇱 {m.summary_dutch_tax()}
           </span>
           {showBE && (
             <span className="bt-year-chart__legend-item">
-              <span className="bt-year-chart__legend-dot" style={{ background: "var(--bt-be)" }} />
+              <span className="bt-year-chart__legend-dot tw:bg-be" />
               🇧🇪 {m.summary_belgian_tax()}
             </span>
           )}
@@ -523,7 +526,7 @@ export default function WFHRatioChart({ inputs }: Props) {
                 )}
                 🏢 {Math.round((1 - displayPoint.beRatio) * 100)}% NL · 🏠{" "}
                 {Math.round(displayPoint.beRatio * 100)}% BE
-                <span className="text-muted bt-wfh-readout__days">
+                <span className="tw:text-text-muted bt-wfh-readout__days">
                   ({displayPoint.nlDays}d / {displayPoint.beDays}d)
                 </span>
               </span>
@@ -550,15 +553,19 @@ export default function WFHRatioChart({ inputs }: Props) {
               </span>
             </>
           ) : (
-            <span className="text-muted small">{m.wfh_hover_hint()}</span>
+            <span className="tw:text-text-muted tw:text-sm">{m.wfh_hover_hint()}</span>
           )}
         </div>
 
         {/* ── Delta callout — only shown when there's meaningful gain ── */}
         {delta > 50 && data[optimalIdx] && (
           <div className="bt-wfh-delta">
-            <i className="bi bi-arrow-up-circle-fill me-1" />↑ <strong>{fmt(delta)}</strong>/yr more
-            at {Math.round(data[optimalIdx]!.beRatio * 100)}% BE
+            <CircleArrowUp
+              aria-hidden="true"
+              className="tw:inline tw:size-4 tw:shrink-0 tw:align-text-bottom tw:me-1"
+            />
+            ↑ <strong>{fmt(delta)}</strong>/yr more at {Math.round(data[optimalIdx]!.beRatio * 100)}
+            % BE
           </div>
         )}
       </div>
@@ -569,20 +576,30 @@ export default function WFHRatioChart({ inputs }: Props) {
         onClick={() => setTableOpen((v) => !v)}
         aria-expanded={tableOpen}
       >
-        <i className={`bi bi-chevron-${tableOpen ? "up" : "down"} me-1`} />
+        {tableOpen ? (
+          <ChevronUp aria-hidden="true" className="tw:inline tw:size-4 tw:me-1" />
+        ) : (
+          <ChevronDown aria-hidden="true" className="tw:inline tw:size-4 tw:me-1" />
+        )}
         {tableOpen ? m.wfh_table_hide() : m.wfh_table_show()}
       </button>
 
       {/* ── Kaderakkoord note ────────────────────────────────────────── */}
-      <p className="text-muted small mt-2 mb-0">
-        <i className="bi bi-info-circle me-1" />
+      <p className="tw:text-text-muted tw:text-sm tw:mt-2 tw:mb-0">
+        <Info
+          aria-hidden="true"
+          className="tw:inline tw:size-4 tw:shrink-0 tw:align-text-bottom tw:me-1"
+        />
         {m.wfh_kaderakkoord_note()}
       </p>
 
       {/* ── Qualifying taxpayer note (only relevant at ≤10% BE) ─────── */}
       {currentZone === "full" && (
-        <p className="text-muted small mt-1 mb-0">
-          <i className="bi bi-info-circle me-1" />
+        <p className="tw:text-text-muted tw:text-sm tw:mt-1 tw:mb-0">
+          <Info
+            aria-hidden="true"
+            className="tw:inline tw:size-4 tw:shrink-0 tw:align-text-bottom tw:me-1"
+          />
           {m.wfh_qualifying_taxpayer_note()}
         </p>
       )}
@@ -635,7 +652,7 @@ const ratioColumns = ratioColumnHelper.columns([
       return (
         <>
           <span className="tw:font-mono tw:text-sm tw:font-semibold">{bePct}%</span>
-          <span className="text-muted ms-2 small">
+          <span className="tw:text-text-muted tw:ms-2 tw:text-sm">
             {row.nlDays}d NL / {row.beDays}d BE
           </span>
           {row.isCurrent && (
@@ -669,23 +686,27 @@ const ratioColumns = ratioColumnHelper.columns([
   }),
   ratioColumnHelper.accessor("nlTax", {
     header: () => m.years_nl_tax(),
-    cell: (info) => <span className="tw:text-danger small">−{fmt(info.getValue())}</span>,
+    cell: (info) => <span className="tw:text-danger tw:text-sm">−{fmt(info.getValue())}</span>,
   }),
   ratioColumnHelper.accessor("beTax", {
     header: () => m.years_be_tax(),
-    cell: (info) => <span className="tw:text-danger small">−{fmt(info.getValue())}</span>,
+    cell: (info) => <span className="tw:text-danger tw:text-sm">−{fmt(info.getValue())}</span>,
   }),
   ratioColumnHelper.accessor("totalTax", {
     header: () => m.years_total_tax(),
-    cell: (info) => <span className="tw:text-danger fw-semibold">−{fmt(info.getValue())}</span>,
+    cell: (info) => (
+      <span className="tw:text-danger tw:font-semibold">−{fmt(info.getValue())}</span>
+    ),
   }),
   ratioColumnHelper.accessor("netIncome", {
     header: () => m.years_net_income(),
-    cell: (info) => <span className="tw:text-success fw-semibold">{fmt(info.getValue())}</span>,
+    cell: (info) => (
+      <span className="tw:text-success tw:font-semibold">{fmt(info.getValue())}</span>
+    ),
   }),
   ratioColumnHelper.accessor("effectiveRate", {
     header: () => m.years_effective_rate(),
-    cell: (info) => <span className="text-muted small">{pct(info.getValue())}</span>,
+    cell: (info) => <span className="tw:text-text-muted tw:text-sm">{pct(info.getValue())}</span>,
   }),
 ]);
 
@@ -787,7 +808,7 @@ function RatioTable({ data, currentIdx, optimalIdx, showBE }: RatioTableProps) {
                 {header.column.getCanSort() ? (
                   <button
                     type="button"
-                    className="btn btn-link p-0 tw:text-inherit tw:no-underline"
+                    className="tw:border-0 tw:bg-transparent tw:p-0 tw:text-inherit tw:no-underline"
                     onClick={header.column.getToggleSortingHandler()}
                   >
                     {flexRender(header.column.columnDef.header, header.getContext())}

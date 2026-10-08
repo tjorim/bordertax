@@ -1,3 +1,7 @@
+import { DistributionSegment } from "@/components/ui/distribution-segment";
+import { Alert } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { CircleArrowDown, CircleArrowUp, Clipboard, RotateCcw } from "lucide-react";
 import {
   Table,
   TableHeader,
@@ -7,8 +11,8 @@ import {
   TableCell,
 } from "@/components/ui/table";
 import { useEffect, useState } from "react";
-import { Alert, Button, Col, Row, Stack } from "react-bootstrap";
-import clsx from "clsx";
+
+import { cn } from "@/lib/utils";
 import type { TaxResult } from "../tax/types";
 import { getNLFractions, getTotalWorkdays } from "../tax/workdays";
 import * as m from "../paraglide/messages.js";
@@ -67,24 +71,30 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
   return (
     <div>
       {/* Actions */}
-      <Stack direction="horizontal" gap={2} className="mb-3">
+      <div className="tw:flex tw:flex-wrap tw:items-center tw:gap-2 tw:mb-4">
         <Button variant="outline-primary" size="sm" onClick={() => void copySummary()}>
-          <i className="bi bi-clipboard me-1" />
+          <Clipboard
+            aria-hidden="true"
+            className="tw:inline tw:size-4 tw:shrink-0 tw:align-text-bottom tw:me-1"
+          />
           {m.summary_copy()}
         </Button>
         <Button variant="outline-secondary" size="sm" onClick={onResetInputs}>
-          <i className="bi bi-arrow-counterclockwise me-1" />
+          <RotateCcw
+            aria-hidden="true"
+            className="tw:inline tw:size-4 tw:shrink-0 tw:align-text-bottom tw:me-1"
+          />
           {m.summary_reset()}
         </Button>
-      </Stack>
+      </div>
 
       {copyStatus === "success" && (
-        <Alert variant="success" className="py-2 mb-3">
+        <Alert variant="success" className="tw:py-2 tw:mb-4">
           {m.summary_copy_success()}
         </Alert>
       )}
       {copyStatus === "error" && (
-        <Alert variant="warning" className="py-2 mb-3">
+        <Alert variant="warning" className="tw:py-2 tw:mb-4">
           {m.summary_copy_error()}
         </Alert>
       )}
@@ -106,28 +116,28 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
       {/* Allocation bar */}
       <div className="bt-alloc">
         <div className="bt-alloc__bar" role="img" aria-label={m.summary_allocation()}>
-          <div
+          <DistributionSegment
             className="bt-alloc__seg bt-alloc__seg--net"
-            style={{ width: `${netPct}%` }}
+            percent={netPct}
             title={`${m.summary_net_label()} ${pct(netPct / 100)}`}
           >
             {netPct > 18 && <span className="bt-alloc__seg-label">{pct(netPct / 100)}</span>}
-          </div>
-          <div
+          </DistributionSegment>
+          <DistributionSegment
             className="bt-alloc__seg bt-alloc__seg--nl"
-            style={{ width: `${nlPct}%` }}
+            percent={nlPct}
             title={`🇳🇱 ${m.summary_dutch_tax()} ${pct(nlPct / 100)}`}
           >
             {nlPct > 10 && <span className="bt-alloc__seg-label">{pct(nlPct / 100)}</span>}
-          </div>
+          </DistributionSegment>
           {bePct > 0 && (
-            <div
+            <DistributionSegment
               className="bt-alloc__seg bt-alloc__seg--be"
-              style={{ width: `${bePct}%` }}
+              percent={bePct}
               title={`🇧🇪 ${m.summary_belgian_tax()} ${pct(bePct / 100)}`}
             >
               {bePct > 8 && <span className="bt-alloc__seg-label">{pct(bePct / 100)}</span>}
-            </div>
+            </DistributionSegment>
           )}
         </div>
 
@@ -135,18 +145,18 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
           <div className="bt-alloc__legend-item">
             <span className="bt-alloc__legend-dot bt-alloc__legend-dot--net" />
             <span className="bt-alloc__legend-label">{m.summary_net_label()}</span>
-            <span className="bt-alloc__legend-value text-success">{fmt(netIncome)}</span>
+            <span className="bt-alloc__legend-value tw:text-success">{fmt(netIncome)}</span>
           </div>
           <div className="bt-alloc__legend-item">
             <span className="bt-alloc__legend-dot bt-alloc__legend-dot--nl" />
             <span className="bt-alloc__legend-label">🇳🇱 {m.summary_dutch_tax()}</span>
-            <span className="bt-alloc__legend-value text-danger">−{fmt(nl.netTaxNL)}</span>
+            <span className="bt-alloc__legend-value tw:text-danger">−{fmt(nl.netTaxNL)}</span>
           </div>
           {be && be.netTaxBE > 0 && (
             <div className="bt-alloc__legend-item">
               <span className="bt-alloc__legend-dot bt-alloc__legend-dot--be" />
               <span className="bt-alloc__legend-label">🇧🇪 {m.summary_belgian_tax()}</span>
-              <span className="bt-alloc__legend-value text-danger">−{fmt(be.netTaxBE)}</span>
+              <span className="bt-alloc__legend-value tw:text-danger">−{fmt(be.netTaxBE)}</span>
             </div>
           )}
         </div>
@@ -160,19 +170,19 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
         </div>
         <div className="bt-breakdown__row">
           <span className="bt-breakdown__label">🇳🇱 {m.summary_dutch_tax()}</span>
-          <span className="bt-breakdown__value text-danger">−{fmt(nl.netTaxNL)}</span>
+          <span className="bt-breakdown__value tw:text-danger">−{fmt(nl.netTaxNL)}</span>
         </div>
         {be && be.netTaxBE > 0 && (
           <div className="bt-breakdown__row">
             <span className="bt-breakdown__label">🇧🇪 {m.summary_belgian_tax()}</span>
-            <span className="bt-breakdown__value text-danger">−{fmt(be.netTaxBE)}</span>
+            <span className="bt-breakdown__value tw:text-danger">−{fmt(be.netTaxBE)}</span>
           </div>
         )}
         <div className="bt-breakdown__row bt-breakdown__row--total">
           <span className="bt-breakdown__label bt-breakdown__label--strong">
             {m.summary_total_tax()}
           </span>
-          <span className="bt-breakdown__value text-danger bt-breakdown__label--strong">
+          <span className="bt-breakdown__value tw:text-danger bt-breakdown__label--strong">
             −{fmt(totalTax)}
           </span>
         </div>
@@ -183,28 +193,38 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
       </div>
 
       {/* Stat cards */}
-      <Row className="mt-3 text-center g-3">
-        <Col>
+      <div className="tw:grid tw:grid-cols-12 tw:mt-4 tw:text-center tw:gap-4">
+        <div className="tw:col-span-4">
           <div className="bt-stat-card">
-            <div className="text-muted small">{m.summary_net_monthly()}</div>
-            <div className="fs-5 fw-bold text-success">{fmt(netIncome / 12)}</div>
+            <div className="tw:text-text-muted tw:text-label tw:font-medium tw:uppercase tw:tracking-wide">
+              {m.summary_net_monthly()}
+            </div>
+            <div className="tw:font-mono tw:text-stat tw:tracking-tight tw:font-bold tw:text-success">
+              {fmt(netIncome / 12)}
+            </div>
           </div>
-        </Col>
-        <Col>
+        </div>
+        <div className="tw:col-span-4">
           <div className="bt-stat-card">
-            <div className="text-muted small">{m.summary_effective_rate()}</div>
-            <div className="fs-5 fw-bold">{pct(effectiveRateTotal)}</div>
+            <div className="tw:text-text-muted tw:text-label tw:font-medium tw:uppercase tw:tracking-wide">
+              {m.summary_effective_rate()}
+            </div>
+            <div className="tw:font-mono tw:text-stat tw:tracking-tight tw:font-bold">
+              {pct(effectiveRateTotal)}
+            </div>
           </div>
-        </Col>
-        <Col>
+        </div>
+        <div className="tw:col-span-4">
           <div className="bt-stat-card">
-            <div className="text-muted small">{m.summary_net_daily()}</div>
-            <div className="fs-5 fw-bold text-success">
+            <div className="tw:text-text-muted tw:text-label tw:font-medium tw:uppercase tw:tracking-wide">
+              {m.summary_net_daily()}
+            </div>
+            <div className="tw:font-mono tw:text-stat tw:tracking-tight tw:font-bold tw:text-success">
               {totalWorkdays > 0 ? fmt(netIncome / totalWorkdays) : "—"}
             </div>
           </div>
-        </Col>
-      </Row>
+        </div>
+      </div>
 
       <FilingChecklist result={result} />
 
@@ -213,9 +233,9 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
         const { totalWithSick, totalNoSick, sickDays, daysBE } = getNLFractions(result.inputs);
         const showOverlapNote = sickDays > 0 && daysBE > 0;
         return (
-          <div className="mt-4">
-            <h6 className="mb-2">{m.summary_sourcing_title()}</h6>
-            <Table bordered className="tw:mb-1 small">
+          <div className="tw:mt-6">
+            <h6 className="tw:mb-2">{m.summary_sourcing_title()}</h6>
+            <Table bordered className="tw:mb-1 tw:text-sm">
               <TableHeader>
                 <TableRow>
                   <TableHead scope="col">{m.summary_sourcing_method_col()}</TableHead>
@@ -248,10 +268,16 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
                 </TableRow>
               </TableBody>
             </Table>
-            <p className="text-muted small mb-0">{m.summary_sourcing_nl_formula()}</p>
-            <p className="text-muted small mb-0">{m.summary_sourcing_be_formula()}</p>
+            <p className="tw:text-text-muted tw:text-sm tw:mb-0">
+              {m.summary_sourcing_nl_formula()}
+            </p>
+            <p className="tw:text-text-muted tw:text-sm tw:mb-0">
+              {m.summary_sourcing_be_formula()}
+            </p>
             {showOverlapNote && (
-              <p className="text-warning small mb-0 mt-1">{m.summary_sourcing_overlap_note()}</p>
+              <p className="tw:text-warning tw:text-sm tw:mb-0 tw:mt-1">
+                {m.summary_sourcing_overlap_note()}
+              </p>
             )}
           </div>
         );
@@ -259,8 +285,8 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
 
       {/* Fiscal balance (if NL tax was withheld) */}
       {withheldTaxNL > 0 && (
-        <div className="mt-4">
-          <h6 className="mb-3">{m.summary_eindafrekening()}</h6>
+        <div className="tw:mt-6">
+          <h6 className="tw:mb-4">{m.summary_eindafrekening()}</h6>
 
           <div className="bt-breakdown">
             <div className="bt-breakdown__row">
@@ -269,10 +295,10 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
             </div>
             <div className="bt-breakdown__row">
               <span className="bt-breakdown__label">🇳🇱 {m.summary_nl_owed()}</span>
-              <span className="bt-breakdown__value text-danger">−{fmt(nl.netTaxNL)}</span>
+              <span className="bt-breakdown__value tw:text-danger">−{fmt(nl.netTaxNL)}</span>
             </div>
             <div
-              className={clsx(
+              className={cn(
                 "bt-breakdown__row",
                 nlBalance >= 0 ? "bt-breakdown__row--ok" : "bt-breakdown__row--warn",
               )}
@@ -281,10 +307,10 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
                 🇳🇱 {m.summary_nl_balance()}
               </span>
               <span
-                className={clsx(
+                className={cn(
                   "bt-breakdown__value",
                   "bt-breakdown__label--strong",
-                  nlBalance >= 0 ? "text-success" : "text-danger",
+                  nlBalance >= 0 ? "tw:text-success" : "tw:text-danger",
                 )}
               >
                 {fmtSigned(nlBalance)}
@@ -293,21 +319,20 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
             {be && be.netTaxBE > 0 && (
               <div className="bt-breakdown__row">
                 <span className="bt-breakdown__label">🇧🇪 {m.summary_be_owed()}</span>
-                <span className="bt-breakdown__value text-danger">−{fmt(be.netTaxBE)}</span>
+                <span className="bt-breakdown__value tw:text-danger">−{fmt(be.netTaxBE)}</span>
               </div>
             )}
           </div>
 
           <div
-            className={clsx(
-              "bt-balance",
-              netResult >= 0 ? "bt-balance--refund" : "bt-balance--owe",
-            )}
+            className={cn("bt-balance", netResult >= 0 ? "bt-balance--refund" : "bt-balance--owe")}
           >
             <div className="bt-balance__label">
-              <i
-                className={`bi bi-${netResult >= 0 ? "arrow-down-circle-fill" : "arrow-up-circle-fill"} me-2`}
-              />
+              {netResult >= 0 ? (
+                <CircleArrowDown aria-hidden="true" className="tw:size-4 tw:me-2" />
+              ) : (
+                <CircleArrowUp aria-hidden="true" className="tw:size-4 tw:me-2" />
+              )}
               {m.summary_net_result()}
             </div>
             <div className="bt-balance__amount">{fmtSigned(netResult)}</div>
