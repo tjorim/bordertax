@@ -476,9 +476,15 @@ export default function PensionReference() {
               <Table className="text-table-reference-xs">
                 <TableBody>
                   {[
-                    ["< €2.078,46/mnd", m.ref_pension_ziv_rule_geen1()],
+                    [
+                      m.ref_amount_below_per_month({ amount: "€2.078,46" }),
+                      m.ref_pension_ziv_rule_geen1(),
+                    ],
                     ["€2.078,46 – €2.154,94", m.ref_pension_ziv_rule_prog1()],
-                    ["> €2.154,94/mnd", m.ref_pension_ziv_rule_355_1()],
+                    [
+                      m.ref_amount_above_per_month({ amount: "€2.154,94" }),
+                      m.ref_pension_ziv_rule_355_1(),
+                    ],
                   ].map(([range, rule]) => (
                     <TableRow key={range}>
                       <TableCell className="font-mono text-text text-xs">{range}</TableCell>
@@ -493,9 +499,15 @@ export default function PensionReference() {
               <Table className="text-table-reference-xs">
                 <TableBody>
                   {[
-                    ["< €2.463,25/mnd", m.ref_pension_ziv_rule_geen2()],
+                    [
+                      m.ref_amount_below_per_month({ amount: "€2.463,25" }),
+                      m.ref_pension_ziv_rule_geen2(),
+                    ],
                     ["€2.463,25 – €2.553,89", m.ref_pension_ziv_rule_prog2()],
-                    ["> €2.553,89/mnd", m.ref_pension_ziv_rule_355_2()],
+                    [
+                      m.ref_amount_above_per_month({ amount: "€2.553,89" }),
+                      m.ref_pension_ziv_rule_355_2(),
+                    ],
                   ].map(([range, rule]) => (
                     <TableRow key={range}>
                       <TableCell className="font-mono text-text text-xs">{range}</TableCell>

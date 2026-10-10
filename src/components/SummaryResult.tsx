@@ -103,7 +103,10 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
           {fmt(netIncome)}
         </div>
         <div className="bt-summary-hero__sub">
-          {pct(1 - effectiveRateTotal)} net &middot; {pct(effectiveRateTotal)} tax
+          {m.summary_net_tax_split({
+            net: pct(1 - effectiveRateTotal),
+            tax: pct(effectiveRateTotal),
+          })}
         </div>
       </div>
 

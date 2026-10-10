@@ -56,7 +56,7 @@ function ThemeToggleButton() {
       variant="outline"
       onClick={cycleTheme}
       aria-label={`${m.theme_toggle_label()}: ${label}`}
-      title={`${m.theme_toggle_label()}: ${label} (click to cycle)`}
+      title={m.theme_toggle_title({ theme: m.theme_toggle_label(), label })}
     >
       <Icon className="size-4" aria-hidden="true" />
     </Button>
@@ -135,12 +135,12 @@ export function AppNavbar({ children, onLocaleSwitch }: AppNavbarProps) {
         <span className="w-1/2 bg-be" />
       </div>
       <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-3 px-3 py-3">
-        <span className="text-xl font-bold" aria-label="Belgium and Netherlands">
+        <span className="text-xl font-bold" aria-label={m.nav_countries_label()}>
           🇧🇪&thinsp;🇳🇱
         </span>
         <CollapsibleTrigger
           render={<Button variant="outline" />}
-          aria-label="Toggle navigation"
+          aria-label={m.nav_toggle_label()}
           className="ml-auto shell:hidden"
         >
           <Menu className="size-5" aria-hidden="true" />
@@ -151,7 +151,7 @@ export function AppNavbar({ children, onLocaleSwitch }: AppNavbarProps) {
           className="hidden w-full flex-col gap-3 data-open:flex shell:flex shell:w-auto shell:flex-1 shell:flex-row shell:items-center"
         >
           <nav
-            aria-label="Main navigation"
+            aria-label={m.nav_main_label()}
             className="flex flex-col gap-3 shell:mr-auto shell:flex-row shell:items-center"
           >
             <Link
