@@ -1,4 +1,5 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 
 import MultiYearComparison from "@/components/MultiYearComparison";
@@ -53,10 +54,11 @@ describe("MultiYearComparison", () => {
     expect(headers.length).toBeGreaterThan(3);
   });
 
-  it("sorts table rows by year", () => {
+  it("sorts table rows by year", async () => {
+    const user = userEvent.setup();
     render(<MultiYearComparison rows={rows} activeYear={2025} />);
 
-    fireEvent.click(screen.getByRole("button", { name: /year/i }));
+    await user.click(screen.getByRole("button", { name: /year/i }));
 
     const bodyRows = screen.getByRole("table").querySelectorAll("tbody tr");
     expect(bodyRows[0]).toHaveTextContent("2025");
