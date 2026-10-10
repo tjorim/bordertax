@@ -40,6 +40,11 @@ updates:
       i18n:
         patterns:
           - "@inlang/*"
+      # tailwindcss and its Vite plugin share one release train
+      tailwind:
+        patterns:
+          - "tailwindcss"
+          - "@tailwindcss/*"
 
   - package-ecosystem: "github-actions"
     directory: "/"
