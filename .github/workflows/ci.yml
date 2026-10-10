@@ -35,6 +35,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Audit interface strings and catalogues
+        run: pnpm locale:audit
+
       - name: Typecheck
         run: pnpm typecheck
 

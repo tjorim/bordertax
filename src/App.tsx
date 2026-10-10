@@ -82,7 +82,7 @@ function ResultsTabs({ inputs, onResetInputs }: ResultsTabsProps) {
 
   return (
     <Tabs defaultValue="summary">
-      <TabsList aria-label="Results">
+      <TabsList aria-label={m.tabs_results_label()}>
         <TabsTrigger value="summary" aria-label={m.tabs_summary()}>
           <PieChart className="size-3" aria-hidden="true" />
           {m.tabs_summary()}

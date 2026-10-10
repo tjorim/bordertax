@@ -449,7 +449,7 @@ export default function WFHRatioChart({ inputs }: Props) {
           <p className="text-text-muted text-sm mb-0 mt-1">{m.wfh_description()}</p>
         </div>
         <div className={`bt-wfh-zone-pill bt-wfh-zone-pill--${currentZone}`}>
-          🏠 {Math.round(currentBeRatio * 100)}% BE
+          {m.wfh_share_be({ percent: Math.round(currentBeRatio * 100) })}
           <span className="bt-wfh-zone-pill__rule">
             {currentZone === "full" && m.wfh_threshold_10_label()}
             {currentZone === "hybrid" && m.wfh_threshold_25_label()}
@@ -467,7 +467,11 @@ export default function WFHRatioChart({ inputs }: Props) {
             renderer={chartRenderer}
             height={300}
             ariaLabel={m.wfh_title()}
-            ariaDescription={`${m.wfh_description()} ${m.wfh_current_ratio()}: ${Math.round(currentBeRatio * 100)}% BE.`}
+            ariaDescription={m.wfh_current_ratio_aria({
+              description: m.wfh_description(),
+              label: m.wfh_current_ratio(),
+              percent: Math.round(currentBeRatio * 100),
+            })}
             onFocusChange={(point) => setHovered(point?.datumIndex ?? null)}
           />
         )}
@@ -522,10 +526,12 @@ export default function WFHRatioChart({ inputs }: Props) {
                 {!isHovering && (
                   <span className="bt-wfh-readout__tag">{m.wfh_current_ratio()}</span>
                 )}
-                🏢 {Math.round((1 - displayPoint.beRatio) * 100)}% NL · 🏠{" "}
-                {Math.round(displayPoint.beRatio * 100)}% BE
+                {m.wfh_share_split({
+                  nl: Math.round((1 - displayPoint.beRatio) * 100),
+                  be: Math.round(displayPoint.beRatio * 100),
+                })}
                 <span className="text-text-muted bt-wfh-readout__days">
-                  ({displayPoint.nlDays}d / {displayPoint.beDays}d)
+                  {m.wfh_day_split({ nl: displayPoint.nlDays, be: displayPoint.beDays })}
                 </span>
               </span>
               <span className="bt-wfh-readout__item bt-wfh-readout__item--net">
@@ -544,9 +550,9 @@ export default function WFHRatioChart({ inputs }: Props) {
               >
                 {getZone(displayPoint.beRatio) === "full" && `✓ ${m.wfh_threshold_10_label()}`}
                 {getZone(displayPoint.beRatio) === "hybrid" &&
-                  `✓ ${m.wfh_threshold_25_label()} · ✗ hypo`}
+                  m.wfh_badge_hybrid({ rule: m.wfh_threshold_25_label() })}
                 {getZone(displayPoint.beRatio) === "kaderakkoord" &&
-                  `✓ ${m.wfh_threshold_49_label()} · A1`}
+                  m.wfh_badge_kaderakkoord({ rule: m.wfh_threshold_49_label() })}
                 {getZone(displayPoint.beRatio) === "above" && `✗ ${m.wfh_threshold_49_label()}`}
               </span>
             </>
@@ -562,8 +568,8 @@ export default function WFHRatioChart({ inputs }: Props) {
               aria-hidden="true"
               className="inline size-4 shrink-0 align-text-bottom me-1"
             />
-            ↑ <strong>{fmt(delta)}</strong>/yr more at {Math.round(data[optimalIdx]!.beRatio * 100)}
-            % BE
+            ↑ <strong>{m.wfh_delta_amount({ amount: fmt(delta) })}</strong>{" "}
+            {m.wfh_delta_at({ percent: Math.round(data[optimalIdx]!.beRatio * 100) })}
           </div>
         )}
       </div>
@@ -645,7 +651,7 @@ const ratioColumns = ratioColumnHelper.columns([
         <>
           <span className="font-mono text-sm font-semibold">{bePct}%</span>
           <span className="text-text-muted ms-2 text-sm">
-            {row.nlDays}d NL / {row.beDays}d BE
+            {m.wfh_day_split_labelled({ nl: row.nlDays, be: row.beDays })}
           </span>
           {row.isCurrent && (
             <Badge variant="primary" className="ms-2">
