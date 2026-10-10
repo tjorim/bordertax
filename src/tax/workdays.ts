@@ -63,8 +63,7 @@ export function getNLFractions(inputs: TaxInputs): WorkdayFractions {
   const totals = getWorkdayTotals(inputs);
   const nlFractionDutchMethod =
     totals.totalWithSick > 0 ? (totals.daysNL + totals.sickDays) / totals.totalWithSick : 0;
-  const nlFractionBelgianMethod =
-    totals.totalNoSick > 0 ? totals.daysNL / totals.totalNoSick : 0;
+  const nlFractionBelgianMethod = totals.totalNoSick > 0 ? totals.daysNL / totals.totalNoSick : 0;
   const beFraction = totals.totalNoSick > 0 ? totals.daysOutsideNL / totals.totalNoSick : 0;
 
   return {

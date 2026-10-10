@@ -19,10 +19,7 @@ export function themeInitPlugin(): Plugin {
     transformIndexHtml: {
       order: "pre",
       async handler(html) {
-        return html.replace(
-          "<!-- theme-init -->",
-          `<script>${await themeBootScript()}</script>`,
-        );
+        return html.replace("<!-- theme-init -->", `<script>${await themeBootScript()}</script>`);
       },
     },
   };
