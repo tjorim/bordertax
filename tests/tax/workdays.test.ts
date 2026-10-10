@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 
-import { getMaxDaysInYear, getNLFractions, getTotalWorkdays, getWorkdayTotals } from "@/tax/workdays";
+import {
+  getMaxDaysInYear,
+  getNLFractions,
+  getTotalWorkdays,
+  getWorkdayTotals,
+} from "@/tax/workdays";
 import type { TaxInputs } from "@/tax/types";
 
 const base: TaxInputs = {
@@ -52,7 +57,15 @@ describe("getTotalWorkdays", () => {
 
 describe("getWorkdayTotals", () => {
   it("returns denominators with and without sick days", () => {
-    expect(getWorkdayTotals({ ...base, daysWorkedNL: 200, daysWorkedBE: 20, daysWorkedOther: 10, sickDays: 5 })).toMatchObject({
+    expect(
+      getWorkdayTotals({
+        ...base,
+        daysWorkedNL: 200,
+        daysWorkedBE: 20,
+        daysWorkedOther: 10,
+        sickDays: 5,
+      }),
+    ).toMatchObject({
       daysNL: 200,
       daysBE: 20,
       daysOther: 10,
@@ -66,7 +79,13 @@ describe("getWorkdayTotals", () => {
 
 describe("getNLFractions", () => {
   it("returns zero fractions when there are no workdays", () => {
-    const fractions = getNLFractions({ ...base, daysWorkedNL: 0, daysWorkedBE: 0, daysWorkedOther: 0, sickDays: 0 });
+    const fractions = getNLFractions({
+      ...base,
+      daysWorkedNL: 0,
+      daysWorkedBE: 0,
+      daysWorkedOther: 0,
+      sickDays: 0,
+    });
 
     expect(fractions.nlFractionDutchMethod).toBe(0);
     expect(fractions.nlFractionBelgianMethod).toBe(0);
@@ -75,7 +94,13 @@ describe("getNLFractions", () => {
   });
 
   it("includes sick days only in the Dutch-method NL fraction", () => {
-    const fractions = getNLFractions({ ...base, daysWorkedNL: 200, daysWorkedBE: 20, daysWorkedOther: 10, sickDays: 5 });
+    const fractions = getNLFractions({
+      ...base,
+      daysWorkedNL: 200,
+      daysWorkedBE: 20,
+      daysWorkedOther: 10,
+      sickDays: 5,
+    });
 
     expect(fractions.nlFractionDutchMethod).toBeCloseTo(205 / 235, 10);
     expect(fractions.nlFractionBelgianMethod).toBeCloseTo(200 / 230, 10);
@@ -83,7 +108,12 @@ describe("getNLFractions", () => {
   });
 
   it("counts other-country days outside NL for Belgian sourcing", () => {
-    const fractions = getNLFractions({ ...base, daysWorkedNL: 200, daysWorkedBE: 20, daysWorkedOther: 30 });
+    const fractions = getNLFractions({
+      ...base,
+      daysWorkedNL: 200,
+      daysWorkedBE: 20,
+      daysWorkedOther: 30,
+    });
 
     expect(fractions.beFraction).toBeCloseTo(50 / 250, 10);
     expect(fractions.vrijgesteldFrac).toBeCloseTo(200 / 250, 10);

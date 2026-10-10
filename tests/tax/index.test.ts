@@ -35,7 +35,10 @@ describe("calculate", () => {
 
   // TODO: Re-enable when NL-resident support is re-integrated
   it.skip("returns null be result for NL resident", () => {
-    const result = calculate({ ...base, residentCountry: "NL" as unknown as TaxInputs["residentCountry"] });
+    const result = calculate({
+      ...base,
+      residentCountry: "NL" as unknown as TaxInputs["residentCountry"],
+    });
     expect(result.be).toBeNull();
   });
 
@@ -56,7 +59,10 @@ describe("calculate", () => {
 
   // TODO: Re-enable when NL-resident support is re-integrated
   it.skip("totalTax equals nl.netTaxNL when residentCountry is NL", () => {
-    const result = calculate({ ...base, residentCountry: "NL" as unknown as TaxInputs["residentCountry"] });
+    const result = calculate({
+      ...base,
+      residentCountry: "NL" as unknown as TaxInputs["residentCountry"],
+    });
     expect(result.totalTax).toBeCloseTo(result.nl.netTaxNL, 5);
   });
 

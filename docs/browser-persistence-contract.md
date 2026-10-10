@@ -40,13 +40,13 @@ storage model appropriate to its data. A shared package is not required.
 
 ## App-specific policies
 
-| App | Model | Retention and session policy |
-| --- | --- | --- |
-| Champagnefestival | Allowlisted read-only TanStack Query snapshot in IndexedDB | 72 hours, schema buster, sensitive-field filtering, owner-scoped restore gate; logout/role loss clears cache. No outbox. |
-| Travel | Explicit encrypted IndexedDB pins | Seven-day lease, reconnect authorization check; logout atomically removes keys and copies and advances a durable owner generation. Schema mismatch is rejected. |
-| Worktime | TanStack DB collection snapshots plus sync outbox | Restore barrier and generation-scoped snapshots; account transition clears old snapshots, per-owner pending sync changes are retained. Anonymous authored data supports the existing first-sync flow. No arbitrary expiry for drafts. |
-| Daynest | Account-scoped offline action records | Schema version 1; only explicit task/chore/medication absolute status transitions replay. Web Locks serialize replay across tabs. Sign-out stops replay but preserves pending actions. Legacy unowned records remain quarantined. |
-| BorderTax | Validated calculator inputs and theme in localStorage | Device-local preferences; no authenticated cache or replay queue, no arbitrary expiry. Storage failure falls back to the current in-memory session. |
+| App               | Model                                                      | Retention and session policy                                                                                                                                                                                                          |
+| ----------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Champagnefestival | Allowlisted read-only TanStack Query snapshot in IndexedDB | 72 hours, schema buster, sensitive-field filtering, owner-scoped restore gate; logout/role loss clears cache. No outbox.                                                                                                              |
+| Travel            | Explicit encrypted IndexedDB pins                          | Seven-day lease, reconnect authorization check; logout atomically removes keys and copies and advances a durable owner generation. Schema mismatch is rejected.                                                                       |
+| Worktime          | TanStack DB collection snapshots plus sync outbox          | Restore barrier and generation-scoped snapshots; account transition clears old snapshots, per-owner pending sync changes are retained. Anonymous authored data supports the existing first-sync flow. No arbitrary expiry for drafts. |
+| Daynest           | Account-scoped offline action records                      | Schema version 1; only explicit task/chore/medication absolute status transitions replay. Web Locks serialize replay across tabs. Sign-out stops replay but preserves pending actions. Legacy unowned records remain quarantined.     |
+| BorderTax         | Validated calculator inputs and theme in localStorage      | Device-local preferences; no authenticated cache or replay queue, no arbitrary expiry. Storage failure falls back to the current in-memory session.                                                                                   |
 
 ## Verification
 

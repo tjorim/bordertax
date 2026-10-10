@@ -84,8 +84,7 @@ export function calculateBETax(inputs: TaxInputs, nl: NLTaxResult): BETaxResult 
   // is therefore taken from the NL-exempt side of code 1250, not allocated pro rata
   // across both sides. This mirrors the 1250/Netherlands split on the Belgian return.
   const nlExemptDeclaredIncome = Math.max(0, declaredIncome - beIncome);
-  const vrijgesteldFrac =
-    declaredIncome > 0 ? nlExemptDeclaredIncome / declaredIncome : 0;
+  const vrijgesteldFrac = declaredIncome > 0 ? nlExemptDeclaredIncome / declaredIncome : 0;
 
   // Exempt and taxable portions of net professional income
   const vrijgesteld = vrijgesteldFrac * netProfessionalIncome;

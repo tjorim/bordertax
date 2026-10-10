@@ -65,7 +65,10 @@ describe("calculateNLTax", () => {
   });
 
   it("applies 30% ruling by taxing only 70% of the NL income", () => {
-    const nlResident = { ...base, residentCountry: "NL" as unknown as TaxInputs["residentCountry"] };
+    const nlResident = {
+      ...base,
+      residentCountry: "NL" as unknown as TaxInputs["residentCountry"],
+    };
     const withRuling = calculateNLTax({ ...nlResident, thirtyPercentRuling: true });
     const withoutRuling = calculateNLTax({ ...nlResident, thirtyPercentRuling: false });
     expect(withRuling.nlTaxableIncome).toBeCloseTo(withoutRuling.nlTaxableIncome * 0.7, 1);

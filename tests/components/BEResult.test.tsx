@@ -9,7 +9,9 @@ import { mockBEResult } from "../test-utils/mockData";
 describe("BEResult", () => {
   // TODO: Re-enable when NL-resident support is re-integrated
   it.skip("shows info alert for NL residents", () => {
-    render(<BEResult result={null} residentCountry={"NL" as unknown as TaxInputs["residentCountry"]} />);
+    render(
+      <BEResult result={null} residentCountry={"NL" as unknown as TaxInputs["residentCountry"]} />,
+    );
     expect(screen.getByRole("alert")).toBeInTheDocument();
   });
 
