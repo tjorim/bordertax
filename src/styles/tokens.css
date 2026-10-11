@@ -27,8 +27,8 @@
 
   /* Text */
   --bt-text: #d4e4f5;
-  --bt-text-sub: #8ba8c5;
-  --bt-text-muted: #7090b0;
+  --bt-text-sub: #a3bdd6;
+  --bt-text-muted: #8fabc8;
   --bt-text-dim: #4e6884;
 
   /* Dutch Orange — demoted to per-tab accent only */
@@ -48,7 +48,7 @@
   /* Semantic */
   --bt-success: #22c55e;
   --bt-success-dim: rgba(34, 197, 94, 0.1);
-  --bt-danger: #ef4444;
+  --bt-danger: #f87171;
   --bt-danger-dim: rgba(239, 68, 68, 0.1);
   --bt-warning: #f59e0b;
   --bt-warning-dim: rgba(245, 158, 11, 0.1);
@@ -71,6 +71,10 @@
 
 [data-theme="light"] {
   --bt-brand-light: #0f766e;
+
+  /* Accent text on light surfaces needs a darker shade than the dark-mode accents. */
+  --bt-nl-light: #a8350a;
+  --bt-be-light: #7a5400;
   --bt-bg: #f8f9fa;
   --bt-surface: #ffffff;
   --bt-surface-2: #f0f4f8;
@@ -84,17 +88,17 @@
 
   --bt-text: #0f1923;
   --bt-text-sub: #2e4560;
-  --bt-text-muted: #4a6480;
+  --bt-text-muted: #435d79;
   --bt-text-dim: #7a9ab8;
 
-  --bt-success: #16a34a;
+  --bt-success: #166534;
   --bt-success-dim: rgba(22, 163, 74, 0.1);
-  --bt-danger: #dc2626;
+  --bt-danger: #b91c1c;
   --bt-danger-dim: rgba(220, 38, 38, 0.08);
-  --bt-warning: #d97706;
+  --bt-warning: #9a4406;
   --bt-warning-dim: rgba(217, 119, 6, 0.08);
   --bt-warning-border: rgba(217, 119, 6, 0.3);
-  --bt-info: #2563eb;
+  --bt-info: #1d4ed8;
   --bt-info-dim: rgba(37, 99, 235, 0.08);
   --bt-info-border: rgba(37, 99, 235, 0.25);
 }
@@ -111,4 +115,9 @@
   --bt-threshold-purple: #a855f7;
   --bt-threshold-purple-bg: rgba(168, 85, 247, 0.12);
   --bt-threshold-purple-border: rgba(168, 85, 247, 0.28);
+}
+
+/* Declared after the :root defaults above so it wins at equal specificity. */
+[data-theme="light"] {
+  --bt-on-warning: #ffffff;
 }

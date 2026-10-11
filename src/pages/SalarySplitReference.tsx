@@ -34,7 +34,14 @@ import { PageHero } from "../components/PageHero";
 import { PageFooter } from "../components/PageFooter";
 
 function Formula({ children }: { children: React.ReactNode }) {
-  return <pre className="p-4 rounded-md mb-0 ref-formula">{children}</pre>;
+  return (
+    <pre
+      tabIndex={0}
+      className="p-4 rounded-md mb-0 ref-formula focus-visible:outline-2 focus-visible:outline-ring"
+    >
+      {children}
+    </pre>
+  );
 }
 
 // ── Main page ────────────────────────────────────────────────────
