@@ -19,16 +19,8 @@ export async function seedPreferences(page: Page, locale: Locale, theme: Theme) 
   );
 }
 
-// TODO: re-enable once the NL/BE accent, status and muted text tokens meet 4.5:1 contrast in
-// both themes. Axe currently reports them on every route, so the smoke suite skips this one
-// rule rather than hiding the other checks.
-const KNOWN_FAILING_RULES = ["color-contrast"];
-
 export async function expectNoAxeViolations(page: Page) {
-  const { violations } = await new AxeBuilder({ page })
-    .withTags(WCAG_TAGS)
-    .disableRules(KNOWN_FAILING_RULES)
-    .analyze();
+  const { violations } = await new AxeBuilder({ page }).withTags(WCAG_TAGS).analyze();
   expect(
     violations.map((v) => ({
       id: v.id,
