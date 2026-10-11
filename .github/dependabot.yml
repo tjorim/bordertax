@@ -37,6 +37,10 @@ updates:
         patterns:
           - "oxlint"
           - "oxfmt"
+      playwright:
+        patterns:
+          - "@playwright/*"
+          - "@axe-core/*"
       i18n:
         patterns:
           - "@inlang/*"

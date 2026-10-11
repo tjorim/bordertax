@@ -16,8 +16,10 @@ function Table({
   return (
     <div
       data-slot="table-container"
+      // Scrollable regions must be keyboard-focusable.
+      tabIndex={0}
       className={cn(
-        "relative w-full overflow-x-auto",
+        "relative w-full overflow-x-auto focus-visible:outline-2 focus-visible:outline-ring",
         bordered && !responsive && "rounded-sm",
         responsive && "rounded-md border border-border bg-surface",
       )}

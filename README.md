@@ -52,6 +52,11 @@ Run `pnpm lint`, `pnpm typecheck`, `pnpm test` and `pnpm build` before submittin
 changes. Stop the dev server and run generation/build checks sequentially;
 Paraglide writes generated modules and declarations during these commands.
 
+Browser smoke tests (Playwright, plus an axe WCAG scan of every route in both
+locales, themes and at desktop/mobile widths) live in `e2e/`. Run `pnpm build`
+first, then `pnpm test:e2e`; it serves the build with `vite preview`. Install
+the browser once with `pnpm exec playwright install chromium`.
+
 ### Backend writes & idempotency
 
 Bordertax is currently a **client-side-only calculator**. All tax
