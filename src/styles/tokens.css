@@ -102,8 +102,10 @@
 :root {
   --bt-on-solid: #ffffff;
   --bt-on-warning: #212529;
+  --bt-threshold-info: #60a5fa;
   --bt-threshold-info-bg: rgba(96, 165, 250, 0.15);
   --bt-threshold-info-border: rgba(96, 165, 250, 0.3);
+  --bt-threshold-warning: #f59e0b;
   --bt-threshold-warning-bg: rgba(245, 158, 11, 0.12);
   --bt-threshold-warning-border: rgba(245, 158, 11, 0.28);
   --bt-threshold-purple: #a855f7;

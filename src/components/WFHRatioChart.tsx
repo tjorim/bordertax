@@ -32,10 +32,13 @@ import {
   ruleX,
   text as textMark,
   whenFocused,
+  type ChartMarkStateContext,
 } from "@tanstack/charts";
 import { decorative } from "@tanstack/charts/mark/decorative";
 import { crosshair } from "@tanstack/charts/crosshair";
 import { scaleLinear } from "@tanstack/charts/scales/linear";
+import { controlledSignal } from "@tanstack/charts/interaction/signal";
+import { interactiveColorLegend } from "@tanstack/charts/legend";
 import { motion } from "@tanstack/charts/motion";
 import { Chart } from "@tanstack/charts/react/core";
 import { calculate } from "../tax";
@@ -68,11 +71,32 @@ const T_49 = 0.49;
 
 const Y_TICKS = 5;
 
+type Series = "net" | "nl" | "be";
+const ALL_SERIES: readonly Series[] = ["net", "nl", "be"];
+const SERIES_COLORS: Record<Series, string> = {
+  net: "var(--bt-success)",
+  nl: "var(--bt-nl)",
+  be: "var(--bt-be)",
+};
+
+// Dim the other series while a legend button is hovered or focused.
+const legendEmphasis = [
+  {
+    when: ({ focus, matches }: ChartMarkStateContext<DataPoint>) =>
+      focus.source === "legend" && !matches("series"),
+    style: { opacity: 0.25 },
+  },
+];
+
 // Spring transition for line/area/marker movement as the ratio curve is
 // recomputed (inputs change) or the focused point moves along it.
 const chartRenderer = motion({
   transition: { type: "spring", stiffness: 170, damping: 22, mass: 1 },
 });
+
+function stripColon(label: string): string {
+  return label.replace(/:\s*$/, "");
+}
 
 function fmtK(n: number): string {
   if (Math.abs(n) >= 1000) return `€${Math.round(n / 1000)}k`;
@@ -108,6 +132,7 @@ interface ZoneRow {
   x1: number;
   x2: number;
   fill: string;
+  fillOpacity: number;
 }
 interface ChipRow {
   x: number;
@@ -118,6 +143,7 @@ interface ChipRow {
 export default function WFHRatioChart({ inputs }: Props) {
   const [hovered, setHovered] = useState<number | null>(null);
   const [tableOpen, setTableOpen] = useState(false);
+  const [visibleSeries, setVisibleSeries] = useState<readonly Series[]>(ALL_SERIES);
   const locale = getLocale();
 
   const nlbeDays = inputs.daysWorkedNL + inputs.daysWorkedBE;
@@ -185,36 +211,48 @@ export default function WFHRatioChart({ inputs }: Props) {
     if (data.length === 0) return null;
 
     const zoneRows: ZoneRow[] = [
-      { x1: 0, x2: T_90, fill: "rgba(34, 197, 94, 0.06)" },
-      { x1: T_90, x2: T_25, fill: "rgba(96, 165, 250, 0.025)" },
-      { x1: T_25, x2: T_49, fill: "rgba(168, 85, 247, 0.025)" },
-      { x1: T_49, x2: 1, fill: "rgba(245, 158, 11, 0.025)" },
+      { x1: 0, x2: T_90, fill: "var(--bt-success)", fillOpacity: 0.06 },
+      { x1: T_90, x2: T_25, fill: "var(--bt-threshold-info)", fillOpacity: 0.025 },
+      { x1: T_25, x2: T_49, fill: "var(--bt-threshold-purple)", fillOpacity: 0.025 },
+      { x1: T_49, x2: 1, fill: "var(--bt-threshold-warning)", fillOpacity: 0.025 },
     ];
     const chipRows: ChipRow[] = [
       {
         x: T_90,
         label: m.wfh_threshold_10_label({}, { locale }),
-        color: "rgba(96, 165, 250, 0.9)",
+        color: "var(--bt-threshold-info)",
       },
       {
         x: T_25,
         label: m.wfh_threshold_25_label({}, { locale }),
-        color: "rgba(245, 158, 11, 0.9)",
+        color: "var(--bt-threshold-warning)",
       },
       {
         x: T_49,
         label: m.wfh_threshold_49_label({}, { locale }),
-        color: "rgba(168, 85, 247, 0.9)",
+        color: "var(--bt-threshold-purple)",
       },
     ];
-    const currentPoint: XYPoint[] = [{ x: currentBeRatio, y: currentNet }];
-    const optimalPoint: XYPoint[] = showOptimalMarker ? [{ x: optimalBeRatio, y: optimalNet }] : [];
+    // The current/optimal markers sit on the net-income curve, so they follow its visibility.
+    const showNetMarkers = visibleSeries.includes("net");
+    const currentPoint: XYPoint[] = showNetMarkers ? [{ x: currentBeRatio, y: currentNet }] : [];
+    const optimalPoint: XYPoint[] =
+      showNetMarkers && showOptimalMarker ? [{ x: optimalBeRatio, y: optimalNet }] : [];
     const thresholdRules: XPoint[] = [{ x: T_90 }, { x: T_25 }, { x: T_49 }];
     const thresholdColors = [
-      "rgba(96, 165, 250, 0.7)",
-      "rgba(245, 158, 11, 0.7)",
-      "rgba(168, 85, 247, 0.7)",
+      "var(--bt-threshold-info)",
+      "var(--bt-threshold-warning)",
+      "var(--bt-threshold-purple)",
     ];
+    const seriesDomain = showBE ? ALL_SERIES : ALL_SERIES.filter((series) => series !== "be");
+    const visibleInDomain: readonly Series[] = visibleSeries.filter((series) =>
+      seriesDomain.includes(series),
+    );
+    const seriesLabels: Record<Series, string> = {
+      net: stripColon(m.summary_net_income()),
+      nl: `🇳🇱 ${stripColon(m.summary_dutch_tax())}`,
+      be: `🇧🇪 ${stripColon(m.summary_belgian_tax())}`,
+    };
 
     return defineChart(
       {
@@ -228,6 +266,7 @@ export default function WFHRatioChart({ inputs }: Props) {
                 y1: () => yLow,
                 y2: () => yHigh,
                 fill: row.fill,
+                fillOpacity: row.fillOpacity,
                 inset: 0,
               }),
             ),
@@ -237,6 +276,7 @@ export default function WFHRatioChart({ inputs }: Props) {
               id: "net-area",
               x: "beRatio",
               y: "netIncome",
+              color: () => "net",
               fill: "url(#wfh-net-grad)",
             }),
           ),
@@ -244,31 +284,30 @@ export default function WFHRatioChart({ inputs }: Props) {
             id: "net-line",
             x: "beRatio",
             y: "netIncome",
-            stroke: "var(--bt-success)",
+            color: () => "net",
             strokeWidth: 2.5,
+            states: legendEmphasis,
           }),
-          decorative(
-            lineY(data, {
-              id: "nl-line",
-              x: "beRatio",
-              y: "nlTax",
-              stroke: "var(--bt-nl)",
-              strokeWidth: 2,
-              strokeOpacity: 0.85,
-            }),
-          ),
+          lineY(data, {
+            id: "nl-line",
+            x: "beRatio",
+            y: "nlTax",
+            color: () => "nl",
+            strokeWidth: 2,
+            strokeOpacity: 0.85,
+            states: legendEmphasis,
+          }),
           ...(showBE
             ? [
-                decorative(
-                  lineY(data, {
-                    id: "be-line",
-                    x: "beRatio",
-                    y: "beTax",
-                    stroke: "var(--bt-be)",
-                    strokeWidth: 2,
-                    strokeOpacity: 0.85,
-                  }),
-                ),
+                lineY(data, {
+                  id: "be-line",
+                  x: "beRatio",
+                  y: "beTax",
+                  color: () => "be",
+                  strokeWidth: 2,
+                  strokeOpacity: 0.85,
+                  states: legendEmphasis,
+                }),
               ]
             : []),
           ...thresholdRules.map((row, i) =>
@@ -276,28 +315,32 @@ export default function WFHRatioChart({ inputs }: Props) {
               id: `threshold-${i}`,
               x: "x",
               stroke: thresholdColors[i],
+              strokeOpacity: 0.7,
               strokeWidth: 1.5,
               strokeDasharray: "5 3",
             }),
           ),
-          decorative(
-            textMark(chipRows, {
-              id: "threshold-chips",
-              x: "x",
-              y: () => yHigh,
-              text: "label",
-              fill: "color",
-              fontSize: 8,
-              fontWeight: 600,
-              anchor: "start",
-              dx: 4,
-              dy: 10,
-            }),
+          ...chipRows.map((row, i) =>
+            decorative(
+              textMark([row], {
+                id: `threshold-chip-${i}`,
+                x: "x",
+                y: () => yHigh,
+                text: "label",
+                fill: row.color,
+                fontSize: 8,
+                fontWeight: 600,
+                anchor: "start",
+                dx: 4,
+                dy: 10,
+              }),
+            ),
           ),
           ruleX([{ x: currentBeRatio }], {
             id: "current-line",
             x: "x",
-            stroke: "rgba(255, 255, 255, 0.55)",
+            stroke: "var(--bt-text)",
+            strokeOpacity: 0.55,
             strokeWidth: 1.5,
             strokeDasharray: "6 4",
           }),
@@ -330,7 +373,8 @@ export default function WFHRatioChart({ inputs }: Props) {
               y: "y",
               r: 5,
               fill: "var(--bt-bg)",
-              stroke: "rgba(255, 255, 255, 0.85)",
+              stroke: "var(--bt-text)",
+              strokeOpacity: 0.85,
               strokeWidth: 2.5,
             }),
           ),
@@ -339,8 +383,8 @@ export default function WFHRatioChart({ inputs }: Props) {
               id: "hover-net-dot",
               x: "beRatio",
               y: "netIncome",
+              z: () => "net",
               r: 4,
-              fill: "var(--bt-success)",
               stroke: "var(--bt-bg)",
               strokeWidth: 2,
             }),
@@ -351,8 +395,8 @@ export default function WFHRatioChart({ inputs }: Props) {
               id: "hover-nl-dot",
               x: "beRatio",
               y: "nlTax",
+              z: () => "nl",
               r: 3,
-              fill: "var(--bt-nl)",
               stroke: "var(--bt-bg)",
               strokeWidth: 2,
             }),
@@ -365,8 +409,8 @@ export default function WFHRatioChart({ inputs }: Props) {
                     id: "hover-be-dot",
                     x: "beRatio",
                     y: "beTax",
+                    z: () => "be",
                     r: 3,
-                    fill: "var(--bt-be)",
                     stroke: "var(--bt-bg)",
                     strokeWidth: 2,
                   }),
@@ -406,10 +450,21 @@ export default function WFHRatioChart({ inputs }: Props) {
             ],
           },
         ],
+        color: {
+          domain: seriesDomain,
+          range: seriesDomain.map((series) => SERIES_COLORS[series]),
+          legend: interactiveColorLegend<Series>({
+            visible: controlledSignal(visibleInDomain, setVisibleSeries),
+            hover: "series",
+            placement: "bottom",
+            ariaLabel: m.wfh_series_toggle_label(),
+            format: (series) => seriesLabels[series],
+          }),
+        },
         clip: true,
       },
       {
-        focus: "nearest-x",
+        focus: "group-x",
         maxFocusDistance: Number.POSITIVE_INFINITY,
         keyboard: true,
       },
@@ -426,6 +481,7 @@ export default function WFHRatioChart({ inputs }: Props) {
     yHigh,
     yTicks,
     locale,
+    visibleSeries,
   ]);
 
   if (nlbeDays === 0) {
@@ -474,20 +530,6 @@ export default function WFHRatioChart({ inputs }: Props) {
 
         {/* ── Legend — directly below chart, above readout ──────────── */}
         <div className="bt-year-chart__legend bt-wfh-legend">
-          <span className="bt-year-chart__legend-item">
-            <span className="bt-year-chart__legend-dot bg-success" />
-            {m.summary_net_income()}
-          </span>
-          <span className="bt-year-chart__legend-item">
-            <span className="bt-year-chart__legend-dot bg-nl" />
-            🇳🇱 {m.summary_dutch_tax()}
-          </span>
-          {showBE && (
-            <span className="bt-year-chart__legend-item">
-              <span className="bt-year-chart__legend-dot bg-be" />
-              🇧🇪 {m.summary_belgian_tax()}
-            </span>
-          )}
           <span className="bt-year-chart__legend-item">
             <span className="bt-wfh-legend-zone bt-wfh-legend-zone--full" />
             {m.wfh_zone_full_benefits()}

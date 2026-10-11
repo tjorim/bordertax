@@ -192,6 +192,7 @@
   "wfh_threshold_25_label": "25% rule",
   "wfh_be_split": "🏠 BE split",
   "wfh_hover_hint": "Hover the chart to explore scenarios",
+  "wfh_series_toggle_label": "Toggle chart series",
   "wfh_table_show": "Show detail table",
   "wfh_table_hide": "Hide detail table",
   "summary_sourcing_title": "Income sourcing ratio",
