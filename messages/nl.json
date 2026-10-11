@@ -192,6 +192,7 @@
   "wfh_threshold_25_label": "25%-regel",
   "wfh_be_split": "🏠 BE-verdeling",
   "wfh_hover_hint": "Beweeg over de grafiek om scenario's te verkennen",
+  "wfh_series_toggle_label": "Reeksen in grafiek tonen of verbergen",
   "wfh_table_show": "Detailtabel tonen",
   "wfh_table_hide": "Detailtabel verbergen",
   "summary_sourcing_title": "Bronverhouding inkomen",
