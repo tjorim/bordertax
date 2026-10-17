@@ -3,15 +3,16 @@ import { BarChart3, House, PieChart } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { lazyView } from "@/lib/lazyView";
 import { calculate } from "@/tax";
-import { isThirtyPercentRulingSupportedResident, VALID_YEARS } from "@/tax/constants";
+import { isThirtyPercentRulingSupportedResident } from "@/tax/constants";
 import type { TaxInputs } from "@/tax/types";
 import * as m from "@/paraglide/messages.js";
 import { LazyBoundary } from "../LazyBoundary";
 import BEResult from "./BEResult";
-import MultiYearComparison from "./MultiYearComparison";
 import NLResult from "./NLResult";
 import SummaryResult from "./SummaryResult";
 
+const yearComparisonView = lazyView(() => import("./YearComparison"));
+const YearComparison = yearComparisonView.Component;
 const wfhChartView = lazyView(() => import("./WFHRatioChart"));
 const WFHRatioChart = wfhChartView.Component;
 
@@ -22,25 +23,18 @@ interface ResultsTabsProps {
 
 export default function ResultsTabs({ inputs, onResetInputs }: ResultsTabsProps) {
   const result = useMemo(() => calculate(inputs), [inputs]);
-  const comparisonResults = useMemo(
-    () =>
-      VALID_YEARS.map((year) => ({
-        year,
-        result: year === inputs.year ? result : calculate({ ...inputs, year }),
-      })),
-    [inputs, result],
-  );
-
   const [tab, setTab] = useState<string | number | null>("summary");
-  // The chart chunk loads on first selection; later it stays mounted like the other panels.
-  const [wfhRequested, setWfhRequested] = useState(false);
+  // These panels load on first selection; later they stay mounted like the other panels.
+  const [requested, setRequested] = useState({ years: false, wfh: false });
 
   return (
     <Tabs
       value={tab}
       onValueChange={(next) => {
         setTab(next);
-        if (next === "wfh") setWfhRequested(true);
+        if (next === "years" || next === "wfh") {
+          setRequested((prev) => ({ ...prev, [next]: true }));
+        }
       }}
     >
       <TabsList aria-label={m.tabs_results_label()}>
@@ -54,7 +48,12 @@ export default function ResultsTabs({ inputs, onResetInputs }: ResultsTabsProps)
         <TabsTrigger value="be" aria-label={m.tabs_be()}>
           🇧🇪 {m.tabs_be()}
         </TabsTrigger>
-        <TabsTrigger value="years" aria-label={m.tabs_year_comparison()}>
+        <TabsTrigger
+          value="years"
+          aria-label={m.tabs_year_comparison()}
+          onPointerEnter={yearComparisonView.preload}
+          onFocus={yearComparisonView.preload}
+        >
           <BarChart3 className="size-3" aria-hidden="true" />
           {m.tabs_year_comparison()}
         </TabsTrigger>
@@ -87,10 +86,14 @@ export default function ResultsTabs({ inputs, onResetInputs }: ResultsTabsProps)
           <BEResult result={result.be} residentCountry={inputs.residentCountry} />
         </TabsContent>
         <TabsContent value="years">
-          <MultiYearComparison rows={comparisonResults} activeYear={inputs.year} />
+          {requested.years && (
+            <LazyBoundary view={yearComparisonView}>
+              <YearComparison inputs={inputs} result={result} />
+            </LazyBoundary>
+          )}
         </TabsContent>
         <TabsContent value="wfh">
-          {wfhRequested && (
+          {requested.wfh && (
             <LazyBoundary view={wfhChartView}>
               <WFHRatioChart inputs={inputs} />
             </LazyBoundary>

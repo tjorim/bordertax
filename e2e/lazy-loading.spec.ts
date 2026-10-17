@@ -15,7 +15,13 @@ test("defers the home ratio chart chunk until its tab is used", async ({ page })
 
   await page.goto("/");
   await expect(page.getByRole("tab", { name: "Summary" })).toHaveAttribute("aria-selected", "true");
-  expect(scripts.filter((url) => /WFHRatioChart|Reference/.test(url))).toEqual([]);
+  expect(scripts.filter((url) => /WFHRatioChart|YearComparison|Reference/.test(url))).toEqual([]);
+
+  await page.getByRole("tab", { name: "Year comparison" }).click();
+  await expect(
+    page.getByRole("tabpanel", { name: "Year comparison" }).getByRole("table"),
+  ).toBeVisible();
+  expect(scripts.some((url) => url.includes("YearComparison"))).toBe(true);
 
   await page.getByRole("tab", { name: "Home ratio" }).click();
   await expect(page.getByRole("tabpanel", { name: "Home ratio" })).toBeVisible();

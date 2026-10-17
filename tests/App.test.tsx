@@ -103,6 +103,17 @@ describe("App", () => {
     expect(panel).not.toBeEmptyDOMElement();
   });
 
+  it("defers the year comparison until its tab is requested", async () => {
+    render(<App />);
+    const panel = screen.getAllByRole("tabpanel", { hidden: true })[3]!; // years is the fourth tab
+    expect(panel).toBeEmptyDOMElement();
+
+    fireEvent.click(screen.getByRole("tab", { name: /year comparison/i }));
+    await waitFor(() => expect(within(panel).getByRole("table")).toBeInTheDocument(), {
+      timeout: 5000,
+    });
+  });
+
   it("loads saved inputs from localStorage", () => {
     const savedInputs = {
       year: 2024,
