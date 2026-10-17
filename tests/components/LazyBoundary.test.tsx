@@ -1,6 +1,7 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { LazyBoundary, lazyView } from "@/components/LazyBoundary";
+import { LazyBoundary } from "@/components/LazyBoundary";
+import { lazyView } from "@/lib/lazyView";
 import { setLocale } from "@/paraglide/runtime";
 
 interface Props {
