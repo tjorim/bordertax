@@ -2,14 +2,20 @@ import { Suspense, type ReactNode } from "react";
 import { ErrorBoundary, type FallbackProps } from "react-error-boundary";
 import { useRouter, type ErrorComponentProps } from "@tanstack/react-router";
 import { TriangleAlert } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import type { LazyView } from "@/lib/lazyView";
 import * as m from "../paraglide/messages.js";
 
-export function LazyLoading() {
+interface LazyLoadingProps {
+  /** Reserve roughly the loaded content's height so the page does not jump on arrival. */
+  className?: string;
+}
+
+export function LazyLoading({ className }: LazyLoadingProps) {
   return (
-    <div className="flex items-center justify-center p-6">
+    <div className={cn("flex items-start justify-center p-6", className)}>
       <Spinner />
     </div>
   );
@@ -50,17 +56,18 @@ export function RouteLoadError({ reset }: ErrorComponentProps) {
 
 interface LazyBoundaryProps {
   view: Pick<LazyView<object>, "reset">;
+  loadingClassName?: string;
   children: ReactNode;
 }
 
 /** Suspense fallback plus chunk-failure recovery around a lazily loaded view. */
-export function LazyBoundary({ view, children }: LazyBoundaryProps) {
+export function LazyBoundary({ view, loadingClassName, children }: LazyBoundaryProps) {
   const renderError = ({ resetErrorBoundary }: FallbackProps) => (
     <LazyError onRetry={resetErrorBoundary} />
   );
   return (
     <ErrorBoundary fallbackRender={renderError} onReset={view.reset}>
-      <Suspense fallback={<LazyLoading />}>{children}</Suspense>
+      <Suspense fallback={<LazyLoading className={loadingClassName} />}>{children}</Suspense>
     </ErrorBoundary>
   );
 }

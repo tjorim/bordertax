@@ -16,6 +16,13 @@ const YearComparison = yearComparisonView.Component;
 const wfhChartView = lazyView(() => import("./WFHRatioChart"));
 const WFHRatioChart = wfhChartView.Component;
 
+// Preload on hover, keyboard focus and touch/press, so the chunk is usually in by the click.
+const preloadOnIntent = (view: { preload: () => void }) => ({
+  onPointerEnter: view.preload,
+  onPointerDown: view.preload,
+  onFocus: view.preload,
+});
+
 interface ResultsTabsProps {
   inputs: TaxInputs;
   onResetInputs: () => void;
@@ -51,18 +58,12 @@ export default function ResultsTabs({ inputs, onResetInputs }: ResultsTabsProps)
         <TabsTrigger
           value="years"
           aria-label={m.tabs_year_comparison()}
-          onPointerEnter={yearComparisonView.preload}
-          onFocus={yearComparisonView.preload}
+          {...preloadOnIntent(yearComparisonView)}
         >
           <BarChart3 className="size-3" aria-hidden="true" />
           {m.tabs_year_comparison()}
         </TabsTrigger>
-        <TabsTrigger
-          value="wfh"
-          aria-label={m.tabs_wfh_ratio()}
-          onPointerEnter={wfhChartView.preload}
-          onFocus={wfhChartView.preload}
-        >
+        <TabsTrigger value="wfh" aria-label={m.tabs_wfh_ratio()} {...preloadOnIntent(wfhChartView)}>
           <House className="size-3" aria-hidden="true" />
           {m.tabs_wfh_ratio()}
         </TabsTrigger>
@@ -87,14 +88,14 @@ export default function ResultsTabs({ inputs, onResetInputs }: ResultsTabsProps)
         </TabsContent>
         <TabsContent value="years">
           {requested.years && (
-            <LazyBoundary view={yearComparisonView}>
+            <LazyBoundary view={yearComparisonView} loadingClassName="min-h-180">
               <YearComparison inputs={inputs} result={result} />
             </LazyBoundary>
           )}
         </TabsContent>
         <TabsContent value="wfh">
           {requested.wfh && (
-            <LazyBoundary view={wfhChartView}>
+            <LazyBoundary view={wfhChartView} loadingClassName="min-h-200">
               <WFHRatioChart inputs={inputs} />
             </LazyBoundary>
           )}
