@@ -3,6 +3,10 @@ name: PR Preview Build
 on:
   pull_request:
     types: [opened, synchronize, reopened]
+    paths-ignore:
+      - '.github/dependabot.yml'
+      - 'docs/**'
+      - '**/*.md'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
