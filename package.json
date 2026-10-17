@@ -62,13 +62,13 @@
     "@testing-library/dom": "^10.4.2",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.3",
-    "@testing-library/user-event": "^14.6.7",
+    "@testing-library/user-event": "^14.6.8",
     "@types/node": "^26.6.5",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.1.2",
-    "@vitest/coverage-v8": "^5.0.3",
-    "@vitest/ui": "^5.0.3",
+    "@vitest/coverage-v8": "^5.0.4",
+    "@vitest/ui": "^5.0.4",
     "happy-dom": "^20.14.5",
     "lightningcss": "^1.33.0",
     "oxc-parser": "^0.153.0",
@@ -78,7 +78,7 @@
     "terser": "^5.51.2",
     "typescript": "~7.0.2",
     "vite": "^8.3.4",
-    "vitest": "^5.0.3"
+    "vitest": "^5.0.4"
   },
   "engines": {
     "node": ">=24.0.0"
