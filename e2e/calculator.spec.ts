@@ -28,7 +28,7 @@ test("changing the year and income updates the page", async ({ page }) => {
 });
 
 test("switches between result tabs", async ({ page }) => {
-  for (const name of ["Netherlands", "Belgium", "Year comparison", "Home ratio", "Summary"]) {
+  for (const name of ["Netherlands", "Belgium", "Home ratio", "Year comparison", "Summary"]) {
     const tab = page.getByRole("tab", { name });
     await tab.click();
     await expect(tab).toHaveAttribute("aria-selected", "true");

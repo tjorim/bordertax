@@ -9,9 +9,9 @@ import {
   TableCell,
 } from "@/components/ui/table";
 
-import type { TaxResult } from "../tax/types";
-import * as m from "../paraglide/messages.js";
-import { fmtExact as fmt } from "./format.js";
+import type { TaxResult } from "@/tax/types";
+import * as m from "@/paraglide/messages.js";
+import { fmtExact as fmt } from "../format.js";
 
 interface Props {
   result: TaxResult;

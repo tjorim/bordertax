@@ -1,10 +1,10 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import SummaryResult from "@/components/SummaryResult";
+import SummaryResult from "@/components/results/SummaryResult";
 import * as m from "@/paraglide/messages.js";
 import { fmtExact } from "@/components/format";
-import { mockTaxResult, mockTaxResultNoBE } from "../test-utils/mockData";
+import { mockTaxResult, mockTaxResultNoBE } from "../../test-utils/mockData";
 
 describe("SummaryResult", () => {
   beforeEach(() => {

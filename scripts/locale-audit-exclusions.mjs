@@ -15,14 +15,14 @@ export const exclusions = {
     "🇧🇪&thinsp;🇳🇱": "flag emoji",
     Bordertax: "fixed application brand",
   },
-  "components/FilingChecklist.tsx": {
+  "components/results/FilingChecklist.tsx": {
     "Mijn Belastingdienst": "official portal name",
     "MyMinfin / Tax-on-web": "official portal name",
   },
   "components/PageHero.tsx": {
     "🇧🇪&thinsp;🇳🇱&nbsp;": "flag emoji",
   },
-  "components/SummaryResult.tsx": {
+  "components/results/SummaryResult.tsx": {
     "━━━ Bordertax ·": "fixed application brand in the copied summary header",
   },
   "pages/PensionReference.tsx": {

@@ -41,11 +41,11 @@ import { controlledSignal } from "@tanstack/charts/interaction/signal";
 import { interactiveColorLegend } from "@tanstack/charts/legend";
 import { motion } from "@tanstack/charts/motion";
 import { Chart } from "@tanstack/charts/react/core";
-import { calculate } from "../tax";
-import type { TaxInputs } from "../tax/types";
-import { getLocale } from "../paraglide/runtime.js";
-import * as m from "../paraglide/messages.js";
-import { fmt, pct } from "./format.js";
+import { calculate } from "@/tax";
+import type { TaxInputs } from "@/tax/types";
+import { getLocale } from "@/paraglide/runtime.js";
+import * as m from "@/paraglide/messages.js";
+import { fmt, pct } from "../format.js";
 
 interface Props {
   inputs: TaxInputs;

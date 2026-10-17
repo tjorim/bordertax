@@ -1,10 +1,10 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import BEResult from "@/components/BEResult";
+import BEResult from "@/components/results/BEResult";
 import type { TaxInputs } from "@/tax/types";
 import * as m from "@/paraglide/messages.js";
-import { mockBEResult } from "../test-utils/mockData";
+import { mockBEResult } from "../../test-utils/mockData";
 
 describe("BEResult", () => {
   // TODO: Re-enable when NL-resident support is re-integrated

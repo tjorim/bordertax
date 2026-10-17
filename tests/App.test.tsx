@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, within } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("@tanstack/react-router", async (importOriginal) => {
@@ -84,7 +84,41 @@ describe("App", () => {
   it("renders a tab for NL, BE and year comparison", () => {
     render(<App />);
     const tabs = screen.getAllByRole("tab");
-    expect(tabs.length).toBe(5); // summary, NL, BE, years, wfh
+    expect(tabs.length).toBe(5);
+    expect(tabs.map((tab) => tab.getAttribute("aria-label"))).toEqual([
+      "Summary",
+      "Netherlands",
+      "Belgium",
+      "Home ratio",
+      "Year comparison",
+    ]);
+  });
+
+  it("defers the home ratio chart until its tab is requested", async () => {
+    render(<App />);
+    const panel = screen.getAllByRole("tabpanel", { hidden: true })[3]!; // wfh is the fourth tab
+    expect(panel).toBeEmptyDOMElement();
+
+    fireEvent.click(screen.getByRole("tab", { name: /home ratio/i }));
+    await waitFor(() => expect(panel).not.toBeEmptyDOMElement(), { timeout: 5000 });
+    expect(screen.getByRole("tab", { name: /home ratio/i })).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
+
+    fireEvent.click(screen.getByRole("tab", { name: /summary/i }));
+    expect(panel).not.toBeEmptyDOMElement();
+  });
+
+  it("defers the year comparison until its tab is requested", async () => {
+    render(<App />);
+    const panel = screen.getAllByRole("tabpanel", { hidden: true })[4]!; // years is the last tab
+    expect(panel).toBeEmptyDOMElement();
+
+    fireEvent.click(screen.getByRole("tab", { name: /year comparison/i }));
+    await waitFor(() => expect(within(panel).getByRole("table")).toBeInTheDocument(), {
+      timeout: 5000,
+    });
   });
 
   it("loads saved inputs from localStorage", () => {

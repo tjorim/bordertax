@@ -1,14 +1,13 @@
 import {
   Outlet,
   createRootRoute,
+  lazyRouteComponent,
   createRoute,
   createRouter,
   redirect,
 } from "@tanstack/react-router";
 import App from "./App";
-import PensionReference from "./pages/PensionReference";
-import ReferenceOverview from "./pages/ReferenceOverview";
-import SalarySplitReference from "./pages/SalarySplitReference";
+import { LazyLoading, RouteLoadError } from "./components/LazyBoundary";
 import { deLocalizeUrl, getLocale, localizeUrl, shouldRedirect } from "./paraglide/runtime.js";
 
 const rootRoute = createRootRoute({
@@ -31,19 +30,19 @@ const indexRoute = createRoute({
 const referenceOverviewRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/reference",
-  component: ReferenceOverview,
+  component: lazyRouteComponent(() => import("./pages/ReferenceOverview")),
 });
 
 const referenceRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/reference/salary-split",
-  component: SalarySplitReference,
+  component: lazyRouteComponent(() => import("./pages/SalarySplitReference")),
 });
 
 const pensionRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/reference/pension",
-  component: PensionReference,
+  component: lazyRouteComponent(() => import("./pages/PensionReference")),
 });
 
 const routeTree = rootRoute.addChildren([
@@ -56,6 +55,8 @@ const routeTree = rootRoute.addChildren([
 export const router = createRouter({
   routeTree,
   defaultPreload: "intent",
+  defaultPendingComponent: LazyLoading,
+  defaultErrorComponent: RouteLoadError,
   scrollRestoration: true,
   defaultStructuralSharing: true,
   rewrite: {

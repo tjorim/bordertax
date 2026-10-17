@@ -86,10 +86,11 @@ export default defineConfig({
         entryFileNames: "assets/js/[name]-[hash].js",
         assetFileNames: "assets/[ext]/[name]-[hash].[ext]",
         manualChunks(id) {
-          if (id.includes("node_modules")) {
-            if (id.includes("react") || id.includes("react-dom")) {
-              return "vendor-react";
-            }
+          // Match the React runtime packages exactly. A substring match also pulls in
+          // every package with "react" in its name (charts, table, router, icons),
+          // which would keep lazily loaded views in the initial vendor chunk.
+          if (/[\\/]node_modules[\\/](?:react|react-dom|scheduler)[\\/]/.test(id)) {
+            return "vendor-react";
           }
         },
       },

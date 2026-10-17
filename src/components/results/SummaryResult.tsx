@@ -13,10 +13,10 @@ import {
 import { useEffect, useState } from "react";
 
 import { cn } from "@/lib/utils";
-import type { TaxResult } from "../tax/types";
-import { getNLFractions, getTotalWorkdays } from "../tax/workdays";
-import * as m from "../paraglide/messages.js";
-import { fmt, fmtSigned, pct } from "./format.js";
+import type { TaxResult } from "@/tax/types";
+import { getNLFractions, getTotalWorkdays } from "@/tax/workdays";
+import * as m from "@/paraglide/messages.js";
+import { fmt, fmtSigned, pct } from "../format.js";
 import FilingChecklist from "./FilingChecklist";
 
 interface Props {
