@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, within } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("@tanstack/react-router", async (importOriginal) => {
@@ -85,6 +85,22 @@ describe("App", () => {
     render(<App />);
     const tabs = screen.getAllByRole("tab");
     expect(tabs.length).toBe(5); // summary, NL, BE, years, wfh
+  });
+
+  it("defers the home ratio chart until its tab is requested", async () => {
+    render(<App />);
+    const panel = screen.getAllByRole("tabpanel", { hidden: true })[4]; // wfh is the last tab
+    expect(panel).toBeEmptyDOMElement();
+
+    fireEvent.click(screen.getByRole("tab", { name: /home ratio/i }));
+    await waitFor(() => expect(panel).not.toBeEmptyDOMElement(), { timeout: 5000 });
+    expect(screen.getByRole("tab", { name: /home ratio/i })).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
+
+    fireEvent.click(screen.getByRole("tab", { name: /summary/i }));
+    expect(panel).not.toBeEmptyDOMElement();
   });
 
   it("loads saved inputs from localStorage", () => {

@@ -10,7 +10,7 @@ import NLResult from "./components/NLResult";
 import BEResult from "./components/BEResult";
 import SummaryResult from "./components/SummaryResult";
 import MultiYearComparison from "./components/MultiYearComparison";
-import WFHRatioChart from "./components/WFHRatioChart";
+import { LazyBoundary, lazyView } from "./components/LazyBoundary";
 import { calculate } from "./tax";
 import type { TaxInputs } from "./tax/types";
 import { isThirtyPercentRulingSupportedResident, VALID_YEARS } from "./tax/constants";
@@ -40,6 +40,9 @@ export const DEFAULT_INPUTS: TaxInputs = {
   withheldTaxNL: 0,
   sickDays: 0,
 };
+
+const wfhChartView = lazyView(() => import("./components/WFHRatioChart"));
+const WFHRatioChart = wfhChartView.Component;
 
 const taxFormOptions = formOptions({ defaultValues: DEFAULT_INPUTS });
 export type TaxFormApi = ReactFormType<typeof taxFormOptions>;
@@ -80,8 +83,18 @@ function ResultsTabs({ inputs, onResetInputs }: ResultsTabsProps) {
     [inputs, result],
   );
 
+  const [tab, setTab] = useState<string | number | null>("summary");
+  // The chart chunk loads on first selection; later it stays mounted like the other panels.
+  const [wfhRequested, setWfhRequested] = useState(false);
+
   return (
-    <Tabs defaultValue="summary">
+    <Tabs
+      value={tab}
+      onValueChange={(next) => {
+        setTab(next);
+        if (next === "wfh") setWfhRequested(true);
+      }}
+    >
       <TabsList aria-label={m.tabs_results_label()}>
         <TabsTrigger value="summary" aria-label={m.tabs_summary()}>
           <PieChart className="size-3" aria-hidden="true" />
@@ -97,7 +110,12 @@ function ResultsTabs({ inputs, onResetInputs }: ResultsTabsProps) {
           <BarChart3 className="size-3" aria-hidden="true" />
           {m.tabs_year_comparison()}
         </TabsTrigger>
-        <TabsTrigger value="wfh" aria-label={m.tabs_wfh_ratio()}>
+        <TabsTrigger
+          value="wfh"
+          aria-label={m.tabs_wfh_ratio()}
+          onPointerEnter={wfhChartView.preload}
+          onFocus={wfhChartView.preload}
+        >
           <House className="size-3" aria-hidden="true" />
           {m.tabs_wfh_ratio()}
         </TabsTrigger>
@@ -124,7 +142,11 @@ function ResultsTabs({ inputs, onResetInputs }: ResultsTabsProps) {
           <MultiYearComparison rows={comparisonResults} activeYear={inputs.year} />
         </TabsContent>
         <TabsContent value="wfh">
-          <WFHRatioChart inputs={inputs} />
+          {wfhRequested && (
+            <LazyBoundary view={wfhChartView}>
+              <WFHRatioChart inputs={inputs} />
+            </LazyBoundary>
+          )}
         </TabsContent>
       </div>
     </Tabs>
