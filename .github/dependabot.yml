@@ -1,6 +1,8 @@
 version: 2
 updates:
   - package-ecosystem: "npm"
+    allow:
+      - dependency-type: all
     directory: "/"
     open-pull-requests-limit: 20
     schedule:
