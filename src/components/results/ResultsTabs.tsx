@@ -55,6 +55,10 @@ export default function ResultsTabs({ inputs, onResetInputs }: ResultsTabsProps)
         <TabsTrigger value="be" aria-label={m.tabs_be()}>
           🇧🇪 {m.tabs_be()}
         </TabsTrigger>
+        <TabsTrigger value="wfh" aria-label={m.tabs_wfh_ratio()} {...preloadOnIntent(wfhChartView)}>
+          <House className="size-3" aria-hidden="true" />
+          {m.tabs_wfh_ratio()}
+        </TabsTrigger>
         <TabsTrigger
           value="years"
           aria-label={m.tabs_year_comparison()}
@@ -62,10 +66,6 @@ export default function ResultsTabs({ inputs, onResetInputs }: ResultsTabsProps)
         >
           <BarChart3 className="size-3" aria-hidden="true" />
           {m.tabs_year_comparison()}
-        </TabsTrigger>
-        <TabsTrigger value="wfh" aria-label={m.tabs_wfh_ratio()} {...preloadOnIntent(wfhChartView)}>
-          <House className="size-3" aria-hidden="true" />
-          {m.tabs_wfh_ratio()}
         </TabsTrigger>
       </TabsList>
 
@@ -86,17 +86,17 @@ export default function ResultsTabs({ inputs, onResetInputs }: ResultsTabsProps)
         <TabsContent value="be" className="bt-be-accent">
           <BEResult result={result.be} residentCountry={inputs.residentCountry} />
         </TabsContent>
-        <TabsContent value="years">
-          {requested.years && (
-            <LazyBoundary view={yearComparisonView} loadingClassName="min-h-180">
-              <YearComparison inputs={inputs} result={result} />
-            </LazyBoundary>
-          )}
-        </TabsContent>
         <TabsContent value="wfh">
           {requested.wfh && (
             <LazyBoundary view={wfhChartView} loadingClassName="min-h-200">
               <WFHRatioChart inputs={inputs} />
+            </LazyBoundary>
+          )}
+        </TabsContent>
+        <TabsContent value="years">
+          {requested.years && (
+            <LazyBoundary view={yearComparisonView} loadingClassName="min-h-180">
+              <YearComparison inputs={inputs} result={result} />
             </LazyBoundary>
           )}
         </TabsContent>
