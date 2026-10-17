@@ -2,10 +2,10 @@ import { Alert } from "@/components/ui/alert";
 import { CircleCheck, Info, TriangleAlert } from "lucide-react";
 import { Table, TableBody, TableRow, TableCell } from "@/components/ui/table";
 
-import type { BETaxResult, TaxInputs } from "../tax/types";
-import * as m from "../paraglide/messages.js";
-import { fmtExact as fmt, pctExact as pct } from "./format.js";
-import { CodeBadge } from "./CodeBadge";
+import type { BETaxResult, TaxInputs } from "@/tax/types";
+import * as m from "@/paraglide/messages.js";
+import { fmtExact as fmt, pctExact as pct } from "../format.js";
+import { CodeBadge } from "../CodeBadge";
 
 interface Props {
   result: BETaxResult | null;

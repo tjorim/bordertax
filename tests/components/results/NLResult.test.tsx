@@ -1,8 +1,8 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import NLResult from "@/components/NLResult";
-import { mockNLResult } from "../test-utils/mockData";
+import NLResult from "@/components/results/NLResult";
+import { mockNLResult } from "../../test-utils/mockData";
 
 describe("NLResult", () => {
   it("renders without crashing", () => {

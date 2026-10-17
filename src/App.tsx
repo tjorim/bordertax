@@ -1,20 +1,11 @@
 import { TriangleAlert } from "lucide-react";
 import { formOptions, useForm, useSelector, type ReactFormType } from "@tanstack/react-form";
 import { useEffect, useMemo, useState } from "react";
-import { BarChart3, House, PieChart } from "lucide-react";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "./components/ui/tabs";
 import { ErrorBoundary, type FallbackProps } from "react-error-boundary";
 
 import InputPanel from "./components/InputPanel";
-import NLResult from "./components/NLResult";
-import BEResult from "./components/BEResult";
-import SummaryResult from "./components/SummaryResult";
-import MultiYearComparison from "./components/MultiYearComparison";
-import { LazyBoundary } from "./components/LazyBoundary";
-import { lazyView } from "./lib/lazyView";
-import { calculate } from "./tax";
+import ResultsTabs from "./components/results/ResultsTabs";
 import type { TaxInputs } from "./tax/types";
-import { isThirtyPercentRulingSupportedResident, VALID_YEARS } from "./tax/constants";
 import { TaxInputSchema, PersistedInputsSchema, type PersistedInputs } from "./tax/schema";
 import * as m from "./paraglide/messages.js";
 import { getLocale } from "./paraglide/runtime.js";
@@ -42,9 +33,6 @@ export const DEFAULT_INPUTS: TaxInputs = {
   sickDays: 0,
 };
 
-const wfhChartView = lazyView(() => import("./components/WFHRatioChart"));
-const WFHRatioChart = wfhChartView.Component;
-
 const taxFormOptions = formOptions({ defaultValues: DEFAULT_INPUTS });
 export type TaxFormApi = ReactFormType<typeof taxFormOptions>;
 
@@ -66,92 +54,6 @@ function loadInitialInputs(): TaxInputs {
   } catch {
     return DEFAULT_INPUTS;
   }
-}
-
-interface ResultsTabsProps {
-  inputs: TaxInputs;
-  onResetInputs: () => void;
-}
-
-function ResultsTabs({ inputs, onResetInputs }: ResultsTabsProps) {
-  const result = useMemo(() => calculate(inputs), [inputs]);
-  const comparisonResults = useMemo(
-    () =>
-      VALID_YEARS.map((year) => ({
-        year,
-        result: year === inputs.year ? result : calculate({ ...inputs, year }),
-      })),
-    [inputs, result],
-  );
-
-  const [tab, setTab] = useState<string | number | null>("summary");
-  // The chart chunk loads on first selection; later it stays mounted like the other panels.
-  const [wfhRequested, setWfhRequested] = useState(false);
-
-  return (
-    <Tabs
-      value={tab}
-      onValueChange={(next) => {
-        setTab(next);
-        if (next === "wfh") setWfhRequested(true);
-      }}
-    >
-      <TabsList aria-label={m.tabs_results_label()}>
-        <TabsTrigger value="summary" aria-label={m.tabs_summary()}>
-          <PieChart className="size-3" aria-hidden="true" />
-          {m.tabs_summary()}
-        </TabsTrigger>
-        <TabsTrigger value="nl" aria-label={m.tabs_nl()}>
-          🇳🇱 {m.tabs_nl()}
-        </TabsTrigger>
-        <TabsTrigger value="be" aria-label={m.tabs_be()}>
-          🇧🇪 {m.tabs_be()}
-        </TabsTrigger>
-        <TabsTrigger value="years" aria-label={m.tabs_year_comparison()}>
-          <BarChart3 className="size-3" aria-hidden="true" />
-          {m.tabs_year_comparison()}
-        </TabsTrigger>
-        <TabsTrigger
-          value="wfh"
-          aria-label={m.tabs_wfh_ratio()}
-          onPointerEnter={wfhChartView.preload}
-          onFocus={wfhChartView.preload}
-        >
-          <House className="size-3" aria-hidden="true" />
-          {m.tabs_wfh_ratio()}
-        </TabsTrigger>
-      </TabsList>
-
-      <div>
-        <TabsContent value="summary">
-          <SummaryResult result={result} onResetInputs={onResetInputs} />
-        </TabsContent>
-        <TabsContent value="nl" className="bt-nl-accent">
-          <NLResult
-            result={result.nl}
-            withheldTaxNL={inputs.withheldTaxNL}
-            thirtyPercentRuling={
-              isThirtyPercentRulingSupportedResident(inputs.residentCountry) &&
-              inputs.thirtyPercentRuling
-            }
-          />
-        </TabsContent>
-        <TabsContent value="be" className="bt-be-accent">
-          <BEResult result={result.be} residentCountry={inputs.residentCountry} />
-        </TabsContent>
-        <TabsContent value="years">
-          <MultiYearComparison rows={comparisonResults} activeYear={inputs.year} />
-        </TabsContent>
-        <TabsContent value="wfh">
-          {wfhRequested && (
-            <LazyBoundary view={wfhChartView}>
-              <WFHRatioChart inputs={inputs} />
-            </LazyBoundary>
-          )}
-        </TabsContent>
-      </div>
-    </Tabs>
-  );
 }
 
 function ResultsErrorFallback({ error }: FallbackProps) {

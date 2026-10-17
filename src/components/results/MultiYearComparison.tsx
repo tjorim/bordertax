@@ -24,11 +24,11 @@ import {
   type SortingState,
   useTable,
 } from "@tanstack/react-table";
-import { VALID_YEARS } from "../tax/constants";
-import type { TaxYear } from "../tax/constants";
-import type { TaxResult } from "../tax/types";
-import * as m from "../paraglide/messages.js";
-import { fmt, pct } from "./format.js";
+import { VALID_YEARS } from "@/tax/constants";
+import type { TaxYear } from "@/tax/constants";
+import type { TaxResult } from "@/tax/types";
+import * as m from "@/paraglide/messages.js";
+import { fmt, pct } from "../format.js";
 
 interface ComparisonRow {
   year: (typeof VALID_YEARS)[number];

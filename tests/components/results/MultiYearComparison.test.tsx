@@ -2,9 +2,9 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 
-import MultiYearComparison from "@/components/MultiYearComparison";
+import MultiYearComparison from "@/components/results/MultiYearComparison";
 import type { TaxYear } from "@/tax/constants";
-import { mockTaxResult } from "../test-utils/mockData";
+import { mockTaxResult } from "../../test-utils/mockData";
 import { calculate } from "@/tax";
 
 const rows = [2024, 2025].map((year) => ({
