@@ -1,5 +1,5 @@
 import { Input } from "@/components/ui/input";
-import { FieldLabel, FieldDescription } from "@/components/ui/field";
+import { Field, FieldDescription, FieldError, FieldLabel } from "@/components/ui/field";
 import type { ReactNode } from "react";
 
 export function fieldError(errors: unknown[] | undefined): string | undefined {
@@ -45,7 +45,7 @@ export function NumberField({
   const describedBy = [hint && hintId, error && errorId].filter(Boolean).join(" ") || undefined;
 
   return (
-    <div>
+    <Field invalid={!!error}>
       <FieldLabel htmlFor={id}>{label}</FieldLabel>
       <Input
         id={id}
@@ -66,17 +66,9 @@ export function NumberField({
         aria-invalid={!!error}
         aria-describedby={describedBy}
       />
-      {hint && hintId && (
-        <FieldDescription id={hintId} className="text-text-muted">
-          {hint}
-        </FieldDescription>
-      )}
-      {error && (
-        <div id={errorId} className="mt-1 text-hint text-danger">
-          {error}
-        </div>
-      )}
-    </div>
+      {hint && hintId && <FieldDescription id={hintId}>{hint}</FieldDescription>}
+      {error && <FieldError id={errorId}>{error}</FieldError>}
+    </Field>
   );
 }
 

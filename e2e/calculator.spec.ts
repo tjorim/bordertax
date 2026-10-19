@@ -48,7 +48,7 @@ test("cycles the theme through auto, light and dark", async ({ page }) => {
 
 test("switches locale in place", async ({ page }) => {
   await expect(page.locator("html")).toHaveAttribute("lang", "en");
-  await page.getByRole("button", { name: "NL" }).click();
+  await page.getByRole("button", { name: "NL", exact: true }).click();
   await expect(page.locator("html")).toHaveAttribute("lang", "nl");
   await expect(page.getByRole("tab", { name: "Overzicht" })).toBeVisible();
 });
