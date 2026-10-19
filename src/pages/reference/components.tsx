@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils";
 import { AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { ExternalLink, FileText, Lightbulb, TriangleAlert } from "lucide-react";
+import { Alert } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 
 // ── Shared styled sub-components for reference pages ────────────
@@ -88,25 +89,25 @@ export function StatRow({
 
 export function TipBox({ children }: { children: React.ReactNode }) {
   return (
-    <div role="note" className="p-4 rounded-md mb-4 ref-tip-box">
+    <Alert variant="info" role="note" className="text-sm">
       <Lightbulb
         aria-hidden="true"
         className="inline size-4 shrink-0 align-text-bottom me-2 text-info"
       />
       {children}
-    </div>
+    </Alert>
   );
 }
 
 export function WarnBox({ children }: { children: React.ReactNode }) {
   return (
-    <div role="alert" className="p-4 rounded-md mb-4 ref-warn-box">
+    <Alert variant="warning" className="text-sm">
       <TriangleAlert
         aria-hidden="true"
         className="inline size-4 shrink-0 align-text-bottom me-2 text-warning"
       />
       {children}
-    </div>
+    </Alert>
   );
 }
 

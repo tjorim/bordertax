@@ -10,3 +10,9 @@ Variants use `class-variance-authority` and are exported (`buttonVariants`,
 Bordertax `outline-primary` and `outline-secondary` label buttons. Forms use
 `Field*` helpers with explicit input IDs; checkbox values use Base UI
 `onCheckedChange`. Tooltips need a `TooltipProvider` above them.
+
+Before adding custom UI, check this folder, then the registry
+(`pnpm dlx shadcn@latest add <component> --dry-run --view`) and the official docs
+for an existing variant. `native-select` is generated; `field`, `tabs`, `table`
+and `dropdown-menu` are owned adaptations. `docs/shadcn-adoption-audit.md` records
+each keep/extend/replace decision and its reason.

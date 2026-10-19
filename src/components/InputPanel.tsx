@@ -7,7 +7,8 @@ import {
 } from "@/components/ui/accordion";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { FieldLabel, FieldDescription, NativeSelect, CheckboxField } from "@/components/ui/field";
+import { FieldLabel, FieldDescription, CheckboxField } from "@/components/ui/field";
+import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
 import { Coins, EyeOff, Info, User } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
@@ -85,9 +86,9 @@ export default function InputPanel({ form }: Props) {
                     onBlur={field.handleBlur}
                   >
                     {VALID_YEARS.map((y) => (
-                      <option key={y} value={y}>
+                      <NativeSelectOption key={y} value={y}>
                         {y}
-                      </option>
+                      </NativeSelectOption>
                     ))}
                   </NativeSelect>
                 </div>
@@ -108,10 +109,14 @@ export default function InputPanel({ form }: Props) {
                       onBlur={field.handleBlur}
                     >
                       {(VALID_RESIDENT_COUNTRIES as readonly string[]).includes("BE") && (
-                        <option value="BE">🇧🇪 {m.input_resident_country_be()}</option>
+                        <NativeSelectOption value="BE">
+                          🇧🇪 {m.input_resident_country_be()}
+                        </NativeSelectOption>
                       )}
                       {(VALID_RESIDENT_COUNTRIES as readonly string[]).includes("NL") && (
-                        <option value="NL">🇳🇱 {m.input_resident_country_nl()}</option>
+                        <NativeSelectOption value="NL">
+                          🇳🇱 {m.input_resident_country_nl()}
+                        </NativeSelectOption>
                       )}
                     </NativeSelect>
                   </div>
@@ -142,10 +147,14 @@ export default function InputPanel({ form }: Props) {
                       onBlur={field.handleBlur}
                     >
                       {(VALID_CIVIL_STATUSES as readonly string[]).includes("single") && (
-                        <option value="single">{m.input_civil_status_single()}</option>
+                        <NativeSelectOption value="single">
+                          {m.input_civil_status_single()}
+                        </NativeSelectOption>
                       )}
                       {(VALID_CIVIL_STATUSES as readonly string[]).includes("married") && (
-                        <option value="married">{m.input_civil_status_married()}</option>
+                        <NativeSelectOption value="married">
+                          {m.input_civil_status_married()}
+                        </NativeSelectOption>
                       )}
                     </NativeSelect>
                   </div>
@@ -214,13 +223,19 @@ export default function InputPanel({ form }: Props) {
                           onBlur={field.handleBlur}
                         >
                           {(VALID_BELGIAN_REGIONS as readonly string[]).includes("flemish") && (
-                            <option value="flemish">{m.input_belgian_region_flemish()}</option>
+                            <NativeSelectOption value="flemish">
+                              {m.input_belgian_region_flemish()}
+                            </NativeSelectOption>
                           )}
                           {(VALID_BELGIAN_REGIONS as readonly string[]).includes("walloon") && (
-                            <option value="walloon">{m.input_belgian_region_walloon()}</option>
+                            <NativeSelectOption value="walloon">
+                              {m.input_belgian_region_walloon()}
+                            </NativeSelectOption>
                           )}
                           {(VALID_BELGIAN_REGIONS as readonly string[]).includes("brussels") && (
-                            <option value="brussels">{m.input_belgian_region_brussels()}</option>
+                            <NativeSelectOption value="brussels">
+                              {m.input_belgian_region_brussels()}
+                            </NativeSelectOption>
                           )}
                         </NativeSelect>
                       </div>

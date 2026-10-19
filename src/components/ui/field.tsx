@@ -1,6 +1,5 @@
 import type { ComponentProps, ReactNode } from "react";
 import { cn } from "@/lib/utils";
-import { inputClasses } from "./input";
 import { Checkbox } from "./checkbox";
 
 export function FieldLabel({ className, ...props }: ComponentProps<"label">) {
@@ -16,9 +15,6 @@ export function FieldLabel({ className, ...props }: ComponentProps<"label">) {
 }
 export function FieldDescription({ className, ...props }: ComponentProps<"div">) {
   return <div className={cn("mt-1 text-hint text-text-muted", className)} {...props} />;
-}
-export function NativeSelect({ className, ...props }: ComponentProps<"select">) {
-  return <select className={cn(inputClasses, className)} {...props} />;
 }
 export function CheckboxField({
   id,
