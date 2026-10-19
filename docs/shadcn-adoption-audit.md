@@ -81,6 +81,12 @@ Outcome: `CodeBadge` renders a `Popover` whose trigger is a button with
 text as before. Keyboard-only sighted users get no new way to open the popover,
 which is the same as with `title`; tab order is unchanged.
 
+Trade-offs: the `tabIndex={-1}` buttons are extra "button" elements in screen-reader
+browse mode (dozens per result panel), even though they are not tab stops. Their
+long accessible names also matched the substring `NL` in
+`e2e/calculator.spec.ts`, which is why that locator now uses `exact: true`.
+Revisit if screen-reader testing shows the extra buttons are noisy.
+
 ## Unused generated primitives
 
 `label` and `popover` gained consumers (`Field`, `CodeBadge`). The rest had none
