@@ -1,4 +1,4 @@
-# shadcn component adoption audit (issue #303)
+# shadcn component adoption audit (issues #303, #305)
 
 Review of `src/components/ui` and the application compositions against the
 configured registry (`base-mira`, `components.json`). Sources were compared with
@@ -31,32 +31,69 @@ The CLI writes `import { cn } from "cn"`; every file here imports `cn` from
 | Card                 | `ui/card.tsx`                     | adapted     | **Keep**                                         | reference pages, overview                             | Registry also has `CardAction`, `CardFooter` and sizes; unused here.                                                                                                                                                                                                                                                                           |
 | Table                | `ui/table.tsx`                    | custom      | **Keep**                                         | results, filing checklist, WFH, reference             | `bordered`/`responsive`/`hover` props, a keyboard-focusable scroll container and row variants (`primary`, `nl`, `be`…) have no registry equivalent. TanStack Table supplies sorting.                                                                                                                                                           |
 | Input / Checkbox     | `ui/input.tsx`, `ui/checkbox.tsx` | adapted     | **Keep**                                         | `NumberField`, `CheckboxField`                        | Registry structure with Bordertax tokens. `inputClasses` is shared with `NativeSelect`.                                                                                                                                                                                                                                                        |
-| Field helpers        | `ui/field.tsx`                    | custom      | **Keep** (follow-up, see below)                  | `NumberField`, `InputPanel`                           | Not the registry `field`. A `Field`/`FieldGroup`/`FieldError` migration changes every form layout and error announcement, so it is a separate piece of work.                                                                                                                                                                                   |
+| Field composition    | `ui/field.tsx`, `ui/label.tsx`    | adapted     | **Replaced** (issue #305)                        | `NumberField`, `CheckboxField`, `InputPanel`          | Registry `Field`, `FieldGroup`, `FieldLabel` (built on `Label`), `FieldDescription`, `FieldError` and `FieldContent` with Bordertax tokens. See "Field composition" below.                                                                                                                                                                     |
 | Spinner              | `ui/spinner.tsx`                  | adapted     | **Keep**                                         | `LazyBoundary`                                        | The registry file with a localised accessible name.                                                                                                                                                                                                                                                                                            |
 | Loading state        | `LazyBoundary`                    | custom      | **Keep**                                         | lazy WFH chart / year comparison                      | Reserves the loaded panel height (`min-h-*`); a skeleton would need per-panel layouts. Retry/reload buttons already use `Button`.                                                                                                                                                                                                              |
-| Code badge           | `components/CodeBadge.tsx`        | custom      | **Keep**                                         | BE/NL result panels                                   | The registry `tooltip` would make each box code a focus stop (dozens per panel; badges are deliberately not tab stops). The `title`/`aria-label` text stays; a touch-friendly pattern is a follow-up.                                                                                                                                          |
+| Code badge           | `components/CodeBadge.tsx`        | composition | **Replaced** `title` with `Popover` (issue #305) | BE/NL result panels, `InputPanel`                     | Registry `tooltip` never opens on touch and `popover` normally adds a tab stop per code. Decision recorded in "CodeBadge touch access" below.                                                                                                                                                                                                  |
 | Navigation links     | `AppNavbar`, `ReferenceOverview`  | custom      | **Keep**                                         | all routes                                            | Router `Link`s with active state. Registry `navigation-menu` targets mega-menus; the collapsible nav + menu already covers the requirement.                                                                                                                                                                                                    |
 | Empty state          | –                                 | –           | **No consumer**                                  | –                                                     | The app has no empty list/result views (`RatioTable` returns `null` when it has no rows). Nothing to replace with registry `empty`.                                                                                                                                                                                                            |
 | Pagination           | –                                 | –           | **No consumer**                                  | –                                                     | No paginated list.                                                                                                                                                                                                                                                                                                                             |
 | Compact selection    | –                                 | –           | **No gap**                                       | –                                                     | Selection is a native select, one checkbox and tabs. No segmented/toggle-group need.                                                                                                                                                                                                                                                           |
 | Distribution segment | `ui/distribution-segment.tsx`     | custom      | **Keep**                                         | workday bar, summary, year comparison                 | Chart-specific SVG whose width is an attribute (no inline styles); registry `progress` is a single-value bar.                                                                                                                                                                                                                                  |
 
+## Field composition (issue #305)
+
+`ui/field.tsx` is now the registry `field` structure with Bordertax tokens:
+
+- `Field` (`role="group"`, `orientation="vertical" | "horizontal"`, `invalid`),
+  `FieldGroup`, `FieldContent`, `FieldLabel` (wraps `Label`), `FieldDescription`
+  (a `<p>`) and `FieldError`.
+- `invalid` sets `data-invalid`, which turns the label red from one place; the
+  input keeps `aria-invalid` and `aria-describedby` (hint + error ids).
+- `FieldError` renders `role="alert"`, so an error is announced when it appears
+  (the old `<div>` was silent).
+- `CheckboxField` (`fields/CheckboxField.tsx`) is a horizontal `Field` with a
+  `Checkbox` and a sentence-case `FieldLabel`; its hint stays below the row.
+- `FieldGroup` carries the accordion grid (`className="grid grid-cols-12"`, the
+  merge drops `flex`).
+- Not adopted: `FieldSet`/`FieldLegend` (no radio/checkbox groups),
+  `FieldSeparator` and `FieldTitle` (no consumer; this also removes the need for
+  `separator`).
+- Not adopted: a `required` indicator, as no field is required.
+
+## CodeBadge touch access (issue #305)
+
+Box codes used to be exposed through `title`/`aria-label` only. `title` does not
+open on touch, so mobile users could not read what `[1257]` means.
+
+| Option                                  | Touch | Extra tab stops | Verdict                                                                      |
+| --------------------------------------- | ----- | --------------- | ---------------------------------------------------------------------------- |
+| Keep `title`                            | no    | none            | Rejected: the gap this issue is about.                                       |
+| `Tooltip` (hover/focus)                 | no    | one per code    | Rejected: Base UI tooltips do not open on touch, and focus needs a tab stop. |
+| `Popover` with a normal button          | yes   | one per code    | Rejected: dozens of tab stops per result panel.                              |
+| `Popover` trigger with `tabIndex={-1}`  | yes   | none            | **Chosen.**                                                                  |
+| One toggle that lists every description | yes   | one             | Rejected for now: moves the text away from the value it explains.            |
+
+Outcome: `CodeBadge` renders a `Popover` whose trigger is a button with
+`tabIndex={-1}`. Tap or click opens the description, hover opens it on desktop
+(`openOnHover`), Escape or an outside tap closes it. The trigger keeps the full
+`aria-label` (`<prefix> <code> — <description>`), so screen readers read the same
+text as before. Keyboard-only sighted users get no new way to open the popover,
+which is the same as with `title`; tab order is unchanged.
+
+Trade-offs: the `tabIndex={-1}` buttons are extra "button" elements in screen-reader
+browse mode (dozens per result panel), even though they are not tab stops. Their
+long accessible names also matched the substring `NL` in
+`e2e/calculator.spec.ts`, which is why that locator now uses `exact: true`.
+Revisit if screen-reader testing shows the extra buttons are noisy.
+
 ## Unused generated primitives
 
-`alert-dialog`, `dialog`, `label`, `popover`, `progress`, `radio-group`, `select`,
-`separator`, `switch`, `textarea` and `tooltip` have no consumer. They remain as
-ready-to-use generated sources (they are not shipped in the bundle). Delete any
-that stay unused after the follow-ups, rather than restyling them.
-
-## Genuine gaps and follow-ups
-
-- **Field composition.** Adopt the registry `Field`, `FieldGroup`, `FieldError`
-  and `FieldLabel` (built on `Label`) so required/invalid state, `role="alert"`
-  errors and horizontal checkbox rows come from one place. Touches every form
-  field and the Playwright/axe label checks.
-- **Touch-accessible code descriptions.** Evaluate a `Popover` or `Tooltip`
-  pattern for `CodeBadge` that does not add a tab stop per code.
-- **Prune unused primitives** once the two items above are decided.
+`label` and `popover` gained consumers (`Field`, `CodeBadge`). The rest had none
+and were deleted rather than restyled: `alert-dialog`, `dialog`, `progress`,
+`radio-group`, `select`, `separator`, `switch`, `textarea` and `tooltip`. Add them
+again from the registry when a feature needs them
+(`pnpm dlx shadcn@latest add <component>`).
 
 ## Verification
 
@@ -70,3 +107,13 @@ offset (previously none); arrow keys change the native select; Enter/Space
 activate the sort headings (`aria-sort` updates) and the table toggle
 (`aria-expanded`). The `ref-link-card p-0` button and `ref-list-sub p-0`
 element computed to 0px padding in both themes.
+
+### Issue #305 verification
+
+Before and after screenshots of `/` (income and situation panels, results) in
+light and dark at 1440px and 390px. Checked: `Field` spacing and label wrapping
+match the old layout; invalid input shows the red label, `aria-invalid` and a
+`role="alert"` message; 40 Tab presses reach no `CodeBadge` trigger; a tap
+(390px, touch) or hover (1440px) on `[1257]` opens the popover in both themes
+and Escape closes it. `e2e/calculator.spec.ts` now matches the NL toggle with
+`exact: true`, because the badge buttons carry long accessible names.
