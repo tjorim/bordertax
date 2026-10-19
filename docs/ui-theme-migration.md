@@ -57,6 +57,12 @@ the accordion's inset offset. Numeric table cells and `bt-number` retain their
 monospace and tabular-number treatment. Badge labels are spans by default and
 introduce no extra focus stops or dialog/menu behavior.
 
+## Shared control audit
+
+Before custom UI work, check the shared controls in `src/components/ui`, the
+configured registry and the official docs. `docs/shadcn-adoption-audit.md` records
+which wrappers are generated, adapted or custom, and why each custom one remains.
+
 ## Verification
 
 Run `pnpm lint`, `pnpm typecheck`, `pnpm test`, and `pnpm build`.

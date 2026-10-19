@@ -7,7 +7,8 @@ import {
 } from "@/components/ui/accordion";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { FieldLabel, FieldDescription, NativeSelect, CheckboxField } from "@/components/ui/field";
+import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
 import { Coins, EyeOff, Info, User } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
@@ -26,6 +27,7 @@ import type { TaxFormApi } from "../App";
 import type { TaxInputs } from "../tax/types";
 import { getMaxDaysInYear, getNLFractions, getTotalWorkdays } from "../tax/workdays";
 import * as m from "../paraglide/messages.js";
+import { CheckboxField } from "./fields/CheckboxField";
 import { CurrencyField, NumberField, fieldError } from "./fields/NumberField";
 import { CodeBadge } from "./CodeBadge";
 
@@ -71,10 +73,10 @@ export default function InputPanel({ form }: Props) {
           {m.input_personal_situation()}
         </AccordionTrigger>
         <AccordionContent>
-          <div className="grid grid-cols-12 gap-4">
+          <FieldGroup className="grid grid-cols-12">
             <form.Field name="year">
               {(field) => (
-                <div className="col-span-12 table:col-span-6">
+                <Field className="col-span-12 table:col-span-6">
                   <FieldLabel htmlFor="tax-year">{m.input_tax_year()}</FieldLabel>
                   <NativeSelect
                     id="tax-year"
@@ -85,19 +87,19 @@ export default function InputPanel({ form }: Props) {
                     onBlur={field.handleBlur}
                   >
                     {VALID_YEARS.map((y) => (
-                      <option key={y} value={y}>
+                      <NativeSelectOption key={y} value={y}>
                         {y}
-                      </option>
+                      </NativeSelectOption>
                     ))}
                   </NativeSelect>
-                </div>
+                </Field>
               )}
             </form.Field>
 
             {VALID_RESIDENT_COUNTRIES.length > 1 && (
               <form.Field name="residentCountry">
                 {(field) => (
-                  <div className="col-span-12 table:col-span-6">
+                  <Field className="col-span-12 table:col-span-6">
                     <FieldLabel htmlFor="resident-country">{m.input_resident_country()}</FieldLabel>
                     <NativeSelect
                       id="resident-country"
@@ -108,13 +110,17 @@ export default function InputPanel({ form }: Props) {
                       onBlur={field.handleBlur}
                     >
                       {(VALID_RESIDENT_COUNTRIES as readonly string[]).includes("BE") && (
-                        <option value="BE">🇧🇪 {m.input_resident_country_be()}</option>
+                        <NativeSelectOption value="BE">
+                          🇧🇪 {m.input_resident_country_be()}
+                        </NativeSelectOption>
                       )}
                       {(VALID_RESIDENT_COUNTRIES as readonly string[]).includes("NL") && (
-                        <option value="NL">🇳🇱 {m.input_resident_country_nl()}</option>
+                        <NativeSelectOption value="NL">
+                          🇳🇱 {m.input_resident_country_nl()}
+                        </NativeSelectOption>
                       )}
                     </NativeSelect>
-                  </div>
+                  </Field>
                 )}
               </form.Field>
             )}
@@ -122,7 +128,7 @@ export default function InputPanel({ form }: Props) {
             {VALID_CIVIL_STATUSES.length > 1 && (
               <form.Field name="civilStatus">
                 {(field) => (
-                  <div className="col-span-12 table:col-span-6">
+                  <Field className="col-span-12 table:col-span-6">
                     <FieldLabel htmlFor="civil-status">
                       {m.input_civil_status()}{" "}
                       <Badge
@@ -142,13 +148,17 @@ export default function InputPanel({ form }: Props) {
                       onBlur={field.handleBlur}
                     >
                       {(VALID_CIVIL_STATUSES as readonly string[]).includes("single") && (
-                        <option value="single">{m.input_civil_status_single()}</option>
+                        <NativeSelectOption value="single">
+                          {m.input_civil_status_single()}
+                        </NativeSelectOption>
                       )}
                       {(VALID_CIVIL_STATUSES as readonly string[]).includes("married") && (
-                        <option value="married">{m.input_civil_status_married()}</option>
+                        <NativeSelectOption value="married">
+                          {m.input_civil_status_married()}
+                        </NativeSelectOption>
                       )}
                     </NativeSelect>
-                  </div>
+                  </Field>
                 )}
               </form.Field>
             )}
@@ -194,7 +204,7 @@ export default function InputPanel({ form }: Props) {
                 {VALID_BELGIAN_REGIONS.length > 1 && (
                   <form.Field name="belgianRegion">
                     {(field) => (
-                      <div className="col-span-12 table:col-span-6">
+                      <Field className="col-span-12 table:col-span-6">
                         <FieldLabel htmlFor="belgian-region">
                           {m.input_belgian_region()}{" "}
                           <Badge
@@ -214,16 +224,22 @@ export default function InputPanel({ form }: Props) {
                           onBlur={field.handleBlur}
                         >
                           {(VALID_BELGIAN_REGIONS as readonly string[]).includes("flemish") && (
-                            <option value="flemish">{m.input_belgian_region_flemish()}</option>
+                            <NativeSelectOption value="flemish">
+                              {m.input_belgian_region_flemish()}
+                            </NativeSelectOption>
                           )}
                           {(VALID_BELGIAN_REGIONS as readonly string[]).includes("walloon") && (
-                            <option value="walloon">{m.input_belgian_region_walloon()}</option>
+                            <NativeSelectOption value="walloon">
+                              {m.input_belgian_region_walloon()}
+                            </NativeSelectOption>
                           )}
                           {(VALID_BELGIAN_REGIONS as readonly string[]).includes("brussels") && (
-                            <option value="brussels">{m.input_belgian_region_brussels()}</option>
+                            <NativeSelectOption value="brussels">
+                              {m.input_belgian_region_brussels()}
+                            </NativeSelectOption>
                           )}
                         </NativeSelect>
-                      </div>
+                      </Field>
                     )}
                   </form.Field>
                 )}
@@ -262,7 +278,7 @@ export default function InputPanel({ form }: Props) {
                 </form.Field>
               </>
             )}
-          </div>
+          </FieldGroup>
         </AccordionContent>
       </AccordionItem>
 
@@ -273,9 +289,9 @@ export default function InputPanel({ form }: Props) {
           {m.input_income()}
         </AccordionTrigger>
         <AccordionContent>
-          <div className="grid grid-cols-12 gap-4">
+          <FieldGroup className="grid grid-cols-12">
             <div className="col-span-12">
-              <FieldDescription className="text-text-muted">
+              <FieldDescription className="mt-1">
                 {m.input_income_not_persisted_hint()}
               </FieldDescription>
             </div>
@@ -459,6 +475,7 @@ export default function InputPanel({ form }: Props) {
               <FieldDescription
                 role="status"
                 className={cn(
+                  "mt-1",
                   totalWorkdays === 0 || totalWorkdays > maxWorkdaysInYear
                     ? "text-warning"
                     : "text-text-muted",
@@ -468,9 +485,7 @@ export default function InputPanel({ form }: Props) {
                 {totalWorkdays === 0 && ` — ${m.input_workdays_total_zero_warning()}`}
                 {totalWorkdays > maxWorkdaysInYear && ` — ${m.input_workdays_total_high_warning()}`}
               </FieldDescription>
-              <FieldDescription className="text-text-muted block mt-1">
-                {m.input_workdays_typical()}
-              </FieldDescription>
+              <FieldDescription className="mt-1">{m.input_workdays_typical()}</FieldDescription>
               {values.residentCountry === "BE" && totalWorkdays > 0 && beFraction >= 0.5 && (
                 <Alert variant="warning" className="mt-2 py-2 text-sm mb-0">
                   {m.input_social_security_above_50()}
@@ -497,7 +512,7 @@ export default function InputPanel({ form }: Props) {
                       onCheckedChange={(checked) => field.handleChange(checked)}
                       aria-describedby="thirty-ruling-hint"
                     />
-                    <FieldDescription id="thirty-ruling-hint" className="text-text-muted">
+                    <FieldDescription id="thirty-ruling-hint" className="mt-1">
                       {m.input_thirty_percent_ruling_hint()}
                     </FieldDescription>
                   </div>
@@ -512,7 +527,7 @@ export default function InputPanel({ form }: Props) {
                   disabled
                   aria-describedby="thirty-ruling-hint"
                 />
-                <FieldDescription id="thirty-ruling-hint" className="text-text-muted">
+                <FieldDescription id="thirty-ruling-hint" className="mt-1">
                   {m.input_thirty_percent_ruling_unavailable_be()}
                 </FieldDescription>
               </div>
@@ -622,7 +637,7 @@ export default function InputPanel({ form }: Props) {
                 </div>
               )}
             </div>
-          </div>
+          </FieldGroup>
         </AccordionContent>
       </AccordionItem>
     </Accordion>

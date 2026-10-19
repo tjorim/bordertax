@@ -1,5 +1,6 @@
 import { ChartNoAxesCombined, ChevronDown, ChevronUp, CircleArrowUp, Info } from "lucide-react";
-import { ArrowUp, ArrowDown } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { SortHeaderButton } from "./SortHeaderButton";
 import {
   Table,
   TableHeader,
@@ -617,18 +618,16 @@ export default function WFHRatioChart({ inputs }: Props) {
       </div>
 
       {/* ── Table toggle ────────────────────────────────────────────── */}
-      <button
-        className="bt-wfh-table-toggle"
+      <Button
+        variant="outline"
+        size="sm"
+        className="mt-3 w-full justify-start font-mono"
         onClick={() => setTableOpen((v) => !v)}
         aria-expanded={tableOpen}
       >
-        {tableOpen ? (
-          <ChevronUp aria-hidden="true" className="inline size-4 me-1" />
-        ) : (
-          <ChevronDown aria-hidden="true" className="inline size-4 me-1" />
-        )}
+        {tableOpen ? <ChevronUp aria-hidden="true" /> : <ChevronDown aria-hidden="true" />}
         {tableOpen ? m.wfh_table_hide() : m.wfh_table_show()}
-      </button>
+      </Button>
 
       {/* ── Kaderakkoord note ────────────────────────────────────────── */}
       <p className="text-text-muted text-sm mt-2 mb-0">
@@ -842,19 +841,12 @@ function RatioTable({ data, currentIdx, optimalIdx, showBE }: RatioTableProps) {
                 }
               >
                 {header.column.getCanSort() ? (
-                  <button
-                    type="button"
-                    className="border-0 bg-transparent p-0 text-inherit no-underline"
+                  <SortHeaderButton
+                    sorted={header.column.getIsSorted()}
                     onClick={header.column.getToggleSortingHandler()}
                   >
                     {flexRender(header.column.columnDef.header, header.getContext())}
-                    {header.column.getIsSorted() === "asc" && (
-                      <ArrowUp className="ms-1 inline size-3" aria-hidden="true" />
-                    )}
-                    {header.column.getIsSorted() === "desc" && (
-                      <ArrowDown className="ms-1 inline size-3" aria-hidden="true" />
-                    )}
-                  </button>
+                  </SortHeaderButton>
                 ) : (
                   flexRender(header.column.columnDef.header, header.getContext())
                 )}

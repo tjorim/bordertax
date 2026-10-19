@@ -7,6 +7,13 @@ imports, then restyle it with Bordertax tokens and run `pnpm lint`.
 Variants use `class-variance-authority` and are exported (`buttonVariants`,
 `badgeVariants`, `alertVariants`). `Button` follows the shadcn variant names
 (`default`, `outline`, `secondary`, `ghost`, `destructive`, `link`) plus the
-Bordertax `outline-primary` and `outline-secondary` label buttons. Forms use
-`Field*` helpers with explicit input IDs; checkbox values use Base UI
-`onCheckedChange`. Tooltips need a `TooltipProvider` above them.
+Bordertax `outline-primary` and `outline-secondary` label buttons. Forms compose
+`Field`, `FieldLabel`, `FieldDescription` and `FieldError` with explicit input IDs;
+checkbox values use Base UI `onCheckedChange`.
+
+Before adding custom UI, check this folder, then the registry
+(`pnpm dlx shadcn@latest add <component> --dry-run --view`) and the official docs
+for an existing variant. `native-select` is generated; `field`, `tabs`, `table`
+and `dropdown-menu` are owned adaptations. Unused primitives are not kept: add
+them from the registry when a feature needs them. `docs/shadcn-adoption-audit.md` records
+each keep/extend/replace decision and its reason.

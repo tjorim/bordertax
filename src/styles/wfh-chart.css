@@ -420,30 +420,3 @@
   background: rgba(168, 85, 247, 0.2);
   border: 1px solid rgba(168, 85, 247, 0.35);
 }
-
-/* ── Table toggle button ──────────────────────────────────────── */
-.bt-wfh-table-toggle {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  width: 100%;
-  margin-top: 0.75rem;
-  padding: 0.4rem 0.75rem;
-  background: transparent;
-  border: 1px solid var(--bt-border);
-  border-radius: var(--bt-r-sm);
-  color: var(--bt-text-muted);
-  font-family: var(--bt-font-mono);
-  font-size: 0.72rem;
-  cursor: pointer;
-  transition:
-    border-color 0.15s,
-    color 0.15s,
-    background 0.15s;
-}
-
-.bt-wfh-table-toggle:hover {
-  border-color: var(--bt-border-hover);
-  color: var(--bt-text);
-  background: var(--bt-surface-2);
-}

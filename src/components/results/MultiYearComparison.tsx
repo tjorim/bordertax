@@ -1,5 +1,5 @@
 import { DistributionSegment } from "@/components/ui/distribution-segment";
-import { ArrowUp, ArrowDown } from "lucide-react";
+import { SortHeaderButton } from "./SortHeaderButton";
 import {
   Table,
   TableHeader,
@@ -198,19 +198,12 @@ export default function MultiYearComparison({ rows, activeYear }: Props) {
                   }
                 >
                   {header.column.getCanSort() ? (
-                    <button
-                      type="button"
-                      className=" border-0 bg-transparent text-brand-light p-0 text-inherit no-underline"
+                    <SortHeaderButton
+                      sorted={header.column.getIsSorted()}
                       onClick={header.column.getToggleSortingHandler()}
                     >
                       {flexRender(header.column.columnDef.header, header.getContext())}
-                      {header.column.getIsSorted() === "asc" && (
-                        <ArrowUp className="ms-1 inline size-3" aria-hidden="true" />
-                      )}
-                      {header.column.getIsSorted() === "desc" && (
-                        <ArrowDown className="ms-1 inline size-3" aria-hidden="true" />
-                      )}
-                    </button>
+                    </SortHeaderButton>
                   ) : (
                     flexRender(header.column.columnDef.header, header.getContext())
                   )}

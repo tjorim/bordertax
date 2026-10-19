@@ -13,19 +13,6 @@
 
 /* SectionCard */
 
-/* TipBox / WarnBox */
-.ref-tip-box {
-  background: var(--bt-info-dim);
-  border: 1px solid var(--bt-info-border);
-  font-size: 0.9rem;
-}
-
-.ref-warn-box {
-  background: var(--bt-warning-dim);
-  border: 1px solid var(--bt-warning-border);
-  font-size: 0.9rem;
-}
-
 /* StatRow */
 .ref-stat-row {
   border-bottom: 1px solid var(--bt-border-soft);

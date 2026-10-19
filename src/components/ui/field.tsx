@@ -1,37 +1,110 @@
-import type { ComponentProps, ReactNode } from "react";
+import { useMemo, type ComponentProps } from "react";
+import { cva, type VariantProps } from "class-variance-authority";
+import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import { inputClasses } from "./input";
-import { Checkbox } from "./checkbox";
 
-export function FieldLabel({ className, ...props }: ComponentProps<"label">) {
+function FieldGroup({ className, ...props }: ComponentProps<"div">) {
   return (
-    <label
-      className={cn(
-        "mb-1.5 inline-block text-label font-semibold uppercase tracking-table-heading text-text-muted",
-        className,
-      )}
+    <div
+      data-slot="field-group"
+      className={cn("group/field-group flex w-full flex-col gap-4", className)}
       {...props}
     />
   );
 }
-export function FieldDescription({ className, ...props }: ComponentProps<"div">) {
-  return <div className={cn("mt-1 text-hint text-text-muted", className)} {...props} />;
-}
-export function NativeSelect({ className, ...props }: ComponentProps<"select">) {
-  return <select className={cn(inputClasses, className)} {...props} />;
-}
-export function CheckboxField({
-  id,
-  label,
+
+const fieldVariants = cva("group/field flex w-full gap-1.5", {
+  variants: {
+    orientation: {
+      vertical: "flex-col *:w-full",
+      horizontal: "flex-row items-start gap-2 py-0.5",
+    },
+  },
+  defaultVariants: {
+    orientation: "vertical",
+  },
+});
+
+function Field({
   className,
+  orientation = "vertical",
+  invalid,
   ...props
-}: ComponentProps<typeof Checkbox> & { id: string; label: ReactNode }) {
+}: ComponentProps<"div"> & VariantProps<typeof fieldVariants> & { invalid?: boolean }) {
   return (
-    <div className={cn("flex items-start gap-2 py-0.5", className)}>
-      <Checkbox id={id} className="mt-1" {...props} />
-      <label htmlFor={id} className="text-sm text-text">
-        {label}
-      </label>
+    <div
+      role="group"
+      data-slot="field"
+      data-orientation={orientation}
+      data-invalid={invalid || undefined}
+      className={cn(fieldVariants({ orientation }), className)}
+      {...props}
+    />
+  );
+}
+
+function FieldContent({ className, ...props }: ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="field-content"
+      className={cn("flex flex-1 flex-col gap-1", className)}
+      {...props}
+    />
+  );
+}
+
+function FieldLabel({ className, ...props }: ComponentProps<typeof Label>) {
+  return (
+    <Label
+      data-slot="field-label"
+      className={cn("block w-fit leading-snug group-data-invalid/field:text-danger", className)}
+      {...props}
+    />
+  );
+}
+
+function FieldDescription({ className, ...props }: ComponentProps<"p">) {
+  return (
+    <p
+      data-slot="field-description"
+      className={cn("m-0 text-hint text-text-muted", className)}
+      {...props}
+    />
+  );
+}
+
+function FieldError({
+  className,
+  children,
+  errors,
+  ...props
+}: ComponentProps<"div"> & { errors?: Array<{ message?: string } | undefined> }) {
+  const content = useMemo(() => {
+    if (children) return children;
+    const messages = [...new Set(errors?.map((error) => error?.message).filter(Boolean))];
+    if (messages.length === 0) return null;
+    if (messages.length === 1) return messages[0];
+    return (
+      <ul className="ms-4 flex list-disc flex-col gap-1">
+        {messages.map((message) => (
+          <li key={message}>{message}</li>
+        ))}
+      </ul>
+    );
+  }, [children, errors]);
+
+  if (!content) return null;
+
+  return (
+    <div
+      role="alert"
+      data-slot="field-error"
+      className={cn("text-hint text-danger", className)}
+      {...props}
+    >
+      {content}
     </div>
   );
 }
+
+export { Field, FieldContent, FieldDescription, FieldError, FieldGroup, FieldLabel };
