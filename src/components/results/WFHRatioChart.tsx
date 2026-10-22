@@ -32,7 +32,8 @@ import {
   ruleX,
   text as textMark,
   whenFocused,
-  type ChartMarkStateContext,
+  type ChartLineStateStyle,
+  type ChartMarkState,
 } from "@tanstack/charts";
 import { decorative } from "@tanstack/charts/mark/decorative";
 import { crosshair } from "@tanstack/charts/crosshair";
@@ -80,11 +81,11 @@ const SERIES_COLORS: Record<Series, string> = {
 };
 
 // Dim the other series while a legend button is hovered or focused.
-const legendEmphasis = [
+const legendEmphasis: ChartMarkState<DataPoint, ChartLineStateStyle<DataPoint>>[] = [
   {
-    when: ({ focus, matches }: ChartMarkStateContext<DataPoint>) =>
-      focus.source === "legend" && !matches("series"),
+    when: { focus: "unmatched", source: "legend" },
     style: { opacity: 0.25 },
+    transition: { type: "tween", duration: 120, easing: "ease-out" },
   },
 ];
 
@@ -254,221 +255,216 @@ export default function WFHRatioChart({ inputs }: Props) {
       be: `🇧🇪 ${stripColon(m.summary_belgian_tax())}`,
     };
 
-    return defineChart(
-      {
-        marks: [
-          ...zoneRows.map((row, i) =>
-            decorative(
-              rect([row], {
-                id: `zone-${i}`,
-                x1: "x1",
-                x2: "x2",
-                y1: () => yLow,
-                y2: () => yHigh,
-                fill: row.fill,
-                fillOpacity: row.fillOpacity,
-                inset: 0,
-              }),
-            ),
-          ),
+    return defineChart({
+      marks: [
+        ...zoneRows.map((row, i) =>
           decorative(
-            areaY(data, {
-              id: "net-area",
-              x: "beRatio",
-              y: "netIncome",
-              color: () => "net",
-              fill: "url(#wfh-net-grad)",
+            rect([row], {
+              id: `zone-${i}`,
+              x1: "x1",
+              x2: "x2",
+              y1: () => yLow,
+              y2: () => yHigh,
+              fill: row.fill,
+              fillOpacity: row.fillOpacity,
+              inset: 0,
             }),
           ),
-          lineY(data, {
-            id: "net-line",
+        ),
+        decorative(
+          areaY(data, {
+            id: "net-area",
             x: "beRatio",
             y: "netIncome",
             color: () => "net",
-            strokeWidth: 2.5,
-            states: legendEmphasis,
+            fill: "url(#wfh-net-grad)",
           }),
-          lineY(data, {
-            id: "nl-line",
+        ),
+        lineY(data, {
+          id: "net-line",
+          x: "beRatio",
+          y: "netIncome",
+          color: () => "net",
+          strokeWidth: 2.5,
+          states: legendEmphasis,
+        }),
+        lineY(data, {
+          id: "nl-line",
+          x: "beRatio",
+          y: "nlTax",
+          color: () => "nl",
+          strokeWidth: 2,
+          strokeOpacity: 0.85,
+          states: legendEmphasis,
+        }),
+        ...(showBE
+          ? [
+              lineY(data, {
+                id: "be-line",
+                x: "beRatio",
+                y: "beTax",
+                color: () => "be",
+                strokeWidth: 2,
+                strokeOpacity: 0.85,
+                states: legendEmphasis,
+              }),
+            ]
+          : []),
+        ...thresholdRules.map((row, i) =>
+          ruleX([row], {
+            id: `threshold-${i}`,
+            x: "x",
+            stroke: thresholdColors[i],
+            strokeOpacity: 0.7,
+            strokeWidth: 1.5,
+            strokeDasharray: "5 3",
+          }),
+        ),
+        ...chipRows.map((row, i) =>
+          decorative(
+            textMark([row], {
+              id: `threshold-chip-${i}`,
+              x: "x",
+              y: () => yHigh,
+              text: "label",
+              fill: row.color,
+              fontSize: 8,
+              fontWeight: 600,
+              anchor: "start",
+              dx: 4,
+              dy: 10,
+            }),
+          ),
+        ),
+        ruleX([{ x: currentBeRatio }], {
+          id: "current-line",
+          x: "x",
+          stroke: "var(--bt-text)",
+          strokeOpacity: 0.55,
+          strokeWidth: 1.5,
+          strokeDasharray: "6 4",
+        }),
+        ...(showOptimalMarker
+          ? [
+              ruleX([{ x: optimalBeRatio }], {
+                id: "optimal-line",
+                x: "x",
+                stroke: "var(--bt-success)",
+                strokeWidth: 1,
+                strokeDasharray: "3 3",
+                strokeOpacity: 0.55,
+              }),
+              decorative(
+                dot(optimalPoint, {
+                  id: "optimal-dot",
+                  x: "x",
+                  y: "y",
+                  r: 6,
+                  fill: "var(--bt-success)",
+                  fillOpacity: 0.9,
+                }),
+              ),
+            ]
+          : []),
+        decorative(
+          dot(currentPoint, {
+            id: "current-dot",
+            x: "x",
+            y: "y",
+            r: 5,
+            fill: "var(--bt-bg)",
+            stroke: "var(--bt-text)",
+            strokeOpacity: 0.85,
+            strokeWidth: 2.5,
+          }),
+        ),
+        whenFocused(
+          dot(data, {
+            id: "hover-net-dot",
+            x: "beRatio",
+            y: "netIncome",
+            z: () => "net",
+            r: 4,
+            stroke: "var(--bt-bg)",
+            strokeWidth: 2,
+          }),
+          { match: "x" },
+        ),
+        whenFocused(
+          dot(data, {
+            id: "hover-nl-dot",
             x: "beRatio",
             y: "nlTax",
-            color: () => "nl",
+            z: () => "nl",
+            r: 3,
+            stroke: "var(--bt-bg)",
             strokeWidth: 2,
-            strokeOpacity: 0.85,
-            states: legendEmphasis,
           }),
-          ...(showBE
-            ? [
-                lineY(data, {
-                  id: "be-line",
+          { match: "x" },
+        ),
+        ...(showBE
+          ? [
+              whenFocused(
+                dot(data, {
+                  id: "hover-be-dot",
                   x: "beRatio",
                   y: "beTax",
-                  color: () => "be",
+                  z: () => "be",
+                  r: 3,
+                  stroke: "var(--bt-bg)",
                   strokeWidth: 2,
-                  strokeOpacity: 0.85,
-                  states: legendEmphasis,
                 }),
-              ]
-            : []),
-          ...thresholdRules.map((row, i) =>
-            ruleX([row], {
-              id: `threshold-${i}`,
-              x: "x",
-              stroke: thresholdColors[i],
-              strokeOpacity: 0.7,
-              strokeWidth: 1.5,
-              strokeDasharray: "5 3",
-            }),
-          ),
-          ...chipRows.map((row, i) =>
-            decorative(
-              textMark([row], {
-                id: `threshold-chip-${i}`,
-                x: "x",
-                y: () => yHigh,
-                text: "label",
-                fill: row.color,
-                fontSize: 8,
-                fontWeight: 600,
-                anchor: "start",
-                dx: 4,
-                dy: 10,
-              }),
-            ),
-          ),
-          ruleX([{ x: currentBeRatio }], {
-            id: "current-line",
-            x: "x",
-            stroke: "var(--bt-text)",
-            strokeOpacity: 0.55,
-            strokeWidth: 1.5,
-            strokeDasharray: "6 4",
-          }),
-          ...(showOptimalMarker
-            ? [
-                ruleX([{ x: optimalBeRatio }], {
-                  id: "optimal-line",
-                  x: "x",
-                  stroke: "var(--bt-success)",
-                  strokeWidth: 1,
-                  strokeDasharray: "3 3",
-                  strokeOpacity: 0.55,
-                }),
-                decorative(
-                  dot(optimalPoint, {
-                    id: "optimal-dot",
-                    x: "x",
-                    y: "y",
-                    r: 6,
-                    fill: "var(--bt-success)",
-                    fillOpacity: 0.9,
-                  }),
-                ),
-              ]
-            : []),
-          decorative(
-            dot(currentPoint, {
-              id: "current-dot",
-              x: "x",
-              y: "y",
-              r: 5,
-              fill: "var(--bt-bg)",
-              stroke: "var(--bt-text)",
-              strokeOpacity: 0.85,
-              strokeWidth: 2.5,
-            }),
-          ),
-          whenFocused(
-            dot(data, {
-              id: "hover-net-dot",
-              x: "beRatio",
-              y: "netIncome",
-              z: () => "net",
-              r: 4,
-              stroke: "var(--bt-bg)",
-              strokeWidth: 2,
-            }),
-            { match: "x" },
-          ),
-          whenFocused(
-            dot(data, {
-              id: "hover-nl-dot",
-              x: "beRatio",
-              y: "nlTax",
-              z: () => "nl",
-              r: 3,
-              stroke: "var(--bt-bg)",
-              strokeWidth: 2,
-            }),
-            { match: "x" },
-          ),
-          ...(showBE
-            ? [
-                whenFocused(
-                  dot(data, {
-                    id: "hover-be-dot",
-                    x: "beRatio",
-                    y: "beTax",
-                    z: () => "be",
-                    r: 3,
-                    stroke: "var(--bt-bg)",
-                    strokeWidth: 2,
-                  }),
-                  { match: "x" },
-                ),
-              ]
-            : []),
-          crosshair({ x: {}, y: false }),
-        ],
-        scales: {
-          x: {
-            scale: () => scaleLinear().domain([0, 1]),
-            axis: {
-              ticks: {
-                values: [0, 0.1, 0.25, 0.5, 0.75, 1],
-                format: (v: number) => `${Math.round(v * 100)}%`,
-              },
-              label: m.wfh_x_label({}, { locale }),
+                { match: "x" },
+              ),
+            ]
+          : []),
+        crosshair({ x: {}, y: false }),
+      ],
+      scales: {
+        x: {
+          scale: () => scaleLinear().domain([0, 1]),
+          axis: {
+            ticks: {
+              values: [0, 0.1, 0.25, 0.5, 0.75, 1],
+              format: (v: number) => `${Math.round(v * 100)}%`,
             },
-          },
-          y: {
-            scale: () => scaleLinear().domain([yLow, yHigh]),
-            grid: true,
-            axis: {
-              ticks: { values: yTicks, format: fmtK },
-            },
+            label: m.wfh_x_label({}, { locale }),
           },
         },
-        gradients: [
-          {
-            id: "wfh-net-grad",
-            y1: 0,
-            y2: 1,
-            stops: [
-              { offset: 0, color: "var(--bt-success)", opacity: 0.18 },
-              { offset: 1, color: "var(--bt-success)", opacity: 0.01 },
-            ],
+        y: {
+          scale: () => scaleLinear().domain([yLow, yHigh]),
+          grid: true,
+          axis: {
+            ticks: { values: yTicks, format: fmtK },
           },
-        ],
-        color: {
-          domain: seriesDomain,
-          range: seriesDomain.map((series) => SERIES_COLORS[series]),
-          legend: interactiveColorLegend<Series>({
-            visible: controlledSignal(visibleInDomain, setVisibleSeries),
-            hover: "series",
-            placement: "bottom",
-            ariaLabel: m.wfh_series_toggle_label(),
-            format: (series) => seriesLabels[series],
-          }),
         },
-        clip: true,
       },
-      {
-        focus: "group-x",
-        maxFocusDistance: Number.POSITIVE_INFINITY,
-        keyboard: true,
+      gradients: [
+        {
+          id: "wfh-net-grad",
+          y1: 0,
+          y2: 1,
+          stops: [
+            { offset: 0, color: "var(--bt-success)", opacity: 0.18 },
+            { offset: 1, color: "var(--bt-success)", opacity: 0.01 },
+          ],
+        },
+      ],
+      color: {
+        domain: seriesDomain,
+        range: seriesDomain.map((series) => SERIES_COLORS[series]),
+        legend: interactiveColorLegend<Series>({
+          visible: controlledSignal(visibleInDomain, setVisibleSeries),
+          hover: "series",
+          placement: "bottom",
+          ariaLabel: m.wfh_series_toggle_label(),
+          format: (series) => seriesLabels[series],
+        }),
       },
-    );
+      clip: true,
+      focus: "group-x",
+      maxFocusDistance: Number.POSITIVE_INFINITY,
+    });
   }, [
     data,
     showBE,
