@@ -128,10 +128,6 @@
 }
 
 @theme {
-  --container-reference-cards: 66.375rem;
-}
-
-@theme {
   --text-stat: 1.15rem;
   --text-section-label: 0.68rem;
 }

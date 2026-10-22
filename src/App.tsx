@@ -97,7 +97,7 @@ export default function App() {
         </span>
       </AppNavbar>
 
-      <main className="mx-auto max-w-6xl px-3 pb-12">
+      <main className="px-3 pb-12">
         <div className="grid grid-cols-1 gap-6 shell:grid-cols-12">
           {/* ── Left column: inputs ────────────────────────────── */}
           <div className="min-w-0 shell:col-span-5">
