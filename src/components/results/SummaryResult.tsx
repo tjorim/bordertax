@@ -1,3 +1,4 @@
+import { Card } from "@/components/ui/card";
 import { DistributionSegment } from "@/components/ui/distribution-segment";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -70,37 +71,8 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
 
   return (
     <div>
-      {/* Actions */}
-      <div className="flex flex-wrap items-center gap-2 mb-4">
-        <Button variant="outline-primary" size="sm" onClick={() => void copySummary()}>
-          <ClipboardIcon
-            aria-hidden="true"
-            className="inline size-4 shrink-0 align-text-bottom me-1"
-          />
-          {m.summary_copy()}
-        </Button>
-        <Button variant="outline-secondary" size="sm" onClick={onResetInputs}>
-          <RotateCcwIcon
-            aria-hidden="true"
-            className="inline size-4 shrink-0 align-text-bottom me-1"
-          />
-          {m.summary_reset()}
-        </Button>
-      </div>
-
-      {copyStatus === "success" && (
-        <Alert variant="success" className="py-2 mb-4">
-          {m.summary_copy_success()}
-        </Alert>
-      )}
-      {copyStatus === "error" && (
-        <Alert variant="warning" className="py-2 mb-4">
-          {m.summary_copy_error()}
-        </Alert>
-      )}
-
       {/* Hero: net income */}
-      <div className="bt-summary-hero">
+      <Card className="bt-summary-hero bg-success-dim">
         <div className="bt-summary-hero__eyebrow">
           {m.summary_net_income()} · {result.inputs.year}
         </div>
@@ -108,12 +80,34 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
         <div className="bt-summary-hero__amount" key={netIncome}>
           {fmt(netIncome)}
         </div>
-        <div className="bt-summary-hero__sub">
-          {m.summary_net_tax_split({
-            net: pct(1 - effectiveRateTotal),
-            tax: pct(effectiveRateTotal),
-          })}
+        {/* Stat cards */}
+        <div className="grid grid-cols-1 table:grid-cols-2 mt-6 text-center gap-4">
+          <div className="min-w-0">
+            <div className="bt-stat-card">
+              <div className="text-text-muted text-label font-medium uppercase tracking-wide">
+                {m.summary_net_monthly()}
+              </div>
+              <div className="font-mono text-stat tracking-tight font-bold text-success">
+                {fmt(netIncome / 12)}
+              </div>
+            </div>
+          </div>
+          <div className="min-w-0">
+            <div className="bt-stat-card">
+              <div className="text-text-muted text-label font-medium uppercase tracking-wide">
+                {m.summary_net_daily()}
+              </div>
+              <div className="font-mono text-stat tracking-tight font-bold text-success">
+                {totalWorkdays > 0 ? fmt(netIncome / totalWorkdays) : "—"}
+              </div>
+            </div>
+          </div>
         </div>
+      </Card>
+
+      <div className="flex flex-wrap items-baseline justify-between gap-2 mt-6 mb-3 text-sm text-text-muted">
+        <span>{m.summary_effective_rate_total()}</span>
+        <span className="font-mono font-semibold text-text">{pct(effectiveRateTotal)}</span>
       </div>
 
       {/* Allocation bar */}
@@ -189,45 +183,36 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
             −{fmt(totalTax)}
           </span>
         </div>
-        <div className="bt-breakdown__row bt-breakdown__row--muted">
-          <span className="bt-breakdown__label">{m.summary_effective_rate_total()}</span>
-          <span className="bt-breakdown__value">{pct(effectiveRateTotal)}</span>
-        </div>
       </div>
 
-      {/* Stat cards */}
-      <div className="grid grid-cols-12 mt-4 text-center gap-4">
-        <div className="col-span-4">
-          <div className="bt-stat-card">
-            <div className="text-text-muted text-label font-medium uppercase tracking-wide">
-              {m.summary_net_monthly()}
-            </div>
-            <div className="font-mono text-stat tracking-tight font-bold text-success">
-              {fmt(netIncome / 12)}
-            </div>
-          </div>
-        </div>
-        <div className="col-span-4">
-          <div className="bt-stat-card">
-            <div className="text-text-muted text-label font-medium uppercase tracking-wide">
-              {m.summary_effective_rate()}
-            </div>
-            <div className="font-mono text-stat tracking-tight font-bold">
-              {pct(effectiveRateTotal)}
-            </div>
-          </div>
-        </div>
-        <div className="col-span-4">
-          <div className="bt-stat-card">
-            <div className="text-text-muted text-label font-medium uppercase tracking-wide">
-              {m.summary_net_daily()}
-            </div>
-            <div className="font-mono text-stat tracking-tight font-bold text-success">
-              {totalWorkdays > 0 ? fmt(netIncome / totalWorkdays) : "—"}
-            </div>
-          </div>
-        </div>
+      {/* Actions */}
+      <div className="flex flex-wrap items-center gap-2 mt-4 mb-4">
+        <Button variant="outline-secondary" size="sm" onClick={() => void copySummary()}>
+          <ClipboardIcon
+            aria-hidden="true"
+            className="inline size-4 shrink-0 align-text-bottom me-1"
+          />
+          {m.summary_copy()}
+        </Button>
+        <Button variant="outline-secondary" size="sm" onClick={onResetInputs}>
+          <RotateCcwIcon
+            aria-hidden="true"
+            className="inline size-4 shrink-0 align-text-bottom me-1"
+          />
+          {m.summary_reset()}
+        </Button>
       </div>
+
+      {copyStatus === "success" && (
+        <Alert variant="success" className="py-2 mb-4">
+          {m.summary_copy_success()}
+        </Alert>
+      )}
+      {copyStatus === "error" && (
+        <Alert variant="warning" className="py-2 mb-4">
+          {m.summary_copy_error()}
+        </Alert>
+      )}
 
       <FilingChecklist result={result} />
 
