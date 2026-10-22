@@ -1,4 +1,4 @@
-import { Star } from "lucide-react";
+import { StarIcon } from "lucide-react";
 import {
   Table,
   TableHeader,
@@ -39,7 +39,7 @@ export default function NLResult({
 
       {thirtyPercentRuling && (
         <div className="bt-ruling-notice mb-4">
-          <Star aria-hidden="true" className="inline size-4 shrink-0 align-text-bottom me-2" />
+          <StarIcon aria-hidden="true" className="inline size-4 shrink-0 align-text-bottom me-2" />
           {m.input_thirty_percent_ruling_hint()}
         </div>
       )}

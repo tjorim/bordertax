@@ -1,23 +1,23 @@
 import { cn } from "@/lib/utils";
 import { Accordion } from "@/components/ui/accordion";
 import {
-  Archive,
-  Bandage,
-  Building,
-  CalendarCheck,
-  CircleArrowDown,
-  CircleArrowUp,
-  CircleMinus,
-  BadgeAlert,
-  DoorOpen,
-  FileText,
-  Flag,
-  Heart,
-  HeartPulse,
-  Hourglass,
-  Layers,
-  PiggyBank,
-  Receipt,
+  ArchiveIcon,
+  BadgeAlertIcon,
+  BandageIcon,
+  BuildingIcon,
+  CalendarCheckIcon,
+  CircleArrowDownIcon,
+  CircleArrowUpIcon,
+  CircleMinusIcon,
+  DoorOpenIcon,
+  FileTextIcon,
+  FlagIcon,
+  HeartIcon,
+  HeartPulseIcon,
+  HourglassIcon,
+  LayersIcon,
+  PiggyBankIcon,
+  ReceiptIcon,
 } from "lucide-react";
 import {
   Table,
@@ -50,7 +50,7 @@ export default function PensionReference() {
     <>
       <AppNavbar>
         <span className="ref-nav-text font-mono text-xs font-semibold tracking-wide text-text-muted">
-          <PiggyBank
+          <PiggyBankIcon
             aria-hidden="true"
             className="inline size-4 shrink-0 align-text-bottom me-2 text-be-light"
           />
@@ -62,7 +62,7 @@ export default function PensionReference() {
         <PageHero title={m.ref_pension_hero_title()} subtitle={m.ref_pension_hero_subtitle()} />
 
         {/* ── 3-pijler overzicht ────────────────────────────────── */}
-        <SectionCard title={m.ref_pension_s1_title()} icon={Layers} accent="neutral">
+        <SectionCard title={m.ref_pension_s1_title()} icon={LayersIcon} accent="neutral">
           <div className="grid grid-cols-12 gap-4">
             {[
               {
@@ -111,7 +111,7 @@ export default function PensionReference() {
         <div className="grid grid-cols-12 gap-6">
           <div className="col-span-12 shell:col-span-6">
             {/* ── AOW ────────────────────────────────────────────── */}
-            <SectionCard title={m.ref_pension_s_aow()} icon={Flag} accent="nl">
+            <SectionCard title={m.ref_pension_s_aow()} icon={FlagIcon} accent="nl">
               <StatRow label={m.ref_pension_aow_opbouw()} value="2%" />
               <StatRow
                 label={m.ref_pension_aow_volledig()}
@@ -235,7 +235,7 @@ export default function PensionReference() {
             </SectionCard>
 
             {/* ── ANW ────────────────────────────────────────────── */}
-            <SectionCard title={m.ref_pension_s_anw()} icon={HeartPulse} accent="nl">
+            <SectionCard title={m.ref_pension_s_anw()} icon={HeartPulseIcon} accent="nl">
               <StatRow
                 label={m.ref_pension_anw_uitkering()}
                 value={m.ref_pension_anw_uitkering_value()}
@@ -280,7 +280,7 @@ export default function PensionReference() {
             </SectionCard>
 
             {/* ── Bijverdienen bij AOW ───────────────────────────── */}
-            <SectionCard title={m.ref_pension_s_aow_work()} icon={BadgeAlert} accent="nl">
+            <SectionCard title={m.ref_pension_s_aow_work()} icon={BadgeAlertIcon} accent="nl">
               <WarnBox>{m.ref_pension_aow_work_warn()}</WarnBox>
               <ul className="text-sm mb-0 ref-list-sub">
                 <li>{m.ref_pension_aow_work_li1()}</li>
@@ -293,7 +293,7 @@ export default function PensionReference() {
 
           <div className="col-span-12 shell:col-span-6">
             {/* ── Aanvullend pensioen NL ─────────────────────────── */}
-            <SectionCard title={m.ref_pension_s_supplementary()} icon={Building} accent="nl">
+            <SectionCard title={m.ref_pension_s_supplementary()} icon={BuildingIcon} accent="nl">
               <p className="text-sm mb-4 ref-text-sub">{m.ref_pension_sup_intro()}</p>
               <StatRow
                 label={m.ref_pension_sup_pensioenpot()}
@@ -339,7 +339,7 @@ export default function PensionReference() {
             </SectionCard>
 
             {/* ── RVU ────────────────────────────────────────────── */}
-            <SectionCard title={m.ref_pension_s_rvu()} icon={DoorOpen} accent="nl">
+            <SectionCard title={m.ref_pension_s_rvu()} icon={DoorOpenIcon} accent="nl">
               <p className="text-sm mb-4 ref-text-sub">{m.ref_pension_rvu_intro()}</p>
               <StatRow
                 label={m.ref_pension_rvu_max()}
@@ -364,7 +364,7 @@ export default function PensionReference() {
             </SectionCard>
 
             {/* ── Inhoudingen op pensioen ────────────────────────── */}
-            <SectionCard title={m.ref_pension_s_deductions()} icon={CircleMinus} accent="nl">
+            <SectionCard title={m.ref_pension_s_deductions()} icon={CircleMinusIcon} accent="nl">
               <p className="text-sm mb-4 ref-text-sub">{m.ref_pension_ded_intro()}</p>
               <StatRow label={m.ref_pension_ded_zorg()} value={m.ref_pension_ded_zorg_value()} />
               <StatRow
@@ -391,7 +391,7 @@ export default function PensionReference() {
         </div>
 
         {/* ── Belgisch rustpensioen ────────────────────────────────── */}
-        <SectionCard title={m.ref_pension_s_be()} icon={Flag} accent="be">
+        <SectionCard title={m.ref_pension_s_be()} icon={FlagIcon} accent="be">
           <div className="grid grid-cols-12 gap-6">
             <div className="col-span-12 md:col-span-4">
               <div className="text-sm font-semibold mb-2 ref-subsection-label">
@@ -524,7 +524,7 @@ export default function PensionReference() {
         {/* ── Hervorming 2027 + Malus/Bonus ───────────────────────── */}
         <div className="grid grid-cols-12 gap-6">
           <div className="col-span-12 md:col-span-4">
-            <SectionCard title={m.ref_pension_s_be_2027()} icon={CalendarCheck} accent="be">
+            <SectionCard title={m.ref_pension_s_be_2027()} icon={CalendarCheckIcon} accent="be">
               <p className="text-sm mb-4 ref-text-sub">{m.ref_pension_be2027_intro()}</p>
               <Table className="text-table-reference">
                 <TableHeader className="bg-surface-3">
@@ -557,7 +557,7 @@ export default function PensionReference() {
           </div>
 
           <div className="col-span-12 md:col-span-4">
-            <SectionCard title={m.ref_pension_s_malus()} icon={CircleArrowDown} accent="be">
+            <SectionCard title={m.ref_pension_s_malus()} icon={CircleArrowDownIcon} accent="be">
               <p className="text-sm mb-4 ref-text-sub">{m.ref_pension_malus_intro()}</p>
               <Table className="text-table-reference-md">
                 <TableHeader className="bg-surface-3">
@@ -583,7 +583,7 @@ export default function PensionReference() {
           </div>
 
           <div className="col-span-12 md:col-span-4">
-            <SectionCard title={m.ref_pension_s_bonus()} icon={CircleArrowUp} accent="be">
+            <SectionCard title={m.ref_pension_s_bonus()} icon={CircleArrowUpIcon} accent="be">
               <p className="text-sm mb-4 ref-text-sub">{m.ref_pension_bonus_intro()}</p>
               <Table className="text-table-reference-md">
                 <TableHeader className="bg-surface-3">
@@ -612,7 +612,7 @@ export default function PensionReference() {
         {/* ── Inkomenshiaat & grensarbeiderspensioen ──────────────── */}
         <div className="grid grid-cols-12 gap-6">
           <div className="col-span-12 md:col-span-6">
-            <SectionCard title={m.ref_pension_s_gap()} icon={Hourglass} accent="neutral">
+            <SectionCard title={m.ref_pension_s_gap()} icon={HourglassIcon} accent="neutral">
               <p className="text-sm mb-4 ref-text-sub">{m.ref_pension_gap_intro()}</p>
               <ul className="text-sm mb-4 ref-list-sub">
                 <li>{m.ref_pension_gap_li1()}</li>
@@ -633,7 +633,7 @@ export default function PensionReference() {
           </div>
 
           <div className="col-span-12 md:col-span-6">
-            <SectionCard title={m.ref_pension_s_border()} icon={Archive} accent="be">
+            <SectionCard title={m.ref_pension_s_border()} icon={ArchiveIcon} accent="be">
               <p className="text-sm mb-4 ref-text-sub">{m.ref_pension_border_intro()}</p>
               <ul className="text-sm mb-4 ref-list-sub">
                 <li>{m.ref_pension_border_li1()}</li>
@@ -648,7 +648,7 @@ export default function PensionReference() {
         </div>
 
         {/* ── Overlevingspensioen BE ───────────────────────────────── */}
-        <SectionCard title={m.ref_pension_s_survivor()} icon={Heart} accent="be">
+        <SectionCard title={m.ref_pension_s_survivor()} icon={HeartIcon} accent="be">
           <div className="grid grid-cols-12 gap-4">
             <div className="col-span-12 md:col-span-6">
               <div className="text-sm font-semibold mb-2 ref-subsection-label">
@@ -676,7 +676,7 @@ export default function PensionReference() {
         </SectionCard>
 
         {/* ── Arbeidsongeschiktheid & AOW ──────────────────────────── */}
-        <SectionCard title={m.ref_pension_s_disability()} icon={Bandage} accent="nl">
+        <SectionCard title={m.ref_pension_s_disability()} icon={BandageIcon} accent="nl">
           <div className="grid grid-cols-12 gap-4">
             <div className="col-span-12 md:col-span-6">
               <p className="text-sm mb-2 ref-text-sub">{m.ref_pension_disability_intro1()}</p>
@@ -697,7 +697,7 @@ export default function PensionReference() {
         </SectionCard>
 
         {/* ── Belasting op pensioen ────────────────────────────────── */}
-        <SectionCard title={m.ref_pension_s_tax()} icon={Receipt} accent="neutral">
+        <SectionCard title={m.ref_pension_s_tax()} icon={ReceiptIcon} accent="neutral">
           <p className="text-sm mb-4 ref-text-sub">{m.ref_pension_tax_intro()}</p>
           <div className="grid grid-cols-12 gap-4">
             <div className="col-span-12 md:col-span-6">
@@ -719,7 +719,7 @@ export default function PensionReference() {
         </SectionCard>
 
         {/* ── Bronbestand ─────────────────────────────────────────── */}
-        <SectionCard title={m.ref_pension_s_source()} icon={FileText} accent="neutral">
+        <SectionCard title={m.ref_pension_s_source()} icon={FileTextIcon} accent="neutral">
           <DocLink
             href="/docs/ACV-Pensioen-Infosessie-2026.pdf"
             title={m.ref_pension_source_doc_title()}

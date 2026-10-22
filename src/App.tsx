@@ -1,4 +1,4 @@
-import { TriangleAlert } from "lucide-react";
+import { TriangleAlertIcon } from "lucide-react";
 import { formOptions, useForm, useSelector, type ReactFormType } from "@tanstack/react-form";
 import { useEffect, useMemo, useState } from "react";
 import { ErrorBoundary, type FallbackProps } from "react-error-boundary";
@@ -60,7 +60,7 @@ function ResultsErrorFallback({ error }: FallbackProps) {
   const message = error instanceof Error ? error.message : String(error);
   return (
     <div className="p-6 text-center">
-      <TriangleAlert aria-hidden="true" className="mx-auto size-8 text-warning mb-4 block" />
+      <TriangleAlertIcon aria-hidden="true" className="mx-auto size-8 text-warning mb-4 block" />
       <h5>{m.results_error_title()}</h5>
       <p className="text-text-muted text-sm mb-4">{m.results_error_description()}</p>
       <details className="text-start text-sm text-text-muted">

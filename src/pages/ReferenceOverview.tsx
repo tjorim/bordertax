@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import { Card, CardContent, CardTitle, CardDescription } from "@/components/ui/card";
-import { ArrowRight, Library } from "lucide-react";
+import { ArrowRightIcon, LibraryIcon } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 
 import * as m from "../paraglide/messages.js";
@@ -13,7 +13,7 @@ export default function ReferenceOverview() {
     <>
       <AppNavbar>
         <span className="ref-nav-text font-mono text-xs font-semibold tracking-wide text-text-muted">
-          <Library
+          <LibraryIcon
             aria-hidden="true"
             className="inline size-4 shrink-0 align-text-bottom me-2 text-be-light"
           />
@@ -46,7 +46,7 @@ export default function ReferenceOverview() {
                     </CardDescription>
                     <span className={cn("text-sm font-semibold", page.accentClass)}>
                       {m.ref_nav_read_more()}{" "}
-                      <ArrowRight
+                      <ArrowRightIcon
                         aria-hidden="true"
                         className="inline size-4 shrink-0 align-text-bottom ms-1"
                       />

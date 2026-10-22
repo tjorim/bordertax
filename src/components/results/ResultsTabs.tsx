@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { BarChart3, House, PieChart } from "lucide-react";
+import { ChartColumnIcon, ChartPieIcon, HouseIcon } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { lazyView } from "@/lib/lazyView";
 import { calculate } from "@/tax";
@@ -46,7 +46,7 @@ export default function ResultsTabs({ inputs, onResetInputs }: ResultsTabsProps)
     >
       <TabsList aria-label={m.tabs_results_label()}>
         <TabsTrigger value="summary" aria-label={m.tabs_summary()}>
-          <PieChart className="size-3" aria-hidden="true" />
+          <ChartPieIcon className="size-3" aria-hidden="true" />
           {m.tabs_summary()}
         </TabsTrigger>
         <TabsTrigger value="nl" aria-label={m.tabs_nl()}>
@@ -56,7 +56,7 @@ export default function ResultsTabs({ inputs, onResetInputs }: ResultsTabsProps)
           🇧🇪 {m.tabs_be()}
         </TabsTrigger>
         <TabsTrigger value="wfh" aria-label={m.tabs_wfh_ratio()} {...preloadOnIntent(wfhChartView)}>
-          <House className="size-3" aria-hidden="true" />
+          <HouseIcon className="size-3" aria-hidden="true" />
           {m.tabs_wfh_ratio()}
         </TabsTrigger>
         <TabsTrigger
@@ -64,7 +64,7 @@ export default function ResultsTabs({ inputs, onResetInputs }: ResultsTabsProps)
           aria-label={m.tabs_year_comparison()}
           {...preloadOnIntent(yearComparisonView)}
         >
-          <BarChart3 className="size-3" aria-hidden="true" />
+          <ChartColumnIcon className="size-3" aria-hidden="true" />
           {m.tabs_year_comparison()}
         </TabsTrigger>
       </TabsList>

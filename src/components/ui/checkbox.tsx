@@ -1,5 +1,5 @@
 import { Checkbox as CheckboxPrimitive } from "@base-ui/react/checkbox";
-import { Check } from "lucide-react";
+import { CheckIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 export function Checkbox({ className, ...props }: CheckboxPrimitive.Root.Props) {
   return (
@@ -11,7 +11,7 @@ export function Checkbox({ className, ...props }: CheckboxPrimitive.Root.Props) 
       {...props}
     >
       <CheckboxPrimitive.Indicator>
-        <Check aria-hidden="true" className="size-3.5" />
+        <CheckIcon aria-hidden="true" className="size-3.5" />
       </CheckboxPrimitive.Indicator>
     </CheckboxPrimitive.Root>
   );

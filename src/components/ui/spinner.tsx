@@ -1,10 +1,10 @@
 import { cn } from "@/lib/utils";
-import { Loader2Icon } from "lucide-react";
+import { LoaderCircleIcon } from "lucide-react";
 import * as m from "../../paraglide/messages.js";
 
 function Spinner({ className, ...props }: React.ComponentProps<"svg">) {
   return (
-    <Loader2Icon
+    <LoaderCircleIcon
       data-slot="spinner"
       role="status"
       aria-label={m.ui_loading()}

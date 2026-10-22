@@ -1,7 +1,7 @@
 import { DistributionSegment } from "@/components/ui/distribution-segment";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { CircleArrowDown, CircleArrowUp, Clipboard, RotateCcw } from "lucide-react";
+import { CircleArrowDownIcon, CircleArrowUpIcon, ClipboardIcon, RotateCcwIcon } from "lucide-react";
 import {
   Table,
   TableHeader,
@@ -73,11 +73,17 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
       {/* Actions */}
       <div className="flex flex-wrap items-center gap-2 mb-4">
         <Button variant="outline-primary" size="sm" onClick={() => void copySummary()}>
-          <Clipboard aria-hidden="true" className="inline size-4 shrink-0 align-text-bottom me-1" />
+          <ClipboardIcon
+            aria-hidden="true"
+            className="inline size-4 shrink-0 align-text-bottom me-1"
+          />
           {m.summary_copy()}
         </Button>
         <Button variant="outline-secondary" size="sm" onClick={onResetInputs}>
-          <RotateCcw aria-hidden="true" className="inline size-4 shrink-0 align-text-bottom me-1" />
+          <RotateCcwIcon
+            aria-hidden="true"
+            className="inline size-4 shrink-0 align-text-bottom me-1"
+          />
           {m.summary_reset()}
         </Button>
       </div>
@@ -320,9 +326,9 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
           >
             <div className="bt-balance__label">
               {netResult >= 0 ? (
-                <CircleArrowDown aria-hidden="true" className="size-4 me-2" />
+                <CircleArrowDownIcon aria-hidden="true" className="size-4 me-2" />
               ) : (
-                <CircleArrowUp aria-hidden="true" className="size-4 me-2" />
+                <CircleArrowUpIcon aria-hidden="true" className="size-4 me-2" />
               )}
               {m.summary_net_result()}
             </div>
