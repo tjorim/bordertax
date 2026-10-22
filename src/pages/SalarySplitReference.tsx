@@ -59,7 +59,7 @@ export default function SalarySplitReference() {
         </span>
       </AppNavbar>
 
-      <div className="mx-auto w-full max-w-6xl px-5 pb-12">
+      <div className="w-full px-3 pb-12">
         <PageHero title={m.ref_ss_hero_title()} subtitle={m.ref_ss_hero_subtitle()} />
 
         {/* ── Alert: geen neutralisatieregeling ─────────────────── */}

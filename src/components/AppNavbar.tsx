@@ -134,7 +134,7 @@ export function AppNavbar({ children, onLocaleSwitch }: AppNavbarProps) {
         <span className="w-1/2 bg-nl" />
         <span className="w-1/2 bg-be" />
       </div>
-      <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-3 px-3 py-3">
+      <div className="flex flex-wrap items-center gap-3 px-3 py-3">
         <span className="text-xl font-bold" aria-label={m.nav_countries_label()}>
           🇧🇪&thinsp;🇳🇱
         </span>

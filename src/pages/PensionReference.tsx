@@ -58,7 +58,7 @@ export default function PensionReference() {
         </span>
       </AppNavbar>
 
-      <div className="mx-auto w-full max-w-6xl px-5 pb-12">
+      <div className="w-full px-3 pb-12">
         <PageHero title={m.ref_pension_hero_title()} subtitle={m.ref_pension_hero_subtitle()} />
 
         {/* ── 3-pijler overzicht ────────────────────────────────── */}

@@ -21,10 +21,10 @@ export default function ReferenceOverview() {
         </span>
       </AppNavbar>
 
-      <div className="mx-auto w-full max-w-6xl px-5 pb-12">
+      <div className="w-full px-3 pb-12">
         <PageHero title={m.ref_overview_page_title()} subtitle={m.ref_overview_subtitle()} />
 
-        <div className="mx-auto grid max-w-reference-cards grid-cols-1 gap-6 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           {REFERENCE_PAGES.map((page) => (
             <div key={page.route} className="min-w-0">
               <Link to={page.route} className="no-underline">
