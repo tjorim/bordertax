@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { ArrowDown, ArrowUp } from "lucide-react";
+import { ArrowDownIcon, ArrowUpIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface SortHeaderButtonProps {
@@ -18,8 +18,8 @@ export function SortHeaderButton({ sorted, onClick, children }: SortHeaderButton
       onClick={onClick}
     >
       {children}
-      {sorted === "asc" && <ArrowUp aria-hidden="true" />}
-      {sorted === "desc" && <ArrowDown aria-hidden="true" />}
+      {sorted === "asc" && <ArrowUpIcon aria-hidden="true" />}
+      {sorted === "desc" && <ArrowDownIcon aria-hidden="true" />}
     </Button>
   );
 }

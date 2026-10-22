@@ -2,7 +2,7 @@ import type { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
-import { ExternalLink, FileText, Lightbulb, TriangleAlert } from "lucide-react";
+import { ExternalLinkIcon, FileTextIcon, LightbulbIcon, TriangleAlertIcon } from "lucide-react";
 import { Alert } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 
@@ -90,7 +90,7 @@ export function StatRow({
 export function TipBox({ children }: { children: React.ReactNode }) {
   return (
     <Alert variant="info" role="note" className="text-sm">
-      <Lightbulb
+      <LightbulbIcon
         aria-hidden="true"
         className="inline size-4 shrink-0 align-text-bottom me-2 text-info"
       />
@@ -102,7 +102,7 @@ export function TipBox({ children }: { children: React.ReactNode }) {
 export function WarnBox({ children }: { children: React.ReactNode }) {
   return (
     <Alert variant="warning" className="text-sm">
-      <TriangleAlert
+      <TriangleAlertIcon
         aria-hidden="true"
         className="inline size-4 shrink-0 align-text-bottom me-2 text-warning"
       />
@@ -130,7 +130,7 @@ export function DocLink({
           className,
         )}
       >
-        <FileText
+        <FileTextIcon
           aria-hidden="true"
           className="inline size-8 shrink-0 align-text-bottom text-danger"
         />
@@ -138,7 +138,7 @@ export function DocLink({
           <div className="font-semibold text-sm ref-text">{title}</div>
           <div className="ref-footnote">{sub}</div>
         </div>
-        <ExternalLink
+        <ExternalLinkIcon
           aria-hidden="true"
           className="inline size-4 shrink-0 align-text-bottom ms-auto text-text-muted size-3.5"
         />

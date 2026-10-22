@@ -1,5 +1,5 @@
 import { Accordion as AccordionPrimitive } from "@base-ui/react/accordion";
-import { ChevronDown } from "lucide-react";
+import { ChevronDownIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function Accordion({ className, ...props }: AccordionPrimitive.Root.Props) {
@@ -37,7 +37,7 @@ export function AccordionTrigger({
         {...props}
       >
         {children}
-        <ChevronDown
+        <ChevronDownIcon
           aria-hidden="true"
           className="ms-auto size-4 shrink-0 transition-transform group-data-panel-open:rotate-180"
         />

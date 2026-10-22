@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import {
-  BookOpen,
-  Calculator,
-  ChevronDown,
-  SunMoon,
-  Menu,
-  Moon,
-  PiggyBank,
-  Sun,
+  BookOpenIcon,
+  CalculatorIcon,
+  ChevronDownIcon,
+  MenuIcon,
+  MoonIcon,
+  PiggyBankIcon,
+  SunIcon,
+  SunMoonIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
@@ -47,7 +47,7 @@ function ThemeToggleButton() {
     setThemeState(next);
   };
 
-  const Icon = theme === "light" ? Sun : theme === "dark" ? Moon : SunMoon;
+  const Icon = theme === "light" ? SunIcon : theme === "dark" ? MoonIcon : SunMoonIcon;
   const label =
     theme === "light" ? m.theme_light() : theme === "dark" ? m.theme_dark() : m.theme_auto();
 
@@ -143,7 +143,7 @@ export function AppNavbar({ children, onLocaleSwitch }: AppNavbarProps) {
           aria-label={m.nav_toggle_label()}
           className="ml-auto shell:hidden"
         >
-          <Menu className="size-5" aria-hidden="true" />
+          <MenuIcon className="size-5" aria-hidden="true" />
         </CollapsibleTrigger>
         <CollapsibleContent
           id="app-navbar-nav"
@@ -166,13 +166,14 @@ export function AppNavbar({ children, onLocaleSwitch }: AppNavbarProps) {
                 render={<Button variant="outline" />}
                 className="border-transparent"
               >
-                <BookOpen className="size-4" aria-hidden="true" />
+                <BookOpenIcon className="size-4" aria-hidden="true" />
                 {m.ref_overview_hub_title()}
-                <ChevronDown className="size-3" aria-hidden="true" />
+                <ChevronDownIcon className="size-3" aria-hidden="true" />
               </DropdownMenuTrigger>
               <DropdownMenuContent>
                 {REFERENCE_PAGES.map((page) => {
-                  const Icon = page.route === "/reference/salary-split" ? Calculator : PiggyBank;
+                  const Icon =
+                    page.route === "/reference/salary-split" ? CalculatorIcon : PiggyBankIcon;
                   return (
                     <DropdownMenuItem key={page.route} render={<Link to={page.route} />}>
                       <Icon

@@ -1,7 +1,7 @@
 import { Suspense, type ReactNode } from "react";
 import { ErrorBoundary, type FallbackProps } from "react-error-boundary";
 import { useRouter, type ErrorComponentProps } from "@tanstack/react-router";
-import { TriangleAlert } from "lucide-react";
+import { TriangleAlertIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
@@ -28,7 +28,7 @@ interface LazyErrorProps {
 export function LazyError({ onRetry }: LazyErrorProps) {
   return (
     <div role="alert" className="p-6 text-center">
-      <TriangleAlert aria-hidden="true" className="mx-auto size-8 text-warning mb-4 block" />
+      <TriangleAlertIcon aria-hidden="true" className="mx-auto size-8 text-warning mb-4 block" />
       <h5>{m.lazy_error_title()}</h5>
       <p className="text-text-muted text-sm mb-4">{m.lazy_error_description()}</p>
       <div className="flex flex-wrap justify-center gap-2">

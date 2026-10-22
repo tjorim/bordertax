@@ -1,13 +1,13 @@
 import { Accordion } from "@/components/ui/accordion";
 import {
-  BookOpen,
-  Calculator,
-  Calendar,
-  FileText,
-  Flag,
-  FolderOpen,
-  House,
-  Percent,
+  BookOpenIcon,
+  CalculatorIcon,
+  CalendarIcon,
+  FileTextIcon,
+  FlagIcon,
+  FolderOpenIcon,
+  HouseIcon,
+  PercentIcon,
 } from "lucide-react";
 import {
   Table,
@@ -51,7 +51,7 @@ export default function SalarySplitReference() {
     <>
       <AppNavbar>
         <span className="ref-nav-text font-mono text-xs font-semibold tracking-wide text-text-muted">
-          <BookOpen
+          <BookOpenIcon
             aria-hidden="true"
             className="inline size-4 shrink-0 align-text-bottom me-2 text-be-light"
           />
@@ -70,7 +70,7 @@ export default function SalarySplitReference() {
         <div className="grid grid-cols-12 gap-6">
           <div className="col-span-12 shell:col-span-7">
             {/* ── 1. Hoofdregel ──────────────────────────────────── */}
-            <SectionCard title={m.ref_ss_s1_title()} icon={Flag} accent="neutral">
+            <SectionCard title={m.ref_ss_s1_title()} icon={FlagIcon} accent="neutral">
               <p className="mb-4 ref-text-sub">{m.ref_ss_s1_intro()}</p>
               <Formula>{m.ref_ss_s1_formula()}</Formula>
               <div className="mt-4 flex gap-2 flex-wrap">
@@ -81,7 +81,7 @@ export default function SalarySplitReference() {
             </SectionCard>
 
             {/* ── 2. Dagentelling ────────────────────────────────── */}
-            <SectionCard title={m.ref_ss_s2_title()} icon={Calendar} accent="neutral">
+            <SectionCard title={m.ref_ss_s2_title()} icon={CalendarIcon} accent="neutral">
               <p className="mb-4 ref-text-sub">{m.ref_ss_s2_intro()}</p>
               <Table responsive className="mb-3 text-table-reference-md">
                 <TableHeader className="bg-surface-3">
@@ -135,7 +135,7 @@ export default function SalarySplitReference() {
             </SectionCard>
 
             {/* ── 3. FOD Berekeningsformule ──────────────────────── */}
-            <SectionCard title={m.ref_ss_s3_title()} icon={Calculator} accent="be">
+            <SectionCard title={m.ref_ss_s3_title()} icon={CalculatorIcon} accent="be">
               <p className="mb-4 ref-text-sub">{m.ref_ss_s3_intro()}</p>
               <Formula>{m.ref_ss_be_formula()}</Formula>
               <div className="mt-4">
@@ -182,7 +182,7 @@ export default function SalarySplitReference() {
 
           <div className="col-span-12 shell:col-span-5">
             {/* ── 4. NL Belastingtarieven 2026 ──────────────────── */}
-            <SectionCard title={m.ref_ss_s4_title()} icon={Percent} accent="nl">
+            <SectionCard title={m.ref_ss_s4_title()} icon={PercentIcon} accent="nl">
               <Table responsive className="text-table-reference">
                 <TableHeader className="bg-surface-3">
                   <TableRow>
@@ -246,7 +246,7 @@ export default function SalarySplitReference() {
             </SectionCard>
 
             {/* ── 5. Kaderovereenkomst Telewerk (SZ) ────────────── */}
-            <SectionCard title={m.ref_ss_s5_title()} icon={House} accent="neutral">
+            <SectionCard title={m.ref_ss_s5_title()} icon={HouseIcon} accent="neutral">
               <p className="mb-4 ref-section-intro">{m.ref_ss_s5_intro()}</p>
               <Table className="text-table-reference">
                 <TableBody>
@@ -284,7 +284,7 @@ export default function SalarySplitReference() {
             </SectionCard>
 
             {/* ── 6. Bewijslast ─────────────────────────────────── */}
-            <SectionCard title={m.ref_ss_s6_title()} icon={FolderOpen} accent="neutral">
+            <SectionCard title={m.ref_ss_s6_title()} icon={FolderOpenIcon} accent="neutral">
               <p className="mb-2 ref-section-intro">{m.ref_ss_s6_intro()}</p>
               <Accordion>
                 <RefAccordionItem value="0" title={m.ref_ss_strong_evidence()}>
@@ -316,7 +316,7 @@ export default function SalarySplitReference() {
         </div>
 
         {/* ── 7. Worked Examples ──────────────────────────────────── */}
-        <SectionCard title={m.ref_ss_s7_title()} icon={Calculator} accent="be">
+        <SectionCard title={m.ref_ss_s7_title()} icon={CalculatorIcon} accent="be">
           <p className="mb-4 ref-section-intro">{m.ref_ss_s7_intro()}</p>
           <div className="grid grid-cols-12 gap-4">
             {/* Basisdata */}
@@ -458,7 +458,7 @@ export default function SalarySplitReference() {
         </SectionCard>
 
         {/* ── Bronbestanden ───────────────────────────────────────── */}
-        <SectionCard title={m.ref_ss_s8_title()} icon={FileText} accent="neutral">
+        <SectionCard title={m.ref_ss_s8_title()} icon={FileTextIcon} accent="neutral">
           <p className="mb-4 ref-section-intro">{m.ref_ss_s8_intro()}</p>
           <div className="grid grid-cols-12 gap-4">
             <div className="col-span-12 table:col-span-6">

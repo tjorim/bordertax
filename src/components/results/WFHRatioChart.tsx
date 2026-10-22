@@ -1,4 +1,10 @@
-import { ChartNoAxesCombined, ChevronDown, ChevronUp, CircleArrowUp, Info } from "lucide-react";
+import {
+  ChartNoAxesCombinedIcon,
+  ChevronDownIcon,
+  ChevronUpIcon,
+  CircleArrowUpIcon,
+  InfoIcon,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SortHeaderButton } from "./SortHeaderButton";
 import {
@@ -484,7 +490,7 @@ export default function WFHRatioChart({ inputs }: Props) {
   if (nlbeDays === 0) {
     return (
       <div className="bt-wfh-empty">
-        <ChartNoAxesCombined
+        <ChartNoAxesCombinedIcon
           aria-hidden="true"
           className="inline size-4 shrink-0 align-text-bottom text-text-muted me-2 size-6"
         />
@@ -603,7 +609,7 @@ export default function WFHRatioChart({ inputs }: Props) {
         {/* ── Delta callout — only shown when there's meaningful gain ── */}
         {delta > 50 && data[optimalIdx] && (
           <div className="bt-wfh-delta">
-            <CircleArrowUp
+            <CircleArrowUpIcon
               aria-hidden="true"
               className="inline size-4 shrink-0 align-text-bottom me-1"
             />
@@ -621,20 +627,20 @@ export default function WFHRatioChart({ inputs }: Props) {
         onClick={() => setTableOpen((v) => !v)}
         aria-expanded={tableOpen}
       >
-        {tableOpen ? <ChevronUp aria-hidden="true" /> : <ChevronDown aria-hidden="true" />}
+        {tableOpen ? <ChevronUpIcon aria-hidden="true" /> : <ChevronDownIcon aria-hidden="true" />}
         {tableOpen ? m.wfh_table_hide() : m.wfh_table_show()}
       </Button>
 
       {/* ── Kaderakkoord note ────────────────────────────────────────── */}
       <p className="text-text-muted text-sm mt-2 mb-0">
-        <Info aria-hidden="true" className="inline size-4 shrink-0 align-text-bottom me-1" />
+        <InfoIcon aria-hidden="true" className="inline size-4 shrink-0 align-text-bottom me-1" />
         {m.wfh_kaderakkoord_note()}
       </p>
 
       {/* ── Qualifying taxpayer note (only relevant at ≤10% BE) ─────── */}
       {currentZone === "full" && (
         <p className="text-text-muted text-sm mt-1 mb-0">
-          <Info aria-hidden="true" className="inline size-4 shrink-0 align-text-bottom me-1" />
+          <InfoIcon aria-hidden="true" className="inline size-4 shrink-0 align-text-bottom me-1" />
           {m.wfh_qualifying_taxpayer_note()}
         </p>
       )}

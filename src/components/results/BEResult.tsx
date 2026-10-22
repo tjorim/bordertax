@@ -1,5 +1,5 @@
 import { Alert } from "@/components/ui/alert";
-import { CircleCheck, Info, TriangleAlert } from "lucide-react";
+import { CircleCheckIcon, InfoIcon, TriangleAlertIcon } from "lucide-react";
 import { Table, TableBody, TableRow, TableCell } from "@/components/ui/table";
 
 import type { BETaxResult, TaxInputs } from "@/tax/types";
@@ -16,7 +16,7 @@ export default function BEResult({ result, residentCountry }: Props) {
   if (residentCountry !== "BE") {
     return (
       <Alert variant="info" className="mb-0">
-        <Info aria-hidden="true" className="inline size-4 shrink-0 align-text-bottom me-2" />
+        <InfoIcon aria-hidden="true" className="inline size-4 shrink-0 align-text-bottom me-2" />
         {m.be_only_residents()}
       </Alert>
     );
@@ -32,7 +32,7 @@ export default function BEResult({ result, residentCountry }: Props) {
 
       {!hasBeIncome && (
         <Alert variant="success" className="mb-4">
-          <CircleCheck
+          <CircleCheckIcon
             aria-hidden="true"
             className="inline size-4 shrink-0 align-text-bottom me-2"
           />
@@ -161,7 +161,7 @@ export default function BEResult({ result, residentCountry }: Props) {
       </Table>
 
       <Alert variant="warning" className="mt-4 text-sm mb-0">
-        <TriangleAlert
+        <TriangleAlertIcon
           aria-hidden="true"
           className="inline size-4 shrink-0 align-text-bottom me-2"
         />

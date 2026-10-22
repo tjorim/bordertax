@@ -1,5 +1,5 @@
 import { Alert } from "@/components/ui/alert";
-import { ClipboardCheck, TriangleAlert } from "lucide-react";
+import { ClipboardCheckIcon, TriangleAlertIcon } from "lucide-react";
 import {
   Table,
   TableHeader,
@@ -24,7 +24,7 @@ export default function FilingChecklist({ result }: Props) {
   return (
     <section className="mt-6" aria-labelledby="filing-checklist-title">
       <h5 id="filing-checklist-title" className="mb-2">
-        <ClipboardCheck
+        <ClipboardCheckIcon
           aria-hidden="true"
           className="inline size-4 shrink-0 align-text-bottom me-2"
         />
@@ -33,7 +33,7 @@ export default function FilingChecklist({ result }: Props) {
       <p className="text-text-muted text-sm mb-4">{m.filing_intro()}</p>
 
       <Alert variant="warning" role="note" className="text-sm py-2">
-        <TriangleAlert
+        <TriangleAlertIcon
           aria-hidden="true"
           className="inline size-4 shrink-0 align-text-bottom me-2"
         />

@@ -9,7 +9,7 @@ import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
-import { Coins, EyeOff, Info, User } from "lucide-react";
+import { CoinsIcon, EyeOffIcon, InfoIcon, UserIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import { useSelector } from "@tanstack/react-form";
@@ -69,7 +69,7 @@ export default function InputPanel({ form }: Props) {
       {/* ── Section 1: Situation ─────────────────────────────── */}
       <AccordionItem value="0">
         <AccordionTrigger>
-          <User aria-hidden="true" className="inline size-4 shrink-0 align-text-bottom me-2" />
+          <UserIcon aria-hidden="true" className="inline size-4 shrink-0 align-text-bottom me-2" />
           {m.input_personal_situation()}
         </AccordionTrigger>
         <AccordionContent>
@@ -285,7 +285,7 @@ export default function InputPanel({ form }: Props) {
       {/* ── Section 2: Income ────────────────────────────────── */}
       <AccordionItem value="1">
         <AccordionTrigger>
-          <Coins aria-hidden="true" className="inline size-4 shrink-0 align-text-bottom me-2" />
+          <CoinsIcon aria-hidden="true" className="inline size-4 shrink-0 align-text-bottom me-2" />
           {m.input_income()}
         </AccordionTrigger>
         <AccordionContent>
@@ -619,9 +619,9 @@ export default function InputPanel({ form }: Props) {
                 aria-controls="formulas-panel"
               >
                 {showFormulas ? (
-                  <EyeOff aria-hidden="true" className="size-4" />
+                  <EyeOffIcon aria-hidden="true" className="size-4" />
                 ) : (
-                  <Info aria-hidden="true" className="size-4" />
+                  <InfoIcon aria-hidden="true" className="size-4" />
                 )}
                 {showFormulas ? m.hide_formulas() : m.show_formulas()}
               </Button>
