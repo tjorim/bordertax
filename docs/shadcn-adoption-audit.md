@@ -117,3 +117,30 @@ match the old layout; invalid input shows the red label, `aria-invalid` and a
 (390px, touch) or hover (1440px) on `[1257]` opens the popover in both themes
 and Escape closes it. `e2e/calculator.spec.ts` now matches the NL toggle with
 `exact: true`, because the badge buttons carry long accessible names.
+
+### Issue #314 calculator hierarchy
+
+Reused the shared `Card` for the annual/monthly/daily income summary and the
+shared secondary outline `Button` variant for copy/reset. Checked the configured
+`base-mira` card with `pnpm dlx shadcn@latest add card --dry-run --view` and the
+[official Base UI card documentation](https://ui.shadcn.com/docs/components/base/card).
+No new primitive is needed. Retained the existing custom income typography and
+allocation SVG: the responsive animated currency amount and proportional tax
+segments are domain presentation beyond the registry Card's layout role.
+The desktop input column uses standard width/flex utilities; results fill the
+remaining width, and smaller screens retain the single column.
+
+Before/after screenshots of `/` cover light/dark at 1440px and 390px, plus 900px;
+all six viewport/theme combinations have document width equal to viewport width.
+Evidence is saved in `/tmp/bordertax-314/`. Keyboard checks cover result tabs,
+input accordion, copy button focus/activation, and the navigation menu. Copy
+writes the formatted summary; changing salary updates results; reset restores
+60000; locale switching still updates the page. Both themes compute zero padding
+for temporary `ref-link-card p-0` and `ref-list-sub p-0` probes while the unchanged
+input retains `7px 12px` padding. Probes were removed immediately.
+
+Validation: `pnpm lint` passed with three existing warnings in the input-panel
+test and locale-audit script; `pnpm typecheck`, `pnpm test` (163 passed,
+15 skipped), and `pnpm build` passed. Paraglide-compiling commands ran
+sequentially with the dev server stopped. Final screenshots also cover the
+production preview build.

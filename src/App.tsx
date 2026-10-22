@@ -98,14 +98,14 @@ export default function App() {
       </AppNavbar>
 
       <main className="px-3 pb-12">
-        <div className="grid grid-cols-1 gap-6 shell:grid-cols-12">
+        <div className="grid grid-cols-1 gap-6 shell:flex shell:items-start">
           {/* ── Left column: inputs ────────────────────────────── */}
-          <div className="min-w-0 shell:col-span-5">
+          <div className="min-w-0 shell:w-96 shell:shrink-0">
             <InputPanel form={form} />
           </div>
 
           {/* ── Right column: results ──────────────────────────── */}
-          <div className="min-w-0 shell:col-span-7">
+          <div className="min-w-0 shell:flex-1">
             <ErrorBoundary FallbackComponent={ResultsErrorFallback}>
               <ResultsTabs inputs={inputs} onResetInputs={() => form.reset(DEFAULT_INPUTS)} />
             </ErrorBoundary>

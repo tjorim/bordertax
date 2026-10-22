@@ -2,7 +2,7 @@
 
 .bt-summary-hero {
   text-align: center;
-  padding: 1.5rem 1rem 1rem;
+  padding: 1.5rem 1rem;
 }
 
 .bt-summary-hero__eyebrow {
@@ -28,19 +28,11 @@
 .bt-summary-hero__amount {
   font-family: var(--bt-font-mono);
   font-size: clamp(2.2rem, 7vw, 3.2rem);
-  font-weight: 400;
+  font-weight: 700;
   color: var(--bt-success);
   letter-spacing: -0.04em;
   line-height: 1;
   animation: heroReveal 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.bt-summary-hero__sub {
-  font-family: var(--bt-font-mono);
-  font-size: 0.72rem;
-  color: var(--bt-text-muted);
-  letter-spacing: 0.04em;
-  margin-top: 0.5rem;
 }
 
 /* ── Allocation bar ──────────────────────────────────────────── */
