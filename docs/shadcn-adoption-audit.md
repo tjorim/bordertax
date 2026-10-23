@@ -144,3 +144,23 @@ test and locale-audit script; `pnpm typecheck`, `pnpm test` (163 passed,
 15 skipped), and `pnpm build` passed. Paraglide-compiling commands ran
 sequentially with the dev server stopped. Final screenshots also cover the
 production preview build.
+
+### Issue #315 filing guidance accordion
+
+The filing checklist moved below the income, tax breakdown, sourcing and balance
+sections and now sits in the shared `Accordion` (one `AccordionItem`, collapsed
+initially). No new primitive: the registry `accordion` is already adapted in
+`ui/accordion.tsx` (`base-mira` could not be re-fetched from the sandbox, so the
+existing file was reused unchanged). The trigger is named by the title
+(`aria-labelledby`) and described by a short summary (`aria-describedby`, new
+`filing_summary` message in both locales), so the accessible name stays short.
+Base UI hides the collapsed panel (`hidden`), so its links are not focusable;
+Enter/Space toggle `aria-expanded`. All checklist content, warnings and links are
+unchanged inside the panel.
+
+Checked at 1440px and 390px in light and dark, English and Dutch, collapsed and
+expanded: document width equals the viewport width, the focus outline is 2px, Tab
+from the trigger skips the collapsed content and enters the first link once
+expanded, and the `ref-link-card p-0` / `ref-list-sub p-0` probes computed to 0px
+padding in both themes. Screenshots are in `/tmp/bordertax-315/`. `pnpm lint`,
+`pnpm typecheck`, `pnpm test` and `pnpm build` ran sequentially.
