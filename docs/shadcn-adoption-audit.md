@@ -187,3 +187,7 @@ navbar and reference pages stay coherent.
   triggers and panels use `p-4`. The summary is a single `gap-6` column.
 - **Accordion trigger.** `border-0` replaces the old transparent `border-s-2`, which
   had been hiding the browser's default button border.
+
+## Dependency and upstream source maintenance
+
+Use the pinned CLI and review workflow in [ui-maintenance.md](ui-maintenance.md). Existing generator/version examples above describe the original adoption; current maintenance commands and captured revisions live in that workflow and the frontend inventory.

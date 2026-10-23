@@ -31,3 +31,6 @@ playwright-report
 *.njsproj
 *.sln
 *.sw?
+
+# Read-only upstream UI review reports
+.ui-maintenance/

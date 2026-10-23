@@ -4,14 +4,14 @@ The app lives at the repository root. UI components belong in
 `src/components/ui`, use Base UI (`@base-ui/react`) and Lucide icons, and use
 `cn` from `@/lib/utils` for conditional/merged class names. `components.json`
 pins shadcn to `base-mira` and Lucide. Generate primitives on demand with
-`pnpm dlx shadcn@latest add <component>`, then own and restyle the copied source.
+`pnpm exec shadcn add <component>`, then own and restyle the copied source.
 Keep the Base UI style explicit; do not reinitialize the app or accept a CLI
 reset/theme replacement. Verify generated paths and imports: components belong
 in `src/components/ui`, and `cn` comes from the local utility, not another package.
 
 Before building custom UI, check in this order: the shared controls already in
 `src/components/ui` (and their compositions, such as `SortHeaderButton`), the
-configured registry (`pnpm dlx shadcn@latest add <component> --dry-run --view`),
+configured registry (`pnpm exec shadcn add <component> --dry-run --view`),
 and the official shadcn/Base UI documentation for built-in variants and
 behaviour. Prefer an existing variant or a restyled generated component over new
 markup or CSS; keep a custom implementation only for a real requirement, and
@@ -50,3 +50,7 @@ For a cascade smoke check, temporarily append a `ref-link-card p-0` button and
 `ref-list-sub p-0` element in the browser and check zero computed padding in
 both themes. Unmodified application controls should retain their padding. Keep
 probes out of application markup.
+
+## UI dependency maintenance
+
+Follow [docs/ui-maintenance.md](docs/ui-maintenance.md) for Base UI/runtime updates and the pinned shadcn CLI, registry comparisons and review records. Run `pnpm ui:check` from the repository root after changing shared UI. Dependabot does not update owned component source; preserve the documented customisations and validate interactions and bundle budgets.
