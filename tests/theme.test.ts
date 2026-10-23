@@ -1,9 +1,15 @@
+import type { DetachedWindowAPI } from "happy-dom";
 import { runInNewContext } from "node:vm";
 import { describe, expect, it, vi, afterEach } from "vitest";
 import { themeBootScript } from "../scripts/theme-init";
 import { applyTheme, loadTheme, THEME_KEY } from "../src/theme";
 
-afterEach(() => vi.restoreAllMocks());
+const { happyDOM } = window as unknown as { happyDOM: DetachedWindowAPI };
+const originalColorScheme = happyDOM.settings.device.prefersColorScheme;
+afterEach(() => {
+  vi.restoreAllMocks();
+  happyDOM.settings.device.prefersColorScheme = originalColorScheme;
+});
 
 describe("theme initialization and runtime agree", () => {
   it.each(["light", "dark", "auto", "invalid", null])(
@@ -11,14 +17,14 @@ describe("theme initialization and runtime agree", () => {
     async (stored) => {
       const code = await themeBootScript();
       for (const prefersDark of [false, true]) {
-        vi.spyOn(window, "matchMedia").mockReturnValue({ matches: prefersDark } as MediaQueryList);
+        happyDOM.settings.device.prefersColorScheme = prefersDark ? "dark" : "light";
         if (stored !== null) localStorage.setItem(THEME_KEY, stored);
         else localStorage.clear();
         applyTheme(loadTheme());
         const setAttribute = vi.fn();
         runInNewContext(code, {
           localStorage: { getItem: () => stored },
-          window: { matchMedia: () => ({ matches: prefersDark }) },
+          window: { matchMedia: window.matchMedia.bind(window) },
           document: { documentElement: { setAttribute } },
         });
         expect(setAttribute).toHaveBeenCalledWith(
