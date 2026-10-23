@@ -1,4 +1,5 @@
 import {
+  CertificateIcon,
   ChartNoAxesCombinedIcon,
   ChevronDownIcon,
   ChevronUpIcon,
@@ -629,7 +630,10 @@ export default function WFHRatioChart({ inputs }: Props) {
 
       {/* ── Kaderakkoord note ────────────────────────────────────────── */}
       <p className="text-text-muted text-sm mt-2 mb-0">
-        <InfoIcon aria-hidden="true" className="inline size-4 shrink-0 align-text-bottom me-1" />
+        <CertificateIcon
+          aria-hidden="true"
+          className="inline size-4 shrink-0 align-text-bottom me-1"
+        />
         {m.wfh_kaderakkoord_note()}
       </p>
 
