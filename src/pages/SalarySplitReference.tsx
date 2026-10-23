@@ -53,7 +53,7 @@ export default function SalarySplitReference() {
         <span className="ref-nav-text font-mono text-xs font-semibold tracking-wide text-text-muted">
           <BookOpenIcon
             aria-hidden="true"
-            className="inline size-4 shrink-0 align-text-bottom me-2 text-be-light"
+            className="inline size-4 shrink-0 align-text-bottom me-2 text-brand-light"
           />
           {m.ref_ss_nav_title()}
         </span>

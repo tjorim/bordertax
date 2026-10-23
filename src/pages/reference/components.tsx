@@ -19,21 +19,16 @@ export function SectionCard({
   accent?: "nl" | "be" | "neutral";
   children: React.ReactNode;
 }) {
-  const accents = {
-    nl: "border-nl-border",
-    be: "border-be-border",
-    neutral: "border-border",
-  };
+  // Country colour marks only the icon; the card keeps neutral surfaces.
   const iconAccents = {
-    nl: "text-nl-border",
-    be: "text-be-border",
-    neutral: "text-border",
+    nl: "text-nl-light",
+    be: "text-be-light",
+    neutral: "text-text-muted",
   };
-  const borderClass = accents[accent ?? "neutral"];
 
   return (
-    <Card className={cn("mb-6", borderClass)}>
-      <CardHeader className={borderClass}>
+    <Card className="mb-6">
+      <CardHeader>
         <h5 className="mb-0 font-semibold">
           <Icon
             aria-hidden="true"
@@ -42,7 +37,7 @@ export function SectionCard({
           {title}
         </h5>
       </CardHeader>
-      <CardContent className="pt-4">{children}</CardContent>
+      <CardContent>{children}</CardContent>
     </Card>
   );
 }

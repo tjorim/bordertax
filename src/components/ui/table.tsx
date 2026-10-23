@@ -28,7 +28,7 @@ function Table({
         data-slot="table"
         className={cn(
           "w-full border-collapse caption-bottom text-sm leading-table text-text",
-          bordered && "[&_td]:border-x [&_th]:border-x [&_tr]:border-y",
+          bordered && "[&_tr]:border-y",
           bordered && !responsive && "border border-border rounded-sm overflow-hidden",
           hover && "[&_tbody_tr:hover]:bg-on-solid/3",
           className,
@@ -76,7 +76,7 @@ function TableRow({
     <tr
       data-slot="table-row"
       data-variant={variant}
-      className={cn("border-b border-border", rowVariants[variant], className)}
+      className={cn("border-b border-border-soft", rowVariants[variant], className)}
       {...props}
     />
   );

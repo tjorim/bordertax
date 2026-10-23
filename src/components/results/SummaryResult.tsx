@@ -17,7 +17,7 @@ import { cn } from "@/lib/utils";
 import type { TaxResult } from "@/tax/types";
 import { getNLFractions, getTotalWorkdays } from "@/tax/workdays";
 import * as m from "@/paraglide/messages.js";
-import { fmt, fmtSigned, pct } from "../format.js";
+import { fmt, fmtSigned, pct, stripColon } from "../format.js";
 import FilingChecklist from "./FilingChecklist";
 
 interface Props {
@@ -70,158 +70,156 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
   }
 
   return (
-    <div>
+    <div className="flex flex-col gap-6">
       {/* Hero: net income */}
-      <Card className="bt-summary-hero bg-success-dim">
+      <Card className="bt-summary-hero border-transparent bg-brand-dim">
         <div className="bt-summary-hero__eyebrow">
-          {m.summary_net_income()} · {result.inputs.year}
+          {stripColon(m.summary_net_income())} · {result.inputs.year}
         </div>
         {/* key={netIncome} remounts the element on change, re-triggering the CSS animation */}
         <div className="bt-summary-hero__amount" key={netIncome}>
           {fmt(netIncome)}
         </div>
         {/* Stat cards */}
-        <div className="grid grid-cols-1 table:grid-cols-2 mt-6 text-center gap-4">
-          <div className="min-w-0">
-            <div className="bt-stat-card">
-              <div className="text-text-muted text-label font-medium uppercase tracking-wide">
-                {m.summary_net_monthly()}
-              </div>
-              <div className="font-mono text-stat tracking-tight font-bold text-success">
-                {fmt(netIncome / 12)}
-              </div>
+        <div className="mt-6 grid grid-cols-1 gap-3 text-center table:grid-cols-2">
+          <div className="min-w-0 rounded-md bg-surface px-3 py-3.5">
+            <div className="text-label text-text-sub">{m.summary_net_monthly()}</div>
+            <div className="font-mono text-stat font-semibold tracking-tight tabular-nums text-text">
+              {fmt(netIncome / 12)}
             </div>
           </div>
-          <div className="min-w-0">
-            <div className="bt-stat-card">
-              <div className="text-text-muted text-label font-medium uppercase tracking-wide">
-                {m.summary_net_daily()}
-              </div>
-              <div className="font-mono text-stat tracking-tight font-bold text-success">
-                {totalWorkdays > 0 ? fmt(netIncome / totalWorkdays) : "—"}
-              </div>
+          <div className="min-w-0 rounded-md bg-surface px-3 py-3.5">
+            <div className="text-label text-text-sub">{m.summary_net_daily()}</div>
+            <div className="font-mono text-stat font-semibold tracking-tight tabular-nums text-text">
+              {totalWorkdays > 0 ? fmt(netIncome / totalWorkdays) : "—"}
             </div>
           </div>
         </div>
       </Card>
 
-      <div className="flex flex-wrap items-baseline justify-between gap-2 mt-6 mb-3 text-sm text-text-muted">
-        <span>{m.summary_effective_rate_total()}</span>
-        <span className="font-mono font-semibold text-text">{pct(effectiveRateTotal)}</span>
-      </div>
-
-      {/* Allocation bar */}
-      <div className="bt-alloc">
-        <div className="bt-alloc__bar" role="img" aria-label={m.summary_allocation()}>
-          <DistributionSegment
-            className="bt-alloc__seg bt-alloc__seg--net"
-            percent={netPct}
-            title={`${m.summary_net_label()} ${pct(netPct / 100)}`}
-          >
-            {netPct > 18 && <span className="bt-alloc__seg-label">{pct(netPct / 100)}</span>}
-          </DistributionSegment>
-          <DistributionSegment
-            className="bt-alloc__seg bt-alloc__seg--nl"
-            percent={nlPct}
-            title={`🇳🇱 ${m.summary_dutch_tax()} ${pct(nlPct / 100)}`}
-          >
-            {nlPct > 10 && <span className="bt-alloc__seg-label">{pct(nlPct / 100)}</span>}
-          </DistributionSegment>
-          {bePct > 0 && (
-            <DistributionSegment
-              className="bt-alloc__seg bt-alloc__seg--be"
-              percent={bePct}
-              title={`🇧🇪 ${m.summary_belgian_tax()} ${pct(bePct / 100)}`}
-            >
-              {bePct > 8 && <span className="bt-alloc__seg-label">{pct(bePct / 100)}</span>}
-            </DistributionSegment>
-          )}
+      <div>
+        <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2 text-sm text-text-sub">
+          <span>{stripColon(m.summary_effective_rate_total())}</span>
+          <span className="font-mono font-semibold tabular-nums text-text">
+            {pct(effectiveRateTotal)}
+          </span>
         </div>
 
-        <div className="bt-alloc__legend">
-          <div className="bt-alloc__legend-item">
-            <span className="bt-alloc__legend-dot bt-alloc__legend-dot--net" />
-            <span className="bt-alloc__legend-label">{m.summary_net_label()}</span>
-            <span className="bt-alloc__legend-value text-success">{fmt(netIncome)}</span>
+        {/* Allocation bar */}
+        <div className="bt-alloc">
+          <div className="bt-alloc__bar" role="img" aria-label={m.summary_allocation()}>
+            <DistributionSegment
+              className="bt-alloc__seg bt-alloc__seg--net"
+              percent={netPct}
+              title={`${m.summary_net_label()} ${pct(netPct / 100)}`}
+            >
+              {netPct > 18 && <span className="bt-alloc__seg-label">{pct(netPct / 100)}</span>}
+            </DistributionSegment>
+            <DistributionSegment
+              className="bt-alloc__seg bt-alloc__seg--nl"
+              percent={nlPct}
+              title={`🇳🇱 ${m.summary_dutch_tax()} ${pct(nlPct / 100)}`}
+            >
+              {nlPct > 10 && <span className="bt-alloc__seg-label">{pct(nlPct / 100)}</span>}
+            </DistributionSegment>
+            {bePct > 0 && (
+              <DistributionSegment
+                className="bt-alloc__seg bt-alloc__seg--be"
+                percent={bePct}
+                title={`🇧🇪 ${m.summary_belgian_tax()} ${pct(bePct / 100)}`}
+              >
+                {bePct > 8 && <span className="bt-alloc__seg-label">{pct(bePct / 100)}</span>}
+              </DistributionSegment>
+            )}
           </div>
-          <div className="bt-alloc__legend-item">
-            <span className="bt-alloc__legend-dot bt-alloc__legend-dot--nl" />
-            <span className="bt-alloc__legend-label">🇳🇱 {m.summary_dutch_tax()}</span>
-            <span className="bt-alloc__legend-value text-danger">−{fmt(nl.netTaxNL)}</span>
-          </div>
-          {be && be.netTaxBE > 0 && (
+
+          <div className="bt-alloc__legend">
             <div className="bt-alloc__legend-item">
-              <span className="bt-alloc__legend-dot bt-alloc__legend-dot--be" />
-              <span className="bt-alloc__legend-label">🇧🇪 {m.summary_belgian_tax()}</span>
-              <span className="bt-alloc__legend-value text-danger">−{fmt(be.netTaxBE)}</span>
+              <span className="bt-alloc__legend-dot bt-alloc__legend-dot--net" />
+              <span className="bt-alloc__legend-label">{m.summary_net_label()}</span>
+              <span className="bt-alloc__legend-value text-brand-light">{fmt(netIncome)}</span>
             </div>
-          )}
+            <div className="bt-alloc__legend-item">
+              <span className="bt-alloc__legend-dot bt-alloc__legend-dot--nl" />
+              <span className="bt-alloc__legend-label">🇳🇱 {m.summary_dutch_tax()}</span>
+              <span className="bt-alloc__legend-value">−{fmt(nl.netTaxNL)}</span>
+            </div>
+            {be && be.netTaxBE > 0 && (
+              <div className="bt-alloc__legend-item">
+                <span className="bt-alloc__legend-dot bt-alloc__legend-dot--be" />
+                <span className="bt-alloc__legend-label">🇧🇪 {m.summary_belgian_tax()}</span>
+                <span className="bt-alloc__legend-value">−{fmt(be.netTaxBE)}</span>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
       {/* Compact tax breakdown */}
-      <div className="bt-breakdown">
-        <div className="bt-breakdown__row">
-          <span className="bt-breakdown__label">{m.summary_gross_income()}</span>
-          <span className="bt-breakdown__value">{fmt(grossIncome)}</span>
-        </div>
-        <div className="bt-breakdown__row">
-          <span className="bt-breakdown__label">🇳🇱 {m.summary_dutch_tax()}</span>
-          <span className="bt-breakdown__value text-danger">−{fmt(nl.netTaxNL)}</span>
-        </div>
-        {be && be.netTaxBE > 0 && (
+      <div>
+        <div className="bt-breakdown">
           <div className="bt-breakdown__row">
-            <span className="bt-breakdown__label">🇧🇪 {m.summary_belgian_tax()}</span>
-            <span className="bt-breakdown__value text-danger">−{fmt(be.netTaxBE)}</span>
+            <span className="bt-breakdown__label">{m.summary_gross_income()}</span>
+            <span className="bt-breakdown__value">{fmt(grossIncome)}</span>
           </div>
-        )}
-        <div className="bt-breakdown__row bt-breakdown__row--total">
-          <span className="bt-breakdown__label bt-breakdown__label--strong">
-            {m.summary_total_tax()}
-          </span>
-          <span className="bt-breakdown__value text-danger bt-breakdown__label--strong">
-            −{fmt(totalTax)}
-          </span>
+          <div className="bt-breakdown__row">
+            <span className="bt-breakdown__label">🇳🇱 {m.summary_dutch_tax()}</span>
+            <span className="bt-breakdown__value">−{fmt(nl.netTaxNL)}</span>
+          </div>
+          {be && be.netTaxBE > 0 && (
+            <div className="bt-breakdown__row">
+              <span className="bt-breakdown__label">🇧🇪 {m.summary_belgian_tax()}</span>
+              <span className="bt-breakdown__value">−{fmt(be.netTaxBE)}</span>
+            </div>
+          )}
+          <div className="bt-breakdown__row bt-breakdown__row--total">
+            <span className="bt-breakdown__label bt-breakdown__label--strong">
+              {m.summary_total_tax()}
+            </span>
+            <span className="bt-breakdown__value bt-breakdown__label--strong">
+              −{fmt(totalTax)}
+            </span>
+          </div>
         </div>
-      </div>
 
-      {/* Actions */}
-      <div className="flex flex-wrap items-center gap-2 mt-4 mb-4">
-        <Button variant="outline-secondary" size="sm" onClick={() => void copySummary()}>
-          <ClipboardIcon
-            aria-hidden="true"
-            className="inline size-4 shrink-0 align-text-bottom me-1"
-          />
-          {m.summary_copy()}
-        </Button>
-        <Button variant="outline-secondary" size="sm" onClick={onResetInputs}>
-          <RotateCcwIcon
-            aria-hidden="true"
-            className="inline size-4 shrink-0 align-text-bottom me-1"
-          />
-          {m.summary_reset()}
-        </Button>
-      </div>
+        {/* Actions */}
+        <div className="mt-4 flex flex-wrap items-center gap-2">
+          <Button variant="outline-primary" size="sm" onClick={() => void copySummary()}>
+            <ClipboardIcon
+              aria-hidden="true"
+              className="inline size-4 shrink-0 align-text-bottom me-1"
+            />
+            {m.summary_copy()}
+          </Button>
+          <Button variant="outline-secondary" size="sm" onClick={onResetInputs}>
+            <RotateCcwIcon
+              aria-hidden="true"
+              className="inline size-4 shrink-0 align-text-bottom me-1"
+            />
+            {m.summary_reset()}
+          </Button>
+        </div>
 
-      {copyStatus === "success" && (
-        <Alert variant="success" className="py-2 mb-4">
-          {m.summary_copy_success()}
-        </Alert>
-      )}
-      {copyStatus === "error" && (
-        <Alert variant="warning" className="py-2 mb-4">
-          {m.summary_copy_error()}
-        </Alert>
-      )}
+        {copyStatus === "success" && (
+          <Alert variant="success" className="mt-4 mb-0 py-2">
+            {m.summary_copy_success()}
+          </Alert>
+        )}
+        {copyStatus === "error" && (
+          <Alert variant="warning" className="mt-4 mb-0 py-2">
+            {m.summary_copy_error()}
+          </Alert>
+        )}
+      </div>
 
       {/* Income sourcing ratio (4 percentages) */}
       {(() => {
         const { totalWithSick, totalNoSick, sickDays, daysBE } = getNLFractions(result.inputs);
         const showOverlapNote = sickDays > 0 && daysBE > 0;
         return (
-          <div className="mt-6">
-            <h6 className="mb-2">{m.summary_sourcing_title()}</h6>
-            <Table bordered className="mb-1 text-sm">
+          <div>
+            <h6 className="mb-3">{m.summary_sourcing_title()}</h6>
+            <Table bordered className="mb-3 text-sm">
               <TableHeader>
                 <TableRow>
                   <TableHead scope="col">{m.summary_sourcing_method_col()}</TableHead>
@@ -254,8 +252,8 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
                 </TableRow>
               </TableBody>
             </Table>
-            <p className="text-text-muted text-sm mb-0">{m.summary_sourcing_nl_formula()}</p>
-            <p className="text-text-muted text-sm mb-0">{m.summary_sourcing_be_formula()}</p>
+            <p className="mb-1 text-sm text-text-sub">{m.summary_sourcing_nl_formula()}</p>
+            <p className="mb-0 text-sm text-text-sub">{m.summary_sourcing_be_formula()}</p>
             {showOverlapNote && (
               <p className="text-warning text-sm mb-0 mt-1">{m.summary_sourcing_overlap_note()}</p>
             )}
@@ -265,8 +263,8 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
 
       {/* Fiscal balance (if NL tax was withheld) */}
       {withheldTaxNL > 0 && (
-        <div className="mt-6">
-          <h6 className="mb-4">{m.summary_eindafrekening()}</h6>
+        <div>
+          <h6 className="mb-3">{m.summary_eindafrekening()}</h6>
 
           <div className="bt-breakdown">
             <div className="bt-breakdown__row">
@@ -275,7 +273,7 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
             </div>
             <div className="bt-breakdown__row">
               <span className="bt-breakdown__label">🇳🇱 {m.summary_nl_owed()}</span>
-              <span className="bt-breakdown__value text-danger">−{fmt(nl.netTaxNL)}</span>
+              <span className="bt-breakdown__value">−{fmt(nl.netTaxNL)}</span>
             </div>
             <div
               className={cn(
@@ -299,7 +297,7 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
             {be && be.netTaxBE > 0 && (
               <div className="bt-breakdown__row">
                 <span className="bt-breakdown__label">🇧🇪 {m.summary_be_owed()}</span>
-                <span className="bt-breakdown__value text-danger">−{fmt(be.netTaxBE)}</span>
+                <span className="bt-breakdown__value">−{fmt(be.netTaxBE)}</span>
               </div>
             )}
           </div>

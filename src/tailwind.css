@@ -13,6 +13,8 @@
   --color-brand-light: var(--bt-brand-light);
   --color-brand-dim: var(--bt-brand-dim);
   --color-brand-border: var(--bt-brand-border);
+  --color-result: var(--bt-result);
+  --color-on-result: var(--bt-on-result);
   --color-bg: var(--bt-bg);
   --color-surface: var(--bt-surface);
   --color-surface-2: var(--bt-surface-2);
@@ -68,8 +70,8 @@
   --radius-sm: var(--bt-r-sm);
   --radius-md: var(--bt-r);
   --radius-lg: var(--bt-r-lg);
-  --text-badge: 0.62rem;
-  --text-badge-label: 0.58rem;
+  --text-badge: 0.7rem;
+  --text-badge-label: 0.66rem;
   --tracking-badge: 0.04em;
 }
 
@@ -88,11 +90,11 @@
 /* Preserve the established table typography and density during migration. */
 @theme {
   --breakpoint-table: 36rem;
-  --text-table-heading: 0.67rem;
-  --text-table-number: 0.8rem;
-  --text-table-reference: 0.8rem;
-  --text-table-reference-xs: 0.78rem;
-  --text-table-reference-md: 0.85rem;
+  --text-table-heading: 0.72rem;
+  --text-table-number: 0.85rem;
+  --text-table-reference: 0.85rem;
+  --text-table-reference-xs: 0.82rem;
+  --text-table-reference-md: 0.875rem;
   --tracking-table-heading: 0.09em;
   --tracking-table-number: -0.02em;
   --leading-table: 1.55;
@@ -121,15 +123,15 @@
 }
 
 @theme {
-  --text-control: 0.84rem;
-  --text-label: 0.7rem;
-  --text-hint: 0.72rem;
-  --text-form-input: 0.85rem;
+  --text-control: 0.875rem;
+  --text-label: 0.85rem;
+  --text-hint: 0.8rem;
+  --text-form-input: 0.875rem;
 }
 
 @theme {
-  --text-stat: 1.15rem;
-  --text-section-label: 0.68rem;
+  --text-stat: 1.25rem;
+  --text-section-label: 0.75rem;
 }
 
 /* Layout helpers for the generated dialog primitives (the lint rules forbid arbitrary values). */

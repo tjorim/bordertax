@@ -53,7 +53,7 @@ import { calculate } from "@/tax";
 import type { TaxInputs } from "@/tax/types";
 import { getLocale } from "@/paraglide/runtime.js";
 import * as m from "@/paraglide/messages.js";
-import { fmt, pct } from "../format.js";
+import { fmt, pct, stripColon } from "../format.js";
 
 interface Props {
   inputs: TaxInputs;
@@ -101,10 +101,6 @@ const legendEmphasis: ChartMarkState<DataPoint, ChartLineStateStyle<DataPoint>>[
 const chartRenderer = motion({
   transition: { type: "spring", stiffness: 170, damping: 22, mass: 1 },
 });
-
-function stripColon(label: string): string {
-  return label.replace(/:\s*$/, "");
-}
 
 function fmtK(n: number): string {
   if (Math.abs(n) >= 1000) return `€${Math.round(n / 1000)}k`;

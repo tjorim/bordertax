@@ -11,9 +11,9 @@ h5 {
 
 h6 {
   font-family: var(--bt-font-body);
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   font-weight: 600;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--bt-text-muted);
+  color: var(--bt-text-sub);
 }
