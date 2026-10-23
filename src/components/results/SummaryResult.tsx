@@ -214,8 +214,6 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
         </Alert>
       )}
 
-      <FilingChecklist result={result} />
-
       {/* Income sourcing ratio (4 percentages) */}
       {(() => {
         const { totalWithSick, totalNoSick, sickDays, daysBE } = getNLFractions(result.inputs);
@@ -321,6 +319,8 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
           </div>
         </div>
       )}
+
+      <FilingChecklist result={result} />
     </div>
   );
 }
