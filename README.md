@@ -120,3 +120,7 @@ acceptable to merge.
 - Civil status and Belgian region fields are present but not yet used in the calculation.
 - Special social security contribution (BBSZ) and regional Belgian supplements are not included.
 - This tool is a **simplified estimate** — it does not replace professional tax advice.
+
+## UI maintenance
+
+See [UI dependency and component maintenance](docs/ui-maintenance.md) for package updates, component provenance, upstream review commands and validation.

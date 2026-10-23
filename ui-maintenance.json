@@ -1,0 +1,176 @@
+{
+  "version": 1,
+  "mode": "shadcn",
+  "style": "base-mira",
+  "directories": ["src/components/ui"],
+  "components": {
+    "accordion": {
+      "files": ["src/components/ui/accordion.tsx"],
+      "registry": "accordion",
+      "origin": "https://ui.shadcn.com/r/styles/base-mira/accordion.json",
+      "reason": "Adapted registry component; preserve app tokens, accessibility and documented wrapper decisions.",
+      "reviewedAt": null,
+      "reviewNote": null,
+      "upstreamSha256": "8085ad9b5c50d24bd7a1e62106a438f6b2f29634150f77adeeea00fd33678b20",
+      "capturedAt": "2026-10-23T22:47:12.357560Z"
+    },
+    "alert": {
+      "files": ["src/components/ui/alert.tsx"],
+      "registry": "alert",
+      "origin": "https://ui.shadcn.com/r/styles/base-mira/alert.json",
+      "reason": "Adapted registry component; preserve app tokens, accessibility and documented wrapper decisions.",
+      "reviewedAt": null,
+      "reviewNote": null,
+      "upstreamSha256": "2878e9699b788dd16c5dd4f45a63a5ae6c0c7372f4dabbc9cf5d83b7df850752",
+      "capturedAt": "2026-10-23T22:47:12.357560Z"
+    },
+    "badge": {
+      "files": ["src/components/ui/badge.tsx"],
+      "registry": "badge",
+      "origin": "https://ui.shadcn.com/r/styles/base-mira/badge.json",
+      "reason": "Adapted registry component; preserve app tokens, accessibility and documented wrapper decisions.",
+      "reviewedAt": null,
+      "reviewNote": null,
+      "upstreamSha256": "af4cf0129a8b7847f857bc62ae46bcc3451b26f14b2eff9495f860f7a132a7d7",
+      "capturedAt": "2026-10-23T22:47:12.357560Z"
+    },
+    "button": {
+      "files": ["src/components/ui/button.tsx"],
+      "registry": "button",
+      "origin": "https://ui.shadcn.com/r/styles/base-mira/button.json",
+      "reason": "Adapted registry component; preserve app tokens, accessibility and documented wrapper decisions.",
+      "reviewedAt": null,
+      "reviewNote": null,
+      "upstreamSha256": "8374720e2207c025fb1bcb0fd100dd4619796c6982c65ec3a3816222ff34daa4",
+      "capturedAt": "2026-10-23T22:47:12.357560Z"
+    },
+    "card": {
+      "files": ["src/components/ui/card.tsx"],
+      "registry": "card",
+      "origin": "https://ui.shadcn.com/r/styles/base-mira/card.json",
+      "reason": "Adapted registry component; preserve app tokens, accessibility and documented wrapper decisions.",
+      "reviewedAt": null,
+      "reviewNote": null,
+      "upstreamSha256": "1f5c2c44ee5b79fe0498fa3f9330d3d5f4e994202b9634c9ea09ba5e25e4b159",
+      "capturedAt": "2026-10-23T22:47:12.357560Z"
+    },
+    "checkbox": {
+      "files": ["src/components/ui/checkbox.tsx"],
+      "registry": "checkbox",
+      "origin": "https://ui.shadcn.com/r/styles/base-mira/checkbox.json",
+      "reason": "Adapted registry component; preserve app tokens, accessibility and documented wrapper decisions.",
+      "reviewedAt": null,
+      "reviewNote": null,
+      "upstreamSha256": "1bd22c6b5c520b55e023b7dc97395b8a07214ddb3606e9a612469668701a1726",
+      "capturedAt": "2026-10-23T22:47:12.357560Z"
+    },
+    "collapsible": {
+      "files": ["src/components/ui/collapsible.tsx"],
+      "registry": "collapsible",
+      "origin": "https://ui.shadcn.com/r/styles/base-mira/collapsible.json",
+      "reason": "Adapted registry component; preserve app tokens, accessibility and documented wrapper decisions.",
+      "reviewedAt": null,
+      "reviewNote": null,
+      "upstreamSha256": "ab2a1af115edbd76efdf46c382c3af5f7a34aecdcc7bd3e447b2316407e05ea6",
+      "capturedAt": "2026-10-23T22:47:12.357560Z"
+    },
+    "distribution-segment": {
+      "files": ["src/components/ui/distribution-segment.tsx"],
+      "registry": null,
+      "origin": "local",
+      "reason": "Locally owned composition; maintain against the Base UI APIs it imports and the app UI audit.",
+      "reviewedAt": null,
+      "reviewNote": null
+    },
+    "dropdown-menu": {
+      "files": ["src/components/ui/dropdown-menu.tsx"],
+      "registry": "dropdown-menu",
+      "origin": "https://ui.shadcn.com/r/styles/base-mira/dropdown-menu.json",
+      "reason": "Adapted registry component; preserve app tokens, accessibility and documented wrapper decisions.",
+      "reviewedAt": null,
+      "reviewNote": null,
+      "upstreamSha256": "1417130bc5e6faf98f93f279ad8840e1cd5d5a331eef691e9c57d837b785d152",
+      "capturedAt": "2026-10-23T22:47:12.357560Z"
+    },
+    "field": {
+      "files": ["src/components/ui/field.tsx"],
+      "registry": "field",
+      "origin": "https://ui.shadcn.com/r/styles/base-mira/field.json",
+      "reason": "Adapted registry component; preserve app tokens, accessibility and documented wrapper decisions.",
+      "reviewedAt": null,
+      "reviewNote": null,
+      "upstreamSha256": "9b53afb51365a6a335654442a33f939b6ff8d17072aee57289d6a49be4096cf9",
+      "capturedAt": "2026-10-23T22:47:12.357560Z"
+    },
+    "input": {
+      "files": ["src/components/ui/input.tsx"],
+      "registry": "input",
+      "origin": "https://ui.shadcn.com/r/styles/base-mira/input.json",
+      "reason": "Adapted registry component; preserve app tokens, accessibility and documented wrapper decisions.",
+      "reviewedAt": null,
+      "reviewNote": null,
+      "upstreamSha256": "98d0724ae321a2bae8ad8a6490e8ad8f4e2bf108f5f4d01e3d20805a2e7e3e79",
+      "capturedAt": "2026-10-23T22:47:12.357560Z"
+    },
+    "label": {
+      "files": ["src/components/ui/label.tsx"],
+      "registry": "label",
+      "origin": "https://ui.shadcn.com/r/styles/base-mira/label.json",
+      "reason": "Adapted registry component; preserve app tokens, accessibility and documented wrapper decisions.",
+      "reviewedAt": null,
+      "reviewNote": null,
+      "upstreamSha256": "250dc87f5716c8b60773ebdfa0aab9f9628688be7c8511627cf0bd7997ed2eaf",
+      "capturedAt": "2026-10-23T22:47:12.357560Z"
+    },
+    "native-select": {
+      "files": ["src/components/ui/native-select.tsx"],
+      "registry": "native-select",
+      "origin": "https://ui.shadcn.com/r/styles/base-mira/native-select.json",
+      "reason": "Adapted registry component; preserve app tokens, accessibility and documented wrapper decisions.",
+      "reviewedAt": null,
+      "reviewNote": null,
+      "upstreamSha256": "34b30bc12632b90625b26f98abacbb847b2a2df7f88a643b4cdbbe242038282d",
+      "capturedAt": "2026-10-23T22:47:12.357560Z"
+    },
+    "popover": {
+      "files": ["src/components/ui/popover.tsx"],
+      "registry": "popover",
+      "origin": "https://ui.shadcn.com/r/styles/base-mira/popover.json",
+      "reason": "Adapted registry component; preserve app tokens, accessibility and documented wrapper decisions.",
+      "reviewedAt": null,
+      "reviewNote": null,
+      "upstreamSha256": "a5d74de56cf814b3447c4e6b69e2ffab17f5281a3eb8f04ed859eab747b7947a",
+      "capturedAt": "2026-10-23T22:47:12.357560Z"
+    },
+    "spinner": {
+      "files": ["src/components/ui/spinner.tsx"],
+      "registry": "spinner",
+      "origin": "https://ui.shadcn.com/r/styles/base-mira/spinner.json",
+      "reason": "Adapted registry component; preserve app tokens, accessibility and documented wrapper decisions.",
+      "reviewedAt": null,
+      "reviewNote": null,
+      "upstreamSha256": "b03554f6fff5d5ce2c1150a9cf5a0b11a31f596ad7310c378436890741cc5080",
+      "capturedAt": "2026-10-23T22:47:12.357560Z"
+    },
+    "table": {
+      "files": ["src/components/ui/table.tsx"],
+      "registry": "table",
+      "origin": "https://ui.shadcn.com/r/styles/base-mira/table.json",
+      "reason": "Adapted registry component; preserve app tokens, accessibility and documented wrapper decisions.",
+      "reviewedAt": null,
+      "reviewNote": null,
+      "upstreamSha256": "563efb62af67b38fc5a1a67bc8a3c8a786570a29173b4b0d9fcdc84b4aaf5483",
+      "capturedAt": "2026-10-23T22:47:12.357560Z"
+    },
+    "tabs": {
+      "files": ["src/components/ui/tabs.tsx"],
+      "registry": "tabs",
+      "origin": "https://ui.shadcn.com/r/styles/base-mira/tabs.json",
+      "reason": "Adapted registry component; preserve app tokens, accessibility and documented wrapper decisions.",
+      "reviewedAt": null,
+      "reviewNote": null,
+      "upstreamSha256": "285e0d776c6f580fe4bb75b5d1bae7a88a6f0d571eb72d600e7c575d326b05bf",
+      "capturedAt": "2026-10-23T22:47:12.357560Z"
+    }
+  }
+}
