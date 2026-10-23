@@ -18,3 +18,8 @@ export const fmtSigned = (n: number) => {
   });
   return n >= 0 ? `+${abs}` : `−${abs}`;
 };
+
+/** Drops the trailing colon from a label that is also used as a "label: value" prefix. */
+export function stripColon(label: string): string {
+  return label.replace(/:\s*$/, "");
+}

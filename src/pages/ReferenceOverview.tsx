@@ -1,4 +1,3 @@
-import { cn } from "@/lib/utils";
 import { Card, CardContent, CardTitle, CardDescription } from "@/components/ui/card";
 import { ArrowRightIcon, LibraryIcon } from "lucide-react";
 import { Link } from "@tanstack/react-router";
@@ -15,7 +14,7 @@ export default function ReferenceOverview() {
         <span className="ref-nav-text font-mono text-xs font-semibold tracking-wide text-text-muted">
           <LibraryIcon
             aria-hidden="true"
-            className="inline size-4 shrink-0 align-text-bottom me-2 text-be-light"
+            className="inline size-4 shrink-0 align-text-bottom me-2 text-brand-light"
           />
           {m.ref_overview_hub_title()}
         </span>
@@ -28,15 +27,10 @@ export default function ReferenceOverview() {
           {REFERENCE_PAGES.map((page) => (
             <div key={page.route} className="min-w-0">
               <Link to={page.route} className="no-underline">
-                <Card
-                  className={cn(
-                    "h-full cursor-pointer transition-colors hover:border-border-hover",
-                    page.borderClass,
-                  )}
-                >
-                  <CardContent className="p-6">
+                <Card className="h-full cursor-pointer transition-colors hover:border-border-hover">
+                  <CardContent>
                     <div className="mb-4">
-                      <page.icon aria-hidden="true" className={cn("size-8", page.accentClass)} />
+                      <page.icon aria-hidden="true" className="size-8 text-brand-light" />
                     </div>
                     <CardTitle className="font-bold mb-2 ref-overview-card__title">
                       {page.titleFn()}
@@ -44,7 +38,7 @@ export default function ReferenceOverview() {
                     <CardDescription className="ref-overview-card__text">
                       {page.descFn()}
                     </CardDescription>
-                    <span className={cn("text-sm font-semibold", page.accentClass)}>
+                    <span className="text-sm font-semibold text-brand-light">
                       {m.ref_nav_read_more()}{" "}
                       <ArrowRightIcon
                         aria-hidden="true"

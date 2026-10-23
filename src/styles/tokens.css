@@ -31,14 +31,18 @@
   --bt-text-muted: #8fabc8;
   --bt-text-dim: #4e6884;
 
-  /* Dutch Orange — demoted to per-tab accent only */
+  /* Main result: teal fill with the text colour that stays legible on it */
+  --bt-result: #14b8a6;
+  --bt-on-result: #042f2e;
+
+  /* Dutch Orange — reserved for country comparisons */
   --bt-nl: #e05020;
   --bt-nl-light: #f07040;
   --bt-nl-dim: rgba(224, 80, 32, 0.12);
   --bt-nl-glow: rgba(224, 80, 32, 0.25);
   --bt-nl-border: rgba(224, 80, 32, 0.35);
 
-  /* Belgian Gold — demoted to per-tab accent only */
+  /* Belgian Gold — reserved for country comparisons */
   --bt-be: #c8901a;
   --bt-be-light: #e0a830;
   --bt-be-dim: rgba(200, 144, 26, 0.12);
@@ -71,6 +75,8 @@
 
 [data-theme="light"] {
   --bt-brand-light: #0f766e;
+  --bt-result: #0f766e;
+  --bt-on-result: #ffffff;
 
   /* Accent text on light surfaces needs a darker shade than the dark-mode accents. */
   --bt-nl-light: #a8350a;

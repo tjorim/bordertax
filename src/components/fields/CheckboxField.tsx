@@ -11,10 +11,7 @@ export function CheckboxField({
   return (
     <Field orientation="horizontal">
       <Checkbox id={id} className="mt-1" {...props} />
-      <FieldLabel
-        htmlFor={id}
-        className="text-sm font-normal normal-case tracking-normal leading-snug text-text"
-      >
+      <FieldLabel htmlFor={id} className="font-normal leading-snug text-text">
         {label}
       </FieldLabel>
     </Field>

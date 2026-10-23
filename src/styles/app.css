@@ -1,7 +1,6 @@
 /* Application typography, visualization and reference-page styles. */
 @import "./base.css";
 @import "./typography.css";
-@import "./summary-metric-cards.css";
 @import "./footer.css";
 @import "./scrollbar.css";
 @import "./country-specific-visual-accents.css";

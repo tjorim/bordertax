@@ -9,7 +9,6 @@ import {
   SunIcon,
   SunMoonIcon,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "./ui/collapsible";
 import {
@@ -128,12 +127,8 @@ export function AppNavbar({ children, onLocaleSwitch }: AppNavbarProps) {
       open={desktop || mobileOpen}
       onOpenChange={(open) => setMobileOpen(open)}
       render={<header />}
-      className="sticky top-0 z-40 mb-6 border-b border-border bg-navbar-bg backdrop-blur-xl"
+      className="sticky top-0 z-40 mb-6 border-b border-border-soft bg-navbar-bg backdrop-blur-xl"
     >
-      <div aria-hidden="true" className="flex h-0.5 opacity-75">
-        <span className="w-1/2 bg-nl" />
-        <span className="w-1/2 bg-be" />
-      </div>
       <div className="flex flex-wrap items-center gap-3 px-3 py-3">
         <span className="text-xl font-bold" aria-label={m.nav_countries_label()}>
           🇧🇪&thinsp;🇳🇱
@@ -176,15 +171,7 @@ export function AppNavbar({ children, onLocaleSwitch }: AppNavbarProps) {
                     page.route === "/reference/salary-split" ? CalculatorIcon : PiggyBankIcon;
                   return (
                     <DropdownMenuItem key={page.route} render={<Link to={page.route} />}>
-                      <Icon
-                        className={cn(
-                          "size-4",
-                          page.route === "/reference/salary-split"
-                            ? "text-nl-light"
-                            : "text-be-light",
-                        )}
-                        aria-hidden="true"
-                      />
+                      <Icon className="size-4 text-brand-light" aria-hidden="true" />
                       {page.titleFn()}
                     </DropdownMenuItem>
                   );

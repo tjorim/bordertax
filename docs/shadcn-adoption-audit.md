@@ -164,3 +164,26 @@ from the trigger skips the collapsed content and enters the first link once
 expanded, and the `ref-link-card p-0` / `ref-list-sub p-0` probes computed to 0px
 padding in both themes. Screenshots are in `/tmp/bordertax-315/`. `pnpm lint`,
 `pnpm typecheck`, `pnpm test` and `pnpm build` ran sequentially.
+
+## Spacing, surfaces, typography and colour (issue #316)
+
+No new custom components; shared primitives were restyled so the calculator,
+navbar and reference pages stay coherent.
+
+- **Colour roles.** Teal (`brand`, `result`/`on-result`) marks the main result and
+  primary actions. Dutch orange and Belgian gold appear only where NL and BE are
+  compared (allocation bar and legend, country tabs, badges, box codes, section
+  icons on the reference pages); country is always also named by a flag and label.
+  Success/danger stay for refunds, balances and alerts. The navbar country stripe,
+  per-page card borders and orange/gold navigation icons were removed.
+- **Surfaces.** Card, accordion, tabs, table rows and the navbar use `border-soft`;
+  shadows were dropped from the accordion and results panel. `bordered` tables keep
+  horizontal row lines only. The stat tiles are plain `bg-surface` blocks, so
+  `summary-metric-cards.css` (hover lift, gradient edge) was deleted.
+- **Type.** Form labels are sentence case (`text-label` 0.85rem, `text-text-sub`),
+  hints 0.8rem, badges, table headings and section labels were enlarged, and
+  `h6` section headings use `text-sub`. Figures use `tabular-nums`.
+- **Spacing.** `CardContent` is `p-5`, `CardHeader` `px-5 py-3`; accordion
+  triggers and panels use `p-4`. The summary is a single `gap-6` column.
+- **Accordion trigger.** `border-0` replaces the old transparent `border-s-2`, which
+  had been hiding the browser's default button border.
