@@ -9,14 +9,14 @@ import {
   SunIcon,
   SunMoonIcon,
 } from "lucide-react";
-import { Button } from "./ui/button";
-import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "./ui/collapsible";
+import { Button } from "@/components/ui/button";
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
-} from "./ui/dropdown-menu";
+} from "@/components/ui/dropdown-menu";
 import { Link } from "@tanstack/react-router";
 import { getLocale, setLocale } from "../paraglide/runtime.js";
 import * as m from "../paraglide/messages.js";
