@@ -172,5 +172,9 @@
       "upstreamSha256": "285e0d776c6f580fe4bb75b5d1bae7a88a6f0d571eb72d600e7c575d326b05bf",
       "capturedAt": "2026-10-23T22:47:12.357560Z"
     }
+  },
+  "importPolicy": {
+    "uiAlias": "@/components/ui",
+    "baseUiExceptions": {}
   }
 }
