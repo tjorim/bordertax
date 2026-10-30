@@ -27,13 +27,13 @@ export type MortgageReason =
   | "no_interest";
 
 export type MortgageAssumption =
-  /** An inkomensverklaring validated by the Belgian tax authority must be sent to the Belastingdienst. */
+  /** An inkomensverklaring validated by the Belgian tax authority is required, subject to repeat-filer exceptions. */
   | "income_statement_required"
   /** The entered interest is assumed to be on qualifying home debt (eigenwoningschuld) that meets the 30-year and repayment conditions. */
   | "qualifying_debt"
-  /** No eigenwoningforfait is added: the home is assumed to be taxed in Belgium, not NL. */
+  /** Known limitation: no eigenwoningforfait is added, although the foreign home falls under the eigenwoningregeling; see docs/hypotheekrenteaftrek-rules.md. */
   | "no_eigenwoningforfait"
-  /** Volksverzekeringen and labour credits are assumed unaffected; only income tax falls. */
+  /** Legacy identifier retained for compatibility; no longer returned: mortgage deductions reduce premium income. */
   | "premium_base_unchanged"
   /** Belgian tax is recomputed from the lower Dutch tax; no Belgian home benefit (woonbonus) is modelled. */
   | "no_belgian_home_benefit";
@@ -139,6 +139,5 @@ export const MORTGAGE_ASSUMPTIONS: readonly MortgageAssumption[] = [
   "income_statement_required",
   "qualifying_debt",
   "no_eigenwoningforfait",
-  "premium_base_unchanged",
   "no_belgian_home_benefit",
 ];

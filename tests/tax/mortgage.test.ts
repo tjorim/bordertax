@@ -4,6 +4,7 @@ import { VALID_YEARS } from "@/tax/constants";
 import { DEFAULT_INPUTS } from "@/tax/defaults";
 import { calculate } from "@/tax/index";
 import { assessEligibility, getDeductibleInterest } from "@/tax/mortgage";
+import { calculateNLTax } from "@/tax/nl";
 import { TAX_PARAMS } from "@/tax/params";
 import type { TaxInputs } from "@/tax/types";
 
@@ -180,8 +181,16 @@ describe("inputs and params", () => {
   it("has a deduction rate cap for every supported year", () => {
     for (const year of VALID_YEARS) {
       const cap = TAX_PARAMS[year].nl.mortgageDeductionRateCap;
-      expect(cap).toBeGreaterThan(0.3);
-      expect(cap).toBeLessThanOrEqual(0.495);
+      // Ministry policy information 2023 historical table and 2024/2025 guidance.
+      const verifiedCaps = {
+        2020: 0.46,
+        2021: 0.43,
+        2022: 0.4,
+        2023: 0.3693,
+        2024: 0.3697,
+        2025: 0.3748,
+      };
+      expect(cap).toBe(verifiedCaps[year]);
     }
   });
 
@@ -201,5 +210,46 @@ describe("privacy", () => {
     expect(Object.keys(persisted).filter((key) => /mortgage|incomeOutsideNL/.test(key))).toEqual(
       [],
     );
+  });
+});
+
+// Official yearly guidance: premium income uses worldwide Box 1 income after deductions.
+describe("mortgage premium income", () => {
+  for (const year of VALID_YEARS) {
+    for (const belowAOWAge of [true, false]) {
+      it(`reduces premium income below the ceiling in ${year}, below AOW: ${belowAOWAge}`, () => {
+        const inputs = { ...base, year, belowAOWAge, grossSalary: 30000 };
+        const p = TAX_PARAMS[year].nl[belowAOWAge ? "under" : "over"];
+        const without = calculateNLTax(inputs);
+        const withMortgage = calculateNLTax(inputs, 6000);
+        expect(withMortgage.volksverzekeringen).toBe(Math.floor(24000 * p.socialPremiumRate));
+        expect(without.volksverzekeringen - withMortgage.volksverzekeringen).toBeCloseTo(
+          6000 * p.socialPremiumRate,
+          0,
+        );
+        expect(withMortgage.arbeidskorting).toBe(without.arbeidskorting);
+      });
+    }
+    it(`only reduces premiums once income falls below the ceiling in ${year}`, () => {
+      const p = TAX_PARAMS[year].nl.under;
+      const inputs = { ...base, year, grossSalary: p.socialPremiumMax + 2000 };
+      expect(calculateNLTax(inputs, 1000).volksverzekeringen).toBe(
+        calculateNLTax(inputs).volksverzekeringen,
+      );
+      expect(calculateNLTax(inputs, 3000).volksverzekeringen).toBe(
+        Math.floor((p.socialPremiumMax - 1000) * p.socialPremiumRate),
+      );
+      expect(calculateNLTax(inputs, inputs.grossSalary + 1000).volksverzekeringen).toBe(0);
+    });
+  }
+  it("uses worldwide salary even when only part is taxed in NL", () => {
+    const inputs = { ...base, grossSalary: 30000, daysWorkedNL: 180, daysWorkedBE: 20 };
+    const p = TAX_PARAMS[inputs.year].nl.under;
+    const result = calculateNLTax(inputs, 28000);
+    expect(result.nlTaxableIncome).toBe(0);
+    expect(result.volksverzekeringen).toBe(Math.floor(2000 * p.socialPremiumRate));
+  });
+  it("no longer reports an unchanged premium base", () => {
+    expect(calculate(base).mortgage?.assumptions).not.toContain("premium_base_unchanged");
   });
 });
