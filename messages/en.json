@@ -215,7 +215,7 @@
   "wfh_x_label": "Days worked from home in 🇧🇪 BE (%)",
   "wfh_current_ratio": "Current ratio",
   "wfh_optimal": "Optimal (max net)",
-  "wfh_zone_full_benefits": "Full NL benefits (≤10% BE)",
+  "wfh_zone_full_benefits": "Likely full NL benefits (≤10% BE, salary only)",
   "wfh_zone_hybrid_safe": "Hybrid-work safe zone (≤25% BE)",
   "wfh_threshold_10_label": "90% rule",
   "wfh_qualifying_taxpayer_note": "The workday ratio does not prove qualifying non-resident taxpayer status. At least 90% of worldwide income must be taxed in NL, rounded down to a whole percent. Other income (including partner income and the box 3 benefit) lowers the allowed home-working share. An income statement validated by the Belgian tax authority and sent to the Dutch Belastingdienst, and qualifying-loan documents are required. This is an estimate, not tax advice.",
