@@ -5,6 +5,14 @@ import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/
 import { createServer } from "./server";
 
 const bodyLimit = 64 * 1024;
+/** Path without query string or trailing slash, so `/mcp`, `/mcp/` and `/mcp?x=1` all match. */
+function routePath(url: string | undefined): string {
+  try {
+    return new URL(url ?? "/", "http://localhost").pathname.replace(/\/+$/, "") || "/";
+  } catch {
+    return "/";
+  }
+}
 function json(response: ServerResponse, status: number, body: unknown) {
   response.writeHead(status, { "Content-Type": "application/json" });
   response.end(JSON.stringify(body));
@@ -53,15 +61,16 @@ export function startHttpServer({
           json(res, 403, { error: "Origin not allowed" });
           return;
         }
-        if (req.method === "GET" && req.url === "/healthz") {
+        const path = routePath(req.url);
+        if (req.method === "GET" && path === "/healthz") {
           json(res, 200, { status: "ok" });
           return;
         }
-        if (req.method === "GET" && req.url === "/api/mcp/capabilities") {
+        if (req.method === "GET" && path === "/api/mcp/capabilities") {
           json(res, 200, await capabilities());
           return;
         }
-        if (req.url !== "/mcp") {
+        if (path !== "/mcp") {
           json(res, 404, { error: "Not found" });
           return;
         }

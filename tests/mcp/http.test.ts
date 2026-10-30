@@ -109,6 +109,12 @@ describe("stateless HTTP MCP", () => {
     expect(response.status).toBe(405);
     expect(response.headers.get("allow")).toBe("POST");
   });
+  it.each(["/mcp/", "/mcp?x=1"])("routes %s like /mcp", async (path) => {
+    const response = await fetch(`${url}${path}`, { method: "GET" });
+    expect(response.status).toBe(405);
+    const post = await fetch(`${url}${path}`, { method: "POST", body: "{" });
+    expect(post.status).toBe(400);
+  });
   it("serves health and rejects unknown routes", async () => {
     expect(await (await fetch(`${url}/healthz`)).json()).toEqual({ status: "ok" });
     expect((await fetch(`${url}/unknown`)).status).toBe(404);
