@@ -37,3 +37,19 @@ small shared helper chunk.
 
 No bundle budget is enforced; none was added because the project has no earlier budget
 to compare against and one measurement is not a trend.
+
+## Scenario comparison (issue #339)
+
+Measured with Vite 8.3.5, using `pnpm build` followed by `pnpm bundle:measure`
+on the same machine for the base commit and the comparison implementation:
+
+| Build                    | Initial JS raw | Initial JS gzip | Total JS raw | Total JS gzip |
+| ------------------------ | -------------: | --------------: | -----------: | ------------: |
+| Base commit              |      830.59 kB |       251.00 kB |   1143.26 kB |     348.54 kB |
+| With scenario comparison |      831.92 kB |       252.15 kB |   1152.38 kB |     352.63 kB |
+
+`ScenarioCompare` is deferred (7.78 kB raw / 2.93 kB gzip), including the
+comparison/Shapley logic. It is absent from the initial static import closure.
+The tab follows the existing intent-preload and first-selection mount pattern.
+There remains no enforced bundle budget. The small initial increase includes
+the tab wiring and catalogue changes; the editor and comparison logic stay lazy.

@@ -16,6 +16,9 @@ const YearComparison = yearComparisonView.Component;
 const wfhChartView = lazyView(() => import("./WFHRatioChart"));
 const WFHRatioChart = wfhChartView.Component;
 
+const scenarioCompareView = lazyView(() => import("./ScenarioCompare"));
+const ScenarioCompare = scenarioCompareView.Component;
+
 // Preload on hover, keyboard focus and touch/press, so the chunk is usually in by the click.
 const preloadOnIntent = (view: { preload: () => void }) => ({
   onPointerEnter: view.preload,
@@ -32,14 +35,14 @@ export default function ResultsTabs({ inputs, onResetInputs }: ResultsTabsProps)
   const result = useMemo(() => calculate(inputs), [inputs]);
   const [tab, setTab] = useState<string | number | null>("summary");
   // These panels load on first selection; later they stay mounted like the other panels.
-  const [requested, setRequested] = useState({ years: false, wfh: false });
+  const [requested, setRequested] = useState({ years: false, wfh: false, compare: false });
 
   return (
     <Tabs
       value={tab}
       onValueChange={(next) => {
         setTab(next);
-        if (next === "years" || next === "wfh") {
+        if (next === "years" || next === "wfh" || next === "compare") {
           setRequested((prev) => ({ ...prev, [next]: true }));
         }
       }}
@@ -66,6 +69,13 @@ export default function ResultsTabs({ inputs, onResetInputs }: ResultsTabsProps)
         >
           <ChartColumnIcon className="size-3" aria-hidden="true" />
           {m.tabs_year_comparison()}
+        </TabsTrigger>
+        <TabsTrigger
+          value="compare"
+          aria-label={m.tabs_compare()}
+          {...preloadOnIntent(scenarioCompareView)}
+        >
+          {m.tabs_compare()}
         </TabsTrigger>
       </TabsList>
 
@@ -97,6 +107,13 @@ export default function ResultsTabs({ inputs, onResetInputs }: ResultsTabsProps)
           {requested.years && (
             <LazyBoundary view={yearComparisonView} loadingClassName="min-h-180">
               <YearComparison inputs={inputs} result={result} />
+            </LazyBoundary>
+          )}
+        </TabsContent>
+        <TabsContent value="compare">
+          {requested.compare && (
+            <LazyBoundary view={scenarioCompareView} loadingClassName="min-h-180">
+              <ScenarioCompare inputs={inputs} />
             </LazyBoundary>
           )}
         </TabsContent>

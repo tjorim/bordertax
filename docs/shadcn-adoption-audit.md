@@ -191,3 +191,13 @@ navbar and reference pages stay coherent.
 ## Dependency and upstream source maintenance
 
 Use the pinned CLI and review workflow in [ui-maintenance.md](ui-maintenance.md). Existing generator/version examples above describe the original adoption; current maintenance commands and captured revisions live in that workflow and the frontend inventory.
+
+### Scenario comparison (issue #339)
+
+`ScenarioCompare` composes the owned Table, Button, Alert, NumberField/CurrencyField
+and CheckboxField adapters. Reviewed `shadcn add table --dry-run --view` and the
+[official Base UI table documentation](https://ui.shadcn.com/docs/components/base/table).
+The scenario editor and attribution list are domain compositions, with native
+section/list semantics for the unsortable Shapley explanation; no new primitive,
+custom interaction or CSS is needed. The existing responsive Table provides
+keyboard-focusable horizontal scrolling at narrow widths.
