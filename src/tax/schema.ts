@@ -33,6 +33,7 @@ export const TaxInputFields = {
   withheldTaxNL: z.number(),
   sickDays: z.number(),
   mortgageEnabled: z.boolean(),
+  mortgageHomeValue: z.number(),
   mortgageInterest: z.number(),
   mortgageOwnershipShare: z.number(),
   incomeOutsideNL: z.number(),
@@ -63,6 +64,11 @@ export const TaxInputSchema = z.object({
   sickDays: TaxInputFields.sickDays.catch(0).transform((v) => Math.max(0, v)),
   // Optional home/mortgage scenario (hypotheekrenteaftrek). Never persisted.
   mortgageEnabled: TaxInputFields.mortgageEnabled.optional().catch(undefined),
+  /** Whole-home market value at 1 January of the preceding year; undefined = not entered. */
+  mortgageHomeValue: TaxInputFields.mortgageHomeValue
+    .transform((v) => Math.max(0, v))
+    .optional()
+    .catch(undefined),
   /** Annual interest paid on the qualifying home debt (eigenwoningschuld), whole loan. */
   mortgageInterest: TaxInputFields.mortgageInterest
     .transform((v) => Math.max(0, v))

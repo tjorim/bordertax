@@ -36,6 +36,12 @@ describe("InputPanel", () => {
     const interest = screen.getByRole("spinbutton", { name: /annual interest/i });
     fireEvent.change(interest, { target: { value: "6000" } });
     expect(getForm().getFieldValue("mortgageInterest")).toBe(6000);
+    const home = screen.getByRole("spinbutton", { name: /whole home value/i });
+    expect(home).toHaveValue(null);
+    fireEvent.change(home, { target: { value: "300000" } });
+    expect(getForm().getFieldValue("mortgageHomeValue")).toBe(300000);
+    fireEvent.change(home, { target: { value: "" } });
+    expect(getForm().getFieldValue("mortgageHomeValue")).toBeUndefined();
     const share = screen.getByRole("spinbutton", { name: /ownership share/i });
     fireEvent.change(share, { target: { value: "50" } });
     expect(getForm().getFieldValue("mortgageOwnershipShare")).toBe(50);

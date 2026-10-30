@@ -27,6 +27,7 @@ export function getCapabilities() {
           "mortgageEnabled",
           "mortgageInterest",
           "mortgageOwnershipShare",
+          "mortgageHomeValue",
           "incomeOutsideNL",
         ].includes(field),
     ),
@@ -39,6 +40,11 @@ export function getCapabilities() {
     mortgage: {
       inputs: {
         mortgageEnabled: { default: false },
+        mortgageHomeValue: {
+          unit: "EUR, whole-home market value (WOZ-equivalent) at 1 January of the preceding year",
+          optional: true,
+          omittedMeaning: "interest-only upper estimate",
+        },
         mortgageInterest: { unit: "EUR per year, whole qualifying loan", defaultWhenEnabled: 0 },
         mortgageOwnershipShare: { unit: "percent", min: 0, max: 100, defaultWhenEnabled: 100 },
         incomeOutsideNL: {
@@ -58,7 +64,10 @@ export function getCapabilities() {
         },
         nlTaxedPercent: "whole percent, rounded down; may be an upper bound",
         deductibleInterest: "EUR per year; interest multiplied by ownership share",
-        applied: "true only when eligible and deductible interest is positive",
+        eigenwoningforfait: "EUR per year; whole-home forfait multiplied by ownership share",
+        netDeduction: "max(0, deductibleInterest minus eigenwoningforfait)",
+        benefitIsUpperBound: "true when home value is missing",
+        applied: "true only when eligible and net deduction is positive",
         potential: "EUR per year: nlTaxSaving, beTaxIncrease, netBenefit if eligible",
         realised: "EUR per year: actual effect in totals; zero when not applied",
         reasons: "machine-readable explanations for eligibility and missing interest",
@@ -66,6 +75,7 @@ export function getCapabilities() {
       },
     },
     limitations: [
+      "Full-year occupied main home only; positive home income and Wet Hillen not modelled",
       "Single person only",
       "Flemish region only",
       "NL-resident unsupported",

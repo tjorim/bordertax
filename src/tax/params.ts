@@ -529,3 +529,54 @@ export const TAX_PARAMS: Record<TaxYear, YearParams> = {
     },
   },*/
 };
+
+/** Ordinary occupied main home, full year. Each year's official table: sections 10.3.1
+ * https://www.belastingdienst.nl/wps/wcm/connect/fisin/fisin2020/eigen_woning_en_restschuld_vroegere
+ * https://www.belastingdienst.nl/wps/wcm/connect/fisin/fisin2021/eigen_woning_en_restschuld_vroegere
+ * https://www.belastingdienst.nl/wps/wcm/connect/fisin/fisin2022/eigen_woning_en_restschuld_vroegere
+ * https://www.belastingdienst.nl/wps/wcm/connect/fisin/fisin2023/eigen_woning_en_restschuld_vroegere
+ * https://www.belastingdienst.nl/wps/wcm/connect/fisin/fisin2024/eigen_woning_en_restschuld_vroegere
+ * https://www.belastingdienst.nl/wps/wcm/connect/fisin/fisin2025/eigen_woning_en_restschuld_vroegere
+ * Rates apply to the whole value, not marginal bands. Above threshold: base + excess rate.
+ */
+export const EIGENWONINGFORFAIT: Record<
+  TaxYear,
+  { rates: readonly number[]; threshold: number; base: number; excessRate: number }
+> = {
+  2020: {
+    rates: [0, 0.002, 0.0035, 0.0045, 0.006],
+    threshold: 1090000,
+    base: 6540,
+    excessRate: 0.0235,
+  },
+  2021: {
+    rates: [0, 0.002, 0.003, 0.004, 0.005],
+    threshold: 1110000,
+    base: 5550,
+    excessRate: 0.0235,
+  },
+  2022: {
+    rates: [0, 0.0015, 0.0025, 0.0035, 0.0045],
+    threshold: 1130000,
+    base: 5085,
+    excessRate: 0.0235,
+  },
+  2023: {
+    rates: [0, 0.001, 0.002, 0.0025, 0.0035],
+    threshold: 1200000,
+    base: 4200,
+    excessRate: 0.0235,
+  },
+  2024: {
+    rates: [0, 0.001, 0.002, 0.0025, 0.0035],
+    threshold: 1310000,
+    base: 4585,
+    excessRate: 0.0235,
+  },
+  2025: {
+    rates: [0, 0.001, 0.002, 0.0025, 0.0035],
+    threshold: 1330000,
+    base: 4655,
+    excessRate: 0.0235,
+  },
+};

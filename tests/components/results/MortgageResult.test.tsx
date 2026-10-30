@@ -40,6 +40,25 @@ describe("MortgageResult", () => {
     expect(screen.getByText(m.mortgage_qualifying_debt())).toBeVisible();
   });
 
+  it.each(["en", "nl"] as const)("explains forfait and missing value in %s", (locale) => {
+    setLocale(locale, { reload: false });
+    const { rerender } = render(<MortgageResult result={calculate(inputs).mortgage!} />);
+    expect(screen.getByText(m.mortgage_no_eigenwoningforfait())).toBeVisible();
+    const result = calculate({
+      ...inputs,
+      mortgageHomeValue: 300000,
+      mortgageInterest: 500,
+    }).mortgage!;
+    rerender(<MortgageResult result={result} />);
+    expect(screen.queryByText(m.mortgage_no_eigenwoningforfait())).toBeNull();
+    expect(screen.getByText(m.mortgage_forfait_exceeds_interest())).toBeVisible();
+    expect(
+      within(screen.getByText(m.mortgage_forfait_share()).closest("tr")!).getByText(
+        fmt(result.eigenwoningforfait).replace(/\s/g, " "),
+      ),
+    ).toBeVisible();
+  });
+
   it("integrates the mortgage card only when enabled", () => {
     const { rerender } = render(
       <SummaryResult

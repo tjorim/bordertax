@@ -731,13 +731,19 @@
   "mortgage_be_increase": "Stijging Belgische belasting",
   "mortgage_potential": "Mogelijk jaarlijks nettovoordeel — alleen als je recht hebt op aftrek",
   "mortgage_assumptions": "Aannames en voorwaarden",
-  "mortgage_income_statement_required": "Je moet een door de Belgische belastingdienst bevestigde inkomensverklaring indienen bij de Belastingdienst.",
+  "mortgage_income_statement_required": "Een door de Belgische belastingdienst bevestigde inkomensverklaring is vereist, met uitzonderingen voor wie al eerder kwalificerend buitenlands belastingplichtig was.",
   "mortgage_qualifying_debt": "De rente wordt verondersteld betrekking te hebben op een eigenwoningschuld die voldoet aan de aflossingsvoorwaarden en de termijn van 30 jaar.",
-  "mortgage_no_eigenwoningforfait": "Het eigenwoningforfait is nog niet meegerekend, terwijl een buitenlandse hoofdwoning wel onder de eigenwoningregeling valt. Het getoonde voordeel kan daardoor te hoog zijn.",
+  "mortgage_no_eigenwoningforfait": "De woningwaarde ontbreekt: dit voordeel op basis van alleen rente is een bovengrens, omdat het eigenwoningforfait ontbreekt.",
   "mortgage_premium_base_unchanged": "De premies volksverzekeringen dalen mee met de aftrek.",
   "mortgage_no_belgian_home_benefit": "De Belgische belasting wordt opnieuw berekend na de Nederlandse belastingbesparing; Belgische woonvoordelen worden niet meegerekend.",
   "mortgage_note": "Dit is een vereenvoudigde schatting, geen belastingadvies. Voldoen aan de 90%-eis alleen garandeert geen recht op aftrek.",
-  "mortgage_deduction": "Hypotheekrenteaftrek",
+  "mortgage_deduction": "Netto eigenwoningaftrek",
   "mortgage_surcharge": "Tariefcorrectie hypotheekrenteaftrek",
-  "mortgage_source": "Belastingdienst: voorwaarden voor hypotheekrenteaftrek"
+  "mortgage_source": "Belastingdienst: voorwaarden voor hypotheekrenteaftrek",
+  "input_mortgage_home_value": "Waarde van de volledige woning (€)",
+  "input_mortgage_home_hint": "Waarde in het economisch verkeer van de volledige woning op 1 januari van het voorgaande jaar (WOZ-equivalent). We gaan uit van een volledig jaar als hoofdverblijf. Laat leeg voor een bovengrens.",
+  "mortgage_forfait_share": "Eigenwoningforfait (jouw aandeel)",
+  "mortgage_forfait_net_deduction": "Netto eigenwoningaftrek",
+  "mortgage_forfait_exceeds_interest": "Het eigenwoningforfait is hoger dan de rente. De aftrek is nul; extra belastbaar inkomen en de aftrek volgens de Wet Hillen worden niet berekend.",
+  "mortgage_forfait_full_year": "We gaan uit van een gewone eigen woning die het hele jaar je hoofdverblijf is; een deel van het jaar en bijzondere situaties worden niet berekend."
 }

@@ -14,7 +14,13 @@ export type ChangeGroup = "workdays" | "income" | "mortgage" | "other";
 const GROUP_KEYS = {
   workdays: ["daysWorkedNL", "daysWorkedBE", "daysWorkedOther", "sickDays"],
   income: ["grossSalary"],
-  mortgage: ["mortgageEnabled", "mortgageInterest", "mortgageOwnershipShare", "incomeOutsideNL"],
+  mortgage: [
+    "mortgageEnabled",
+    "mortgageInterest",
+    "mortgageOwnershipShare",
+    "mortgageHomeValue",
+    "incomeOutsideNL",
+  ],
 } as const satisfies Record<Exclude<ChangeGroup, "other">, readonly (keyof TaxInputs)[]>;
 
 const GROUPS: readonly ChangeGroup[] = ["workdays", "income", "mortgage", "other"];
@@ -74,6 +80,7 @@ const ALL_INPUT_KEYS = [
   "mortgageEnabled",
   "mortgageInterest",
   "mortgageOwnershipShare",
+  "mortgageHomeValue",
   "incomeOutsideNL",
 ] as const satisfies readonly (keyof TaxInputs)[];
 

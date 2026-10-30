@@ -29,6 +29,7 @@ export const StrictTaxInputSchema = z
     withheldTaxNL: fields.withheldTaxNL.nonnegative(),
     sickDays: fields.sickDays.nonnegative(),
     mortgageEnabled: fields.mortgageEnabled.default(false),
+    mortgageHomeValue: fields.mortgageHomeValue.nonnegative().optional(),
     mortgageInterest: fields.mortgageInterest.nonnegative().optional(),
     mortgageOwnershipShare: fields.mortgageOwnershipShare.min(0).max(100).optional(),
     incomeOutsideNL: fields.incomeOutsideNL.nonnegative().optional(),
@@ -61,6 +62,7 @@ export const StrictTaxInputSchema = z
       for (const field of [
         "mortgageInterest",
         "mortgageOwnershipShare",
+        "mortgageHomeValue",
         "incomeOutsideNL",
       ] as const) {
         if (inputs[field] !== undefined) issue(field, "requires mortgageEnabled=true");

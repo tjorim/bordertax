@@ -8,6 +8,7 @@ const mortgageFields = [
   "mortgageEnabled",
   "mortgageInterest",
   "mortgageOwnershipShare",
+  "mortgageHomeValue",
   "incomeOutsideNL",
 ];
 
