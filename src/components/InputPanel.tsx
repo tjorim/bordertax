@@ -640,6 +640,70 @@ export default function InputPanel({ form }: Props) {
           </FieldGroup>
         </AccordionContent>
       </AccordionItem>
+      <AccordionItem value="2">
+        <AccordionTrigger>{m.input_mortgage_title()}</AccordionTrigger>
+        <AccordionContent>
+          <FieldGroup>
+            <form.Field name="mortgageEnabled">
+              {(field) => (
+                <CheckboxField
+                  id="mortgage-enabled"
+                  label={m.input_mortgage_enabled()}
+                  checked={field.value ?? false}
+                  onCheckedChange={(checked) => field.handleChange(checked)}
+                />
+              )}
+            </form.Field>
+            {values.mortgageEnabled && (
+              <>
+                <form.Field name="mortgageInterest">
+                  {(field) => (
+                    <CurrencyField
+                      id="mortgage-interest"
+                      label={m.input_mortgage_interest()}
+                      hint={m.input_mortgage_interest_hint()}
+                      hintId="mortgage-interest-hint"
+                      min={0}
+                      value={field.value}
+                      onChange={field.handleChange}
+                      onBlur={field.handleBlur}
+                    />
+                  )}
+                </form.Field>
+                <form.Field name="mortgageOwnershipShare">
+                  {(field) => (
+                    <NumberField
+                      id="mortgage-share"
+                      label={m.input_mortgage_share()}
+                      hint={m.input_mortgage_share_hint()}
+                      hintId="mortgage-share-hint"
+                      min={0}
+                      max={100}
+                      value={field.value ?? 100}
+                      onChange={field.handleChange}
+                      onBlur={field.handleBlur}
+                    />
+                  )}
+                </form.Field>
+                <form.Field name="incomeOutsideNL">
+                  {(field) => (
+                    <CurrencyField
+                      id="mortgage-outside"
+                      label={m.input_mortgage_outside()}
+                      hint={m.input_mortgage_outside_hint()}
+                      hintId="mortgage-outside-hint"
+                      min={0}
+                      value={field.value}
+                      onChange={field.handleChange}
+                      onBlur={field.handleBlur}
+                    />
+                  )}
+                </form.Field>
+              </>
+            )}
+          </FieldGroup>
+        </AccordionContent>
+      </AccordionItem>
     </Accordion>
   );
 }

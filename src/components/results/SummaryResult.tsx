@@ -18,6 +18,7 @@ import type { TaxResult } from "@/tax/types";
 import { getNLFractions, getTotalWorkdays } from "@/tax/workdays";
 import * as m from "@/paraglide/messages.js";
 import { fmt, fmtSigned, pct, stripColon } from "../format.js";
+import MortgageResult from "./MortgageResult";
 import FilingChecklist from "./FilingChecklist";
 
 interface Props {
@@ -317,6 +318,8 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
           </div>
         </div>
       )}
+
+      {result.mortgage && <MortgageResult result={result.mortgage} />}
 
       <FilingChecklist result={result} />
     </div>
