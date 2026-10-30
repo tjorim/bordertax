@@ -1,4 +1,3 @@
-import { useId } from "react";
 import {
   Accordion,
   AccordionContent,
@@ -27,17 +26,15 @@ interface Props {
 /** Turns the calculator's inputs and results into the entries needed in each return. */
 export default function FilingChecklist({ result }: Props) {
   const { inputs, nl, be } = result;
-  const titleId = useId();
-  const summaryId = useId();
 
   return (
     <Accordion className="mt-6">
       <AccordionItem value="filing">
-        <AccordionTrigger aria-labelledby={titleId} aria-describedby={summaryId}>
+        <AccordionTrigger>
           <ClipboardCheckIcon aria-hidden="true" className="size-4 shrink-0 self-start mt-0.5" />
           <span className="flex flex-col gap-0.5">
-            <span id={titleId}>{m.filing_title()}</span>
-            <span id={summaryId} className="text-sm font-normal tracking-normal text-text-muted">
+            <span>{m.filing_title()}</span>
+            <span className="text-sm font-normal tracking-normal text-text-muted">
               {m.filing_summary()}
             </span>
           </span>

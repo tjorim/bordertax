@@ -33,9 +33,11 @@ describe("SummaryResult", () => {
 
   it("keeps the filing checklist collapsed until its trigger is activated", () => {
     render(<SummaryResult result={mockTaxResult} onResetInputs={vi.fn()} />);
-    const trigger = screen.getByRole("button", { name: m.filing_title() });
+    const trigger = screen.getByRole("button", {
+      name: `${m.filing_title()} ${m.filing_summary()}`,
+    });
     expect(trigger).toHaveAttribute("aria-expanded", "false");
-    expect(trigger).toHaveAccessibleDescription(m.filing_summary());
+    expect(trigger).toHaveAccessibleName(`${m.filing_title()} ${m.filing_summary()}`);
     expect(screen.queryByRole("link", { name: /mijn belastingdienst/i })).not.toBeInTheDocument();
 
     fireEvent.click(trigger);
@@ -50,7 +52,9 @@ describe("SummaryResult", () => {
   it("shows the document-to-return filing checklist", () => {
     const onReset = vi.fn();
     render(<SummaryResult result={mockTaxResult} onResetInputs={onReset} />);
-    fireEvent.click(screen.getByRole("button", { name: m.filing_title() }));
+    fireEvent.click(
+      screen.getByRole("button", { name: `${m.filing_title()} ${m.filing_summary()}` }),
+    );
     expect(screen.getByRole("heading", { name: /prepare your returns/i })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /mijn belastingdienst/i })).toHaveAttribute(
       "href",
@@ -73,7 +77,9 @@ describe("SummaryResult", () => {
       nl: { ...mockTaxResult.nl, deelNietInNLBelast: 10000 },
     };
     render(<SummaryResult result={result} onResetInputs={onReset} />);
-    fireEvent.click(screen.getByRole("button", { name: m.filing_title() }));
+    fireEvent.click(
+      screen.getByRole("button", { name: `${m.filing_title()} ${m.filing_summary()}` }),
+    );
 
     const row = screen.getByText(m.filing_be_1250_nl()).closest("tr");
     expect(row).toHaveTextContent(
