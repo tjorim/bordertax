@@ -34,6 +34,12 @@ npm run dev
 npm run build
 ```
 
+## Local AI integration
+
+An optional, stateless [MCP server](docs/mcp.md) exposes the shared tax engine
+to local AI clients over stdio. Run `pnpm mcp:build` to build it. It adds no
+backend or persistence to the client-side web app.
+
 ## Architecture
 
 ### Interface

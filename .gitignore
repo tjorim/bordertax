@@ -42,3 +42,5 @@ node_modules
 .ui-maintenance-record.json.*.tmp
 ui-maintenance.json.*.tmp
 ui-upstream.json.*.tmp
+
+dist-mcp
