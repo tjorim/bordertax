@@ -1,8 +1,8 @@
 /**
  * Dutch income tax (Box 1) calculation.
  *
- * Volksverzekeringen (social premiums) are calculated separately on the full gross salary,
- * because social insurance applies to the full employment relationship.
+ * Volksverzekeringen (social premiums) are calculated separately on worldwide Box 1 income,
+ * approximated here by gross salary less the mortgage deduction.
  *
  * Income-tax-only bracket rates are derived from the combined rates by subtracting
  * the social premium rate (27.65% for under-AOW, 9.75% for over-AOW).
@@ -87,8 +87,8 @@ function rateCapSurcharge(
 
 /**
  * @param mortgageDeduction Eigen-woning interest to deduct from NL taxable income (hypotheekrenteaftrek).
- *   Callers decide eligibility; this only applies the deduction. Volksverzekeringen and the
- *   labour credits are not affected by it.
+ *   Callers decide eligibility; this applies the deduction to income tax and premium income.
+ *   Labour credits remain based on employment income.
  */
 export function calculateNLTax(inputs: TaxInputs, mortgageDeduction = 0): NLTaxResult {
   const yearData = TAX_PARAMS[inputs.year]?.nl ?? TAX_PARAMS[2025].nl;
@@ -129,9 +129,11 @@ export function calculateNLTax(inputs: TaxInputs, mortgageDeduction = 0): NLTaxR
   );
   const taxBeforeCredits = bracketTax + mortgageRateCapSurcharge;
 
-  // Volksverzekeringen — social premiums on full gross salary (not the NL fraction)
+  // Premium income is worldwide Box 1 income after deductions, not the NL workday fraction.
+  // Belastingdienst Fiscale informatie 2020–2025, "U woont buiten Nederland", Gevolgen premieplicht.
+  const premiumIncome = Math.max(0, inputs.grossSalary - Math.max(0, mortgageDeduction));
   const volksverzekeringen = Math.floor(
-    Math.min(inputs.grossSalary, p.socialPremiumMax) * p.socialPremiumRate,
+    Math.min(premiumIncome, p.socialPremiumMax) * p.socialPremiumRate,
   );
 
   // AHK: 0 for Belgian residents (buitenlandse belastingplichtige policy)
