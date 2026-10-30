@@ -31,3 +31,6 @@ export type TaxYear = (typeof VALID_YEARS)[number];
 export type ResidentCountry = (typeof VALID_RESIDENT_COUNTRIES)[number];
 export type CivilStatus = (typeof VALID_CIVIL_STATUSES)[number];
 export type BelgianRegion = (typeof VALID_BELGIAN_REGIONS)[number];
+
+/** Share of worldwide income that must be taxed in NL to be a kwalificerend buitenlands belastingplichtige. */
+export const MORTGAGE_QUALIFYING_MIN_NL_PERCENT = 90;
