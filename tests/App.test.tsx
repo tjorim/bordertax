@@ -84,13 +84,14 @@ describe("App", () => {
   it("renders a tab for NL, BE and year comparison", () => {
     render(<App />);
     const tabs = screen.getAllByRole("tab");
-    expect(tabs.length).toBe(5);
+    expect(tabs.length).toBe(6);
     expect(tabs.map((tab) => tab.getAttribute("aria-label"))).toEqual([
       "Summary",
       "Netherlands",
       "Belgium",
       "Home ratio",
       "Year comparison",
+      "Compare",
     ]);
   });
 
