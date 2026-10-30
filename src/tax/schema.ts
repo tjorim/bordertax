@@ -68,6 +68,26 @@ export const TaxInputSchema = z.object({
     .number()
     .catch(0)
     .transform((v) => Math.max(0, v)),
+  // Optional home/mortgage scenario (hypotheekrenteaftrek). Never persisted.
+  mortgageEnabled: z.boolean().optional().catch(undefined),
+  /** Annual interest paid on the qualifying home debt (eigenwoningschuld), whole loan. */
+  mortgageInterest: z
+    .number()
+    .transform((v) => Math.max(0, v))
+    .optional()
+    .catch(undefined),
+  /** The user's ownership share of the home, in percent (0–100). */
+  mortgageOwnershipShare: z
+    .number()
+    .transform((v) => Math.min(100, Math.max(0, v)))
+    .optional()
+    .catch(undefined),
+  /** Annual worldwide income not taxed in NL (partner included). Undefined = not entered. */
+  incomeOutsideNL: z
+    .number()
+    .transform((v) => Math.max(0, v))
+    .optional()
+    .catch(undefined),
 });
 
 // Privacy: salary and day-count inputs are intentionally not persisted across reloads.

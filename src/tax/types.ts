@@ -1,4 +1,5 @@
 import type { TaxInputs } from "./schema";
+import type { MortgageResult } from "./mortgage";
 export type { TaxInputs };
 
 export interface BracketLine {
@@ -9,7 +10,12 @@ export interface BracketLine {
 }
 
 export interface NLTaxResult {
+  /** NL taxable income after any hypotheekrenteaftrek. */
   nlTaxableIncome: number;
+  /** Mortgage interest deducted from NL taxable income (0 when none or not eligible). */
+  mortgageDeduction: number;
+  /** Tax added back because the deduction is relieved at a capped rate (aftrekbeperking). */
+  mortgageRateCapSurcharge: number;
   /** "Deel niet in NL belast" — the aangifte field for the portion of Loon not taxed in NL,
    *  entered separately from Loon. Independent of the 30% ruling exemption. */
   deelNietInNLBelast: number;
@@ -91,4 +97,6 @@ export interface TaxResult {
    *  (because sick days are not counted as NL workdays here).
    *  Formula: NL days / (NL days + other days) */
   nlFractionBelgianMethod: number;
+  /** Home/mortgage scenario outcome; null when the scenario is not enabled. */
+  mortgage: MortgageResult | null;
 }

@@ -77,13 +77,15 @@ export interface BEYearParams {
 // ─── Combined params ──────────────────────────────────────────────────────────
 
 interface YearParams {
-  nl: { under: NLYearParams; over: NLYearParams };
+  nl: { under: NLYearParams; over: NLYearParams; mortgageDeductionRateCap: number };
   be: BEYearParams;
 }
 
 export const TAX_PARAMS: Record<TaxYear, YearParams> = {
   2020: {
     nl: {
+      /** Max rate at which mortgage interest may reduce tax (aftrekbeperking); the part of the deduction taxed above it is added back. */
+      mortgageDeductionRateCap: 0.46,
       under: {
         // Combined schijf 1: 37.35% − 27.65% = 9.70%
         incomeTaxBrackets: [
@@ -146,6 +148,8 @@ export const TAX_PARAMS: Record<TaxYear, YearParams> = {
 
   2021: {
     nl: {
+      /** Max rate at which mortgage interest may reduce tax (aftrekbeperking); the part of the deduction taxed above it is added back. */
+      mortgageDeductionRateCap: 0.43,
       under: {
         // Combined schijf 1: 37.10% − 27.65% = 9.45%
         incomeTaxBrackets: [
@@ -208,6 +212,8 @@ export const TAX_PARAMS: Record<TaxYear, YearParams> = {
 
   2022: {
     nl: {
+      /** Max rate at which mortgage interest may reduce tax (aftrekbeperking); the part of the deduction taxed above it is added back. */
+      mortgageDeductionRateCap: 0.4,
       under: {
         // Combined schijf 1: 37.07% − 27.65% = 9.42%
         incomeTaxBrackets: [
@@ -270,6 +276,8 @@ export const TAX_PARAMS: Record<TaxYear, YearParams> = {
 
   2023: {
     nl: {
+      /** Max rate at which mortgage interest may reduce tax (aftrekbeperking); the part of the deduction taxed above it is added back. */
+      mortgageDeductionRateCap: 0.3693,
       under: {
         // Combined schijf 1: 36.93% − 27.65% = 9.28%
         incomeTaxBrackets: [
@@ -333,6 +341,8 @@ export const TAX_PARAMS: Record<TaxYear, YearParams> = {
 
   2024: {
     nl: {
+      /** Max rate at which mortgage interest may reduce tax (aftrekbeperking); the part of the deduction taxed above it is added back. */
+      mortgageDeductionRateCap: 0.3697,
       under: {
         // Combined schijf 1: 36.97% − 27.65% = 9.32%
         incomeTaxBrackets: [
@@ -396,6 +406,8 @@ export const TAX_PARAMS: Record<TaxYear, YearParams> = {
 
   2025: {
     nl: {
+      /** Max rate at which mortgage interest may reduce tax (aftrekbeperking); the part of the deduction taxed above it is added back. */
+      mortgageDeductionRateCap: 0.3748,
       under: {
         // Combined schijf 1: 35.82% − 27.65% = 8.17%
         incomeTaxBrackets: [

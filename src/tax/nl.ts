@@ -64,7 +64,33 @@ function calcAK(income: number, p: NLYearParams): number {
   return 0;
 }
 
-export function calculateNLTax(inputs: TaxInputs): NLTaxResult {
+/**
+ * Extra tax from capping the rate at which a deduction is relieved (aftrekbeperking).
+ * The deduction removes the top `deduction` euros of income; any part of it that sat in a
+ * bracket taxed above `rateCap` only gets relief at `rateCap`, so the difference is added back.
+ */
+function rateCapSurcharge(
+  incomeBeforeDeduction: number,
+  deduction: number,
+  brackets: NLBracket[],
+  rateCap: number,
+): number {
+  const low = incomeBeforeDeduction - deduction;
+  let surcharge = 0;
+  for (const b of brackets) {
+    if (b.rate <= rateCap) continue;
+    const overlap = Math.min(incomeBeforeDeduction, b.to) - Math.max(low, b.from);
+    if (overlap > 0) surcharge += overlap * (b.rate - rateCap);
+  }
+  return Math.round(surcharge);
+}
+
+/**
+ * @param mortgageDeduction Eigen-woning interest to deduct from NL taxable income (hypotheekrenteaftrek).
+ *   Callers decide eligibility; this only applies the deduction. Volksverzekeringen and the
+ *   labour credits are not affected by it.
+ */
+export function calculateNLTax(inputs: TaxInputs, mortgageDeduction = 0): NLTaxResult {
   const yearData = TAX_PARAMS[inputs.year]?.nl ?? TAX_PARAMS[2025].nl;
   const p = inputs.belowAOWAge ? yearData.under : yearData.over;
 
@@ -85,11 +111,23 @@ export function calculateNLTax(inputs: TaxInputs): NLTaxResult {
     nlTaxableIncome = Math.round(nlTaxableIncome * NL_THIRTY_PERCENT_RULING_TAXABLE_RESIDUAL);
   }
 
+  // Hypotheekrenteaftrek: cannot take taxable income below zero.
+  const incomeBeforeMortgage = nlTaxableIncome;
+  const appliedMortgageDeduction = Math.min(Math.max(0, mortgageDeduction), incomeBeforeMortgage);
+  nlTaxableIncome -= appliedMortgageDeduction;
+  const mortgageRateCapSurcharge = rateCapSurcharge(
+    incomeBeforeMortgage,
+    appliedMortgageDeduction,
+    p.incomeTaxBrackets,
+    yearData.mortgageDeductionRateCap,
+  );
+
   // Income tax only — applied to NL-fraction income
-  const { lines: brackets, total: taxBeforeCredits } = applyBrackets(
+  const { lines: brackets, total: bracketTax } = applyBrackets(
     nlTaxableIncome,
     p.incomeTaxBrackets,
   );
+  const taxBeforeCredits = bracketTax + mortgageRateCapSurcharge;
 
   // Volksverzekeringen — social premiums on full gross salary (not the NL fraction)
   const volksverzekeringen = Math.floor(
@@ -107,6 +145,8 @@ export function calculateNLTax(inputs: TaxInputs): NLTaxResult {
 
   return {
     nlTaxableIncome,
+    mortgageDeduction: appliedMortgageDeduction,
+    mortgageRateCapSurcharge,
     deelNietInNLBelast,
     taxBeforeCredits,
     brackets,

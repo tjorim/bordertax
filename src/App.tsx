@@ -5,33 +5,13 @@ import { ErrorBoundary, type FallbackProps } from "react-error-boundary";
 
 import InputPanel from "./components/InputPanel";
 import ResultsTabs from "./components/results/ResultsTabs";
+import { DEFAULT_INPUTS } from "./tax/defaults";
 import type { TaxInputs } from "./tax/types";
 import { TaxInputSchema, PersistedInputsSchema, type PersistedInputs } from "./tax/schema";
 import * as m from "./paraglide/messages.js";
 import { getLocale } from "./paraglide/runtime.js";
 import { AppNavbar } from "./components/AppNavbar";
 import { PageFooter } from "./components/PageFooter";
-
-export const DEFAULT_INPUTS: TaxInputs = {
-  year: 2025,
-  residentCountry: "BE",
-  civilStatus: "single",
-  dependentChildren: 0,
-  belowAOWAge: true,
-  belgianRegion: "flemish",
-  communalTaxRate: 7,
-  grossSalary: 60000,
-  daysWorkedNL: 200,
-  daysWorkedBE: 20,
-  daysWorkedOther: 0,
-  thirtyPercentRuling: false,
-  socialContributions: 0,
-  aanvullendPensioen: 0,
-  dienstencheques: 0,
-  roerendeVoorheffing: 0,
-  withheldTaxNL: 0,
-  sickDays: 0,
-};
 
 const taxFormOptions = formOptions({ defaultValues: DEFAULT_INPUTS });
 export type TaxFormApi = ReactFormType<typeof taxFormOptions>;

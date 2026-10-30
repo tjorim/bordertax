@@ -23,6 +23,8 @@ export const mockInputs: TaxInputs = {
 
 export const mockNLResult: NLTaxResult = {
   nlTaxableIncome: 54545.45,
+  mortgageDeduction: 0,
+  mortgageRateCapSurcharge: 0,
   deelNietInNLBelast: 5454.55,
   taxBeforeCredits: 19807.51,
   brackets: [
@@ -74,6 +76,7 @@ export const mockTaxResult: TaxResult = {
   effectiveRateTotal: 0.3014,
   nlFractionDutchMethod: 200 / 220,
   nlFractionBelgianMethod: 200 / 220,
+  mortgage: null,
 };
 
 export const mockTaxResultNoBE: TaxResult = {
@@ -88,4 +91,5 @@ export const mockTaxResultNoBE: TaxResult = {
   effectiveRateTotal: 0.2551,
   nlFractionDutchMethod: 200 / 220,
   nlFractionBelgianMethod: 200 / 220,
+  mortgage: null,
 };
