@@ -13,11 +13,13 @@ export default function MortgageResult({ result }: { result: MortgageCalculation
     threshold_not_met: m.mortgage_threshold_not_met,
     income_outside_nl_missing: m.mortgage_income_outside_nl_missing,
     no_interest: m.mortgage_no_interest,
+    forfait_exceeds_interest: m.mortgage_forfait_exceeds_interest,
   };
   const assumptions = {
     income_statement_required: m.mortgage_income_statement_required,
     qualifying_debt: m.mortgage_qualifying_debt,
-    no_eigenwoningforfait: m.mortgage_no_eigenwoningforfait,
+    home_value_missing: m.mortgage_no_eigenwoningforfait,
+    full_year_main_home: m.mortgage_forfait_full_year,
     premium_base_unchanged: m.mortgage_premium_base_unchanged,
     no_belgian_home_benefit: m.mortgage_no_belgian_home_benefit,
   };
@@ -27,6 +29,8 @@ export default function MortgageResult({ result }: { result: MortgageCalculation
     unknown: m.mortgage_unknown,
   };
   const rows = [
+    [m.mortgage_forfait_share(), result.eigenwoningforfait],
+    [m.mortgage_forfait_net_deduction(), result.netDeduction],
     [m.mortgage_annual(), result.realised.netBenefit],
     [m.mortgage_monthly(), result.realised.netBenefit / 12],
     [m.mortgage_nl_saving(), result.realised.nlTaxSaving],

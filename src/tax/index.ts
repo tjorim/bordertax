@@ -7,13 +7,18 @@ import {
   NO_MORTGAGE_EFFECT,
   assessEligibility,
   getDeductibleInterest,
+  getEigenwoningforfait,
   type MortgageEffect,
 } from "./mortgage";
 
 type CoreResult = Omit<TaxResult, "mortgage">;
 
-function calculateCore(inputs: TaxInputs, mortgageDeduction: number): CoreResult {
-  const nl = calculateNLTax(inputs, mortgageDeduction);
+function calculateCore(
+  inputs: TaxInputs,
+  mortgageDeduction: number,
+  grossInterest = mortgageDeduction,
+): CoreResult {
+  const nl = calculateNLTax(inputs, mortgageDeduction, grossInterest);
   const be = calculateBETax(inputs, nl);
 
   const totalTax = nl.netTaxNL + (be?.netTaxBE ?? 0);
@@ -50,21 +55,29 @@ export function calculate(inputs: TaxInputs): TaxResult {
     withoutMortgage.nl.deelNietInNLBelast,
   );
   const deductibleInterest = getDeductibleInterest(inputs);
+  const eigenwoningforfait = getEigenwoningforfait(inputs);
+  const netDeduction = Math.max(0, deductibleInterest - eigenwoningforfait);
+  const benefitIsUpperBound = inputs.mortgageHomeValue === undefined;
   const withMortgage =
-    deductibleInterest > 0 ? calculateCore(inputs, deductibleInterest) : withoutMortgage;
+    netDeduction > 0 ? calculateCore(inputs, netDeduction, deductibleInterest) : withoutMortgage;
   const potential = effectOf(withoutMortgage, withMortgage);
-  const applied = eligibility.status === "eligible" && deductibleInterest > 0;
-  const reasons =
-    eligibility.status === "eligible" && deductibleInterest <= 0
-      ? [...eligibility.reasons, "no_interest" as const]
-      : eligibility.reasons;
+  const applied = eligibility.status === "eligible" && netDeduction > 0;
+  const reasons = [...eligibility.reasons];
+  if (eligibility.status === "eligible" && deductibleInterest <= 0) reasons.push("no_interest");
+  if (eigenwoningforfait > deductibleInterest) reasons.push("forfait_exceeds_interest");
 
   return {
     ...(applied ? withMortgage : withoutMortgage),
     mortgage: {
       ...eligibility,
       reasons,
-      assumptions: [...MORTGAGE_ASSUMPTIONS],
+      assumptions: [
+        ...MORTGAGE_ASSUMPTIONS,
+        ...(benefitIsUpperBound ? ["home_value_missing" as const] : []),
+      ],
+      eigenwoningforfait,
+      netDeduction,
+      benefitIsUpperBound,
       deductibleInterest,
       applied,
       potential,

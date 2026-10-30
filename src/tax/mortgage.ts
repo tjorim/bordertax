@@ -10,6 +10,7 @@
  * without the deduction and reports the difference.
  */
 import { MORTGAGE_QUALIFYING_MIN_NL_PERCENT } from "./constants";
+import { EIGENWONINGFORFAIT } from "./params";
 import type { TaxInputs } from "./schema";
 
 export type MortgageStatus = "eligible" | "ineligible" | "unknown";
@@ -24,15 +25,18 @@ export type MortgageReason =
   /** The salary alone passes; other income outside NL decides and has not been entered. */
   | "income_outside_nl_missing"
   /** Eligible, but there is no interest to deduct. */
-  | "no_interest";
+  | "no_interest"
+  | "forfait_exceeds_interest";
 
 export type MortgageAssumption =
   /** An inkomensverklaring validated by the Belgian tax authority is required, subject to repeat-filer exceptions. */
   | "income_statement_required"
   /** The entered interest is assumed to be on qualifying home debt (eigenwoningschuld) that meets the 30-year and repayment conditions. */
   | "qualifying_debt"
-  /** Known limitation: no eigenwoningforfait is added, although the foreign home falls under the eigenwoningregeling; see docs/hypotheekrenteaftrek-rules.md. */
-  | "no_eigenwoningforfait"
+  /** Missing value means an interest-only upper estimate. */
+  | "home_value_missing"
+  /** Full-year ordinary occupied main home; special situations not modelled. */
+  | "full_year_main_home"
   /** Legacy identifier retained for compatibility; no longer returned: mortgage deductions reduce premium income. */
   | "premium_base_unchanged"
   /** Belgian tax is recomputed from the lower Dutch tax; no Belgian home benefit (woonbonus) is modelled. */
@@ -57,7 +61,10 @@ export interface MortgageResult {
   nlTaxedPercentIsUpperBound: boolean;
   /** Interest × ownership share. */
   deductibleInterest: number;
-  /** Whether the deduction is included in the totals (status is eligible). */
+  eigenwoningforfait: number;
+  netDeduction: number;
+  benefitIsUpperBound: boolean;
+  /** Whether a positive net deduction is included in the totals (status is eligible). */
   applied: boolean;
   /** What the deduction would change if the taxpayer qualifies. */
   potential: MortgageEffect;
@@ -138,6 +145,18 @@ export function assessEligibility(
 export const MORTGAGE_ASSUMPTIONS: readonly MortgageAssumption[] = [
   "income_statement_required",
   "qualifying_debt",
-  "no_eigenwoningforfait",
+  "full_year_main_home",
   "no_belgian_home_benefit",
 ];
+
+/** Calculate on the whole home first, then allocate ownership (no partner optimisation). */
+export function getEigenwoningforfait(inputs: TaxInputs): number {
+  if (inputs.mortgageHomeValue === undefined) return 0;
+  const value = Math.max(0, inputs.mortgageHomeValue);
+  const p = EIGENWONINGFORFAIT[inputs.year];
+  const band =
+    value <= 12500 ? 0 : value <= 25000 ? 1 : value <= 50000 ? 2 : value <= 75000 ? 3 : 4;
+  const whole =
+    value > p.threshold ? p.base + (value - p.threshold) * p.excessRate : value * p.rates[band]!;
+  return (whole * Math.min(100, Math.max(0, inputs.mortgageOwnershipShare ?? 100))) / 100;
+}

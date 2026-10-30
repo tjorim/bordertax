@@ -670,6 +670,20 @@ export default function InputPanel({ form }: Props) {
                     />
                   )}
                 </form.Field>
+                <form.Field name="mortgageHomeValue">
+                  {(field) => (
+                    <CurrencyField
+                      id="mortgage-home-value"
+                      label={m.input_mortgage_home_value()}
+                      hint={m.input_mortgage_home_hint()}
+                      hintId="mortgage-home-value-hint"
+                      min={0}
+                      value={field.value}
+                      onChange={field.handleChange}
+                      onBlur={field.handleBlur}
+                    />
+                  )}
+                </form.Field>
                 <form.Field name="mortgageOwnershipShare">
                   {(field) => (
                     <NumberField

@@ -12,7 +12,7 @@ export interface BracketLine {
 export interface NLTaxResult {
   /** NL taxable income after any hypotheekrenteaftrek. */
   nlTaxableIncome: number;
-  /** Mortgage interest deducted from NL taxable income (0 when none or not eligible). */
+  /** Net home deduction after eigenwoningforfait, capped at NL taxable income (0 when not applied). */
   mortgageDeduction: number;
   /** Tax added back because the deduction is relieved at a capped rate (aftrekbeperking). */
   mortgageRateCapSurcharge: number;

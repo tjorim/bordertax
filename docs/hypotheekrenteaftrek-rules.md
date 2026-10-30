@@ -1,6 +1,6 @@
 # Hypotheekrenteaftrek: official-source review, income years 2020–2025
 
-Research for #341, checked 30 October 2026. **Partially resolved.** “Verified” means the cited official material supports the stated rule; it does not certify the complete calculator. “Contradicted” refers to an existing engine assumption. “Could not verify” is an open question, not evidence that the assumption is correct. Income year 2026 and #144 are outside this review.
+Research for #341 and implementation follow-up #345, checked 30 October 2026. **Partially resolved.** “Verified” means the cited official material supports the stated rule; it does not certify the complete calculator. “Contradicted” refers to an existing engine assumption. “Could not verify” is an open question, not evidence that the assumption is correct. Income year 2026 and #144 are outside this review.
 
 ## Year-specific evidence
 
@@ -23,11 +23,32 @@ The engine now subtracts the mortgage deduction from its worldwide salary approx
 
 Limits: the engine still assumes Dutch social insurance and salary-only worldwide premium income. It does not calculate deductions for a mortgage-ineligible person, partial-year insurance, partner allocations or a complete Box 1 balance. The premium correction is not a complete non-resident return implementation.
 
-## 2. Belgian home and eigenwoningforfait: contradicted; implementation gap
+## 2. Belgian home and eigenwoningforfait: correction with explicit limits
 
-**2020–2025: contradicted, high confidence.** The yearly home chapters above explicitly include a qualifying non-resident's foreign main home in the eigenwoningregeling. They describe adding the home benefit to Box 1 income and deducting eligible costs. Belgium's location does not by itself justify omitting the eigenwoningforfait. A zero forfait can apply in particular situations, such as an empty future main home, but is not the general rule for an occupied Belgian main home.
+**2020–2025: former omission contradicted, high confidence.** The yearly home chapters above explicitly include a qualifying non-resident's foreign main home in the eigenwoningregeling. They describe adding the home benefit to Box 1 income and deducting eligible costs. Belgium's location does not by itself justify omitting the eigenwoningforfait. A zero forfait can apply in particular situations, such as an empty future main home, but is not the general rule for an occupied Belgian main home.
 
-**Known unresolved engine defect:** interest alone is not the full negative home-income balance. The calculator has no home-value, occupation-period or forfait input. This task prohibits changing the input schema, and inventing a home value would not be an evidence-backed correction. No numerical forfait is therefore added in this PR; the assumption comment now identifies the omission as a known limitation. A follow-up must add the necessary inputs and yearly valuation/forfait rules, check positive balances and the small-debt deduction, and apply the rate cap to deductible costs correctly rather than blindly treating net home income as gross interest. Mortgage savings remain incomplete until then.
+**Implemented in #345, checked 30 October 2026.** All six ordinary full-year main-home tables below are **verified, high confidence**, from section 10.3.1 of each official yearly home chapter linked above. These are whole-value rates, not progressive bands. Each lower boundary is exclusive and upper boundary inclusive. The first band (up to €12,500) is zero in every year.
+
+| Year | €12,500–25,000 | €25,000–50,000 | €50,000–75,000 | Above €75,000 up to threshold | Threshold  | Above threshold          |
+| ---- | -------------- | -------------- | -------------- | ----------------------------- | ---------- | ------------------------ |
+| 2020 | 0.20%          | 0.35%          | 0.45%          | 0.60%                         | €1,090,000 | €6,540 + 2.35% of excess |
+| 2021 | 0.20%          | 0.30%          | 0.40%          | 0.50%                         | €1,110,000 | €5,550 + 2.35% of excess |
+| 2022 | 0.15%          | 0.25%          | 0.35%          | 0.45%                         | €1,130,000 | €5,085 + 2.35% of excess |
+| 2023 | 0.10%          | 0.20%          | 0.25%          | 0.35%                         | €1,200,000 | €4,200 + 2.35% of excess |
+| 2024 | 0.10%          | 0.20%          | 0.25%          | 0.35%                         | €1,310,000 | €4,585 + 2.35% of excess |
+| 2025 | 0.10%          | 0.20%          | 0.25%          | 0.35%                         | €1,330,000 | €4,655 + 2.35% of excess |
+
+The statutory basis is [Wet IB 2001, articles 3.110–3.112 and 3.123a, 2025 version](https://wetten.overheid.nl/BWBR0011353/2025-03-15#Hoofdstuk3_Afdeling3.6_Artikel3.112). Article 3.112(3) covers absence of a WOZ valuation. The yearly chapters' “Geen WOZ-beschikking” paragraphs expressly require foreign homes' market value on 1 January of the preceding year. Do not use Belgian cadastral income or today's sale price. All years are supported; none were filled by interpolation.
+
+Ownership: calculate the forfait on the **whole** value, then multiply by the user's ownership percentage. The [official 2024 M-return instructions](https://download.belastingdienst.nl/belastingdienst/docs/toelichting_m_biljet_2024_ib3271t41fd.pdf) explicitly allocate the forfait according to ownership. The same share is applied to whole-loan interest in this simplified model. This does not establish entitlement to deduct another owner's costs or model fiscal-partner allocation.
+
+The annual chapters' section 10.4.5 confirms Wet Hillen relief when the forfait exceeds deductible costs, with phased withdrawal: 93.333%, 90%, 86.667%, 83.333%, 80%, and 76⅔% of the positive balance in 2020–2025 respectively. **Positive home income and Wet Hillen are not modelled:** the calculator floors the net deduction at zero and reports `forfait_exceeds_interest`. The 2025 archive prints 76.666%; article 3.123a states the exact 76⅔%. Zero deduction is not a claim that the positive balance is tax-free.
+
+No value entered retains interest-only arithmetic and returns `benefitIsUpperBound` and `home_value_missing`; this is an upper estimate within the simplified model, not a certified refund. A supplied value assumes an ordinary occupied main home for the full year. Partial-year occupation, temporary letting, vacant former/future homes and the special temporary-posting forfait are outside scope; do not enter an adjusted value to simulate these situations.
+
+For a negative balance, the net deduction reduces Dutch taxable income and worldwide premium income consistently with section 1. The rate-cap surcharge still concerns **gross deductible interest**, with the forfait added to the pre-cost base; capping only the net balance would overstate high-bracket relief.
+
+Treaty confidence: the annual foreign-home instructions support including the Belgian main home in this deduction calculation. They do not constitute a full treaty double-tax-relief calculation for every positive balance. No separate treaty exemption or positive-balance outcome is certified here; specialist review remains necessary. Belgian refund reconciliation remains unresolved as described below.
 
 ## 3. Belgian code 1250 and exempt Dutch salary: could not verify completely
 
@@ -76,9 +97,9 @@ The [official qualifying-non-resident mortgage guidance](https://www.belastingdi
 
 ## Remaining work before treating the feature as verified
 
-- Implement the foreign-home forfait with sufficient inputs; the current omission is a known defect.
+- Extend beyond ordinary full-year occupied main homes and model positive balances/Wet Hillen if needed.
 - Obtain year-specific Belgian resident-return/refund reconciliation evidence.
 - Review EU-law relief outside the ordinary 90% test and subsequent case outcomes.
 - Model or clearly constrain partner, other-income, insurance and regional-benefit cases.
 
-Only the premium-base correction is implemented here. Rates and unverified Belgian calculations remain unchanged. This document deliberately does not close #341.
+The premium-base correction and the ordinary full-year foreign-home forfait are implemented. Unverified Belgian calculations remain unchanged. This document deliberately does not close #341.

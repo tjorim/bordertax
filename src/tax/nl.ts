@@ -86,11 +86,16 @@ function rateCapSurcharge(
 }
 
 /**
- * @param mortgageDeduction Eigen-woning interest to deduct from NL taxable income (hypotheekrenteaftrek).
+ * @param mortgageDeduction Net home deduction (interest share minus forfait share, floored at zero).
  *   Callers decide eligibility; this applies the deduction to income tax and premium income.
  *   Labour credits remain based on employment income.
+ * @param grossInterest Gross deductible interest share, before subtracting the forfait, for the rate cap.
  */
-export function calculateNLTax(inputs: TaxInputs, mortgageDeduction = 0): NLTaxResult {
+export function calculateNLTax(
+  inputs: TaxInputs,
+  mortgageDeduction = 0,
+  grossInterest = mortgageDeduction,
+): NLTaxResult {
   const yearData = TAX_PARAMS[inputs.year]?.nl ?? TAX_PARAMS[2025].nl;
   const p = inputs.belowAOWAge ? yearData.under : yearData.over;
 
@@ -116,8 +121,8 @@ export function calculateNLTax(inputs: TaxInputs, mortgageDeduction = 0): NLTaxR
   const appliedMortgageDeduction = Math.min(Math.max(0, mortgageDeduction), incomeBeforeMortgage);
   nlTaxableIncome -= appliedMortgageDeduction;
   const mortgageRateCapSurcharge = rateCapSurcharge(
-    incomeBeforeMortgage,
-    appliedMortgageDeduction,
+    incomeBeforeMortgage + Math.max(0, grossInterest - mortgageDeduction),
+    Math.max(0, grossInterest),
     p.incomeTaxBrackets,
     yearData.mortgageDeductionRateCap,
   );
