@@ -42,8 +42,9 @@
     "ui:record": "node scripts/ui-maintenance.mjs record",
     "ui:test": "node --test scripts/ui-maintenance.verify.mjs scripts/ui-imports.verify.mjs",
     "ui:usage": "node scripts/ui-imports.mjs",
-    "mcp:build": "vite build --config vite.mcp.config.ts",
-    "mcp:start": "node dist-mcp/server.mjs"
+    "mcp:build": "vite build --config vite.mcp.config.ts && vite build --config vite.mcp.config.ts --mode http",
+    "mcp:start": "node dist-mcp/server.mjs",
+    "mcp:start:http": "node dist-mcp/http.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",

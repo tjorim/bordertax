@@ -39,6 +39,7 @@ npm run build
 An optional, stateless [MCP server](docs/mcp.md) exposes the shared tax engine
 to local AI clients over stdio. Run `pnpm mcp:build` to build it. It adds no
 backend or persistence to the client-side web app.
+A separate [hosted HTTP endpoint](docs/mcp.md#hosted-endpoint) is planned for remote clients, pending deployment in tjorim/apps.
 
 ## Architecture
 
