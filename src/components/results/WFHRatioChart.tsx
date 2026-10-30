@@ -51,6 +51,7 @@ import { interactiveColorLegend } from "@tanstack/charts/legend";
 import { motion } from "@tanstack/charts/motion";
 import { Chart } from "@tanstack/charts/react/core";
 import { calculate } from "@/tax";
+import { eligibilityThreshold } from "@/tax/eligibilityThreshold";
 import type { TaxInputs } from "@/tax/types";
 import { getLocale } from "@/paraglide/runtime.js";
 import * as m from "@/paraglide/messages.js";
@@ -65,14 +66,14 @@ interface DataPoint {
   beDays: number;
   nlDays: number;
   netIncome: number;
+  mortgageBenefit: number;
+  eligible: boolean;
   nlTax: number;
   beTax: number;
 }
 
 const STEPS = 101;
 
-/** ≤10 % BE → ≥90 % NL income → qualifies for hypotheekrenteaftrek */
-const T_90 = 0.1;
 /** ≤25 % BE → NL retains sole tax & social-security sourcing (NL-BE 2023 agreement) */
 const T_25 = 0.25;
 /** ≤49 % BE → Dutch social security remains applicable via kaderakkoord (apply at SVB; A1 document required) */
@@ -117,8 +118,8 @@ const zoneCellClasses: Record<Zone, string> = {
   above: "border-s-3 border-s-warning/35",
 };
 
-function getZone(ratio: number): Zone {
-  if (ratio <= T_90) return "full";
+function getZone(ratio: number, T_90: number): Zone {
+  if (ratio <= T_90 + 1e-9) return "full";
   if (ratio <= T_25) return "hybrid";
   if (ratio <= T_49) return "kaderakkoord";
   return "above";
@@ -153,10 +154,24 @@ export default function WFHRatioChart({ inputs }: Props) {
 
   const nlbeDays = inputs.daysWorkedNL + inputs.daysWorkedBE;
 
+  /** T_90 estimates the worldwide-income test; a workday ratio never proves qualification. */
+  const outsideShare = eligibilityThreshold(inputs.grossSalary, inputs.incomeOutsideNL ?? 0);
+  const T_90 = Math.max(
+    0,
+    Math.min(
+      1,
+      (outsideShare * (nlbeDays + inputs.daysWorkedOther + inputs.sickDays) -
+        inputs.daysWorkedOther) /
+        (nlbeDays || 1),
+    ),
+  );
+  const thresholdLabel = m.wfh_mortgage_threshold({ percent: Number((T_90 * 100).toFixed(1)) });
+
   const data = useMemo<DataPoint[]>(() => {
     if (nlbeDays === 0) return [];
-    return Array.from({ length: STEPS }, (_, i) => {
-      const beRatio = i / (STEPS - 1);
+    const steps = inputs.mortgageEnabled ? Math.max(STEPS, Math.ceil(nlbeDays) + 1) : STEPS;
+    return Array.from({ length: steps }, (_, i) => {
+      const beRatio = i / (steps - 1);
       const beDays = Math.round(beRatio * nlbeDays);
       const result = calculate({
         ...inputs,
@@ -168,6 +183,8 @@ export default function WFHRatioChart({ inputs }: Props) {
         beDays,
         nlDays: nlbeDays - beDays,
         netIncome: result.netIncome,
+        mortgageBenefit: result.mortgage?.realised.netBenefit ?? 0,
+        eligible: result.mortgage?.status === "eligible",
         nlTax: result.nl.netTaxNL,
         beTax: result.be?.netTaxBE ?? 0,
       };
@@ -175,7 +192,10 @@ export default function WFHRatioChart({ inputs }: Props) {
   }, [inputs, nlbeDays]);
 
   const currentBeRatio = nlbeDays > 0 ? inputs.daysWorkedBE / nlbeDays : 0;
-  const currentIdx = Math.round(currentBeRatio * (STEPS - 1));
+  const currentIdx = Math.round(currentBeRatio * (data.length - 1));
+  const keepPoint = [...data].reverse().find((point) => point.eligible);
+  const losePoint =
+    keepPoint && data.find((point) => point.beRatio > keepPoint.beRatio && !point.eligible);
 
   const optimalIdx = useMemo(() => {
     if (data.length === 0) return 0;
@@ -208,7 +228,7 @@ export default function WFHRatioChart({ inputs }: Props) {
   const currentNet = data[currentIdx]?.netIncome ?? 0;
   const optimalNet = data[optimalIdx]?.netIncome ?? 0;
   const delta = optimalNet - currentNet;
-  const currentZone = getZone(currentBeRatio);
+  const currentZone = getZone(currentBeRatio, T_90);
   const optimalBeRatio = data[optimalIdx]?.beRatio ?? 0;
   const showOptimalMarker = optimalIdx !== currentIdx && data[optimalIdx] !== undefined;
 
@@ -217,14 +237,19 @@ export default function WFHRatioChart({ inputs }: Props) {
 
     const zoneRows: ZoneRow[] = [
       { x1: 0, x2: T_90, fill: "var(--bt-success)", fillOpacity: 0.06 },
-      { x1: T_90, x2: T_25, fill: "var(--bt-threshold-info)", fillOpacity: 0.025 },
-      { x1: T_25, x2: T_49, fill: "var(--bt-threshold-purple)", fillOpacity: 0.025 },
-      { x1: T_49, x2: 1, fill: "var(--bt-threshold-warning)", fillOpacity: 0.025 },
+      { x1: T_90, x2: Math.max(T_90, T_25), fill: "var(--bt-threshold-info)", fillOpacity: 0.025 },
+      {
+        x1: Math.max(T_90, T_25),
+        x2: Math.max(T_90, T_49),
+        fill: "var(--bt-threshold-purple)",
+        fillOpacity: 0.025,
+      },
+      { x1: Math.max(T_90, T_49), x2: 1, fill: "var(--bt-threshold-warning)", fillOpacity: 0.025 },
     ];
     const chipRows: ChipRow[] = [
       {
         x: T_90,
-        label: m.wfh_threshold_10_label({}, { locale }),
+        label: thresholdLabel,
         color: "var(--bt-threshold-info)",
       },
       {
@@ -336,10 +361,38 @@ export default function WFHRatioChart({ inputs }: Props) {
               fontWeight: 600,
               anchor: "start",
               dx: 4,
-              dy: 10,
+              dy: i === 0 ? 22 : 10,
             }),
           ),
         ),
+        ...(keepPoint && losePoint && showNetMarkers
+          ? [
+              decorative(
+                dot([{ x: keepPoint.beRatio, y: keepPoint.netIncome }], {
+                  id: "mortgage-boundary-dot",
+                  x: "x",
+                  y: "y",
+                  r: 5,
+                  fill: "var(--bt-success)",
+                  stroke: "var(--bt-bg)",
+                  strokeWidth: 2,
+                }),
+              ),
+              decorative(
+                textMark([{ x: keepPoint.beRatio, y: keepPoint.netIncome }], {
+                  id: "mortgage-boundary-label",
+                  x: "x",
+                  y: "y",
+                  text: () => m.wfh_mortgage_keep_label({}, { locale }),
+                  fill: "var(--bt-text)",
+                  fontSize: 10,
+                  anchor: "start",
+                  dx: 7,
+                  dy: -12,
+                }),
+              ),
+            ]
+          : []),
         ruleX([{ x: currentBeRatio }], {
           id: "current-line",
           x: "x",
@@ -471,6 +524,10 @@ export default function WFHRatioChart({ inputs }: Props) {
     });
   }, [
     data,
+    T_90,
+    thresholdLabel,
+    keepPoint,
+    losePoint,
     showBE,
     currentBeRatio,
     currentNet,
@@ -507,7 +564,7 @@ export default function WFHRatioChart({ inputs }: Props) {
         <div className={`bt-wfh-zone-pill bt-wfh-zone-pill--${currentZone}`}>
           {m.wfh_share_be({ percent: Math.round(currentBeRatio * 100) })}
           <span className="bt-wfh-zone-pill__rule">
-            {currentZone === "full" && m.wfh_threshold_10_label()}
+            {currentZone === "full" && m.wfh_mortgage_rule()}
             {currentZone === "hybrid" && m.wfh_threshold_25_label()}
             {currentZone === "kaderakkoord" && m.wfh_threshold_49_label()}
             {currentZone === "above" && `>${m.wfh_threshold_49_label()}`}
@@ -536,7 +593,7 @@ export default function WFHRatioChart({ inputs }: Props) {
         <div className="bt-year-chart__legend bt-wfh-legend">
           <span className="bt-year-chart__legend-item">
             <span className="bt-wfh-legend-zone bt-wfh-legend-zone--full" />
-            {m.wfh_zone_full_benefits()}
+            {m.wfh_mortgage_zone()}
           </span>
           <span className="bt-year-chart__legend-item">
             <span className="bt-wfh-legend-zone bt-wfh-legend-zone--hybrid" />
@@ -588,14 +645,15 @@ export default function WFHRatioChart({ inputs }: Props) {
                 </span>
               )}
               <span
-                className={`bt-wfh-readout__badge bt-wfh-readout__badge--${getZone(displayPoint.beRatio)}`}
+                className={`bt-wfh-readout__badge bt-wfh-readout__badge--${getZone(displayPoint.beRatio, T_90)}`}
               >
-                {getZone(displayPoint.beRatio) === "full" && `✓ ${m.wfh_threshold_10_label()}`}
-                {getZone(displayPoint.beRatio) === "hybrid" &&
+                {getZone(displayPoint.beRatio, T_90) === "full" && m.wfh_mortgage_rule()}
+                {getZone(displayPoint.beRatio, T_90) === "hybrid" &&
                   m.wfh_badge_hybrid({ rule: m.wfh_threshold_25_label() })}
-                {getZone(displayPoint.beRatio) === "kaderakkoord" &&
+                {getZone(displayPoint.beRatio, T_90) === "kaderakkoord" &&
                   m.wfh_badge_kaderakkoord({ rule: m.wfh_threshold_49_label() })}
-                {getZone(displayPoint.beRatio) === "above" && `✗ ${m.wfh_threshold_49_label()}`}
+                {getZone(displayPoint.beRatio, T_90) === "above" &&
+                  `✗ ${m.wfh_threshold_49_label()}`}
               </span>
             </>
           ) : (
@@ -615,6 +673,21 @@ export default function WFHRatioChart({ inputs }: Props) {
           </div>
         )}
       </div>
+
+      {inputs.mortgageEnabled && (
+        <p className="text-text-muted text-sm mt-2 mb-0">
+          {keepPoint && losePoint
+            ? m.wfh_mortgage_comparison({
+                percent: Number((keepPoint.beRatio * 100).toFixed(1)),
+                benefit: fmt(keepPoint.mortgageBenefit),
+                other: fmt(losePoint.netIncome - keepPoint.netIncome + keepPoint.mortgageBenefit),
+              })
+            : m.wfh_mortgage_no_boundary()}
+        </p>
+      )}
+      {inputs.incomeOutsideNL === undefined && (
+        <p className="text-text-muted text-sm mt-2 mb-0">{m.wfh_mortgage_missing()}</p>
+      )}
 
       {/* ── Table toggle ────────────────────────────────────────────── */}
       <Button
@@ -637,16 +710,20 @@ export default function WFHRatioChart({ inputs }: Props) {
         {m.wfh_kaderakkoord_note()}
       </p>
 
-      {/* ── Qualifying taxpayer note (only relevant at ≤10% BE) ─────── */}
-      {currentZone === "full" && (
-        <p className="text-text-muted text-sm mt-1 mb-0">
-          <InfoIcon aria-hidden="true" className="inline size-4 shrink-0 align-text-bottom me-1" />
-          {m.wfh_qualifying_taxpayer_note()}
-        </p>
-      )}
+      {/* The workday estimate never establishes qualification. */}
+      <p className="text-text-muted text-sm mt-1 mb-0">
+        <InfoIcon aria-hidden="true" className="inline size-4 shrink-0 align-text-bottom me-1" />
+        {m.wfh_qualifying_taxpayer_note()}
+      </p>
 
       {tableOpen && (
-        <RatioTable data={data} currentIdx={currentIdx} optimalIdx={optimalIdx} showBE={showBE} />
+        <RatioTable
+          T_90={T_90}
+          data={data}
+          currentIdx={currentIdx}
+          optimalIdx={optimalIdx}
+          showBE={showBE}
+        />
       )}
     </div>
   );
@@ -708,7 +785,7 @@ const ratioColumns = ratioColumnHelper.columns([
           )}
           {row.threshold === "90-norm" && (
             <Badge variant="thresholdInfo" className="ms-2">
-              {m.wfh_threshold_10_label()}
+              {m.wfh_mortgage_rule()}
             </Badge>
           )}
           {row.threshold === "hybrid" && (
@@ -748,13 +825,14 @@ const ratioColumns = ratioColumnHelper.columns([
 ]);
 
 interface RatioTableProps {
+  T_90: number;
   data: DataPoint[];
   currentIdx: number;
   optimalIdx: number;
   showBE: boolean;
 }
 
-function RatioTable({ data, currentIdx, optimalIdx, showBE }: RatioTableProps) {
+function RatioTable({ data, currentIdx, optimalIdx, showBE, T_90 }: RatioTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
 
   const tableRows = useMemo<RatioRow[]>(() => {
@@ -780,14 +858,14 @@ function RatioTable({ data, currentIdx, optimalIdx, showBE }: RatioTableProps) {
     }
 
     add(0);
-    add(Math.round(T_90 * (STEPS - 1)), { threshold: "90-norm" });
-    add(Math.round(T_25 * (STEPS - 1)), { threshold: "hybrid" });
-    add(Math.round(T_49 * (STEPS - 1)), { threshold: "kaderakkoord" });
+    add(Math.round(T_90 * (data.length - 1)), { threshold: "90-norm" });
+    add(Math.round(T_25 * (data.length - 1)), { threshold: "hybrid" });
+    add(Math.round(T_49 * (data.length - 1)), { threshold: "kaderakkoord" });
     add(currentIdx, { isCurrent: true });
     add(optimalIdx, { isOptimal: true });
-    add(Math.round(0.5 * (STEPS - 1)));
-    add(Math.round(0.75 * (STEPS - 1)));
-    add(STEPS - 1);
+    add(Math.round(0.5 * (data.length - 1)));
+    add(Math.round(0.75 * (data.length - 1)));
+    add(data.length - 1);
 
     metas.sort((a, b) => a.idx - b.idx);
 
@@ -813,7 +891,7 @@ function RatioTable({ data, currentIdx, optimalIdx, showBE }: RatioTableProps) {
         },
       ];
     });
-  }, [data, currentIdx, optimalIdx]);
+  }, [data, currentIdx, optimalIdx, T_90]);
 
   const table = useTable({
     features: ratioTableFeatures,
@@ -859,7 +937,7 @@ function RatioTable({ data, currentIdx, optimalIdx, showBE }: RatioTableProps) {
       </TableHeader>
       <TableBody>
         {table.getRowModel().rows.map((row) => {
-          const zone = getZone(row.original.beRatio);
+          const zone = getZone(row.original.beRatio, T_90);
           const rowVariant = row.original.isCurrent
             ? "primary"
             : row.original.isOptimal
