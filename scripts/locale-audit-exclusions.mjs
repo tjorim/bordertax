@@ -1,6 +1,10 @@
 // Whole files that hold no interface copy: authored data and development fixtures. Keep this list short and
 // give each entry a reason; a trailing slash matches a directory.
-export const excludedFiles = {};
+export const excludedFiles = {
+  "tax/capabilities.ts":
+    "machine-readable capability description for programmatic callers (agents), not interface copy",
+  "tax/strict.ts": "validation errors for programmatic callers (agents), not interface copy",
+};
 // Functions that only log for developers; their string arguments are not interface copy.
 export const diagnosticCallees = [];
 // Exact source/value exclusions. Never approve a whole component or directory for visible copy.
