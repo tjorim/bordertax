@@ -67,6 +67,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Build MCP adapter
+        run: pnpm mcp:build
+
       - name: Test
         run: pnpm test
 

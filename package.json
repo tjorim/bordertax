@@ -41,11 +41,14 @@
     "ui:diff": "node scripts/ui-maintenance.mjs diff",
     "ui:record": "node scripts/ui-maintenance.mjs record",
     "ui:test": "node --test scripts/ui-maintenance.verify.mjs scripts/ui-imports.verify.mjs",
-    "ui:usage": "node scripts/ui-imports.mjs"
+    "ui:usage": "node scripts/ui-imports.mjs",
+    "mcp:build": "vite build --config vite.mcp.config.ts",
+    "mcp:start": "node dist-mcp/server.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",
     "@fontsource-variable/inter": "^5.3.0",
+    "@modelcontextprotocol/sdk": "^1.32.2",
     "@tanstack/charts": "^1.1.0",
     "@tanstack/react-form": "2.0.0-alpha.3",
     "@tanstack/react-router": "^1.170.46",
