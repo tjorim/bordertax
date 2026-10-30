@@ -30,8 +30,10 @@ export default function ScenarioCompare({ inputs }: { inputs: TaxInputs }) {
   const comparison = useMemo(() => compareScenarios(inputs, alternative), [inputs, alternative]);
   const { a, b, delta, changed, attribution } = comparison;
   const update = (key: keyof Overrides, value: number | undefined) => {
-    if (value === undefined || !Number.isFinite(value) || value < 0) return;
-    setOverrides((previous) => ({ ...previous, [key]: value }));
+    // A cleared field counts as 0 so it can be emptied and retyped.
+    const next = value ?? 0;
+    if (!Number.isFinite(next) || next < 0) return;
+    setOverrides((previous) => ({ ...previous, [key]: next }));
   };
   const rows = [
     [m.compare_nl_tax(), a.nl.netTaxNL, b.nl.netTaxNL, delta.nlTax, true],
