@@ -27,6 +27,29 @@ describe("InputPanel", () => {
     setLocale("en", { reload: false });
   });
 
+  it("opts in to mortgage inputs and preserves empty versus zero outside income", () => {
+    const { getForm } = renderInputPanel();
+    expect(screen.queryByRole("spinbutton", { name: /annual interest/i })).toBeNull();
+    fireEvent.click(screen.getByRole("checkbox", { name: /estimate mortgage/i }));
+    expect(getForm().getFieldValue("mortgageEnabled")).toBe(true);
+    expect(screen.getByRole("spinbutton", { name: /ownership share/i })).toHaveValue(100);
+    const interest = screen.getByRole("spinbutton", { name: /annual interest/i });
+    fireEvent.change(interest, { target: { value: "6000" } });
+    expect(getForm().getFieldValue("mortgageInterest")).toBe(6000);
+    const share = screen.getByRole("spinbutton", { name: /ownership share/i });
+    fireEvent.change(share, { target: { value: "50" } });
+    expect(getForm().getFieldValue("mortgageOwnershipShare")).toBe(50);
+    const outside = screen.getByRole("spinbutton", { name: /other income taxed outside/i });
+    expect(outside).toHaveValue(null);
+    fireEvent.change(outside, { target: { value: "0" } });
+    expect(getForm().getFieldValue("incomeOutsideNL")).toBe(0);
+    fireEvent.change(outside, { target: { value: "" } });
+    expect(getForm().getFieldValue("incomeOutsideNL")).toBeUndefined();
+    expect(outside).toHaveValue(null);
+    fireEvent.click(screen.getByRole("checkbox", { name: /estimate mortgage/i }));
+    expect(screen.queryByRole("spinbutton", { name: /annual interest/i })).toBeNull();
+  });
+
   it("renders without crashing", () => {
     renderInputPanel();
   });

@@ -57,6 +57,18 @@ export default function NLResult({
             </TableCell>
             <TableCell className="text-end">{fmt(result.deelNietInNLBelast)}</TableCell>
           </TableRow>
+          {result.mortgageDeduction > 0 && (
+            <>
+              <TableRow>
+                <TableCell>{m.mortgage_deduction()}</TableCell>
+                <TableCell className="text-end">−{fmt(result.mortgageDeduction)}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>{m.mortgage_surcharge()}</TableCell>
+                <TableCell className="text-end">{fmt(result.mortgageRateCapSurcharge)}</TableCell>
+              </TableRow>
+            </>
+          )}
           <TableRow>
             <TableCell>{m.nl_taxable_income()}</TableCell>
             <TableCell className="text-end font-semibold">{fmt(result.nlTaxableIncome)}</TableCell>
