@@ -2,9 +2,10 @@
 
 The optional Bordertax MCP server lets AI clients use the same TypeScript tax
 engine as the web app over local stdio. The website remains client-side only.
-There is no hosted HTTP transport, backend service, database, account, or saved
-scenario. The adapter does not persist or log salary or personal inputs and
-writes only MCP protocol messages to stdout. Your AI client receives the inputs
+The optional HTTP service is separate from the static website; neither transport
+has a database, account, or saved scenario. Neither adapter persists or logs
+salary or personal inputs. The stdio adapter writes only MCP protocol messages
+to stdout. Your AI client receives the inputs
 and results; its own privacy and conversation-retention policies still apply.
 
 ## Install and launch
@@ -48,6 +49,66 @@ See the [MCP SDK stdio documentation](https://github.com/modelcontextprotocol/ty
 for programmatic clients. `Client` with `StdioClientTransport` is exercised in
 `tests/mcp/server.test.ts`. Run `pnpm mcp:build && pnpm test` to include the built
 server round-trip; CI always builds it before testing.
+
+## Hosted endpoint
+
+The planned public, unauthenticated endpoint is `https://bordertax.tjor.im/mcp`.
+It goes live once the tjorim/apps deployment issue is completed; this document
+does not mean it is live yet. It serves the same tools over stateless Streamable
+HTTP, with a fresh server and transport for each POST and no sessions.
+
+For Claude Code:
+
+```sh
+claude mcp add --transport http bordertax https://bordertax.tjor.im/mcp
+```
+
+In a generic remote-URL MCP client, select **Streamable HTTP** and enter
+`https://bordertax.tjor.im/mcp` as the server URL. No token is required. SDK clients
+can use `Client` with `StreamableHTTPClientTransport(new URL(url))`.
+
+Salary and personal inputs are sent to the server in the request body. The
+service does not store or log those inputs or results and has no per-request
+logging. Your AI client's own privacy policies still apply. Use the local stdio
+server if you do not want to send your figures to a server. Deployment must also
+keep request bodies out of proxy and edge logs.
+
+All tools are read-only: retries, duplicate requests and timeouts are safe and
+leave no saved state. Bodies are limited to **64 KiB** (larger requests return
+413). Rate limits at the edge may return 429. GET and DELETE on `/mcp` return
+405; no SSE subscription or session deletion is needed. Requests must use the
+SDK's content negotiation: `Content-Type: application/json` and an `Accept`
+header accepting both `application/json` and `text/event-stream`.
+
+To run the HTTP service locally (Node.js 24+):
+
+```sh
+pnpm mcp:build
+pnpm mcp:start:http
+# Or: docker build -f Dockerfile.mcp -t bordertax-mcp .
+#     docker run --rm -p 8080:8080 bordertax-mcp
+```
+
+The build emits two self-contained ESM files: `dist-mcp/server.mjs` for stdio
+and `dist-mcp/http.mjs` for HTTP. Neither enters the web bundle. The container
+runs only the HTTP bundle as a non-root user. SIGTERM and SIGINT stop accepting
+requests and allow up to five seconds for active responses to finish.
+
+| Environment variable  | Default   | Meaning                                     |
+| --------------------- | --------- | ------------------------------------------- |
+| `PORT`                | `8080`    | HTTP listening port                         |
+| `HOST`                | `0.0.0.0` | HTTP bind address                           |
+| `MCP_ALLOWED_ORIGINS` | empty     | Comma-separated exact allowed Origin values |
+
+Requests without an Origin header are accepted. Requests carrying an Origin
+are rejected unless it exactly matches an allow-list entry; the empty default
+rejects all such requests. This is Origin validation, not browser CORS support.
+Headers have a 10-second timeout and requests a 30-second timeout, with a
+30-second socket inactivity timeout.
+
+`GET /healthz` returns `{"status":"ok"}`. `GET /api/mcp/capabilities` exposes the
+MCP capability contract v1 manifest, derived from registered tool metadata,
+with read effects, no confirmation required, and empty access requirements.
 
 ## Tools and examples
 
