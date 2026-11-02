@@ -198,7 +198,6 @@ calculation; a timeout leaves no stored scenario or partial write. Clients may
 retry or restart the process safely. There is no replay-key store or cleanup
 job. No input history is retained between calls.
 
-
 ### HTTP request rate limit
 
 The HTTP server defaults to 60 requests/minute per client for `/mcp` and its
