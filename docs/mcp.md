@@ -197,3 +197,28 @@ Requests have no external side effects. Duplicate calls and retries repeat the
 calculation; a timeout leaves no stored scenario or partial write. Clients may
 retry or restart the process safely. There is no replay-key store or cleanup
 job. No input history is retained between calls.
+
+
+### HTTP request rate limit
+
+The HTTP server defaults to 60 requests/minute per client for `/mcp` and its
+computed `/api/mcp/capabilities` manifest together. HTTP methods, query strings
+and trailing slashes share that bucket. `/healthz` is exempt; local stdio is
+unaffected. A rejected request gets 429, `Retry-After`, `X-RateLimit-*`, and
+`Cache-Control: no-store` before parsing a body or creating an MCP server.
+
+Configure `MCP_RATE_LIMIT_PER_MINUTE` as a positive integer. Set
+`MCP_RATE_LIMIT_ENABLED=false` only for a deliberate staged rollout. Invalid
+settings fail startup. Counters are process-local fixed windows, reset on
+restart, and retain at most 10,000 active client buckets. Capacity rejects new
+clients rather than evicting active ones. Add shared storage before multiple
+workers/replicas. The private Docker peer is trusted to replace `X-Real-IP`;
+public peers cannot select a key and malformed headers fall back to the peer.
+IPv4-mapped addresses normalize to IPv4 and IPv6 subscribers share a /64.
+Keep the service private behind Caddy. The approved Cloudflare edge limit
+remains useful as an outer backstop, not a replacement for this app limit.
+
+Existing body-size and request-time limits remain in force. All tools are
+read-only, so clients may retry a rejected request after its Retry-After delay.
+Monitor 429s and shared-NAT traffic when deploying; no production settings or
+Cloudflare rules are changed by this implementation.
