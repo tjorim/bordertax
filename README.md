@@ -131,3 +131,5 @@ acceptable to merge.
 ## UI maintenance
 
 See [UI dependency and component maintenance](docs/ui-maintenance.md) for package updates, component provenance, upstream review commands and validation.
+
+Toolchain versions and coordinated rollout: [Node and pnpm toolchain](docs/toolchain.md).
