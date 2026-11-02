@@ -20,7 +20,7 @@ export default defineConfig(({ mode }) => ({
   build: {
     ssr: mode === "http" ? "mcp/http.ts" : "mcp/server.ts",
     emptyOutDir: mode !== "http",
-    target: "node24",
+    target: "node26",
     outDir: "dist-mcp",
     rolldownOptions: {
       output: { entryFileNames: mode === "http" ? "http.mjs" : "server.mjs", codeSplitting: false },
