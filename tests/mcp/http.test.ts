@@ -238,3 +238,51 @@ it.skipIf(!existsSync("dist-mcp/http.mjs"))(
     expect(errors).toBe("");
   },
 );
+
+describe("HTTP rate-limit policy", () => {
+  it("shares a bucket across MCP aliases, methods and the manifest, but exempts health", async () => {
+    const limited = startHttpServer({ port: 0, host: "127.0.0.1", rateLimitPerMinute: 2 });
+    await once(limited, "listening");
+    const address = limited.address();
+    if (!address || typeof address === "string") throw new Error("Missing address");
+    const base = `http://127.0.0.1:${address.port}`;
+    try {
+      expect((await fetch(`${base}/mcp/?x=1`)).status).toBe(405);
+      const second = await fetch(`${base}/api/mcp/capabilities`);
+      expect(second.status).toBe(200);
+      expect(second.headers.get("x-ratelimit-remaining")).toBe("0");
+      const blocked = await fetch(`${base}/mcp`, { method: "POST", body: "{" });
+      expect(blocked.status).toBe(429);
+      expect(Number(blocked.headers.get("retry-after"))).toBeGreaterThan(0);
+      expect(blocked.headers.get("cache-control")).toBe("no-store");
+      expect((await fetch(`${base}/healthz`)).status).toBe(200);
+      expect((await fetch(`${base}/mcp`, { headers: { "X-Real-IP": "8.8.8.8" } })).status).toBe(
+        405,
+      );
+    } finally {
+      limited.closeAllConnections();
+      await new Promise<void>((resolve) => limited.close(() => resolve()));
+    }
+  });
+  it("supports an explicit rollout switch", async () => {
+    const unlimited = startHttpServer({
+      port: 0,
+      host: "127.0.0.1",
+      rateLimitPerMinute: 1,
+      rateLimitEnabled: false,
+    });
+    await once(unlimited, "listening");
+    const address = unlimited.address();
+    if (!address || typeof address === "string") throw new Error("Missing address");
+    try {
+      for (let n = 0; n < 3; n++) {
+        const response = await fetch(`http://127.0.0.1:${address.port}/mcp`);
+        expect(response.status).toBe(405);
+        expect(response.headers.has("x-ratelimit-limit")).toBe(false);
+      }
+    } finally {
+      unlimited.closeAllConnections();
+      await new Promise<void>((resolve) => unlimited.close(() => resolve()));
+    }
+  });
+});

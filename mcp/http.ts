@@ -3,6 +3,7 @@ import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import { createServer } from "./server";
+import { clientKey, RequestRateLimiter } from "./rate-limit";
 
 const bodyLimit = 64 * 1024;
 /** Path without query string or trailing slash, so `/mcp`, `/mcp/` and `/mcp?x=1` all match. */
@@ -45,14 +46,30 @@ async function capabilities() {
   }
 }
 
+function readRateLimitEnabled(): boolean {
+  const value = process.env.MCP_RATE_LIMIT_ENABLED ?? "true";
+  if (value !== "true" && value !== "false")
+    throw new Error("MCP_RATE_LIMIT_ENABLED must be true or false");
+  return value === "true";
+}
+
 export function startHttpServer({
   port = Number(process.env.PORT ?? 8080),
   host = process.env.HOST ?? "0.0.0.0",
+  rateLimitPerMinute = Number(process.env.MCP_RATE_LIMIT_PER_MINUTE ?? 60),
+  rateLimitEnabled = readRateLimitEnabled(),
   allowedOrigins = (process.env.MCP_ALLOWED_ORIGINS ?? "")
     .split(",")
     .map((s) => s.trim())
     .filter(Boolean),
-}: { port?: number; host?: string; allowedOrigins?: string[] } = {}) {
+}: {
+  port?: number;
+  host?: string;
+  allowedOrigins?: string[];
+  rateLimitPerMinute?: number;
+  rateLimitEnabled?: boolean;
+} = {}) {
+  const limiter = new RequestRateLimiter(rateLimitPerMinute);
   const server = createHttpServer(
     { headersTimeout: 10_000, requestTimeout: 30_000 },
     async (req, res) => {
@@ -65,6 +82,24 @@ export function startHttpServer({
         if (req.method === "GET" && path === "/healthz") {
           json(res, 200, { status: "ok" });
           return;
+        }
+        // MCP and its computed manifest share one IP bucket. Queries, trailing
+        // slashes and methods cannot create fresh buckets; health is exempt.
+        if (rateLimitEnabled && (path === "/mcp" || path === "/api/mcp/capabilities")) {
+          const forwarded = req.headers["x-real-ip"];
+          const result = limiter.take(
+            clientKey(
+              req.socket.remoteAddress,
+              typeof forwarded === "string" ? forwarded : undefined,
+            ),
+          );
+          for (const [name, value] of Object.entries(result.headers)) res.setHeader(name, value);
+          if (!result.allowed) {
+            res.setHeader("Cache-Control", "no-store");
+            res.setHeader("Connection", "close");
+            json(res, 429, { error: "Rate limit exceeded" });
+            return;
+          }
         }
         if (req.method === "GET" && path === "/api/mcp/capabilities") {
           json(res, 200, await capabilities());
