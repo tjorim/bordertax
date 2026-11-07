@@ -54,12 +54,12 @@ updates:
         patterns:
           - "tailwindcss"
           - "@tailwindcss/*"
-      # shadcn CLI is pinned and Base UI is the runtime; review them together
       # rolldown ships per-platform @rolldown/binding-* packages that move with it
       rolldown:
         patterns:
           - "rolldown"
           - "@rolldown/*"
+      # shadcn CLI is pinned and Base UI is the runtime; review them together
       ui-runtime:
         patterns:
           - "shadcn"
