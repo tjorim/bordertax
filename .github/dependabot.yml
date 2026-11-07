@@ -64,10 +64,11 @@ updates:
         patterns:
           - "shadcn"
           - "@shadcn/*"
-      # Base UI is the shipped runtime; keep its behaviour changes in their own PR
+      # Base UI is the shipped runtime; keep its behaviour changes in their own PR.
+      # @base-ui/utils is its pinned transitive dependency.
       base-ui:
         patterns:
-          - "@base-ui/react"
+          - "@base-ui/*"
       # @tanstack/charts pins its d3-* dependencies, so they move together
       charts:
         patterns:
