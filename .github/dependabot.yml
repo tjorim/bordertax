@@ -71,13 +71,6 @@ updates:
         patterns:
           - "@types/*"
           - "@babel/*"
-      # catch-all for remaining minor/patch updates; majors stay separate
-      transitive:
-        patterns:
-          - "*"
-        update-types:
-          - "minor"
-          - "patch"
 
   - package-ecosystem: "github-actions"
     directory: "/"
