@@ -59,11 +59,14 @@ updates:
         patterns:
           - "rolldown"
           - "@rolldown/*"
-      # shadcn CLI is pinned and Base UI is the runtime; review them together
-      ui-runtime:
+      # shadcn CLI is pinned and only writes source files; review it with its lint package
+      shadcn:
         patterns:
           - "shadcn"
           - "@shadcn/*"
+      # Base UI is the shipped runtime; keep its behaviour changes in their own PR
+      base-ui:
+        patterns:
           - "@base-ui/react"
       # @tanstack/charts pins its d3-* dependencies, so they move together
       charts:
