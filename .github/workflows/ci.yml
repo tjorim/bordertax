@@ -32,7 +32,6 @@ jobs:
               - '**'
               - '!docs/**'
               - '!**/*.md'
-              - '!.github/dependabot.yml'
 
   app:
     name: App
