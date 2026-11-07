@@ -31,11 +31,15 @@ updates:
         patterns:
           - "vite"
           - "@vitejs/plugin-react"
+          # rolldown is Vite's bundler
+          - "rolldown"
+          - "@rolldown/*"
       testing:
         patterns:
           - "@testing-library/*"
           - "@vitest/*"
           - "vitest"
+          - "tinybench"
       oxc:
         patterns:
           - "oxlint"
@@ -53,6 +57,27 @@ updates:
         patterns:
           - "tailwindcss"
           - "@tailwindcss/*"
+      # shadcn CLI is pinned and Base UI is the runtime; review them together
+      ui-runtime:
+        patterns:
+          - "shadcn"
+          - "@shadcn/*"
+          - "@base-ui/react"
+      # transitive runtime deps pulled in by @tanstack/charts
+      d3:
+        patterns:
+          - "d3-*"
+      types:
+        patterns:
+          - "@types/*"
+          - "@babel/*"
+      # catch-all for remaining minor/patch updates; majors stay separate
+      transitive:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
 
   - package-ecosystem: "github-actions"
     directory: "/"
