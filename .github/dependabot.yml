@@ -31,53 +31,107 @@ updates:
         patterns:
           - "vite"
           - "@vitejs/plugin-react"
-      testing:
-        patterns:
-          - "@testing-library/*"
-          - "@vitest/*"
-          - "vitest"
-          - "tinybench"
-      oxc:
-        patterns:
-          - "oxlint"
-          - "oxfmt"
-          - "oxc-parser"
-      playwright:
-        patterns:
-          - "@playwright/*"
-          - "@axe-core/*"
-      i18n:
-        patterns:
-          - "@inlang/*"
       # tailwindcss and its Vite plugin share one release train
       tailwind:
         patterns:
           - "tailwindcss"
           - "@tailwindcss/*"
+      # OXC toolchain: linter, formatter and parser
+      oxc:
+        patterns:
+          - "oxlint"
+          - "oxfmt"
+          - "oxc-parser"
+      # Inlang i18n packages
+      i18n:
+        patterns:
+          - "@inlang/*"
+      # Vitest, Testing Library and the test-environment helpers
+      # tinybench is vitest's benchmark runner; it is a transitive dependency
+      testing:
+        patterns:
+          - "@testing-library/*"
+          - "@vitest/*"
+          - "vitest"
+          - "happy-dom"
+          - "fake-indexeddb"
+          - "tinybench"
+      # msw's own stack: msw, its @msw/@mswjs packages, and the helpers and cookie/URL packages it ships with.
+      # Generic utilities it reaches (yargs, wrap-ansi, type-fest, graphql, ...) stay ungrouped.
+      msw:
+        patterns:
+          - "msw"
+          - "@msw/*"
+          - "@mswjs/*"
+          - "@open-draft/until"
+          - "@inquirer/*"
+          - "tldts"
+          - "tldts-core"
+          - "tough-cookie"
+          - "outvariant"
+          - "rettime"
+          - "headers-polyfill"
+          - "until-async"
+          - "is-node-process"
+      # Playwright and the axe-core integration used by the e2e suite
+      playwright:
+        patterns:
+          - "@playwright/*"
+          - "@axe-core/*"
+      # TanStack Router with its internals; seroval is router-core's serializer
+      tanstack-router:
+        patterns:
+          - "@tanstack/react-router"
+          - "@tanstack/router-*"
+          - "@tanstack/history"
+          - "isbot"
+          - "seroval"
+          - "seroval-plugins"
+      # TanStack Table adapter and core must update together or pipelines fail
+      tanstack-table:
+        patterns:
+          - "@tanstack/react-table"
+          - "@tanstack/table-core"
+      # @tanstack/charts pulls in the d3-* modules (d3-scale, d3-brush, d3-zoom, ...) as runtime
+      # dependencies; they release individually and must move with it. svelte stays ungrouped:
+      # inlang and oxfmt also depend on it
+      charts:
+        patterns:
+          - "@tanstack/charts"
+          - "d3-*"
+          - "@types/d3-*"
+      # Babel packages are transitive and must resolve to one version per major line
+      babel:
+        patterns:
+          - "@babel/*"
+      # TypeScript and its runtime helpers
+      typescript:
+        patterns:
+          - "typescript"
+          - "tslib"
+      # Base UI is the shipped runtime (@base-ui/react and its pinned @base-ui/utils);
+      # its behaviour changes get their own PR
+      base-ui:
+        patterns:
+          - "@base-ui/*"
+      # shadcn CLI and its registry tooling (dev-only). Kept apart from the Base UI runtime group so a
+      # regression is attributable to one of them (docs/ui-maintenance.md)
+      shadcn:
+        patterns:
+          - "shadcn"
+          - "@shadcn/*"
+      # Icon set kept in its own group so icon releases are reviewed separately
+      lucide:
+        patterns:
+          - "lucide-react"
       # rolldown ships per-platform @rolldown/binding-* packages that move with it
       rolldown:
         patterns:
           - "rolldown"
           - "@rolldown/*"
-      # shadcn CLI is pinned and only writes source files; review it with its lint package
-      shadcn:
-        patterns:
-          - "shadcn"
-          - "@shadcn/*"
-      # Base UI is the shipped runtime; keep its behaviour changes in their own PR.
-      # @base-ui/utils is its pinned transitive dependency.
-      base-ui:
-        patterns:
-          - "@base-ui/*"
-      # @tanstack/charts pins its d3-* dependencies, so they move together
-      charts:
-        patterns:
-          - "@tanstack/charts"
-          - "d3-*"
       types:
         patterns:
           - "@types/*"
-          - "@babel/*"
 
   - package-ecosystem: "github-actions"
     directory: "/"
@@ -95,3 +149,7 @@ updates:
     labels:
       - "dependencies"
       - "github-actions"
+    groups:
+      codeql:
+        patterns:
+          - "github/codeql-action/*"
