@@ -156,3 +156,21 @@ updates:
       codeql:
         patterns:
           - "github/codeql-action/*"
+
+  # Monitor Docker images
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "friday"
+      time: "18:00"
+      timezone: "Etc/UTC"
+    open-pull-requests-limit: 20
+    assignees:
+      - "tjorim"
+    commit-message:
+      prefix: "deps(docker)"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "docker"
