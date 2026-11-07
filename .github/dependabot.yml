@@ -31,9 +31,6 @@ updates:
         patterns:
           - "vite"
           - "@vitejs/plugin-react"
-          # rolldown is Vite's bundler
-          - "rolldown"
-          - "@rolldown/*"
       testing:
         patterns:
           - "@testing-library/*"
