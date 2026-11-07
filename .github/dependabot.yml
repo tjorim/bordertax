@@ -63,9 +63,10 @@ updates:
           - "shadcn"
           - "@shadcn/*"
           - "@base-ui/react"
-      # transitive runtime deps pulled in by @tanstack/charts
-      d3:
+      # @tanstack/charts pins its d3-* dependencies, so they move together
+      charts:
         patterns:
+          - "@tanstack/charts"
           - "d3-*"
       types:
         patterns:
