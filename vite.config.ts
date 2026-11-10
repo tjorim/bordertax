@@ -66,7 +66,12 @@ export default defineConfig({
         },
       ],
     }),
-    redact({ preset: "full", environments: ["client"] }),
+    redact({
+      preset: "full",
+      environments: ["client"],
+      // Client-only mount; no Activity boundaries or Fragment DOM refs are used.
+      features: { hydration: false, activity: false, fragmentRefs: false },
+    }),
     reactPlugin(),
     tailwindcss(),
   ],
