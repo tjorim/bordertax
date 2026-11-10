@@ -1,0 +1,15 @@
+{
+  "repo": "tjorim/bordertax",
+  "targets": [
+    {
+      "file": "package.json",
+      "pattern": "\"version\": \"([^\"]+)\""
+    },
+    {
+      "file": "mcp/server.ts",
+      "pattern": "name: \"bordertax-mcp-server\", version: \"([^\"]+)\""
+    }
+  ],
+  "scopes": ["Web", "MCP"],
+  "platforms": ["Web"]
+}

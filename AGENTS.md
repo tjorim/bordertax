@@ -51,6 +51,25 @@ For a cascade smoke check, temporarily append a `ref-link-card p-0` button and
 both themes. Unmodified application controls should retain their padding. Keep
 probes out of application markup.
 
+## Releases
+
+Releases use CalVer, `YYYY.M.MICRO` (`MICRO` counts releases within a month), tagged `vYYYY.M.MICRO`.
+`VERSION` is the single source of truth; the files listed in `release.config.json` (`package.json` and the
+MCP server; its test asserts they agree) are derived from it and checked by CI.
+
+1. Add entries under `## [Unreleased]` in `CHANGELOG.md` while working (`### Added`, `### Changed`,
+   `### Fixed`, `### Removed`). Put backend, infrastructure, CI and dependency changes under `### Internal`:
+   apps hide that heading from users. Prefix a bullet with `**Web:**` (any scope in `release.config.json`)
+   when it only applies to one client. `node scripts/release.mjs export --audience app --platform web`
+   prints what an app should show as JSON.
+2. `node scripts/release.mjs bump` writes the next version everywhere and turns `[Unreleased]` into the
+   dated release section. Review the diff, open the release PR and merge it.
+3. Tag the merge commit `vYYYY.M.MICRO` and push the tag. `release-draft.yml` re-checks the tag against
+   `VERSION` and the changelog and creates a **draft** GitHub release with the changelog section as notes.
+4. Publish the draft; `deploy.yml` then deploys to GitHub Pages.
+
+`node scripts/release.mjs check` runs in CI on every pull request.
+
 ## UI dependency maintenance
 
 Follow [docs/ui-maintenance.md](docs/ui-maintenance.md) for Base UI/runtime updates and the pinned shadcn CLI, registry comparisons and review records. Run `pnpm ui:check` from the repository root after changing shared UI. Renovate does not update owned component source; preserve the documented customisations and validate interactions and bundle budgets.
