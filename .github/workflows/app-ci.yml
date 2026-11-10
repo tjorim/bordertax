@@ -76,6 +76,9 @@ jobs:
       - name: Build
         run: pnpm build
 
+      - name: Check bundle budgets
+        run: pnpm bundle:test && pnpm bundle:check
+
   e2e:
     name: Playwright & axe
     runs-on: ubuntu-latest

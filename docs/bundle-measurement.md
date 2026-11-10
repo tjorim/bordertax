@@ -1,13 +1,8 @@
 # Bundle measurement
 
-`pnpm build && pnpm bundle:measure` reports, for the production build in `dist`:
-
-- the **initial JS closure**: the entry script, its `modulepreload` links and every
-  chunk they reach through static `import`/`export … from` (dynamic `import()` is
-  excluded), raw and gzip;
-- the initial CSS, the total shipped JS and the deferred JS.
-
-Gzip uses `zlib` defaults, matching the figures Vite prints.
+`pnpm build && pnpm bundle:report` reports initial and total JavaScript, raw
+and gzip, using the [shared bundle budget contract](bundle-budgets.md).
+`pnpm bundle:measure` remains an alias. CSS is outside this JavaScript budget.
 
 ## Lazy chart and reference views (issue #295)
 
