@@ -43,6 +43,20 @@ afterEach(async () => {
   vi.restoreAllMocks();
 });
 describe("stateless HTTP MCP", () => {
+  it("reports the built source commit in health", async () => {
+    const previous = process.env.APP_COMMIT;
+    process.env.APP_COMMIT = "a".repeat(40);
+    try {
+      expect(await (await fetch(`${url}/healthz`)).json()).toEqual({
+        status: "ok",
+        version: packageVersion,
+        commit: "a".repeat(40),
+      });
+    } finally {
+      if (previous === undefined) delete process.env.APP_COMMIT;
+      else process.env.APP_COMMIT = previous;
+    }
+  });
   it("lists tools and publishes the registered capability contract", async () => {
     const client = await connect();
     const tools = (await client.listTools()).tools;
@@ -119,7 +133,11 @@ describe("stateless HTTP MCP", () => {
     expect(post.status).toBe(400);
   });
   it("serves health and rejects unknown routes", async () => {
-    expect(await (await fetch(`${url}/healthz`)).json()).toEqual({ status: "ok" });
+    expect(await (await fetch(`${url}/healthz`)).json()).toEqual({
+      status: "ok",
+      version: packageVersion,
+      commit: process.env.APP_COMMIT ?? "unknown",
+    });
     expect((await fetch(`${url}/unknown`)).status).toBe(404);
   });
   it("bounds bodies and returns JSON-RPC parse errors", async () => {

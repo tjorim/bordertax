@@ -10,6 +10,8 @@ RUN pnpm mcp:build
 FROM node:26.13.0-slim
 WORKDIR /app
 COPY --from=build --chown=node:node /app/dist-mcp/http.mjs ./http.mjs
+ARG APP_COMMIT=unknown
+ENV APP_COMMIT=${APP_COMMIT}
 USER node
 EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=5s CMD ["node", "--input-type=module", "-e", "import http from 'node:http'; http.get('http://127.0.0.1:8080/healthz', r => { r.resume(); process.exitCode = r.statusCode === 200 ? 0 : 1; }).on('error', () => process.exit(1));"]

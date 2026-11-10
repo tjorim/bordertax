@@ -2,6 +2,7 @@ import { createServer as createHttpServer, type ServerResponse } from "node:http
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
+import { version } from "../package.json";
 import { createServer } from "./server";
 import { clientKey, RequestRateLimiter } from "./rate-limit";
 
@@ -80,7 +81,7 @@ export function startHttpServer({
         }
         const path = routePath(req.url);
         if (req.method === "GET" && path === "/healthz") {
-          json(res, 200, { status: "ok" });
+          json(res, 200, { status: "ok", version, commit: process.env.APP_COMMIT ?? "unknown" });
           return;
         }
         // MCP and its computed manifest share one IP bucket. Queries, trailing
