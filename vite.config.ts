@@ -1,3 +1,4 @@
+import { redact } from "@tanstack/redact/vite";
 import { paraglideVitePlugin } from "@inlang/paraglide-js";
 import tailwindcss from "@tailwindcss/vite";
 import reactPlugin from "@vitejs/plugin-react";
@@ -65,6 +66,7 @@ export default defineConfig({
         },
       ],
     }),
+    redact({ preset: "full", environments: ["client"] }),
     reactPlugin(),
     tailwindcss(),
   ],
@@ -89,7 +91,9 @@ export default defineConfig({
           // Match the React runtime packages exactly. A substring match also pulls in
           // every package with "react" in its name (charts, table, router, icons),
           // which would keep lazily loaded views in the initial vendor chunk.
-          if (/[\\/]node_modules[\\/](?:react|react-dom|scheduler)[\\/]/.test(id)) {
+          if (
+            /[\\/]node_modules[\\/](?:react|react-dom|scheduler|@tanstack[\\/]redact)[\\/]/.test(id)
+          ) {
             return "vendor-react";
           }
         },
