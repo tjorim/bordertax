@@ -1,0 +1,165 @@
+{
+  "description": "Bordertax production builds, same checkout and dependencies; Chromium desktop, 8 salary edits each; 4 alternating rounds; Event Timing threshold 16ms, lab measurements only",
+  "results": [
+    {
+      "round": 0,
+      "runtime": "react",
+      "workload": "Home ratio",
+      "observedInteractions": 73,
+      "p95": 120,
+      "max": 136,
+      "longTasks": 36,
+      "longTaskMax": 95
+    },
+    {
+      "round": 0,
+      "runtime": "react",
+      "workload": "Compare",
+      "observedInteractions": 51,
+      "p95": 24,
+      "max": 24,
+      "longTasks": 0,
+      "longTaskMax": 0
+    },
+    {
+      "round": 0,
+      "runtime": "redact",
+      "workload": "Home ratio",
+      "observedInteractions": 71,
+      "p95": 80,
+      "max": 80,
+      "longTasks": 16,
+      "longTaskMax": 66
+    },
+    {
+      "round": 0,
+      "runtime": "redact",
+      "workload": "Compare",
+      "observedInteractions": 50,
+      "p95": 24,
+      "max": 24,
+      "longTasks": 0,
+      "longTaskMax": 0
+    },
+    {
+      "round": 1,
+      "runtime": "redact",
+      "workload": "Home ratio",
+      "observedInteractions": 68,
+      "p95": 80,
+      "max": 88,
+      "longTasks": 15,
+      "longTaskMax": 64
+    },
+    {
+      "round": 1,
+      "runtime": "redact",
+      "workload": "Compare",
+      "observedInteractions": 49,
+      "p95": 24,
+      "max": 24,
+      "longTasks": 0,
+      "longTaskMax": 0
+    },
+    {
+      "round": 1,
+      "runtime": "react",
+      "workload": "Home ratio",
+      "observedInteractions": 73,
+      "p95": 120,
+      "max": 136,
+      "longTasks": 35,
+      "longTaskMax": 96
+    },
+    {
+      "round": 1,
+      "runtime": "react",
+      "workload": "Compare",
+      "observedInteractions": 50,
+      "p95": 24,
+      "max": 24,
+      "longTasks": 0,
+      "longTaskMax": 0
+    },
+    {
+      "round": 2,
+      "runtime": "react",
+      "workload": "Home ratio",
+      "observedInteractions": 73,
+      "p95": 104,
+      "max": 112,
+      "longTasks": 21,
+      "longTaskMax": 77
+    },
+    {
+      "round": 2,
+      "runtime": "react",
+      "workload": "Compare",
+      "observedInteractions": 52,
+      "p95": 24,
+      "max": 24,
+      "longTasks": 0,
+      "longTaskMax": 0
+    },
+    {
+      "round": 2,
+      "runtime": "redact",
+      "workload": "Home ratio",
+      "observedInteractions": 71,
+      "p95": 80,
+      "max": 88,
+      "longTasks": 16,
+      "longTaskMax": 65
+    },
+    {
+      "round": 2,
+      "runtime": "redact",
+      "workload": "Compare",
+      "observedInteractions": 49,
+      "p95": 24,
+      "max": 24,
+      "longTasks": 0,
+      "longTaskMax": 0
+    },
+    {
+      "round": 3,
+      "runtime": "redact",
+      "workload": "Home ratio",
+      "observedInteractions": 73,
+      "p95": 80,
+      "max": 88,
+      "longTasks": 16,
+      "longTaskMax": 67
+    },
+    {
+      "round": 3,
+      "runtime": "redact",
+      "workload": "Compare",
+      "observedInteractions": 49,
+      "p95": 24,
+      "max": 24,
+      "longTasks": 0,
+      "longTaskMax": 0
+    },
+    {
+      "round": 3,
+      "runtime": "react",
+      "workload": "Home ratio",
+      "observedInteractions": 73,
+      "p95": 104,
+      "max": 112,
+      "longTasks": 17,
+      "longTaskMax": 87
+    },
+    {
+      "round": 3,
+      "runtime": "react",
+      "workload": "Compare",
+      "observedInteractions": 51,
+      "p95": 24,
+      "max": 24,
+      "longTasks": 0,
+      "longTaskMax": 0
+    }
+  ]
+}
