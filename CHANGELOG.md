@@ -15,6 +15,7 @@ allowed scopes are listed in `release.config.json`, and `check` validates `[Unre
 
 ### Internal
 
+- Report the built source commit alongside the app version in the health response; VPS builds receive the full commit from the shared deployment tooling (tjorim/apps#345).
 - Read the MCP server version from `package.json` so releases no longer rewrite `mcp/server.ts`.
 
 ## [2026.11.1] - 2026-11-10
