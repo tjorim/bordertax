@@ -1,4 +1,5 @@
 // @vitest-environment node
+import { version } from "../../package.json";
 import { existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
@@ -71,6 +72,7 @@ describe("MCP tax adapter", () => {
     try {
       await server.connect(serverTransport);
       await client.connect(clientTransport);
+      expect(client.getServerVersion()?.version).toBe(version);
       const tools = (await client.listTools()).tools;
       expect(tools.map((tool) => tool.name)).toEqual([
         "get_capabilities",
@@ -126,6 +128,7 @@ it.skipIf(!existsSync(bundle))(
     });
     try {
       await client.connect(transport);
+      expect(client.getServerVersion()?.version).toBe(version);
       expect((await client.listTools()).tools).toHaveLength(3);
       const result = await client.callTool({ name: "calculate_tax", arguments: DEFAULT_INPUTS });
       expect(result.isError).not.toBe(true);

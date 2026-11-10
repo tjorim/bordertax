@@ -229,6 +229,7 @@ it.skipIf(!existsSync("dist-mcp/http.mjs"))(
         await client.connect(
           new StreamableHTTPClientTransport(new URL(`http://127.0.0.1:${port}/mcp`)),
         );
+        expect(client.getServerVersion()?.version).toBe(packageVersion);
         expect((await client.listTools()).tools).toHaveLength(3);
       } finally {
         await client.close();

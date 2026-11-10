@@ -13,6 +13,10 @@ allowed scopes are listed in `release.config.json`, and `check` validates `[Unre
 
 ## [Unreleased]
 
+### Internal
+
+- Read the MCP server version from `package.json` so releases no longer rewrite `mcp/server.ts`.
+
 ## [2026.11.1] - 2026-11-10
 
 ### Changed

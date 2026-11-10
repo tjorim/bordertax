@@ -54,8 +54,7 @@ probes out of application markup.
 ## Releases
 
 Releases use CalVer, `YYYY.M.MICRO` (`MICRO` counts releases within a month), tagged `vYYYY.M.MICRO`.
-`VERSION` is the single source of truth; the files listed in `release.config.json` (`package.json` and the
-MCP server; its test asserts they agree) are derived from it and checked by CI.
+`VERSION` is the single source of truth; the files listed in `release.config.json` (`package.json`; the MCP server imports its version from there) are derived from it and checked by CI.
 
 1. Add entries under `## [Unreleased]` in `CHANGELOG.md` while working (`### Added`, `### Changed`,
    `### Fixed`, `### Removed`). Put backend, infrastructure, CI and dependency changes under `### Internal`:
