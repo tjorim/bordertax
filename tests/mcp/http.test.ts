@@ -48,7 +48,7 @@ describe("stateless HTTP MCP", () => {
       contract_version: 1,
       enabled: true,
       mount_path: "/mcp",
-      version: "0.1.0",
+      version: "2026.11.1",
       tools: tools.map(({ name }) => ({
         name,
         effect: "read",

@@ -55,7 +55,7 @@ export function compareTax(input: unknown): CallToolResult {
   });
 }
 export function createServer(): McpServer {
-  const server = new McpServer({ name: "bordertax-mcp-server", version: "0.1.0" });
+  const server = new McpServer({ name: "bordertax-mcp-server", version: "2026.11.1" });
   server.registerTool(
     "get_capabilities",
     {
