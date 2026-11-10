@@ -7,6 +7,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 everywhere and turns `[Unreleased]` into the next release, and `node scripts/release.mjs check` (run by CI
 and before a release tag) verifies the two agree.
 
+Entries under `### Internal` (backend, infrastructure, CI, dependencies) are left out of what the apps
+show their users. Start a bullet with a scope such as `**Web:**` to limit it to one client or area; the
+allowed scopes are listed in `release.config.json`, and `check` validates `[Unreleased]`.
+
 ## [Unreleased]
 
 ## [2026.11.1] - 2026-11-10

@@ -1,7 +1,7 @@
 // @vitest-environment node
 import { spawn } from "node:child_process";
 import { request } from "node:http";
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { once } from "node:events";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
@@ -10,6 +10,9 @@ import { startHttpServer } from "../../mcp/http";
 import { calculate } from "../../src/tax/index";
 import { DEFAULT_INPUTS } from "../../src/tax/defaults";
 import { parseStrictTaxInputs } from "../../src/tax/strict";
+
+// The MCP server reports the application version, so it must track package.json.
+const packageVersion = JSON.parse(readFileSync("package.json", "utf8")).version as string;
 
 let server: ReturnType<typeof startHttpServer>;
 let url: string;
@@ -48,7 +51,7 @@ describe("stateless HTTP MCP", () => {
       contract_version: 1,
       enabled: true,
       mount_path: "/mcp",
-      version: "2026.11.1",
+      version: packageVersion,
       tools: tools.map(({ name }) => ({
         name,
         effect: "read",
