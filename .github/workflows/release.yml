@@ -1,0 +1,82 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+# Read-only by default. Only `draft` writes (contents) and only `publish-library` gets an OIDC token.
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+# Every tjorim/* repository releases with the same job graph; a repository leaves out what it does not
+# have. Publishing is always manual: the last job only drafts the GitHub release.
+#
+#   validate         tag == VERSION == every versioned file == CHANGELOG        (all repositories)
+#   *-checks         the tests that gate this repository's release                (repository specific)
+#   publish-library  build and publish the Python client to PyPI, once per tag    (Daynest, Travel)
+#   package-*        build release assets (HACS archive, Android APK)             (Daynest, Travel)
+#   draft            changelog notes + assets become a draft GitHub release       (all repositories)
+
+jobs:
+  validate:
+    name: Validate tag, versions and changelog
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .node-version
+          package-manager-cache: false
+
+      # The tag, VERSION, every versioned file and the CHANGELOG must agree
+      # (scripts/release.mjs; configuration in release.config.json).
+      - name: Validate tag, versions and changelog
+        env:
+          TAG: ${{ github.ref_name }}
+        run: node scripts/release.mjs check --tag "$TAG"
+
+      - name: Read version
+        id: version
+        run: echo "version=$(tr -d '[:space:]' < VERSION)" >> "$GITHUB_OUTPUT"
+
+  draft:
+    name: Create draft release
+    needs: [validate]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .node-version
+          package-manager-cache: false
+
+      - name: Extract release notes from the changelog
+        run: node scripts/release.mjs notes > "$RUNNER_TEMP/release-notes.md"
+
+      # Publishing this draft triggers deploy.yml (release: published), which deploys GitHub Pages.
+      - name: Create draft release
+        uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3 # v3.0.4
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
+          draft: true
+          body_path: ${{ runner.temp }}/release-notes.md

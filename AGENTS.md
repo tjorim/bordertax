@@ -63,7 +63,7 @@ Releases use CalVer, `YYYY.M.MICRO` (`MICRO` counts releases within a month), ta
    prints what an app should show as JSON.
 2. `node scripts/release.mjs bump` writes the next version everywhere and turns `[Unreleased]` into the
    dated release section. Review the diff, open the release PR and merge it.
-3. Tag the merge commit `vYYYY.M.MICRO` and push the tag. `release-draft.yml` re-checks the tag against
+3. Tag the merge commit `vYYYY.M.MICRO` and push the tag. `release.yml` re-checks the tag against
    `VERSION` and the changelog and creates a **draft** GitHub release with the changelog section as notes.
 4. Publish the draft; `deploy.yml` then deploys to GitHub Pages.
 
