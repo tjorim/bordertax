@@ -2,6 +2,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { z } from "zod";
+import { version } from "../package.json";
 import { calculate } from "../src/tax/index";
 import { getCapabilities } from "../src/tax/capabilities";
 import { compareScenarios } from "../src/tax/compare";
@@ -55,7 +56,7 @@ export function compareTax(input: unknown): CallToolResult {
   });
 }
 export function createServer(): McpServer {
-  const server = new McpServer({ name: "bordertax-mcp-server", version: "2026.11.1" });
+  const server = new McpServer({ name: "bordertax-mcp-server", version });
   server.registerTool(
     "get_capabilities",
     {
