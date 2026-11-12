@@ -242,10 +242,9 @@ describe("calculateBETax", () => {
     expect(result!.netTaxBE).toBeGreaterThan(0);
   });
 
-  // TODO: Re-enable when 2026 support is re-integrated
-  it.skip("works for tax year 2026", () => {
+  it("works for tax year 2026", () => {
     const result = calculateBETax(
-      { ...base, year: 2026 as unknown as TaxInputs["year"], daysWorkedNL: 200, daysWorkedBE: 20 },
+      { ...base, year: 2026, daysWorkedNL: 200, daysWorkedBE: 20 },
       mockNL(),
     );
     expect(result).not.toBeNull();

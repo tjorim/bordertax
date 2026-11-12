@@ -16,4 +16,4 @@ Rates are data: each income year is one module in `src/tax/years/` (`2025.ts` is
 8. **Check against a real assessment if you can.** Compare income tax, premiums, credits, and the Belgian figures with an actual aanslag and record what matched in the verification table of [tax-model.md](tax-model.md), and in the module's `verified` note. Say so when a year is taken only from published tables.
 9. **Run** `pnpm lint`, `pnpm typecheck`, `pnpm test` and `pnpm build` sequentially (Paraglide writes generated files), then update `CHANGELOG.md` under `[Unreleased]` and the supported-years statements in `README.md` and `tax-model.md`.
 
-Income year 2026 has no module: its figures have to come from the official tables first (see [#144](https://github.com/tjorim/bordertax/issues/144)).
+Income year 2026 was added this way once the official tables were published ([#144](https://github.com/tjorim/bordertax/issues/144)); `2026.ts` lists the page each table was taken from. Add the next year (2027) only after the same checks.

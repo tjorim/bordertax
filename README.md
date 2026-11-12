@@ -4,7 +4,7 @@ Bordertax estimates the Dutch and Belgian income tax of a Belgian resident who w
 
 ## Who it is for
 
-One supported profile: a **single Belgian resident in the Flemish region with one Dutch employer, income years 2020–2025**. Other situations (Dutch residents, married or cohabiting taxpayers, other regions, several employers, partial years) are not modelled. Income year 2026 is not enabled yet.
+One supported profile: a **single Belgian resident in the Flemish region with one Dutch employer, income years 2020–2026**. Other situations (Dutch residents, married or cohabiting taxpayers, other regions, several employers, partial years) are not modelled.
 
 ## What goes in
 

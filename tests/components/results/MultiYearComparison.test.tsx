@@ -23,13 +23,12 @@ describe("MultiYearComparison", () => {
     expect(screen.getAllByText("2025").length).toBeGreaterThan(0);
   });
 
-  // TODO: Re-enable when 2026 support is re-integrated
-  it.skip("renders a row for year 2026", () => {
+  it("renders a row for year 2026", () => {
     const rowsWith2026 = [
       ...rows,
       {
-        year: 2026 as unknown as TaxYear,
-        result: calculate({ ...mockTaxResult.inputs, year: 2026 as unknown as TaxYear }),
+        year: 2026 as TaxYear,
+        result: calculate({ ...mockTaxResult.inputs, year: 2026 }),
       },
     ];
     render(<MultiYearComparison rows={rowsWith2026} activeYear={2025} />);

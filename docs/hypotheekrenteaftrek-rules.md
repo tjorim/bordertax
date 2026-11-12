@@ -1,6 +1,6 @@
 # Hypotheekrenteaftrek: official-source review, income years 2020–2025
 
-Research for #341 and implementation follow-up #345, checked 30 October 2026. **Partially resolved.** “Verified” means the cited official material supports the stated rule; it does not certify the complete calculator. “Contradicted” refers to an existing engine assumption. “Could not verify” is an open question, not evidence that the assumption is correct. Income year 2026 and #144 are outside this review.
+Research for #341 and implementation follow-up #345, checked 30 October 2026. **Partially resolved.** “Verified” means the cited official material supports the stated rule; it does not certify the complete calculator. “Contradicted” refers to an existing engine assumption. “Could not verify” is an open question, not evidence that the assumption is correct. Income year 2026 (#144) was added afterwards: only its eigenwoningforfait and deduction cap rows below were checked (12 November 2026); the other findings were not re-reviewed for 2026.
 
 ## Year-specific evidence
 
@@ -14,6 +14,7 @@ These are the actual yearly Belastingdienst publications, fetched separately for
 | 2023        | [Fiscale informatie 2023](https://www.belastingdienst.nl/wps/wcm/connect/fisin/fisin2023/u_woont_buiten_nederland) | [Eigen woning 2023](https://www.belastingdienst.nl/wps/wcm/connect/fisin/fisin2023/eigen_woning_en_restschuld_vroegere) |
 | 2024        | [Fiscale informatie 2024](https://www.belastingdienst.nl/wps/wcm/connect/fisin/fisin2024/u_woont_buiten_nederland) | [Eigen woning 2024](https://www.belastingdienst.nl/wps/wcm/connect/fisin/fisin2024/eigen_woning_en_restschuld_vroegere) |
 | 2025        | [Fiscale informatie 2025](https://www.belastingdienst.nl/wps/wcm/connect/fisin/fisin2025/u_woont_buiten_nederland) | [Eigen woning 2025](https://www.belastingdienst.nl/wps/wcm/connect/fisin/fisin2025/eigen_woning_en_restschuld_vroegere) |
+| 2026        | [Fiscale informatie 2026](https://www.belastingdienst.nl/wps/wcm/connect/fisin/fisin2026/u_woont_buiten_nederland) | [Eigen woning 2026](https://www.belastingdienst.nl/wps/wcm/connect/fisin/fisin2026/eigen_woning_en_restschuld_vroegere) |
 
 ## 1. Premium income: contradicted and corrected
 
@@ -37,6 +38,7 @@ Limits: the engine still assumes Dutch social insurance and salary-only worldwid
 | 2023 | 0.10%          | 0.20%          | 0.25%          | 0.35%                         | €1,200,000 | €4,200 + 2.35% of excess |
 | 2024 | 0.10%          | 0.20%          | 0.25%          | 0.35%                         | €1,310,000 | €4,585 + 2.35% of excess |
 | 2025 | 0.10%          | 0.20%          | 0.25%          | 0.35%                         | €1,330,000 | €4,655 + 2.35% of excess |
+| 2026 | 0.10%          | 0.20%          | 0.25%          | 0.35%                         | €1,350,000 | €4,725 + 2.35% of excess |
 
 The statutory basis is [Wet IB 2001, articles 3.110–3.112 and 3.123a, 2025 version](https://wetten.overheid.nl/BWBR0011353/2025-03-15#Hoofdstuk3_Afdeling3.6_Artikel3.112). Article 3.112(3) covers absence of a WOZ valuation. The yearly chapters' “Geen WOZ-beschikking” paragraphs expressly require foreign homes' market value on 1 January of the preceding year. Do not use Belgian cadastral income or today's sale price. All years are supported; none were filled by interpolation.
 
@@ -70,6 +72,7 @@ These cap relief for deductible costs in the highest bracket; they are not a gua
 | 2023        | 36.93%     | Verified | [Same published table, 2023 column](https://www.rijksoverheid.nl/binaries/rijksoverheid/documenten/publicaties/2023/04/25/beleidsinformatiekaart-2023/Beleidsinformatiekaart%2B2023.pdf)                                |
 | 2024        | 36.97%     | Verified | [State Secretary's explanation of the 2024 cap and its link to the second bracket](https://zoek.officielebekendmakingen.nl/kst-36602-Z.html)                                                                            |
 | 2025        | 37.48%     | Verified | [Belastingdienst, tariefsaanpassing eigen woning, explicit 2025 figure](https://www.belastingdienst.nl/wps/wcm/connect/nl/koopwoning/content/tariefsaanpassing-eigen-woning)                                            |
+| 2026        | 37.56%     | Verified | [Belastingdienst, tariefsaanpassing eigen woning, explicit 2026 figure (2025 was 37.48%)](https://www.belastingdienst.nl/wps/wcm/connect/nl/koopwoning/content/tariefsaanpassing-eigen-woning)                          |
 
 The Ministry table explicitly lists maximum mortgage/other deduction rates. It resolves the 2023 discrepancy: 36.93%, not an earlier forecast of 36.95%. The parliamentary explanation confirms that the cap follows the second bracket, including after the 2025 split. No parameter correction is warranted. These sources verify the numbers, not every aspect of the engine's surcharge when other deductions or home benefits coexist.
 

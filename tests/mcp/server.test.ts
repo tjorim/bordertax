@@ -44,7 +44,7 @@ describe("MCP tax adapter", () => {
     [{ ...DEFAULT_INPUTS, grossSalary: -1 }, "grossSalary"],
     [{ ...DEFAULT_INPUTS, grossSalary: NaN }, "grossSalary"],
     [{ ...DEFAULT_INPUTS, grossSalary: Infinity }, "grossSalary"],
-    [{ ...DEFAULT_INPUTS, year: 2026 }, "year"],
+    [{ ...DEFAULT_INPUTS, year: 2027 }, "year"],
     [{ ...DEFAULT_INPUTS, residentCountry: "NL" }, "residentCountry"],
     [{ ...DEFAULT_INPUTS, daysWorkedNL: 400 }, "daysWorkedNL"],
     [{ ...DEFAULT_INPUTS, surprise: true }, "surprise"],
@@ -123,7 +123,7 @@ describe("MCP tax adapter", () => {
       ).toEqual(compareTax({ base: mortgage, overrides: {} }).structuredContent);
       for (const input of [
         {},
-        { ...DEFAULT_INPUTS, year: 2026 },
+        { ...DEFAULT_INPUTS, year: 2027 },
         { ...DEFAULT_INPUTS, grossSalary: -1 },
       ]) {
         const result = await client.callTool({ name: "calculate_tax", arguments: input });

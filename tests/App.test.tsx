@@ -155,8 +155,7 @@ describe("App", () => {
     expect(screen.getByText(/Tax year.*2025/)).toBeInTheDocument();
   });
 
-  // TODO: Re-enable when 2026 support is re-integrated
-  it.skip("shows 2026 provisional alert for year 2026", () => {
+  it("loads a saved year 2026 without a provisional alert", () => {
     const savedInputs = {
       year: 2026,
       residentCountry: "BE",
@@ -173,12 +172,11 @@ describe("App", () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(savedInputs));
     render(<App />);
     expect(screen.getByText(/Tax year.*2026/)).toBeInTheDocument();
-    const alert = screen
-      .getAllByRole("alert")
-      .find((node) => /indexed amounts.*2026/i.test(node.textContent ?? ""));
-    expect(alert).toBeDefined();
-    expect(alert).toHaveTextContent(/indexed amounts.*2026/i);
-    expect(within(alert!).getByText(/indexed amounts.*2026/i)).toBeInTheDocument();
+    expect(
+      screen
+        .queryAllByRole("alert")
+        .filter((node) => /provisional|indexed amounts/i.test(node.textContent ?? "")),
+    ).toHaveLength(0);
   });
 
   it("sanitizes invalid enum field values from localStorage", () => {
@@ -197,7 +195,8 @@ describe("App", () => {
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(badInputs));
     render(<App />);
-    expect(screen.getByText(/Tax year.*2025/)).toBeInTheDocument();
+    // An unsupported year falls back to the latest supported year.
+    expect(screen.getByText(/Tax year.*2026/)).toBeInTheDocument();
   });
 
   it("sanitizes non-finite numeric fields from localStorage", () => {
