@@ -84,11 +84,12 @@ describe("App", () => {
   it("renders a tab for NL, BE and year comparison", () => {
     render(<App />);
     const tabs = screen.getAllByRole("tab");
-    expect(tabs.length).toBe(6);
+    expect(tabs.length).toBe(7);
     expect(tabs.map((tab) => tab.getAttribute("aria-label"))).toEqual([
       "Summary",
       "Netherlands",
       "Belgium",
+      "Filing",
       "Home ratio",
       "Year comparison",
       "Compare",
@@ -97,7 +98,7 @@ describe("App", () => {
 
   it("defers the home ratio chart until its tab is requested", async () => {
     render(<App />);
-    const panel = screen.getAllByRole("tabpanel", { hidden: true })[3]!; // wfh is the fourth tab
+    const panel = screen.getAllByRole("tabpanel", { hidden: true })[4]!; // wfh is the fifth tab
     expect(panel).toBeEmptyDOMElement();
 
     fireEvent.click(screen.getByRole("tab", { name: /home ratio/i }));
@@ -113,7 +114,7 @@ describe("App", () => {
 
   it("defers the year comparison until its tab is requested", async () => {
     render(<App />);
-    const panel = screen.getAllByRole("tabpanel", { hidden: true })[4]!; // years is the last tab
+    const panel = screen.getAllByRole("tabpanel", { hidden: true })[5]!; // years is the sixth tab
     expect(panel).toBeEmptyDOMElement();
 
     fireEvent.click(screen.getByRole("tab", { name: /year comparison/i }));

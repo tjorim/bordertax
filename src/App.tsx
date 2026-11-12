@@ -92,19 +92,17 @@ export default function App() {
   const calculation = useMemo(() => runCalculation(inputs), [inputs]);
   const [, setCurrentLocale] = useState(getLocale());
   const [tab, setTab] = useState<string | number | null>("summary");
-  const [filingOpen, setFilingOpen] = useState(false);
   const [filingRequests, setFilingRequests] = useState(0);
   useDocumentTitle(m.app_document_title());
 
   const showFiling = useCallback(() => {
-    setTab("summary");
-    setFilingOpen(true);
+    setTab("filing");
     setFilingRequests((count) => count + 1);
   }, []);
 
-  // Scroll once the summary tab and the opened checklist are in the DOM.
+  // Scroll once the Filing tab is in the DOM.
   useEffect(() => {
-    if (filingRequests > 0) scrollToAndFocus("filing-checklist-trigger");
+    if (filingRequests > 0) scrollToAndFocus("filing-heading");
   }, [filingRequests]);
 
   useEffect(() => {
@@ -159,8 +157,6 @@ export default function App() {
                 inputs={inputs}
                 tab={tab}
                 onTabChange={setTab}
-                filingOpen={filingOpen}
-                onFilingOpenChange={setFilingOpen}
                 onResetInputs={() => form.reset(DEFAULT_INPUTS)}
               />
             </ErrorBoundary>

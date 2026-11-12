@@ -15,8 +15,10 @@ allowed scopes are listed in `release.config.json`, and `check` validates `[Unre
 
 ### Added
 
-- **Web:** Pin a compact result bar (net income, Dutch refund or tax, Belgian tax) below the header while editing, with a "View results" jump on small screens and a shortcut that opens the filing checklist.
+- **Web:** Pin a compact result bar (net income, Dutch refund or tax, Belgian tax) below the header while editing, with a "View results" jump on small screens and a shortcut to the Filing tab.
 - **Web:** Give every page its own document title, so the calculator and the reference guides can be told apart in tabs and history.
+- **Web:** Give the filing checklist its own "Filing" tab, with a "Copy checklist values" action and an entry-format column that says per row whether the portal takes whole euros, cents or a yes/no answer.
+- **Web:** List Belgian code 3364 (dienstencheques) for income years up to 2024, the fixed Dutch return answers (lives in Belgium, insured for volksverzekeringen, 90% test derived from the workday split) and an optional jaaropgave arbeidskorting field shown beside the app's own recalculation.
 
 ### Changed
 
@@ -24,12 +26,19 @@ allowed scopes are listed in `release.config.json`, and `check` validates `[Unre
 - **Web:** Stack the filing checklist rows as field / value / source cards on narrow screens instead of scrolling the tables sideways.
 - **Web:** Wrap the result tabs onto a second row on narrow screens so none are hidden off-screen, and show the app name in the collapsed header.
 
+### Fixed
+
+- **Web:** Show Belgian codes 1285 and 1437 outside the O.2 (Netherlands) group, under general Box IV entries and movable income, and show Dutch return amounts in whole euros.
+- Remove employer and place names from the interface text: the workday hint and filing checklist now speak of "your employer's" jaaropgave and workday statement, and say what to use when the employer provides no statement (calendar, badge or access records, travel receipts).
+
 ### Removed
 
 - **Web:** Remove the disabled 30% ruling checkbox for Belgian residents; the limitation is now stated in the page footer.
 
 ### Internal
 
+- Rewrite the README around the supported profile, inputs, outputs and limits; document the tax model, known gaps and the income-year procedure in `docs/`; move finished migration records to `docs/archive/`.
+- Add a locale-audit check that fails on employer and place names in message files.
 - Rename the release workflow to `release.yml` and give it the shared job graph used by every app: `validate` → `draft`, with a read-only default token that only the draft job can write with.
 - Report the built source commit alongside the app version in the health response; VPS builds receive the full commit from the shared deployment tooling (tjorim/apps#345).
 - Read the MCP server version from `package.json` so releases no longer rewrite `mcp/server.ts`.

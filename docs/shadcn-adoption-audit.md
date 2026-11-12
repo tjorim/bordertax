@@ -25,7 +25,7 @@ The CLI writes `import { cn } from "cn"`; every file here imports `cn` from
 | Tabs                 | `ui/tabs.tsx`                     | custom      | **Keep**                                         | `ResultsTabs`                                         | Registry tabs offer `default` (pill) and `line` list variants. The results UI is a folder tab joined to a bordered panel (`bt-results-panel`), `keepMounted` panels and `activateOnFocus`; neither variant fits. Base UI supplies the roles, arrow keys and `data-active`.                                                                     |
 | Dropdown menu        | `ui/dropdown-menu.tsx`            | adapted     | **Keep**                                         | `AppNavbar` (reference guide menu)                    | Subset of the registry file (root, trigger, content, item); items render router `Link`s. The registry adds groups, labels, checkbox/radio items, submenus and shortcuts, which no consumer needs. Add them from the registry when a menu needs them.                                                                                           |
 | Collapsible          | `ui/collapsible.tsx`              | generated   | **Keep**                                         | `AppNavbar` mobile menu                               | Same as the registry file.                                                                                                                                                                                                                                                                                                                     |
-| Accordion            | `ui/accordion.tsx`                | adapted     | **Keep**                                         | `InputPanel`, reference pages                         | Same Base UI parts and `data-slot` root; chevron rotates instead of swapping icons, with the 2px inset focus ring documented in `ui-theme-migration.md`.                                                                                                                                                                                       |
+| Accordion            | `ui/accordion.tsx`                | adapted     | **Keep**                                         | `InputPanel`, reference pages                         | Same Base UI parts and `data-slot` root; chevron rotates instead of swapping icons, with the 2px inset focus ring documented in `archive/ui-theme-migration.md`.                                                                                                                                                                               |
 | Alert                | `ui/alert.tsx`                    | adapted     | **Keep**                                         | calculator results, reference callouts                | Domain variants (`info`, `warning`, `success`, `danger`) replace the registry `default`/`destructive`. `AlertTitle`/`AlertDescription` are not needed yet.                                                                                                                                                                                     |
 | Badge                | `ui/badge.tsx`                    | adapted     | **Keep**                                         | results, reference pages                              | Uses `useRender` like the registry; variants are the NL/BE and threshold palette.                                                                                                                                                                                                                                                              |
 | Card                 | `ui/card.tsx`                     | adapted     | **Keep**                                         | reference pages, overview                             | Registry also has `CardAction`, `CardFooter` and sizes; unused here.                                                                                                                                                                                                                                                                           |
@@ -50,7 +50,7 @@ The CLI writes `import { cn } from "cn"`; every file here imports `cn` from
 - **Result bar** (`ResultBar.tsx`, custom): a sticky summary strip. The registry has no
   equivalent (`card` is a content container, not a pinned bar); it uses a semantic `section`,
   a `dl` and `Button variant="ghost"` actions.
-- **Filing rows** (`FilingChecklist` `FilingRows`, composition): the existing `Table` restyled with
+- **Filing rows** (`FilingChecklist` `ChecklistRow`, composition): the existing `Table` restyled with
   `max-table:` utilities into stacked cards (header kept as `sr-only`) rather than a second card
   list, so one DOM serves both layouts.
 - **Tabs** (`ui/tabs.tsx`): `TabsList` wraps (`flex-wrap`) instead of scrolling horizontally, so
@@ -216,3 +216,11 @@ The scenario editor and attribution list are domain compositions, with native
 section/list semantics for the unsortable Shapley explanation; no new primitive,
 custom interaction or CSS is needed. The existing responsive Table provides
 keyboard-focusable horizontal scrolling at narrow widths.
+
+### Issue #433 filing checklist tab
+
+The filing checklist moved out of the Summary accordion into its own `filing`
+tab (existing shared `Tabs`), so it renders as a plain section with the shared
+`Table`, `Button`, `Input`, `Field` and `Alert`. No custom primitives. The O.2
+group header row keeps the existing `TableHead colSpan` pattern. The optional
+arbeidskorting field is local component state, not a tax input.

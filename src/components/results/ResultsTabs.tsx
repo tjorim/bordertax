@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChartColumnIcon, ChartPieIcon, HouseIcon } from "lucide-react";
+import { ChartColumnIcon, ChartPieIcon, ClipboardCheckIcon, HouseIcon } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { lazyView } from "@/lib/lazyView";
 import { isThirtyPercentRulingSupportedResident } from "@/tax/constants";
@@ -7,6 +7,7 @@ import type { TaxInputs, TaxResult } from "@/tax/types";
 import * as m from "@/paraglide/messages.js";
 import { LazyBoundary } from "../LazyBoundary";
 import BEResult from "./BEResult";
+import FilingChecklist from "./FilingChecklist";
 import NLResult from "./NLResult";
 import SummaryResult from "./SummaryResult";
 
@@ -30,8 +31,6 @@ export interface ResultsTabsProps {
   result: TaxResult;
   tab: string | number | null;
   onTabChange: (tab: string | number | null) => void;
-  filingOpen: boolean;
-  onFilingOpenChange: (open: boolean) => void;
   onResetInputs: () => void;
 }
 
@@ -40,8 +39,6 @@ export default function ResultsTabs({
   result,
   tab,
   onTabChange,
-  filingOpen,
-  onFilingOpenChange,
   onResetInputs,
 }: ResultsTabsProps) {
   // These panels load on first selection; later they stay mounted like the other panels.
@@ -68,6 +65,10 @@ export default function ResultsTabs({
         <TabsTrigger value="be" aria-label={m.tabs_be()}>
           🇧🇪 {m.tabs_be()}
         </TabsTrigger>
+        <TabsTrigger value="filing" aria-label={m.tabs_filing()}>
+          <ClipboardCheckIcon className="size-3" aria-hidden="true" />
+          {m.tabs_filing()}
+        </TabsTrigger>
         <TabsTrigger value="wfh" aria-label={m.tabs_wfh_ratio()} {...preloadOnIntent(wfhChartView)}>
           <HouseIcon className="size-3" aria-hidden="true" />
           {m.tabs_wfh_ratio()}
@@ -91,12 +92,7 @@ export default function ResultsTabs({
 
       <div>
         <TabsContent value="summary">
-          <SummaryResult
-            result={result}
-            onResetInputs={onResetInputs}
-            filingOpen={filingOpen}
-            onFilingOpenChange={onFilingOpenChange}
-          />
+          <SummaryResult result={result} onResetInputs={onResetInputs} />
         </TabsContent>
         <TabsContent value="nl" className="bt-nl-accent">
           <NLResult
@@ -110,6 +106,9 @@ export default function ResultsTabs({
         </TabsContent>
         <TabsContent value="be" className="bt-be-accent">
           <BEResult result={result.be} residentCountry={inputs.residentCountry} />
+        </TabsContent>
+        <TabsContent value="filing">
+          <FilingChecklist result={result} />
         </TabsContent>
         <TabsContent value="wfh">
           {requested.wfh && (

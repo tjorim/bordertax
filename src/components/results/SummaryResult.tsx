@@ -19,22 +19,13 @@ import { getNLFractions, getTotalWorkdays } from "@/tax/workdays";
 import * as m from "@/paraglide/messages.js";
 import { fmt, fmtSigned, pct, stripColon } from "../format.js";
 import MortgageResult from "./MortgageResult";
-import FilingChecklist from "./FilingChecklist";
 
 interface Props {
   result: TaxResult;
   onResetInputs: () => void;
-  /** Controls the filing checklist; it manages its own state when omitted. */
-  filingOpen?: boolean;
-  onFilingOpenChange?: (open: boolean) => void;
 }
 
-export default function SummaryResult({
-  result,
-  onResetInputs,
-  filingOpen,
-  onFilingOpenChange,
-}: Props) {
+export default function SummaryResult({ result, onResetInputs }: Props) {
   const [copyStatus, setCopyStatus] = useState<"idle" | "success" | "error">("idle");
   const { grossIncome, totalTax, netIncome, effectiveRateTotal, nl, be } = result;
   const withheldTaxNL = result.inputs.withheldTaxNL ?? 0;
@@ -328,8 +319,6 @@ export default function SummaryResult({
       )}
 
       {result.mortgage && <MortgageResult result={result.mortgage} />}
-
-      <FilingChecklist result={result} open={filingOpen} onOpenChange={onFilingOpenChange} />
     </div>
   );
 }
