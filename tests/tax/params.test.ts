@@ -14,15 +14,20 @@ interface Bracket {
 }
 
 /**
- * Known data discrepancies that the restructuring deliberately preserved (no tax figure changes).
- * Each entry names a failing check; the check must keep failing while listed, so the entry has to be
- * deleted in the same change that corrects the figures.
+ * Known data discrepancies that were preserved on purpose. Each entry names a failing check; the check
+ * must keep failing while listed, so the entry has to be deleted in the same change that corrects the figures.
  */
-const KNOWN_DEVIATIONS: Record<string, string> = {
-  "2024 over-AOW AHK":
-    "phase-out start/end (22,660 / 73,031) look like the 2023 values; end is not the top-bracket start (#435)",
-  "2024 over-AOW AK":
-    "stage 3 -> 4 join is off by about 110 euro and the phase-out ends about 6 euro below zero (#435)",
+const KNOWN_DEVIATIONS: Record<string, string> = {};
+
+/**
+ * Official tables whose printed rounding leaves a wider gap at a stage join than the usual one euro.
+ * The figures are as published, so the tolerance is widened instead of altering them.
+ */
+const OFFICIAL_ROUNDING_TOLERANCE: Record<string, { euros: number; why: string }> = {
+  "2024 over-AOW AK": {
+    euros: 2,
+    why: "Belastingdienst prints 4,346% x 11.490 = 499,4 against a first build-up maximum of 501 (Heffingskortingen 2024; Nieuwsbrief Loonheffingen 2024, bijlage)",
+  },
 };
 
 function expectConsistent(key: string, check: () => void) {
@@ -56,7 +61,7 @@ function stageEnd(stage: AKStage) {
 }
 
 describe("tax parameters", () => {
-  it("are unchanged by the per-year module restructuring", () => {
+  it("match the recorded snapshot (2024 over-AOW credits corrected to the Belastingdienst tables)", () => {
     const snapshot = JSON.parse(
       readFileSync(resolve(import.meta.dirname, "fixtures/tax-params-snapshot.json"), "utf8"),
       (_key, value) => (value === "Infinity" ? Infinity : value),
@@ -137,7 +142,9 @@ describe("tax parameters", () => {
           stages.slice(0, -1).forEach((stage, i) => {
             const next = stages[i + 1]!;
             // Each stage starts at the value where the previous one ended.
-            expect(Math.abs(next.baseAmount - stageEnd(stage))).toBeLessThanOrEqual(EURO_TOLERANCE);
+            const tolerance =
+              OFFICIAL_ROUNDING_TOLERANCE[`${year} ${regimeName}-AOW AK`]?.euros ?? EURO_TOLERANCE;
+            expect(Math.abs(next.baseAmount - stageEnd(stage))).toBeLessThanOrEqual(tolerance);
           });
           // The phase-out reaches zero where the last stage starts.
           const phaseOut = stages.at(-2)!;

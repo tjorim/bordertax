@@ -25,6 +25,10 @@ export interface NLTaxResult {
   arbeidskorting: number;
   totalCredits: number;
   volksverzekeringen: number;
+  /** Income tax actually due, after the tax part of the heffingskortingen. */
+  incomeTaxDue: number;
+  /** Premies volksverzekeringen actually due, after the premium part of the heffingskortingen. */
+  premiumsDue: number;
   netTaxNL: number;
   /** Net tax as fraction of total gross salary */
   effectiveRateNL: number;
@@ -39,7 +43,7 @@ export interface BETaxResult {
   professionalExpenses: number;
   /** Net professional income: declaredIncome − socialContributions − forfait */
   netProfessionalIncome: number;
-  /** Non-NL-sourced income (BE + third-country days fraction of grossSalary). */
+  /** Belgian-taxable part of the wage (box IV O.1): (grossSalary − premiums due) × fraction of days outside NL. */
   beIncome: number;
   /** NL-sourced gross income (days in NL fraction of grossSalary), for display purposes. */
   nlExemptIncome: number;

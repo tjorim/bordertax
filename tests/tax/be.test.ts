@@ -120,14 +120,17 @@ describe("calculateBETax", () => {
     expect(result!.beFraction).toBe(1);
   });
 
-  it("allocates Dutch tax only to the NL-exempt portion of the Belgian return", () => {
+  it("follows the FOD guideline: premiums before the day fraction, income tax from the exempt side", () => {
     const result = calculateBETax(
       { ...base, grossSalary: 10000, daysWorkedNL: 9, daysWorkedBE: 1 },
-      mockNL({ nlTaxableIncome: 9000, netTaxNL: 2000 }),
+      mockNL({ nlTaxableIncome: 9000, netTaxNL: 2000, incomeTaxDue: 800, premiumsDue: 1200 }),
     );
-    // Code 1250 is €8,000 after €2,000 NL tax. The €1,000 Belgian work share
-    // stays taxable in Belgium, leaving €7,000 (= 87.5%) as NL-exempt income.
-    expect(result!.vrijgesteld / result!.netProfessionalIncome).toBeCloseTo(0.875, 6);
+    // W = 10,000 − 1,200 = 8,800; Y = W × 1/10 = 880 (O.1); code 1250 = 8,000;
+    // Z = W − Y − 800 = 7,120 (O.2).
+    expect(result!.beIncome).toBeCloseTo(880, 6);
+    expect(result!.declaredIncome).toBeCloseTo(8000, 6);
+    expect(result!.declaredIncome - result!.beIncome).toBeCloseTo(7120, 6);
+    expect(result!.vrijgesteld / result!.netProfessionalIncome).toBeCloseTo(7120 / 8000, 6);
   });
 
   it("communal levy increases with higher communalTaxRate", () => {
@@ -225,9 +228,9 @@ describe("calculateBETax", () => {
     expect(result!.professionalExpenses).toBeCloseTo(10000 * 0.3, 1);
   });
 
-  it("nlExemptIncome + beIncome equals grossSalary", () => {
+  it("nlExemptIncome is the days-based Dutch share of the gross wage", () => {
     const result = calculateBETax({ ...base, daysWorkedNL: 200, daysWorkedBE: 20 }, mockNL());
-    expect(result!.nlExemptIncome + result!.beIncome).toBeCloseTo(base.grossSalary, 5);
+    expect(result!.nlExemptIncome).toBeCloseTo(base.grossSalary * (200 / 220), 5);
   });
 
   it("works for tax year 2024", () => {

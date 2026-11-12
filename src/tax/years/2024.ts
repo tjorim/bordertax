@@ -32,18 +32,17 @@ export const year2024 = defineYear({
       ],
     },
     over: {
-      // Suspected copy error, unchanged here: the phase-out start (22,660) and end (73,031) look like
-      // the 2023 values while the brackets are 2024. Tracked in the AHK follow-up to #435.
-      ahkMax: 1537,
-      ahkPhaseOutStart: 22660,
-      ahkPhaseOutRate: 0.03048,
-      ahkPhaseOutEnd: 73031,
+      // Belastingdienst "Heffingskortingen 2024", whole year at AOW age.
+      ahkMax: 1735,
+      ahkPhaseOutStart: 24812,
+      ahkPhaseOutRate: 0.0342,
+      ahkPhaseOutEnd: 75518,
       akStages: [
-        { from: 0, to: 11491, baseAmount: 0, rate: 0.04118 },
-        { from: 11491, to: 24821, baseAmount: 473, rate: 0.14938 },
-        { from: 24821, to: 39957, baseAmount: 2465, rate: 0.01237 },
-        { from: 39957, to: 124935, baseAmount: 2762, rate: -0.03257 },
-        { from: 124935, to: Infinity, baseAmount: 0, rate: 0 },
+        { from: 0, to: 11490, baseAmount: 0, rate: 0.04346 },
+        { from: 11490, to: 24820, baseAmount: 501, rate: 0.16214 },
+        { from: 24820, to: 39957, baseAmount: 2662, rate: 0.01275 },
+        { from: 39957, to: 124934, baseAmount: 2854, rate: -0.03358 },
+        { from: 124934, to: Infinity, baseAmount: 0, rate: 0 },
       ],
     },
   },
