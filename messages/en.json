@@ -67,7 +67,6 @@
   "input_workdays_other_hint": "E.g. customer installations abroad. Counted the same as BE days for Belgian tax.",
   "input_thirty_percent_ruling": "30% ruling applies (NL)",
   "input_thirty_percent_ruling_hint": "Expat rule: 30% of salary is tax free",
-  "input_thirty_percent_ruling_unavailable_be": "Not available for this Belgian-resident cross-border profile: the expat scheme normally requires living more than 150 km from the Dutch border before Dutch employment. A valid existing ruling from recruitment farther abroad is an exception that this calculator does not estimate.",
   "input_social_contributions": "NL health-insurance premium (€)",
   "input_social_contributions_hint": "Code 1257: net annual basic premium from your health insurer's annual policy or statement.",
   "input_aanvullend_pensioen": "Supplementary pension (€)",
@@ -251,9 +250,7 @@
   "input_social_security_above_50": "Above 49% BE days: Belgian social security would apply. Review your working arrangement.",
   "summary_sourcing_method_col": "Method",
   "formulas_panel_label": "Calculation formulas",
-
   "ref_nav_read_more": "Read more",
-
   "ref_overview_hub_title": "Reference Guide",
   "ref_overview_page_title": "Border Worker Reference Guide",
   "ref_overview_subtitle": "Practical reference sheets on fiscal and social rules for cross-border workers between Belgium and the Netherlands.",
@@ -261,7 +258,6 @@
   "ref_overview_ss_desc": "Day count, FOD formula, 49% telework threshold, NL tax rates 2026 and a worked example.",
   "ref_overview_pension_title": "Pension",
   "ref_overview_pension_desc": "AOW, ANW, RVU, Belgian retirement pension, deductions, pension penalty/bonus and border worker pension.",
-
   "ref_ss_nav_title": "Salary Split Reference",
   "ref_ss_hero_title": "Fiscal Salary Split",
   "ref_ss_hero_subtitle": "Reference guide for cross-border workers living in Belgium and working in the Netherlands. Based on ACV Information Session 24 March 2026 & Border Worker Checklist 2026.",
@@ -284,7 +280,6 @@
   "ref_ss_tax_vs_ss_title": "Tax ≠ Social security:",
   "ref_ss_tax_vs_ss_body": "For social security there is a framework agreement that neutralises remote work (up to 49%). For tax there is no comparable rule. Every day working from home in Belgium is a day on which Belgium levies tax.",
   "ref_ss_footer": "Based on ACV Border Workers Checklist 2026 & Information Session 24 March 2026 (Pelt). No rights can be derived. Consult ACV Border Workers or a tax specialist for your personal situation.",
-
   "ref_table_component": "Component",
   "ref_table_bracket": "Bracket",
   "ref_table_rate": "Rate",
@@ -303,7 +298,6 @@
   "ref_table_malus_per_year": "Penalty per year early",
   "ref_table_bonus_per_year": "Bonus per extra year",
   "ref_table_career_156": "Career (156 days/yr)",
-
   "ref_pension_nav_title": "Pension Reference",
   "ref_pension_hero_title": "Pension as a Cross-Border Worker",
   "ref_pension_hero_subtitle": "Reference guide on AOW, ANW, supplementary pension (NL) and Belgian retirement pension for those living in Belgium and working in the Netherlands. Based on ACV Information Session 24 March 2026 (Pelt).",
@@ -340,7 +334,6 @@
   "ref_pension_term_confusion_title": "Term confusion:",
   "ref_pension_term_confusion_body": "\"Pension\" in the Netherlands = supplementary to AOW (2nd pillar). \"Pension\" in Belgium = the statutory pension. Don't confuse this when talking to HR or pension funds.",
   "ref_pension_footer": "Based on ACV Border Workers Information Session 24 March 2026 (Pelt). No rights can be derived. Consult ACV Border Workers or a pension specialist.",
-
   "ref_ss_s1_intro": "Based on the double taxation treaty BE–NL the following applies:",
   "ref_ss_s1_formula": "Telework day in Belgium  →  taxing rights: BELGIUM\nOffice day in Netherlands →  taxing rights: NETHERLANDS",
   "ref_ss_s1_tip_20pct": "20% rule: If you work more than 20% of a day from home, that day counts as a full telework day for Belgian tax purposes.",
@@ -430,7 +423,6 @@
   "ref_ss_doc1_sub": "Complete reference guide BE→NL · 8 pages",
   "ref_ss_doc2_title": "ACV Information Session Telework & Border Workers",
   "ref_ss_doc2_sub": "Presentation 24 March 2026, Pelt · 47 slides",
-
   "ref_pension_p1_pillar": "1st pillar",
   "ref_pension_p1_nl": "AOW (old age) + ANW (survivor)",
   "ref_pension_p1_be": "Statutory retirement pension + survivor pension",
@@ -587,7 +579,6 @@
   "ref_pension_tax_tip2": "AOW always taxable in Belgium (country of residence). 2nd pillar pension too, unless civil servant with exclusively NL nationality.",
   "ref_pension_source_doc_title": "ACV Information Session Border Workers & Pension",
   "ref_pension_source_doc_sub": "Presentation 24 March 2026, Pelt · 47 slides",
-
   "ref_ss_col_nl": "🇳🇱 Netherlands",
   "ref_ss_col_be": "🇧🇪 Belgium",
   "ref_ss_s3_consult_specialist": "Consider consulting a tax specialist.",
@@ -611,7 +602,6 @@
   "ref_ss_example_sub_fraction_b": "fraction drops: 180−25 / 230−25",
   "ref_ss_example_sub_be_share_b": "vs 50/230 = 21.7% without sick days",
   "ref_ss_example_unchanged": "unchanged",
-
   "ref_pension_aow_volledig_value": "50 years = 100%",
   "ref_pension_aow_premie_value": "17.9%",
   "ref_pension_aow_age_2024_value": "67 years",
@@ -746,7 +736,18 @@
   "mortgage_forfait_net_deduction": "Net home deduction",
   "mortgage_forfait_exceeds_interest": "The eigenwoningforfait exceeds the interest. Deduction is zero; extra taxable income and Wet Hillen relief are not modelled.",
   "mortgage_forfait_full_year": "Assumes an ordinary main home occupied throughout the year; partial-year use and special situations are not modelled.",
-
+  "hint_more": "More",
+  "hint_less": "Less",
+  "result_bar_label": "Key results",
+  "result_bar_dutch_refund": "Dutch refund",
+  "result_bar_dutch_due": "Dutch tax due",
+  "result_bar_view_results": "View results",
+  "result_bar_filing": "Filing checklist",
+  "results_back_to_inputs": "Back to inputs",
+  "app_document_title": "Bordertax · NL/BE Cross-Border Tax Calculator",
+  "document_title_suffix": "Bordertax",
+  "footer_limitations": "Not modelled: the 30% ruling. For Belgian residents the expat scheme normally requires living more than 150 km from the Dutch border before Dutch employment, and a valid existing ruling from recruitment farther abroad is an exception this calculator does not estimate.",
+  "app_name": "Bordertax",
   "tabs_filing": "Filing",
   "filing_format": "Entry format",
   "filing_format_whole": "Whole euros",

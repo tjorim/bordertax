@@ -133,6 +133,7 @@ export function AppNavbar({ children, onLocaleSwitch }: AppNavbarProps) {
         <span className="text-xl font-bold" aria-label={m.nav_countries_label()}>
           🇧🇪&thinsp;🇳🇱
         </span>
+        <span className="font-semibold shell:hidden">{m.app_name()}</span>
         <CollapsibleTrigger
           render={<Button variant="outline" />}
           aria-label={m.nav_toggle_label()}

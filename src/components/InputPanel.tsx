@@ -512,7 +512,7 @@ export default function InputPanel({ form }: Props) {
                 )}
             </div>
 
-            {isThirtyPercentRulingSupportedResident(values.residentCountry) ? (
+            {isThirtyPercentRulingSupportedResident(values.residentCountry) && (
               <form.Field name="thirtyPercentRuling">
                 {(field) => (
                   <div className="col-span-12">
@@ -529,19 +529,6 @@ export default function InputPanel({ form }: Props) {
                   </div>
                 )}
               </form.Field>
-            ) : (
-              <div className="col-span-12">
-                <CheckboxField
-                  id="thirty-ruling"
-                  label={m.input_thirty_percent_ruling()}
-                  checked={false}
-                  disabled
-                  aria-describedby="thirty-ruling-hint"
-                />
-                <FieldDescription id="thirty-ruling-hint" className="mt-1">
-                  {m.input_thirty_percent_ruling_unavailable_be()}
-                </FieldDescription>
-              </div>
             )}
 
             {values.residentCountry === "BE" && (
