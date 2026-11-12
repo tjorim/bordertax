@@ -25,6 +25,7 @@ allowed scopes are listed in `release.config.json`, and `check` validates `[Unre
 
 ### Changed
 
+- **Web:** The note shown when the eigenwoningforfait exceeds the mortgage interest now says the deduction is zero and that a positive balance on a foreign main home is not added to Dutch taxable income for a qualifying non-resident (art. 7.8 lid 1 Wet IB 2001). A small effect through premium income and the algemene heffingskorting is not modelled.
 - Change the shape of the calculation output (MCP `calculate_tax` and `compare_scenarios`, and the engine result): `result.nl.brackets` entries now carry numeric `from` and `to` bounds (`to` is `null` for the open top bracket) instead of a Dutch-formatted `label`, and Belgian money figures in `result.be` (plus `totalTax`, `netIncome`, the mortgage effects and the comparison deltas) are rounded to whole cents instead of carrying thirteen decimals. The cent rounding is applied once to the returned result; no Belgian tax-rounding rule is claimed. `federalTax` and `nlExemptIncome` stay for compatibility.
 - **Web:** Format the Dutch bracket ranges in the active language (English and Dutch number formats) instead of always in Dutch.
 - Accept the optional `assessmentIncomeTaxDue` and `assessmentPremiumsDue` inputs (together, or neither) in the strict schema, the MCP `calculate_tax` and `compare_scenarios` tools, `get_capabilities` and the input file (file version unchanged; files without them stay valid). `result.nl` stays the estimate; the new `result.nlCharge` reports the source and the difference from it.

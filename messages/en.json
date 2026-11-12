@@ -704,7 +704,7 @@
   "input_mortgage_home_hint": "Market value of the whole home at 1 January of the preceding year (WOZ-equivalent). Assumes a full year as your main home. Leave empty for an upper estimate.",
   "mortgage_forfait_share": "Eigenwoningforfait (your share)",
   "mortgage_forfait_net_deduction": "Net home deduction",
-  "mortgage_forfait_exceeds_interest": "The eigenwoningforfait exceeds the interest. Deduction is zero; extra taxable income and Wet Hillen relief are not modelled.",
+  "mortgage_forfait_exceeds_interest": "The eigenwoningforfait exceeds the interest. The deduction is zero. For a qualifying non-resident, a positive balance on a foreign main home is not added to Dutch taxable income (art. 7.8 lid 1 Wet IB 2001). A small effect through premium income and the income used for the algemene heffingskorting, about up to a few hundred euro in a low-income case, is not modelled.",
   "mortgage_forfait_full_year": "Assumes an ordinary main home occupied throughout the year; partial-year use and special situations are not modelled.",
   "hint_more": "More",
   "hint_less": "Less",
