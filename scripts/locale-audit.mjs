@@ -168,6 +168,18 @@ export function frozenMessageCalls(source, file = "source.tsx") {
   });
   return lines;
 }
+// Employer and place names that must not appear in interface text: the tool serves any Belgian resident
+// with a Dutch employer. Keep the list to names that have leaked before or are plainly local.
+const localTerms = /\b(?:ASML|Hamont|Veldhoven|Eindhoven)\b/i;
+/** Lists message values that name a specific employer or place instead of using generic wording. */
+export function localTermErrors(messages, file = "messages.json") {
+  return Object.entries(messages)
+    .filter(([, value]) => typeof value === "string" && localTerms.test(value))
+    .map(
+      ([key, value]) =>
+        `${file}: ${key} names an employer or place (${localTerms.exec(value)[0]}); use generic wording`,
+    );
+}
 function files(directory) {
   return fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
     const file = path.join(directory, entry.name);
@@ -182,6 +194,14 @@ function main() {
   const root = fileURLToPath(new URL("../", import.meta.url));
   const all = process.argv.includes("--all");
   const { errors, locales } = projectErrors(root);
+  const messageDirectory = path.join(root, "messages");
+  for (const name of fs.readdirSync(messageDirectory).filter((entry) => entry.endsWith(".json")))
+    errors.push(
+      ...localTermErrors(
+        JSON.parse(fs.readFileSync(path.join(messageDirectory, name), "utf8")),
+        `messages/${name}`,
+      ),
+    );
   const sources = files(path.join(root, "src"));
   const reviewed = sources.filter((file) => {
     const relative = path.relative(path.join(root, "src"), file).split(path.sep).join("/");

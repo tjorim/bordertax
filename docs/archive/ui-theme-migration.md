@@ -49,7 +49,7 @@ changes when auto is selected.
 Bootstrap, React Bootstrap and Bootstrap Icons are removed. `src/tailwind.css` is
 the only stylesheet entry; `src/styles/` holds the remaining application styles
 in the `components` layer, and `reset.css` is the single application reset.
-Lucide icons replace the icon font (see `docs/icon-migration.md`), and oxlint
+Lucide icons replace the icon font (see `docs/archive/icon-migration.md`), and oxlint
 enforces strict `no-unknown-classes` with no legacy allow-list.
 
 Focus rings keep the 2px outline, 2px offset and 4px brand halo, including
