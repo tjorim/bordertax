@@ -16,17 +16,17 @@ const base: TaxInputs = {
   belowAOWAge: true,
   belgianRegion: "flemish",
   communalTaxRate: 7,
-  grossSalary: 60000,
+  annualStatements: [{ taxableWage: 60000, wageTaxWithheld: 0 }],
   daysWorkedNL: 220,
   daysWorkedBE: 0,
   daysWorkedOther: 0,
   thirtyPercentRuling: false,
-  socialContributions: 0,
-  aanvullendPensioen: 0,
-  dienstencheques: 0,
-  roerendeVoorheffing: 0,
-  withheldTaxNL: 0,
-  sickDays: 0,
+  healthInsurancePremium: 0,
+  supplementaryPension: 0,
+  serviceVouchers: 0,
+  reclaimableWithholdingTax: 0,
+  sickDaysNL: 0,
+  sickDaysOutsideNL: 0,
 };
 
 const nl = (overrides: Partial<TaxInputs>) => calculateNLTax({ ...base, ...overrides });
@@ -38,42 +38,67 @@ describe("income year 2026", () => {
 
   describe("Dutch result", () => {
     it("charges 8.10% income tax and 27.65% premiums up to the €38,883 ceiling", () => {
-      const result = nl({ grossSalary: 38883 });
+      const result = nl({ annualStatements: [{ taxableWage: 38883, wageTaxWithheld: 0 }] });
       expect(result.taxBeforeCredits).toBe(3149); // floor(38,883 × 8.10%)
       expect(result.volksverzekeringen).toBe(10751); // floor(38,883 × 27.65%)
     });
 
     it("stops charging premiums above the ceiling and applies 37.56% in the second bracket", () => {
-      const result = nl({ grossSalary: 60000 });
+      const result = nl({ annualStatements: [{ taxableWage: 60000, wageTaxWithheld: 0 }] });
       expect(result.volksverzekeringen).toBe(10751);
       expect(result.taxBeforeCredits).toBe(11080); // 3,149 + floor(21,117 × 37.56%)
     });
 
     it("applies 49.50% above €78,426", () => {
-      const result = nl({ grossSalary: 100000 });
+      const result = nl({ annualStatements: [{ taxableWage: 100000, wageTaxWithheld: 0 }] });
       // 3,149 + floor(39,543 × 37.56%) + floor(21,574 × 49.50%)
       expect(result.taxBeforeCredits).toBe(28680);
       expect(result.brackets.at(-1)?.rate).toBe(0.495);
     });
 
     it("gives the full algemene heffingskorting up to €29,736 and phases it out to zero at €78,426", () => {
-      expect(nl({ grossSalary: 29736 }).algemeneHeffingskorting).toBe(3115);
-      expect(nl({ grossSalary: 60000 }).algemeneHeffingskorting).toBe(1179);
-      expect(nl({ grossSalary: 78426 }).algemeneHeffingskorting).toBe(0);
-      expect(nl({ grossSalary: 120000 }).algemeneHeffingskorting).toBe(0);
+      expect(
+        nl({ annualStatements: [{ taxableWage: 29736, wageTaxWithheld: 0 }] })
+          .algemeneHeffingskorting,
+      ).toBe(3115);
+      expect(
+        nl({ annualStatements: [{ taxableWage: 60000, wageTaxWithheld: 0 }] })
+          .algemeneHeffingskorting,
+      ).toBe(1179);
+      expect(
+        nl({ annualStatements: [{ taxableWage: 78426, wageTaxWithheld: 0 }] })
+          .algemeneHeffingskorting,
+      ).toBe(0);
+      expect(
+        nl({ annualStatements: [{ taxableWage: 120000, wageTaxWithheld: 0 }] })
+          .algemeneHeffingskorting,
+      ).toBe(0);
     });
 
     it("builds up and phases out the arbeidskorting at the published stage joins", () => {
-      expect(nl({ grossSalary: 11965 }).arbeidskorting).toBe(996);
-      expect(nl({ grossSalary: 20000 }).arbeidskorting).toBe(3488);
-      expect(nl({ grossSalary: 25845 }).arbeidskorting).toBe(5300);
-      expect(nl({ grossSalary: 45592 }).arbeidskorting).toBe(5685);
-      expect(nl({ grossSalary: 60000 }).arbeidskorting).toBe(4748);
-      expect(nl({ grossSalary: 132920 }).arbeidskorting).toBe(0);
+      expect(
+        nl({ annualStatements: [{ taxableWage: 11965, wageTaxWithheld: 0 }] }).arbeidskorting,
+      ).toBe(996);
+      expect(
+        nl({ annualStatements: [{ taxableWage: 20000, wageTaxWithheld: 0 }] }).arbeidskorting,
+      ).toBe(3488);
+      expect(
+        nl({ annualStatements: [{ taxableWage: 25845, wageTaxWithheld: 0 }] }).arbeidskorting,
+      ).toBe(5300);
+      expect(
+        nl({ annualStatements: [{ taxableWage: 45592, wageTaxWithheld: 0 }] }).arbeidskorting,
+      ).toBe(5685);
+      expect(
+        nl({ annualStatements: [{ taxableWage: 60000, wageTaxWithheld: 0 }] }).arbeidskorting,
+      ).toBe(4748);
+      expect(
+        nl({ annualStatements: [{ taxableWage: 132920, wageTaxWithheld: 0 }] }).arbeidskorting,
+      ).toBe(0);
     });
 
     it("uses the whole-year-AOW credit tables from AOW age", () => {
-      const over = (grossSalary: number) => nl({ grossSalary, belowAOWAge: false });
+      const over = (taxableWage: number) =>
+        nl({ annualStatements: [{ taxableWage, wageTaxWithheld: 0 }], belowAOWAge: false });
       expect(over(10000).algemeneHeffingskorting).toBe(1556);
       expect(over(60000).algemeneHeffingskorting).toBe(590);
       expect(over(11965).arbeidskorting).toBe(498);
@@ -83,7 +108,10 @@ describe("income year 2026", () => {
     });
 
     it("charges no AOW premium from AOW age, so the first bracket is 17.85% in total", () => {
-      const result = nl({ grossSalary: 38883, belowAOWAge: false });
+      const result = nl({
+        annualStatements: [{ taxableWage: 38883, wageTaxWithheld: 0 }],
+        belowAOWAge: false,
+      });
       expect(result.taxBeforeCredits).toBe(3149);
       expect(result.volksverzekeringen).toBe(Math.floor(38883 * 0.0975));
     });
@@ -94,14 +122,16 @@ describe("income year 2026", () => {
       calculate({ ...base, daysWorkedNL: 200, daysWorkedBE: 20, ...overrides }).be!;
 
     it("caps the professional-expenses forfait at €6,070", () => {
-      const result = beResult({ grossSalary: 200000 });
+      const result = beResult({ annualStatements: [{ taxableWage: 200000, wageTaxWithheld: 0 }] });
       expect(result.professionalExpenses).toBe(6070);
     });
 
     it.each([[60000], [200000]])(
       "computes the progressive tax with the 2026 brackets (gross %i)",
       (grossSalary) => {
-        const result = beResult({ grossSalary });
+        const result = beResult({
+          annualStatements: [{ taxableWage: grossSalary, wageTaxWithheld: 0 }],
+        });
         const income = result.netProfessionalIncome;
         const expected =
           Math.min(income, 16720) * 0.25 +
@@ -126,8 +156,8 @@ describe("income year 2026", () => {
     });
 
     it("no longer reduces the regional tax for dienstencheques (Flemish reduction abolished)", () => {
-      const without = beResult({ dienstencheques: 0 });
-      const withCheques = beResult({ dienstencheques: 1000 });
+      const without = beResult({ serviceVouchers: 0 });
+      const withCheques = beResult({ serviceVouchers: 1000 });
       expect(withCheques.netTaxBE).toBeCloseTo(without.netTaxBE, 6);
     });
   });
@@ -149,7 +179,7 @@ describe("income year 2026", () => {
     it("limits the deduction in the highest bracket to 37.56%", () => {
       const result = calculate({
         ...base,
-        grossSalary: 120000,
+        annualStatements: [{ taxableWage: 120000, wageTaxWithheld: 0 }],
         mortgageEnabled: true,
         mortgageHomeValue: 400000,
         mortgageInterest: 10000,

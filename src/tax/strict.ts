@@ -1,6 +1,11 @@
 import { z } from "zod";
 import { isThirtyPercentRulingSupportedResident, type TaxYear } from "./constants";
-import { findV1Fields, INPUT_SCHEMA_VERSION, V1_FIELD_RENAMES, V1_RENAME_SUMMARY } from "./migrations";
+import {
+  findV1Fields,
+  INPUT_SCHEMA_VERSION,
+  V1_FIELD_RENAMES,
+  V1_RENAME_SUMMARY,
+} from "./migrations";
 import { TAX_PARAMS } from "./params";
 import {
   AnnualStatementFields,
@@ -168,7 +173,10 @@ export const StrictTaxInputSchema = z
     const maxDays = getMaxDaysInYear(inputs.year);
     if (getWorkdayTotals(inputs).totalWithSick > maxDays) {
       for (const field of INPUT_GROUPS.workdayRecord) {
-        issue(field, `combined workdays and sick days must not exceed ${maxDays} in ${inputs.year}`);
+        issue(
+          field,
+          `combined workdays and sick days must not exceed ${maxDays} in ${inputs.year}`,
+        );
       }
     }
     const maxChildren = getMaxDependentChildren(inputs.year);
@@ -225,14 +233,12 @@ export function v1FieldIssues(input: unknown, path: readonly string[] = []): z.c
   if (found.length === 0) return [];
   const prefix = path.length > 0 ? `${path.join(".")}.` : "";
   return [
-    ...found.map(
-      (field): z.core.$ZodIssue => ({
-        code: "custom",
-        input: undefined,
-        path: [...path, field],
-        message: `${prefix}${field}: renamed in input schema version ${INPUT_SCHEMA_VERSION}; use ${V1_FIELD_RENAMES[field]}`,
-      }),
-    ),
+    ...found.map((field): z.core.$ZodIssue => ({
+      code: "custom",
+      input: undefined,
+      path: [...path, field],
+      message: `${prefix}${field}: renamed in input schema version ${INPUT_SCHEMA_VERSION}; use ${V1_FIELD_RENAMES[field]}`,
+    })),
     {
       code: "custom",
       input: undefined,

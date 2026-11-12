@@ -23,9 +23,7 @@ for (const locale of LOCALES) {
         await tab.focus();
         await page.keyboard.press("Enter");
         await expect(tab).toHaveAttribute("aria-selected", "true");
-        const salary = page.getByLabel(
-          locale === "en" ? "B: gross annual salary" : "B: bruto jaarloon",
-        );
+        const salary = page.getByLabel(locale === "en" ? "B: taxable wage" : "B: fiscaal loon");
         await salary.fill("80000");
         expect(compareChunks.length).toBeGreaterThan(0);
         await expect(

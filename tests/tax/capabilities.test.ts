@@ -41,7 +41,33 @@ describe("tax capabilities", () => {
       delete input[field];
       expect(() => parseStrictTaxInputs(input)).toThrow(field);
     }
-    expect(capabilities.requiredInputs).toHaveLength(18);
+    expect(capabilities.requiredInputs).toEqual([
+      "year",
+      "dependentChildren",
+      "belowAOWAge",
+      "communalTaxRate",
+      "annualStatements",
+      "daysWorkedNL",
+      "daysWorkedBE",
+      "daysWorkedOther",
+      "sickDaysNL",
+      "sickDaysOutsideNL",
+      "healthInsurancePremium",
+      "supplementaryPension",
+      "serviceVouchers",
+      "reclaimableWithholdingTax",
+    ]);
+    // The single-value fields default, so a caller only sends what varies.
+    expect(capabilities.defaults).toEqual({
+      residentCountry: "BE",
+      civilStatus: "single",
+      belgianRegion: "flemish",
+      thirtyPercentRuling: false,
+      mortgageEnabled: false,
+    });
+    for (const field of Object.keys(capabilities.defaults)) {
+      expect(capabilities.requiredInputs).not.toContain(field);
+    }
     expect(capabilities.units.money).toBe("EUR per year");
     expect(capabilities.units.communalTaxRate).toEqual({ unit: "percent", min: 0, max: 15 });
     expect(capabilities.units.resultRatesAndShares).toContain("fractions");
@@ -61,6 +87,33 @@ describe("tax capabilities", () => {
         "Simplified estimate, not tax advice",
       ]),
     );
+  });
+
+  it("reports the input schema version, the renames and the source documents", () => {
+    const { inputSchema, sourceDocuments, belgianCodes, sickDays } = getCapabilities();
+    expect(inputSchema.version).toBe(2);
+    expect(inputSchema.inputFileSchemaVersion).toBe(2);
+    expect(inputSchema.renamedFromVersion1.grossSalary).toBe("annualStatements[].taxableWage");
+    expect(inputSchema.resultRenamedFromVersion1["result.grossIncome"]).toBe("result.taxableWage");
+    expect(Object.keys(sourceDocuments)).toEqual([
+      "profile",
+      "annualTaxStatement",
+      "workdayRecord",
+      "healthInsurer",
+      "pensionOrPayslip",
+      "serviceVoucherStatement",
+      "bank",
+      "dutchAssessment",
+      "home",
+    ]);
+    expect(sourceDocuments.healthInsurer).toEqual(["healthInsurancePremium"]);
+    expect(belgianCodes).toEqual({
+      healthInsurancePremium: "1257",
+      supplementaryPension: "1285",
+      serviceVouchers: "3364",
+      reclaimableWithholdingTax: "1437",
+    });
+    expect(sickDays.belgianMethod).toContain("leaves all sick days out");
   });
 
   it("describes the result conventions: cents, bracket bounds, no workdays, unused reductions", () => {

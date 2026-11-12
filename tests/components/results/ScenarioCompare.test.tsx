@@ -19,10 +19,13 @@ describe("ScenarioCompare", () => {
   it("renders signed tax and net deltas and income attribution, and resets to current inputs", async () => {
     const user = userEvent.setup();
     render(<ScenarioCompare inputs={mockInputs} />);
-    fireEvent.change(screen.getByLabelText("B: gross annual salary"), {
+    fireEvent.change(screen.getByLabelText("B: taxable wage"), {
       target: { value: "70000" },
     });
-    const comparison = compareScenarios(mockInputs, { ...mockInputs, grossSalary: 70000 });
+    const comparison = compareScenarios(mockInputs, {
+      ...mockInputs,
+      annualStatements: [{ taxableWage: 70000, wageTaxWithheld: 0 }],
+    });
     for (const [label, delta] of [
       ["Dutch tax", comparison.delta.nlTax],
       ["Belgian tax", comparison.delta.beTax],
@@ -41,7 +44,7 @@ describe("ScenarioCompare", () => {
     expect(causes).toHaveTextContent(fmtSigned(comparison.attribution.netIncome.income!));
     await user.click(screen.getByRole("button", { name: "Copy current situation" }));
     expect(screen.getByText("Both scenarios are identical.")).toBeInTheDocument();
-    expect(screen.getByLabelText("B: gross annual salary")).toHaveValue(60000);
+    expect(screen.getByLabelText("B: taxable wage")).toHaveValue(60000);
   });
 
   it("shows mortgage eligibility changes caused by workdays", () => {
@@ -84,17 +87,33 @@ describe("ScenarioCompare", () => {
 
   it("keeps only overrides when current inputs change", () => {
     const { rerender } = render(<ScenarioCompare inputs={mockInputs} />);
-    fireEvent.change(screen.getByLabelText("B: gross annual salary"), {
+    fireEvent.change(screen.getByLabelText("B: taxable wage"), {
       target: { value: "70000" },
     });
-    rerender(<ScenarioCompare inputs={{ ...mockInputs, daysWorkedBE: 50, grossSalary: 65000 }} />);
+    rerender(
+      <ScenarioCompare
+        inputs={{
+          ...mockInputs,
+          daysWorkedBE: 50,
+          annualStatements: [{ taxableWage: 65000, wageTaxWithheld: 0 }],
+        }}
+      />,
+    );
     expect(screen.getByLabelText("B: days worked in Belgium")).toHaveValue(50);
-    expect(screen.getByLabelText("B: gross annual salary")).toHaveValue(70000);
+    expect(screen.getByLabelText("B: taxable wage")).toHaveValue(70000);
     expect(screen.getByRole("table")).toHaveTextContent(
       fmt(
         compareScenarios(
-          { ...mockInputs, grossSalary: 65000, daysWorkedBE: 50 },
-          { ...mockInputs, grossSalary: 70000, daysWorkedBE: 50 },
+          {
+            ...mockInputs,
+            annualStatements: [{ taxableWage: 65000, wageTaxWithheld: 0 }],
+            daysWorkedBE: 50,
+          },
+          {
+            ...mockInputs,
+            annualStatements: [{ taxableWage: 70000, wageTaxWithheld: 0 }],
+            daysWorkedBE: 50,
+          },
         ).a.netIncome,
       ),
     );

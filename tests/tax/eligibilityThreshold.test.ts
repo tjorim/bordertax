@@ -18,11 +18,12 @@ describe("eligibilityThreshold", () => {
     const ratio = eligibilityThreshold(60000, other);
     const inputs = {
       ...DEFAULT_INPUTS,
-      grossSalary: 60000,
+      annualStatements: [{ taxableWage: 60000, wageTaxWithheld: 0 }],
       daysWorkedNL: 1000 * (1 - ratio),
       daysWorkedBE: 1000 * ratio,
       daysWorkedOther: 0,
-      sickDays: 0,
+      sickDaysNL: 0,
+      sickDaysOutsideNL: 0,
       thirtyPercentRuling: false,
       mortgageEnabled: true,
       mortgageInterest: 6000,

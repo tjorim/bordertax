@@ -54,15 +54,30 @@ describe("eigenwoningforfait", () => {
     expect(result.realised.netBenefit).toBe(0);
   });
   it("caps gross costs while premiums follow the net home balance", () => {
-    const high = calculate({ ...base, year: 2025, grossSalary: 120000, mortgageHomeValue: 300000 });
-    const without = calculate({ ...base, year: 2025, grossSalary: 120000, mortgageEnabled: false });
+    const high = calculate({
+      ...base,
+      year: 2025,
+      annualStatements: [{ taxableWage: 120000, wageTaxWithheld: 0 }],
+      mortgageHomeValue: 300000,
+    });
+    const without = calculate({
+      ...base,
+      year: 2025,
+      annualStatements: [{ taxableWage: 120000, wageTaxWithheld: 0 }],
+      mortgageEnabled: false,
+    });
     expect(high.nl.mortgageDeduction).toBe(4950);
     expect(high.nl.mortgageRateCapSurcharge).toBe(Math.round(6000 * (0.495 - 0.3748)));
     expect(without.nl.netTaxNL - high.nl.netTaxNL).toBeCloseTo(
       4950 * 0.495 - high.nl.mortgageRateCapSurcharge,
       0,
     );
-    const low = calculate({ ...base, year: 2025, grossSalary: 30000, mortgageHomeValue: 300000 });
+    const low = calculate({
+      ...base,
+      year: 2025,
+      annualStatements: [{ taxableWage: 30000, wageTaxWithheld: 0 }],
+      mortgageHomeValue: 300000,
+    });
     expect(low.nl.volksverzekeringen).toBe(Math.floor((30000 - 4950) * 0.2765));
   });
 

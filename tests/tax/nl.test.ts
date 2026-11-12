@@ -11,22 +11,25 @@ const base: TaxInputs = {
   belowAOWAge: true,
   belgianRegion: "flemish",
   communalTaxRate: 7,
-  grossSalary: 60000,
+  annualStatements: [{ taxableWage: 60000, wageTaxWithheld: 0 }],
   daysWorkedNL: 220,
   daysWorkedBE: 0,
   daysWorkedOther: 0,
   thirtyPercentRuling: false,
-  socialContributions: 0,
-  aanvullendPensioen: 0,
-  dienstencheques: 0,
-  roerendeVoorheffing: 0,
-  withheldTaxNL: 0,
-  sickDays: 0,
+  healthInsurancePremium: 0,
+  supplementaryPension: 0,
+  serviceVouchers: 0,
+  reclaimableWithholdingTax: 0,
+  sickDaysNL: 0,
+  sickDaysOutsideNL: 0,
 };
 
 describe("calculateNLTax", () => {
   it("returns zero tax for zero gross salary", () => {
-    const result = calculateNLTax({ ...base, grossSalary: 0 });
+    const result = calculateNLTax({
+      ...base,
+      annualStatements: [{ taxableWage: 0, wageTaxWithheld: 0 }],
+    });
     expect(result.netTaxNL).toBe(0);
     expect(result.nlTaxableIncome).toBe(0);
     expect(result.effectiveRateNL).toBe(0);
@@ -51,7 +54,9 @@ describe("calculateNLTax", () => {
     const result = calculateNLTax({ ...base, daysWorkedNL: 110, daysWorkedBE: 110 });
     expect(result.nlTaxableIncome).toBeCloseTo(30000, 0);
     expect(result.deelNietInNLBelast).toBeCloseTo(30000, 0);
-    expect(result.nlTaxableIncome + result.deelNietInNLBelast).toBe(base.grossSalary);
+    expect(result.nlTaxableIncome + result.deelNietInNLBelast).toBe(
+      base.annualStatements[0]!.taxableWage,
+    );
   });
 
   it("keeps the non-NL-taxed portion separate from the 30% ruling exemption", () => {
@@ -91,12 +96,18 @@ describe("calculateNLTax", () => {
 
   it("does not return negative netTaxNL", () => {
     // Very low salary where credits exceed tax
-    const result = calculateNLTax({ ...base, grossSalary: 5000 });
+    const result = calculateNLTax({
+      ...base,
+      annualStatements: [{ taxableWage: 5000, wageTaxWithheld: 0 }],
+    });
     expect(result.netTaxNL).toBeGreaterThanOrEqual(0);
   });
 
   it("totalCredits does not exceed taxBeforeCredits + volksverzekeringen", () => {
-    const result = calculateNLTax({ ...base, grossSalary: 5000 });
+    const result = calculateNLTax({
+      ...base,
+      annualStatements: [{ taxableWage: 5000, wageTaxWithheld: 0 }],
+    });
     expect(result.totalCredits).toBeLessThanOrEqual(
       result.taxBeforeCredits + result.volksverzekeringen,
     );
@@ -108,7 +119,10 @@ describe("calculateNLTax", () => {
   });
 
   it("brackets sum matches taxBeforeCredits", () => {
-    const result = calculateNLTax({ ...base, grossSalary: 100000 });
+    const result = calculateNLTax({
+      ...base,
+      annualStatements: [{ taxableWage: 100000, wageTaxWithheld: 0 }],
+    });
     const sum = result.brackets.reduce((acc, b) => acc + b.tax, 0);
     expect(sum).toBeCloseTo(result.taxBeforeCredits, 1);
   });
@@ -120,8 +134,14 @@ describe("calculateNLTax", () => {
   });
 
   it("higher salary results in higher effective rate", () => {
-    const low = calculateNLTax({ ...base, grossSalary: 30000 });
-    const high = calculateNLTax({ ...base, grossSalary: 120000 });
+    const low = calculateNLTax({
+      ...base,
+      annualStatements: [{ taxableWage: 30000, wageTaxWithheld: 0 }],
+    });
+    const high = calculateNLTax({
+      ...base,
+      annualStatements: [{ taxableWage: 120000, wageTaxWithheld: 0 }],
+    });
     expect(high.effectiveRateNL).toBeGreaterThan(low.effectiveRateNL);
   });
 
@@ -144,7 +164,10 @@ describe("calculateNLTax", () => {
   });
 
   it("reaches top bracket for very high salary", () => {
-    const result = calculateNLTax({ ...base, grossSalary: 200000 });
+    const result = calculateNLTax({
+      ...base,
+      annualStatements: [{ taxableWage: 200000, wageTaxWithheld: 0 }],
+    });
     const topBracket = result.brackets.find((b) => b.rate === 0.495);
     expect(topBracket).toBeDefined();
     expect(topBracket!.tax).toBeGreaterThan(0);
@@ -157,16 +180,30 @@ describe("calculateNLTax", () => {
   });
 
   it("AHK is zero for very high income (above phase-out end)", () => {
-    expect(calculateNLTax({ ...base, grossSalary: 200000 }).algemeneHeffingskorting).toBe(0);
+    expect(
+      calculateNLTax({ ...base, annualStatements: [{ taxableWage: 200000, wageTaxWithheld: 0 }] })
+        .algemeneHeffingskorting,
+    ).toBe(0);
   });
 
   it("AHK is at maximum for very low income (below phase-out start)", () => {
-    expect(calculateNLTax({ ...base, grossSalary: 20000 }).algemeneHeffingskorting).toBe(3068);
+    expect(
+      calculateNLTax({ ...base, annualStatements: [{ taxableWage: 20000, wageTaxWithheld: 0 }] })
+        .algemeneHeffingskorting,
+    ).toBe(3068);
   });
 
   it("above-AOW age uses lower AHK max", () => {
-    const under = calculateNLTax({ ...base, grossSalary: 10000, belowAOWAge: true });
-    const over = calculateNLTax({ ...base, grossSalary: 10000, belowAOWAge: false });
+    const under = calculateNLTax({
+      ...base,
+      annualStatements: [{ taxableWage: 10000, wageTaxWithheld: 0 }],
+      belowAOWAge: true,
+    });
+    const over = calculateNLTax({
+      ...base,
+      annualStatements: [{ taxableWage: 10000, wageTaxWithheld: 0 }],
+      belowAOWAge: false,
+    });
     expect(over.algemeneHeffingskorting).toBe(1536);
     expect(over.algemeneHeffingskorting).toBeLessThan(under.algemeneHeffingskorting);
   });
@@ -174,7 +211,7 @@ describe("calculateNLTax", () => {
   it("splits the credits by the first-bracket rates into income tax due and premiums due", () => {
     const result = calculateNLTax({
       ...base,
-      grossSalary: 53299,
+      annualStatements: [{ taxableWage: 53299, wageTaxWithheld: 0 }],
       daysWorkedNL: 180,
       daysWorkedBE: 50,
     });
@@ -194,7 +231,7 @@ describe("calculateNLTax", () => {
     // Tiny Dutch share: income tax is smaller than the tax part of the credits.
     const result = calculateNLTax({
       ...base,
-      grossSalary: 40000,
+      annualStatements: [{ taxableWage: 40000, wageTaxWithheld: 0 }],
       daysWorkedNL: 5,
       daysWorkedBE: 215,
     });
@@ -221,7 +258,10 @@ describe("calculateNLTax", () => {
 
   describe("bracket lines", () => {
     it("return numeric bounds, with null for the open top bracket, and no label", () => {
-      const result = calculateNLTax({ ...base, grossSalary: 120000 });
+      const result = calculateNLTax({
+        ...base,
+        annualStatements: [{ taxableWage: 120000, wageTaxWithheld: 0 }],
+      });
       const [first, ...rest] = result.brackets;
       expect(first!.from).toBe(0);
       expect(first!.to).toBeGreaterThan(0);
@@ -237,13 +277,16 @@ describe("calculateNLTax", () => {
     });
 
     it("survive a JSON round trip unchanged", () => {
-      const { brackets } = calculateNLTax({ ...base, grossSalary: 120000 });
+      const { brackets } = calculateNLTax({
+        ...base,
+        annualStatements: [{ taxableWage: 120000, wageTaxWithheld: 0 }],
+      });
       expect(JSON.parse(JSON.stringify(brackets))).toEqual(brackets);
     });
   });
 
   describe("no workdays", () => {
-    const none = { ...base, daysWorkedNL: 0, daysWorkedBE: 0, daysWorkedOther: 0, sickDays: 0 };
+    const none = { ...base, daysWorkedNL: 0, daysWorkedBE: 0, daysWorkedOther: 0, sickDaysNL: 0 };
 
     it("charges no premiums and applies no credits on income that is not there", () => {
       const result = calculateNLTax(none);
@@ -256,7 +299,7 @@ describe("calculateNLTax", () => {
       expect(result.incomeTaxDue).toBe(0);
       expect(result.premiumsDue).toBe(0);
       expect(result.netTaxNL).toBe(0);
-      expect(result.deelNietInNLBelast).toBe(none.grossSalary);
+      expect(result.deelNietInNLBelast).toBe(none.annualStatements[0]!.taxableWage);
     });
 
     it("ignores a mortgage deduction there is no income to take it from", () => {
@@ -267,8 +310,8 @@ describe("calculateNLTax", () => {
     });
 
     it("only sick days still count as Dutch workdays", () => {
-      const result = calculateNLTax({ ...none, sickDays: 10 });
-      expect(result.nlTaxableIncome).toBe(none.grossSalary);
+      const result = calculateNLTax({ ...none, sickDaysNL: 10 });
+      expect(result.nlTaxableIncome).toBe(none.annualStatements[0]!.taxableWage);
       expect(result.volksverzekeringen).toBeGreaterThan(0);
     });
   });

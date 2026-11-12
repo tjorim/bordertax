@@ -16,17 +16,17 @@ const base: TaxInputs = {
   belowAOWAge: true,
   belgianRegion: "flemish",
   communalTaxRate: 7,
-  grossSalary: 60000,
+  annualStatements: [{ taxableWage: 60000, wageTaxWithheld: 0 }],
   daysWorkedNL: 220,
   daysWorkedBE: 10,
   daysWorkedOther: 5,
   thirtyPercentRuling: false,
-  socialContributions: 0,
-  aanvullendPensioen: 0,
-  dienstencheques: 0,
-  roerendeVoorheffing: 0,
-  withheldTaxNL: 0,
-  sickDays: 0,
+  healthInsurancePremium: 0,
+  supplementaryPension: 0,
+  serviceVouchers: 0,
+  reclaimableWithholdingTax: 0,
+  sickDaysNL: 0,
+  sickDaysOutsideNL: 0,
 };
 
 describe("getMaxDaysInYear", () => {
@@ -51,7 +51,7 @@ describe("getTotalWorkdays", () => {
   });
 
   it("excludes sick days", () => {
-    expect(getTotalWorkdays({ ...base, sickDays: 7 })).toBe(235);
+    expect(getTotalWorkdays({ ...base, sickDaysNL: 7 })).toBe(235);
   });
 });
 
@@ -63,13 +63,15 @@ describe("getWorkdayTotals", () => {
         daysWorkedNL: 200,
         daysWorkedBE: 20,
         daysWorkedOther: 10,
-        sickDays: 5,
+        sickDaysNL: 5,
+        sickDaysOutsideNL: 0,
       }),
     ).toMatchObject({
       daysNL: 200,
       daysBE: 20,
       daysOther: 10,
-      sickDays: 5,
+      sickDaysNL: 5,
+      sickDaysOutsideNL: 0,
       daysOutsideNL: 30,
       totalNoSick: 230,
       totalWithSick: 235,
@@ -84,7 +86,8 @@ describe("getNLFractions", () => {
       daysWorkedNL: 0,
       daysWorkedBE: 0,
       daysWorkedOther: 0,
-      sickDays: 0,
+      sickDaysNL: 0,
+      sickDaysOutsideNL: 0,
     });
 
     expect(fractions.nlFractionDutchMethod).toBe(0);
@@ -99,7 +102,8 @@ describe("getNLFractions", () => {
       daysWorkedNL: 200,
       daysWorkedBE: 20,
       daysWorkedOther: 10,
-      sickDays: 5,
+      sickDaysNL: 5,
+      sickDaysOutsideNL: 0,
     });
 
     expect(fractions.nlFractionDutchMethod).toBeCloseTo(205 / 235, 10);
@@ -117,5 +121,48 @@ describe("getNLFractions", () => {
 
     expect(fractions.beFraction).toBeCloseTo(50 / 250, 10);
     expect(fractions.nlFractionBelgianMethod).toBeCloseTo(200 / 250, 10);
+  });
+});
+
+describe("sick days by scheduled country", () => {
+  it("counts NL-scheduled sick days as NL days and the others as days outside NL (Dutch method)", () => {
+    const f = getNLFractions({
+      ...base,
+      daysWorkedNL: 180,
+      daysWorkedBE: 20,
+      daysWorkedOther: 0,
+      sickDaysNL: 20,
+      sickDaysOutsideNL: 10,
+    });
+    expect(f.sickDays).toBe(30);
+    expect(f.totalWithSick).toBe(230);
+    expect(f.nlFractionDutchMethod).toBeCloseTo(200 / 230, 12);
+  });
+
+  it("leaves every sick day out of the Belgian method, wherever it was scheduled", () => {
+    const nl = getNLFractions({ ...base, sickDaysNL: 30, sickDaysOutsideNL: 0 });
+    const outside = getNLFractions({ ...base, sickDaysNL: 0, sickDaysOutsideNL: 30 });
+    const none = getNLFractions(base);
+    expect(nl.nlFractionBelgianMethod).toBe(none.nlFractionBelgianMethod);
+    expect(outside.nlFractionBelgianMethod).toBe(none.nlFractionBelgianMethod);
+    expect(nl.beFraction).toBe(none.beFraction);
+    expect(outside.beFraction).toBe(none.beFraction);
+  });
+
+  it("gives the version 1 fraction when every sick day is scheduled in NL", () => {
+    const f = getNLFractions({ ...base, sickDaysNL: 12, sickDaysOutsideNL: 0 });
+    expect(f.nlFractionDutchMethod).toBe((220 + 12) / (235 + 12));
+  });
+
+  it("counts only sick days scheduled outside NL as workdays when nothing else is entered", () => {
+    const f = getNLFractions({
+      ...base,
+      daysWorkedNL: 0,
+      daysWorkedBE: 0,
+      daysWorkedOther: 0,
+      sickDaysOutsideNL: 5,
+    });
+    expect(f.noWorkdays).toBe(false);
+    expect(f.nlFractionDutchMethod).toBe(0);
   });
 });

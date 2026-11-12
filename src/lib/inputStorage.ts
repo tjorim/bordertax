@@ -8,7 +8,12 @@ export const V1_STORAGE_KEY = "bt-inputs-v1";
 export const LEGACY_STORAGE_KEY = "grensarbeider-tax-inputs-v1";
 
 /** Fields version 1 stored that only have one legal value; version 2 no longer stores them. */
-const V1_DROPPED_FIELDS = ["residentCountry", "civilStatus", "belgianRegion", "thirtyPercentRuling"];
+const V1_DROPPED_FIELDS = [
+  "residentCountry",
+  "civilStatus",
+  "belgianRegion",
+  "thirtyPercentRuling",
+];
 
 /**
  * Version 1 stored the persisted inputs under their unchanged names plus the single-value fields.

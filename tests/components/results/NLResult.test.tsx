@@ -48,7 +48,7 @@ describe("NLResult", () => {
       premiumsDifference: -40,
       netTaxDifference: 60,
     };
-    render(<NLResult result={mockNLResult} charge={charge} withheldTaxNL={30000} />);
+    render(<NLResult result={mockNLResult} charge={charge} wageTaxWithheld={30000} />);
     expect(screen.getAllByText(m.nl_charge_source_assessment()).length).toBeGreaterThan(0);
     expect(screen.getByRole("columnheader", { name: m.nl_charge_col_difference() })).toBeVisible();
     const incomeTaxRow = screen.getByText(m.nl_charge_income_tax()).closest("tr")!;

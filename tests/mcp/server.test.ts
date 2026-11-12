@@ -40,10 +40,19 @@ describe("MCP tax adapter", () => {
     expect(Object.keys(inputSchema.shape)).toEqual(Object.keys(StrictTaxInputSchema.in.shape));
   });
   it.each([
-    [{}, "grossSalary"],
-    [{ ...DEFAULT_INPUTS, grossSalary: -1 }, "grossSalary"],
-    [{ ...DEFAULT_INPUTS, grossSalary: NaN }, "grossSalary"],
-    [{ ...DEFAULT_INPUTS, grossSalary: Infinity }, "grossSalary"],
+    [{}, "annualStatements"],
+    [
+      { ...DEFAULT_INPUTS, annualStatements: [{ taxableWage: -1, wageTaxWithheld: 0 }] },
+      "annualStatements.0.taxableWage",
+    ],
+    [
+      { ...DEFAULT_INPUTS, annualStatements: [{ taxableWage: NaN, wageTaxWithheld: 0 }] },
+      "annualStatements.0.taxableWage",
+    ],
+    [
+      { ...DEFAULT_INPUTS, annualStatements: [{ taxableWage: Infinity, wageTaxWithheld: 0 }] },
+      "annualStatements.0.taxableWage",
+    ],
     [{ ...DEFAULT_INPUTS, year: 2027 }, "year"],
     [{ ...DEFAULT_INPUTS, residentCountry: "NL" }, "residentCountry"],
     [{ ...DEFAULT_INPUTS, daysWorkedNL: 400 }, "daysWorkedNL"],
@@ -52,6 +61,54 @@ describe("MCP tax adapter", () => {
     const response = calculateTax(input);
     expect(response.isError).toBe(true);
     expect(JSON.stringify(response.content)).toContain(field);
+  });
+  it("rejects version 1 field names with the rename map", () => {
+    const v1 = { ...DEFAULT_INPUTS, annualStatements: undefined, grossSalary: 60000 };
+    const response = calculateTax(v1);
+    expect(response.isError).toBe(true);
+    const text = JSON.stringify(response.content);
+    expect(text).toContain("grossSalary: renamed in input schema version 2");
+    expect(text).toContain("withheldTaxNL → annualStatements[].wageTaxWithheld");
+    expect(text).toContain("roerendeVoorheffing → reclaimableWithholdingTax");
+    const overrides = compareTax({ base: DEFAULT_INPUTS, overrides: { sickDays: 3 } });
+    expect(overrides.isError).toBe(true);
+    expect(JSON.stringify(overrides.content)).toContain(
+      "overrides.sickDays: renamed in input schema version 2; use sickDaysNL",
+    );
+  });
+  it("defaults the single-value fields and sums several annual statements", () => {
+    const {
+      residentCountry: _r,
+      civilStatus: _c,
+      belgianRegion: _b,
+      thirtyPercentRuling: _t,
+      ...minimal
+    } = DEFAULT_INPUTS;
+    const split = {
+      ...minimal,
+      annualStatements: [
+        { taxableWage: 40000, wageTaxWithheld: 7000 },
+        { taxableWage: 20000, wageTaxWithheld: 3000 },
+      ],
+    };
+    const response = calculateTax(split);
+    expect(response.isError).not.toBe(true);
+    const { inputs, result } = response.structuredContent as {
+      inputs: Record<string, unknown>;
+      result: ReturnType<typeof calculate>;
+    };
+    expect(inputs).toMatchObject({
+      residentCountry: "BE",
+      civilStatus: "single",
+      belgianRegion: "flemish",
+      thirtyPercentRuling: false,
+    });
+    expect(result.taxableWage).toBe(60000);
+    expect(result.wageTaxWithheld).toBe(10000);
+    const single = calculate(parseStrictTaxInputs(DEFAULT_INPUTS));
+    expect(result.totalTax).toBe(single.totalTax);
+    expect(result.nl).toEqual(single.nl);
+    expect(calculateTax({ ...DEFAULT_INPUTS, annualStatements: [] }).isError).toBe(true);
   });
   it("accepts the Dutch assessment figures together and reports the source", () => {
     const assessed = {
@@ -79,7 +136,11 @@ describe("MCP tax adapter", () => {
     ).not.toBe(true);
   });
   it("compares effective scenarios with shared attribution", () => {
-    const overrides = { grossSalary: 70000, daysWorkedBE: 10, daysWorkedNL: 210 };
+    const overrides = {
+      annualStatements: [{ taxableWage: 70000, wageTaxWithheld: 0 }],
+      daysWorkedBE: 10,
+      daysWorkedNL: 210,
+    };
     const base = parseStrictTaxInputs(mortgage);
     const alternative = parseStrictTaxInputs({ ...base, ...overrides });
     expect(compareTax({ base: mortgage, overrides }).structuredContent).toEqual({
@@ -87,11 +148,19 @@ describe("MCP tax adapter", () => {
       ...compareScenarios(base, alternative),
       caveat: expect.any(String),
     });
-    expect(compareTax({ base: DEFAULT_INPUTS, overrides: { grossSalary: -1 } }).isError).toBe(true);
+    expect(
+      compareTax({
+        base: DEFAULT_INPUTS,
+        overrides: { annualStatements: [{ taxableWage: -1, wageTaxWithheld: 0 }] },
+      }).isError,
+    ).toBe(true);
     expect(compareTax({ base: DEFAULT_INPUTS, overrides: { unknown: 1 } }).isError).toBe(true);
   });
   it("returns numeric bracket bounds without a locale-formatted label", () => {
-    const response = calculateTax({ ...DEFAULT_INPUTS, grossSalary: 120000 });
+    const response = calculateTax({
+      ...DEFAULT_INPUTS,
+      annualStatements: [{ taxableWage: 120000, wageTaxWithheld: 0 }],
+    });
     const json = JSON.parse((response.content[0] as { text: string }).text) as {
       result: { nl: { brackets: Record<string, unknown>[] } };
     };
@@ -106,7 +175,7 @@ describe("MCP tax adapter", () => {
     expect(brackets.at(-1)!.to).toBeNull();
   });
   it("returns the Belgian figures in cents and reports unused federal reductions", () => {
-    const response = calculateTax({ ...DEFAULT_INPUTS, roerendeVoorheffing: 50000 });
+    const response = calculateTax({ ...DEFAULT_INPUTS, reclaimableWithholdingTax: 50000 });
     const { result } = response.structuredContent as { result: ReturnType<typeof calculate> };
     const be = result.be!;
     expect(be.netTaxBE).toBe(Math.round(be.netTaxBE * 100) / 100);
@@ -120,7 +189,8 @@ describe("MCP tax adapter", () => {
       daysWorkedNL: 0,
       daysWorkedBE: 0,
       daysWorkedOther: 0,
-      sickDays: 0,
+      sickDaysNL: 0,
+      sickDaysOutsideNL: 0,
     });
     expect(response.isError).not.toBe(true);
     const { result } = response.structuredContent as { result: ReturnType<typeof calculate> };
@@ -161,11 +231,11 @@ describe("MCP tax adapter", () => {
       for (const input of [
         {},
         { ...DEFAULT_INPUTS, year: 2027 },
-        { ...DEFAULT_INPUTS, grossSalary: -1 },
+        { ...DEFAULT_INPUTS, annualStatements: [{ taxableWage: -1, wageTaxWithheld: 0 }] },
       ]) {
         const result = await client.callTool({ name: "calculate_tax", arguments: input });
         expect(result.isError).toBe(true);
-        expect(JSON.stringify(result.content)).toMatch(/grossSalary|year/);
+        expect(JSON.stringify(result.content)).toMatch(/annualStatements|year/);
       }
     } finally {
       await client.close();

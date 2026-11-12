@@ -33,9 +33,9 @@ export const V1_RESULT_RENAMES = {
 const V1_FIELDS = Object.keys(V1_FIELD_RENAMES) as V1Field[];
 
 /** The renames as one line, for error messages. */
-export const V1_RENAME_SUMMARY = V1_FIELDS.map((field) => `${field} → ${V1_FIELD_RENAMES[field]}`).join(
-  "; ",
-);
+export const V1_RENAME_SUMMARY = V1_FIELDS.map(
+  (field) => `${field} → ${V1_FIELD_RENAMES[field]}`,
+).join("; ");
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);

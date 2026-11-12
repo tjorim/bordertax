@@ -71,7 +71,8 @@ export function getCapabilities() {
         "sick days on days scheduled in Belgium or a third country; Dutch method counts them as days outside NL (deel niet in NL belast)",
       belgianMethod:
         "the Belgian method leaves all sick days out of numerator and denominator (ACV/FOD material), so the Belgian-taxable share of the wage and the Dutch deel niet in NL belast differ when there are sick days",
-      singleFieldDefault: "a caller with one sick-day figure sends it as sickDaysNL and sickDaysOutsideNL: 0",
+      singleFieldDefault:
+        "a caller with one sick-day figure sends it as sickDaysNL and sickDaysOutsideNL: 0",
     },
     units: {
       money: "EUR per year",

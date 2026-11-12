@@ -28,20 +28,21 @@ const acvInputs = {
   belowAOWAge: true,
   belgianRegion: "flemish",
   communalTaxRate: 6,
-  grossSalary: WAGE,
+  annualStatements: [{ taxableWage: WAGE, wageTaxWithheld: WITHHELD }],
   daysWorkedOther: 0,
   thirtyPercentRuling: false,
-  socialContributions: 0,
-  aanvullendPensioen: 0,
-  dienstencheques: 0,
-  roerendeVoorheffing: 0,
-  withheldTaxNL: WITHHELD,
+  healthInsurancePremium: 0,
+  supplementaryPension: 0,
+  serviceVouchers: 0,
+  reclaimableWithholdingTax: 0,
+  // Every sick day in the session falls on a day scheduled in the Netherlands.
+  sickDaysOutsideNL: 0,
 };
 
 /** Scenario 1: 180 Dutch days, 50 home days, no sick days. */
-const noSick = { ...acvInputs, daysWorkedNL: 180, daysWorkedBE: 50, sickDays: 0 };
+const noSick = { ...acvInputs, daysWorkedNL: 180, daysWorkedBE: 50, sickDaysNL: 0 };
 /** Scenario 2: 25 sick days. The Belgian fraction becomes 50/205 and the Dutch one 180/230. */
-const withSick = { ...acvInputs, daysWorkedNL: 155, daysWorkedBE: 50, sickDays: 25 };
+const withSick = { ...acvInputs, daysWorkedNL: 155, daysWorkedBE: 50, sickDaysNL: 25 };
 
 describe("ACV telework session, income year 2025", () => {
   it("scenario 1: reproduces 1250 = 44,711, O.1 = 10,309.64 and O.2 = 34,401.36", () => {

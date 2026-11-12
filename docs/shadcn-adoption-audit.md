@@ -96,9 +96,15 @@ The CLI writes `import { cn } from "cn"`; every file here imports `cn` from
   `Checkbox` and a sentence-case `FieldLabel`; its hint stays below the row.
 - `FieldGroup` carries the accordion grid (`className="grid grid-cols-12"`, the
   merge drops `flex`).
-- Not adopted: `FieldSet`/`FieldLegend` (no radio/checkbox groups),
-  `FieldSeparator` and `FieldTitle` (no consumer; this also removes the need for
-  `separator`).
+- `FieldSet`/`FieldLegend` (issue #434): adopted from the registry to group the
+  inputs of one source document (each annual statement, health insurer, pension,
+  service vouchers, bank) under a legend, so screen readers announce the
+  document with each field. The registry's `has-[>[data-slot=…-group]]` gap
+  variants are dropped (no radio or checkbox groups), the browser fieldset
+  border and padding are reset with standard utilities, and the legend uses the
+  `text-sm`/`text-hint` and `text-text` tokens.
+- Not adopted: `FieldSeparator` and `FieldTitle` (no consumer; this also removes
+  the need for `separator`).
 - Not adopted: a `required` indicator, as no field is required.
 
 ## CodeBadge touch access (issue #305)

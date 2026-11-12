@@ -7,7 +7,7 @@ import type { TaxInputs } from "@/tax/types";
 
 const a: TaxInputs = {
   ...DEFAULT_INPUTS,
-  grossSalary: 70000,
+  annualStatements: [{ taxableWage: 70000, wageTaxWithheld: 0 }],
   daysWorkedNL: 180,
   daysWorkedBE: 20,
   mortgageEnabled: true,
@@ -25,9 +25,12 @@ describe("compareScenarios", () => {
   });
 
   it("computes deltas as b − a", () => {
-    const c = compareScenarios(a, { ...a, grossSalary: 80000 });
+    const c = compareScenarios(a, {
+      ...a,
+      annualStatements: [{ taxableWage: 80000, wageTaxWithheld: 0 }],
+    });
 
-    expect(c.delta.grossIncome).toBe(10000);
+    expect(c.delta.taxableWage).toBe(10000);
     expect(c.delta.totalTax).toBeCloseTo(c.b.totalTax - c.a.totalTax, 6);
     expect(c.delta.netIncome).toBeCloseTo(c.b.netIncome - c.a.netIncome, 6);
     expect(c.delta.netIncomeMonthly).toBeCloseTo(c.delta.netIncome / 12, 6);
@@ -35,7 +38,10 @@ describe("compareScenarios", () => {
   });
 
   it("attributes the whole difference to a single changed group", () => {
-    const c = compareScenarios(a, { ...a, grossSalary: 80000 });
+    const c = compareScenarios(a, {
+      ...a,
+      annualStatements: [{ taxableWage: 80000, wageTaxWithheld: 0 }],
+    });
 
     expect(c.attribution.netIncome.income).toBeCloseTo(c.delta.netIncome, 6);
   });
@@ -43,7 +49,7 @@ describe("compareScenarios", () => {
   it("splits a multi-group change so the shares add up to the delta", () => {
     const b: TaxInputs = {
       ...a,
-      grossSalary: 75000,
+      annualStatements: [{ taxableWage: 75000, wageTaxWithheld: 0 }],
       daysWorkedNL: 120,
       daysWorkedBE: 80,
       mortgageInterest: 12000,

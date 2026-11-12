@@ -31,7 +31,7 @@ describe("ImportInputsButton", () => {
     const bad = JSON.stringify({
       format: INPUT_FILE_FORMAT,
       schemaVersion: 1,
-      inputs: { ...mockInputs, grossSalary: "x" },
+      inputs: { ...mockInputs, annualStatements: [{ taxableWage: "x", wageTaxWithheld: 0 }] },
     });
     pick(new File([bad], "in.json"));
     expect(await screen.findByText(/not valid inputs/i)).toBeInTheDocument();

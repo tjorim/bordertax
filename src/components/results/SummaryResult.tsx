@@ -51,7 +51,7 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
     const lines = [
       `━━━ ${m.summary_copy_title(yearParams(result.inputs.year))} ━━━`,
       "",
-      pad(m.summary_gross_income(), fmt(taxableWage)),
+      pad(m.summary_taxable_wage(), fmt(taxableWage)),
       pad(`🇳🇱 ${m.summary_dutch_tax()}`, `−${fmt(nlCharge.netTaxNL)}`),
       ...(be && be.netTaxBE > 0
         ? [pad(`🇧🇪 ${m.summary_belgian_tax()}`, `−${fmt(be.netTaxBE)}`)]
@@ -161,7 +161,7 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
       <div>
         <div className="bt-breakdown">
           <div className="bt-breakdown__row">
-            <span className="bt-breakdown__label">{m.summary_gross_income()}</span>
+            <span className="bt-breakdown__label">{m.summary_taxable_wage()}</span>
             <span className="bt-breakdown__value">{fmt(taxableWage)}</span>
           </div>
           <div className="bt-breakdown__row">

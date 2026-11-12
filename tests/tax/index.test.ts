@@ -11,22 +11,25 @@ const base: TaxInputs = {
   belowAOWAge: true,
   belgianRegion: "flemish",
   communalTaxRate: 7,
-  grossSalary: 60000,
+  annualStatements: [{ taxableWage: 60000, wageTaxWithheld: 0 }],
   daysWorkedNL: 220,
   daysWorkedBE: 0,
   daysWorkedOther: 0,
   thirtyPercentRuling: false,
-  socialContributions: 0,
-  aanvullendPensioen: 0,
-  dienstencheques: 0,
-  roerendeVoorheffing: 0,
-  withheldTaxNL: 0,
-  sickDays: 0,
+  healthInsurancePremium: 0,
+  supplementaryPension: 0,
+  serviceVouchers: 0,
+  reclaimableWithholdingTax: 0,
+  sickDaysNL: 0,
+  sickDaysOutsideNL: 0,
 };
 
 describe("calculate", () => {
   it("returns zero tax and net income for zero gross salary", () => {
-    const result = calculate({ ...base, grossSalary: 0 });
+    const result = calculate({
+      ...base,
+      annualStatements: [{ taxableWage: 0, wageTaxWithheld: 0 }],
+    });
 
     expect(result.totalTax).toBe(0);
     expect(result.netIncome).toBe(0);
@@ -49,12 +52,12 @@ describe("calculate", () => {
 
   it("grossIncome equals grossSalary input", () => {
     const result = calculate({ ...base });
-    expect(result.grossIncome).toBe(base.grossSalary);
+    expect(result.taxableWage).toBe(base.annualStatements[0]!.taxableWage);
   });
 
   it("netIncome equals grossSalary minus totalTax", () => {
     const result = calculate({ ...base });
-    expect(result.netIncome).toBeCloseTo(result.grossIncome - result.totalTax, 5);
+    expect(result.netIncome).toBeCloseTo(result.taxableWage - result.totalTax, 5);
   });
 
   // TODO: Re-enable when NL-resident support is re-integrated
@@ -73,11 +76,14 @@ describe("calculate", () => {
 
   it("effectiveRateTotal is totalTax / grossSalary", () => {
     const result = calculate({ ...base });
-    expect(result.effectiveRateTotal).toBeCloseTo(result.totalTax / result.grossIncome, 10);
+    expect(result.effectiveRateTotal).toBeCloseTo(result.totalTax / result.taxableWage, 10);
   });
 
   it("effectiveRateTotal is 0 when grossSalary is 0", () => {
-    const result = calculate({ ...base, grossSalary: 0 });
+    const result = calculate({
+      ...base,
+      annualStatements: [{ taxableWage: 0, wageTaxWithheld: 0 }],
+    });
     expect(result.effectiveRateTotal).toBe(0);
   });
 
@@ -90,42 +96,42 @@ describe("calculate", () => {
     it("nlFractionDutchMethod adds sick days to numerator and includes them in denominator", () => {
       // NL method: sick days count as NL workdays
       // (200 + 10) / (200 + 20 + 10) = 210/230
-      const result = calculate({ ...base, daysWorkedNL: 200, daysWorkedBE: 20, sickDays: 10 });
+      const result = calculate({ ...base, daysWorkedNL: 200, daysWorkedBE: 20, sickDaysNL: 10 });
       expect(result.nlFractionDutchMethod).toBeCloseTo(210 / 230, 10);
     });
 
     it("nlFractionBelgianMethod excludes sick days from both numerator and denominator", () => {
       // BE method: sick days excluded entirely
       // 200 / (200 + 20) = 200/220
-      const result = calculate({ ...base, daysWorkedNL: 200, daysWorkedBE: 20, sickDays: 10 });
+      const result = calculate({ ...base, daysWorkedNL: 200, daysWorkedBE: 20, sickDaysNL: 10 });
       expect(result.nlFractionBelgianMethod).toBeCloseTo(200 / 220, 10);
     });
 
     it("nlFractionDutchMethod and nlFractionBelgianMethod are equal when sickDays is 0", () => {
-      const result = calculate({ ...base, daysWorkedNL: 200, daysWorkedBE: 20, sickDays: 0 });
+      const result = calculate({ ...base, daysWorkedNL: 200, daysWorkedBE: 20, sickDaysNL: 0 });
       expect(result.nlFractionDutchMethod).toBeCloseTo(result.nlFractionBelgianMethod, 10);
     });
 
     it("nlFractionDutchMethod is greater than nlFractionBelgianMethod when sickDays > 0", () => {
       // NL method gives sick days to NL, so NL fraction is higher than BE method
-      const result = calculate({ ...base, daysWorkedNL: 200, daysWorkedBE: 20, sickDays: 10 });
+      const result = calculate({ ...base, daysWorkedNL: 200, daysWorkedBE: 20, sickDaysNL: 10 });
       expect(result.nlFractionDutchMethod).toBeGreaterThan(result.nlFractionBelgianMethod);
     });
 
     it("both fractions are 0 when all days are 0", () => {
-      const result = calculate({ ...base, daysWorkedNL: 0, daysWorkedBE: 0, sickDays: 0 });
+      const result = calculate({ ...base, daysWorkedNL: 0, daysWorkedBE: 0, sickDaysNL: 0 });
       expect(result.nlFractionDutchMethod).toBe(0);
       expect(result.nlFractionBelgianMethod).toBe(0);
     });
 
     it("nlFractionBelgianMethod is 0 when NL days are 0 but there are sick days", () => {
       // BE method: 0 / (0 + 20) = 0
-      const result = calculate({ ...base, daysWorkedNL: 0, daysWorkedBE: 20, sickDays: 5 });
+      const result = calculate({ ...base, daysWorkedNL: 0, daysWorkedBE: 20, sickDaysNL: 5 });
       expect(result.nlFractionBelgianMethod).toBe(0);
     });
 
     it("nlFractionDutchMethod is 1 when all worked days are NL days", () => {
-      const result = calculate({ ...base, daysWorkedNL: 220, daysWorkedBE: 0, sickDays: 0 });
+      const result = calculate({ ...base, daysWorkedNL: 220, daysWorkedBE: 0, sickDaysNL: 0 });
       expect(result.nlFractionDutchMethod).toBe(1);
     });
 
@@ -136,7 +142,8 @@ describe("calculate", () => {
         daysWorkedNL: 200,
         daysWorkedBE: 20,
         daysWorkedOther: 10,
-        sickDays: 0,
+        sickDaysNL: 0,
+        sickDaysOutsideNL: 0,
       });
       expect(result.nlFractionDutchMethod).toBeCloseTo(200 / 230, 10);
       expect(result.nlFractionBelgianMethod).toBeCloseTo(200 / 230, 10);
@@ -150,7 +157,8 @@ describe("calculate", () => {
         daysWorkedNL: 200,
         daysWorkedBE: 20,
         daysWorkedOther: 10,
-        sickDays: 5,
+        sickDaysNL: 5,
+        sickDaysOutsideNL: 0,
       });
       expect(result.nlFractionDutchMethod).toBeCloseTo(205 / 235, 10);
       expect(result.nlFractionBelgianMethod).toBeCloseTo(200 / 230, 10);
@@ -158,7 +166,7 @@ describe("calculate", () => {
   });
 
   describe("Dutch assessment", () => {
-    const gross = { ...base, daysWorkedNL: 180, daysWorkedBE: 40, sickDays: 0 };
+    const gross = { ...base, daysWorkedNL: 180, daysWorkedBE: 40, sickDaysNL: 0 };
     const assessment = { assessmentIncomeTaxDue: 3000, assessmentPremiumsDue: 5000 };
 
     it("uses the estimate and reports no difference when no assessment is entered", () => {
@@ -172,19 +180,21 @@ describe("calculate", () => {
         premiumsDifference: 0,
         netTaxDifference: 0,
       });
-      expect(result.be!.declaredIncome).toBe(gross.grossSalary - result.nl.netTaxNL);
+      expect(result.be!.declaredIncome).toBe(
+        gross.annualStatements[0]!.taxableWage - result.nl.netTaxNL,
+      );
     });
 
     it("feeds 1250, O.1 and O.2 from the assessed figures and keeps the Dutch estimate", () => {
       const estimate = calculate(gross);
       const result = calculate({ ...gross, ...assessment });
       const be = result.be!;
-      const w = gross.grossSalary - 5000;
+      const w = gross.annualStatements[0]!.taxableWage - 5000;
 
       expect(result.nl).toEqual(estimate.nl);
       expect(result.nlCharge.source).toBe("assessment");
       expect(result.nlCharge.netTaxNL).toBe(8000);
-      expect(be.declaredIncome).toBe(gross.grossSalary - 8000);
+      expect(be.declaredIncome).toBe(gross.annualStatements[0]!.taxableWage - 8000);
       expect(be.beIncome).toBeCloseTo(w * be.beFraction, 8);
       expect(be.declaredIncome - be.beIncome).toBeCloseTo(w - w * be.beFraction - 3000, 8);
       expect(result.nlCharge.incomeTaxDifference).toBeCloseTo(3000 - estimate.nl.incomeTaxDue, 8);
@@ -194,7 +204,7 @@ describe("calculate", () => {
     it("uses the assessed Dutch amount in total tax and net income", () => {
       const result = calculate({ ...gross, ...assessment });
       expect(result.totalTax).toBe(8000 + result.be!.netTaxBE);
-      expect(result.netIncome).toBe(gross.grossSalary - result.totalTax);
+      expect(result.netIncome).toBe(gross.annualStatements[0]!.taxableWage - result.totalTax);
     });
 
     it("ignores a lone assessment figure", () => {
@@ -223,7 +233,7 @@ describe("calculate", () => {
   });
 
   describe("no workdays state", () => {
-    const none = { ...base, daysWorkedNL: 0, daysWorkedBE: 0, daysWorkedOther: 0, sickDays: 0 };
+    const none = { ...base, daysWorkedNL: 0, daysWorkedBE: 0, daysWorkedOther: 0, sickDaysNL: 0 };
 
     it("is flagged, with zero Dutch figures and no Belgian tax", () => {
       const result = calculate(none);
@@ -233,13 +243,13 @@ describe("calculate", () => {
       expect(result.be!.beIncome).toBe(0);
       expect(result.be!.netTaxBE).toBe(0);
       expect(result.totalTax).toBe(0);
-      expect(result.netIncome).toBe(none.grossSalary);
+      expect(result.netIncome).toBe(none.annualStatements[0]!.taxableWage);
     });
 
     it("is not flagged once any workday or sick day is entered", () => {
       expect(calculate(base).noWorkdays).toBe(false);
       expect(calculate({ ...none, daysWorkedOther: 1 }).noWorkdays).toBe(false);
-      expect(calculate({ ...none, sickDays: 1 }).noWorkdays).toBe(false);
+      expect(calculate({ ...none, sickDaysNL: 1 }).noWorkdays).toBe(false);
     });
 
     it("keeps an entered assessment as the Dutch charge", () => {
@@ -258,7 +268,7 @@ describe("calculate", () => {
     it("returns cent-clean totals", () => {
       const result = calculate({
         ...base,
-        grossSalary: 61234.57,
+        annualStatements: [{ taxableWage: 61234.57, wageTaxWithheld: 0 }],
         daysWorkedNL: 191,
         daysWorkedBE: 29,
       });
