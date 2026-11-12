@@ -201,3 +201,11 @@ The scenario editor and attribution list are domain compositions, with native
 section/list semantics for the unsortable Shapley explanation; no new primitive,
 custom interaction or CSS is needed. The existing responsive Table provides
 keyboard-focusable horizontal scrolling at narrow widths.
+
+### Issue #433 filing checklist tab
+
+The filing checklist moved out of the Summary accordion into its own `filing`
+tab (existing shared `Tabs`), so it renders as a plain section with the shared
+`Table`, `Button`, `Input`, `Field` and `Alert`. No custom primitives. The O.2
+group header row keeps the existing `TableHead colSpan` pattern. The optional
+arbeidskorting field is local component state, not a tax input.
