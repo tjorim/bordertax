@@ -3,7 +3,7 @@
  * belastingplichtige (qualifying non-resident taxpayer).
  *
  * Eligibility here is only the 90% test: Dutch-taxed income ÷ worldwide income, rounded down to a
- * whole percent. Everything else (inkomensverklaring, 30-year and repayment conditions,
+ * whole percent. Everything else (inkomensverklaring up to 2025, 30-year and repayment conditions,
  * qualifying debt) cannot be verified from the inputs and is returned as an assumption.
  *
  * The financial effect is not computed here: `calculate()` runs the NL and BE engines with and
@@ -30,8 +30,10 @@ export type MortgageReason =
   | "forfait_exceeds_interest";
 
 export type MortgageAssumption =
-  /** An inkomensverklaring validated by the Belgian tax authority is required, subject to repeat-filer exceptions. */
+  /** Income years up to 2025: an inkomensverklaring validated by the Belgian tax authority is required, subject to repeat-filer exceptions. */
   | "income_statement_required"
+  /** From income year 2026 the statement is no longer a condition; the inspector can still ask for it. */
+  | "income_statement_on_request"
   /** The entered interest is assumed to be on qualifying home debt (eigenwoningschuld) that meets the 30-year and repayment conditions. */
   | "qualifying_debt"
   /** Missing value means an interest-only upper estimate. */
@@ -141,12 +143,23 @@ export function assessEligibility(
   };
 }
 
-export const MORTGAGE_ASSUMPTIONS: readonly MortgageAssumption[] = [
-  "income_statement_required",
-  "qualifying_debt",
-  "full_year_main_home",
-  "no_belgian_home_benefit",
-];
+/**
+ * First income year without a mandatory inkomensverklaring. Belastingdienst, Fiscale informatie 2026,
+ * section 30.2.1.3: the condition "is met ingang van 2026 afgeschaft"; the 2025 edition still requires
+ * the statement unless the person also qualified in 2024.
+ */
+export const INCOME_STATEMENT_ABOLISHED_FROM_YEAR = 2026;
+
+export function getMortgageAssumptions(year: number): readonly MortgageAssumption[] {
+  return [
+    year >= INCOME_STATEMENT_ABOLISHED_FROM_YEAR
+      ? "income_statement_on_request"
+      : "income_statement_required",
+    "qualifying_debt",
+    "full_year_main_home",
+    "no_belgian_home_benefit",
+  ];
+}
 
 /** Calculate on the whole home first, then allocate ownership (no partner optimisation). */
 export function getEigenwoningforfait(inputs: TaxInputs): number {

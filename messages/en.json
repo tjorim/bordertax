@@ -743,6 +743,7 @@
   "mortgage_potential": "Potential annual net benefit — only if you qualify",
   "mortgage_assumptions": "Assumptions and conditions",
   "mortgage_income_statement_required": "An income statement certified by the Belgian tax authority is required, subject to exceptions for repeat qualifying filers.",
+  "mortgage_income_statement_on_request": "An income statement from the Belgian tax authority is no longer a condition from income year 2026, but the Dutch tax authority can still ask for proof of your worldwide income.",
   "mortgage_qualifying_debt": "The interest is assumed to relate to qualifying home debt that meets the repayment and 30-year conditions.",
   "mortgage_no_eigenwoningforfait": "Home value is missing: this interest-only benefit is an upper estimate because no eigenwoningforfait is included.",
   "mortgage_no_belgian_home_benefit": "Belgian tax is recalculated after the Dutch tax saving; no Belgian home tax benefit is modelled.",

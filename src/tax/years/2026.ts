@@ -116,8 +116,14 @@ export const year2026 = defineYear({
         "Brackets, belastingvrije som (11,550), child supplements, forfait (30%, max 6,070) and the dienstencheques rule checked against the cited FOD Financiën pages on 12 November 2026; none is marked provisional. gereduceerdRate and gewestelijkeRate are the unchanged Flemish opcentiemen of 33.257% (Vlaamse overheid), as in the other years",
     },
     home: {
-      sources: [eigenwoningforfaitSource(2026)],
-      verified: EIGENWONINGFORFAIT_VERIFIED,
+      sources: [
+        eigenwoningforfaitSource(2026),
+        {
+          name: "Belastingdienst, Fiscale informatie 2026, U woont buiten Nederland (sections 30.2.1.2, 30.2.1.3, 30.3.1)",
+          url: "https://www.belastingdienst.nl/wps/wcm/connect/fisin/fisin2026/u_woont_buiten_nederland",
+        },
+      ],
+      verified: `${EIGENWONINGFORFAIT_VERIFIED}. The foreign-resident chapter was read on 12 November 2026: the 90% test is rounded down to whole percentages and excludes the own home and personal deductions; the inkomensverklaring condition is abolished from 2026 (see INCOME_STATEMENT_ABOLISHED_FROM_YEAR); premium income is worldwide box 1 income with deductions`,
     },
   },
 });

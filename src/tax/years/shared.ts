@@ -62,10 +62,10 @@ export function eigenwoningforfaitSource(year: number): Source {
 }
 
 export const EIGENWONINGFORFAIT_VERIFIED =
-  "Verified, high confidence, against section 10.3.1 of the yearly home chapter (docs/hypotheekrenteaftrek-rules.md, checked 30 October 2026)";
+  "Verified, high confidence, against section 10.3.1 of the yearly home chapter (docs/hypotheekrenteaftrek-rules.md, checked 30 October 2026 and re-fetched for every year 2020–2026 on 12 November 2026)";
 
 export const MORTGAGE_CAP_VERIFIED =
-  "Verified against the cited publication (docs/hypotheekrenteaftrek-rules.md, section 4)";
+  "Verified against the cited publication (docs/hypotheekrenteaftrek-rules.md, section 4; re-checked for 2020–2026 on 12 November 2026)";
 
 export const MORTGAGE_CAP_POLICY_INFORMATION_SOURCE: Source = {
   name: "Ministry policy information 2023 (Beleidsinformatiekaart), historical maximum deduction rates",
