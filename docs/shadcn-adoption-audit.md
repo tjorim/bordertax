@@ -209,3 +209,11 @@ tab (existing shared `Tabs`), so it renders as a plain section with the shared
 `Table`, `Button`, `Input`, `Field` and `Alert`. No custom primitives. The O.2
 group header row keeps the existing `TableHead colSpan` pattern. The optional
 arbeidskorting field is local component state, not a tax input.
+
+## Input file export and import (issue #441)
+
+- **File controls** (`components/InputFileControls.tsx`, composition): `Button variant="outline-secondary"`
+  and `Alert` with a visually hidden native `<input type="file">` opened by the button. The registry has no
+  file-picker component, and the native input keeps the OS picker and works with assistive technology
+  (the input keeps an accessible name; results are announced through a `role="status"` region).
+  Export builds a `Blob` download link; nothing is sent over the network.

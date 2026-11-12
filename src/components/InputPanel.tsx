@@ -30,6 +30,8 @@ import * as m from "../paraglide/messages.js";
 import { CheckboxField } from "./fields/CheckboxField";
 import { CurrencyField, NumberField, fieldError } from "./fields/NumberField";
 import { CodeBadge } from "./CodeBadge";
+import { ExportInputsButton, ImportInputsButton } from "./InputFileControls";
+import { DEFAULT_INPUTS } from "../tax/defaults";
 
 interface Props {
   form: TaxFormApi;
@@ -294,6 +296,15 @@ export default function InputPanel({ form }: Props) {
               <FieldDescription className="mt-1">
                 {m.input_income_not_persisted_hint()}
               </FieldDescription>
+              <FieldDescription className="mt-1">{m.file_privacy_note()}</FieldDescription>
+              <div className="mt-2 flex flex-wrap items-center gap-2">
+                <ExportInputsButton inputs={values as TaxInputs} />
+                <ImportInputsButton
+                  label={m.file_import()}
+                  successMessage={(year) => m.file_imported({ year })}
+                  onLoad={(imported) => form.reset({ ...DEFAULT_INPUTS, ...imported })}
+                />
+              </div>
             </div>
 
             <form.Field

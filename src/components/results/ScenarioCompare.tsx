@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils";
 import { compareScenarios } from "@/tax/compare";
 import type { TaxInputs } from "@/tax/types";
 import * as m from "@/paraglide/messages.js";
+import { ImportInputsButton } from "../InputFileControls";
 import { fmt, fmtSigned } from "../format";
 
 type Overrides = Partial<
@@ -26,8 +27,11 @@ type Overrides = Partial<
 
 export default function ScenarioCompare({ inputs }: { inputs: TaxInputs }) {
   const [overrides, setOverrides] = useState<Overrides>({});
+  // A saved file replaces A (for example "as filed"); B then starts from the current inputs.
+  const [baseline, setBaseline] = useState<TaxInputs | null>(null);
+  const base = baseline ?? inputs;
   const alternative = useMemo(() => ({ ...inputs, ...overrides }), [inputs, overrides]);
-  const comparison = useMemo(() => compareScenarios(inputs, alternative), [inputs, alternative]);
+  const comparison = useMemo(() => compareScenarios(base, alternative), [base, alternative]);
   const { a, b, delta, changed, attribution } = comparison;
   const update = (key: keyof Overrides, value: number | undefined) => {
     // A cleared field counts as 0 so it can be emptied and retyped.
@@ -106,10 +110,20 @@ export default function ScenarioCompare({ inputs }: { inputs: TaxInputs }) {
           </>
         )}
       </div>
-      <div>
+      <div className="flex flex-wrap items-center gap-2">
         <Button variant="outline-secondary" onClick={() => setOverrides({})}>
           {m.compare_reset()}
         </Button>
+        <ImportInputsButton
+          label={m.compare_baseline_load()}
+          successMessage={(year) => m.compare_baseline_loaded({ year })}
+          onLoad={setBaseline}
+        />
+        {baseline && (
+          <Button variant="outline-secondary" onClick={() => setBaseline(null)}>
+            {m.compare_baseline_clear()}
+          </Button>
+        )}
       </div>
       {statusA !== statusB && (
         <Alert variant="warning">
@@ -125,8 +139,8 @@ export default function ScenarioCompare({ inputs }: { inputs: TaxInputs }) {
             <TableHead scope="col" className="whitespace-normal">
               {m.compare_metric()}
             </TableHead>
-            <TableHead scope="col">{m.compare_a()}</TableHead>
-            <TableHead scope="col">{m.compare_b()}</TableHead>
+            <TableHead scope="col">{baseline ? m.compare_a_file() : m.compare_a()}</TableHead>
+            <TableHead scope="col">{baseline ? m.compare_b_current() : m.compare_b()}</TableHead>
             <TableHead scope="col">{m.compare_difference()}</TableHead>
           </TableRow>
         </TableHeader>
