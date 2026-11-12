@@ -776,5 +776,20 @@
   "filing_copy": "Copy checklist values",
   "filing_copy_success": "Checklist values copied.",
   "filing_copy_error": "Could not copy the checklist values.",
-  "filing_answer_no": "No"
+  "filing_answer_no": "No",
+  "file_export": "Export inputs",
+  "file_import": "Import inputs",
+  "file_privacy_note": "Export saves all inputs, including salary, to a file on this device. Nothing is uploaded; import reads the file in your browser.",
+  "file_imported": "Loaded the inputs for income year {year} from the file.",
+  "file_error_too_large": "This file is too large to be a saved set of inputs.",
+  "file_error_not_json": "This file could not be read as JSON.",
+  "file_error_wrong_format": "This is not a file exported from this calculator.",
+  "file_error_unsupported_version": "This file was saved with a different file version and cannot be loaded.",
+  "file_error_invalid_inputs": "The file contains values that are not valid inputs, so nothing was loaded.",
+  "file_error_export": "These inputs are incomplete or out of range, so they cannot be exported yet. Fix the highlighted fields first.",
+  "compare_baseline_load": "Load saved file as A",
+  "compare_baseline_loaded": "A is loaded from a saved file (income year {year}). B starts from your current inputs.",
+  "compare_baseline_clear": "Use current inputs as A",
+  "compare_a_file": "A: saved file",
+  "compare_b_current": "B: current inputs"
 }

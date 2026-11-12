@@ -776,5 +776,20 @@
   "filing_copy": "Kopieer checklistwaarden",
   "filing_copy_success": "Checklistwaarden gekopieerd.",
   "filing_copy_error": "De checklistwaarden konden niet worden gekopieerd.",
-  "filing_answer_no": "Nee"
+  "filing_answer_no": "Nee",
+  "file_export": "Invoer exporteren",
+  "file_import": "Invoer importeren",
+  "file_privacy_note": "Exporteren bewaart alle invoer, inclusief het loon, in een bestand op dit apparaat. Er wordt niets geüpload; importeren leest het bestand in je browser.",
+  "file_imported": "De invoer voor inkomstenjaar {year} is uit het bestand geladen.",
+  "file_error_too_large": "Dit bestand is te groot om een bewaarde invoer te zijn.",
+  "file_error_not_json": "Dit bestand kon niet als JSON worden gelezen.",
+  "file_error_wrong_format": "Dit is geen bestand dat uit deze rekenhulp is geëxporteerd.",
+  "file_error_unsupported_version": "Dit bestand is met een andere bestandsversie opgeslagen en kan niet worden geladen.",
+  "file_error_invalid_inputs": "Het bestand bevat waarden die geen geldige invoer zijn, dus er is niets geladen.",
+  "file_error_export": "Deze invoer is onvolledig of buiten het bereik, dus exporteren kan nog niet. Los eerst de gemarkeerde velden op.",
+  "compare_baseline_load": "Bewaard bestand laden als A",
+  "compare_baseline_loaded": "A komt uit een bewaard bestand (inkomstenjaar {year}). B start met je huidige invoer.",
+  "compare_baseline_clear": "Huidige invoer als A gebruiken",
+  "compare_a_file": "A: bewaard bestand",
+  "compare_b_current": "B: huidige invoer"
 }
