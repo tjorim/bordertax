@@ -102,4 +102,23 @@ describe("FilingChecklist", () => {
     render(<FilingChecklist result={mockTaxResultNoBE} />);
     expect(screen.queryByText(m.filing_be_title())).not.toBeInTheDocument();
   });
+
+  it("marks the Belgian figures provisional until the assessment is entered", () => {
+    render(<FilingChecklist result={mockTaxResult} />);
+    const note = screen.getByText(m.filing_be_provisional());
+    expect(note).toHaveAttribute("role", "note");
+    expect(screen.queryByText(m.filing_be_final())).not.toBeInTheDocument();
+    expect(rowFor(m.filing_be_1250())).toHaveTextContent(m.filing_be_1250_source());
+  });
+
+  it("treats the Belgian figures as final once the assessment is in use", () => {
+    const assessed = {
+      ...mockTaxResult,
+      nlCharge: { ...mockTaxResult.nlCharge, source: "assessment" as const },
+    };
+    render(<FilingChecklist result={assessed} />);
+    expect(screen.getByText(m.filing_be_final())).toBeInTheDocument();
+    expect(screen.queryByText(m.filing_be_provisional())).not.toBeInTheDocument();
+    expect(rowFor(m.filing_be_1250())).toHaveTextContent(m.filing_be_1250_source_assessment());
+  });
 });

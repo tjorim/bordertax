@@ -31,7 +31,7 @@ const METRICS: readonly CompareMetric[] = ["nlTax", "beTax", "netIncome"];
 
 const metricOf = (result: TaxResult, metric: CompareMetric): number =>
   metric === "nlTax"
-    ? result.nl.netTaxNL
+    ? result.nlCharge.netTaxNL
     : metric === "beTax"
       ? (result.be?.netTaxBE ?? 0)
       : result.netIncome;
@@ -95,7 +95,7 @@ export function compareScenarios(a: TaxInputs, b: TaxInputs): ScenarioComparison
 
   const delta: ScenarioDelta = {
     grossIncome: resultB.grossIncome - resultA.grossIncome,
-    nlTax: resultB.nl.netTaxNL - resultA.nl.netTaxNL,
+    nlTax: resultB.nlCharge.netTaxNL - resultA.nlCharge.netTaxNL,
     beTax: (resultB.be?.netTaxBE ?? 0) - (resultA.be?.netTaxBE ?? 0),
     totalTax: resultB.totalTax - resultA.totalTax,
     netIncome: resultB.netIncome - resultA.netIncome,

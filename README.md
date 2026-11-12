@@ -10,6 +10,7 @@ One supported profile: a **single Belgian resident in the Flemish region with on
 
 - Income year, age category (under/over AOW age), dependent children and municipal tax rate
 - Gross annual salary and, optionally, the Dutch loonheffing already withheld
+- Optionally, the income tax and premiums on your actual Dutch assessment (aanslag), which replace the app's Dutch estimate in the Belgian figures
 - Workdays in the Netherlands, in Belgium (home working), in other countries and sick days
 - Optional Belgian items: social contributions, supplementary pension, dienstencheques, roerende voorheffing
 - Optional home scenario: mortgage interest, ownership share, home value and income outside the Netherlands
@@ -27,7 +28,7 @@ Inputs are kept in your browser's local storage so they survive a reload.
 
 ## How it calculates
 
-The workday split decides how much salary the Netherlands taxes. The Dutch tax is then treated as paid, code 1250 on the Belgian return is the salary less that tax, and Belgium applies the exemption with progression to the Dutch-sourced part, plus municipal tax on the exempt income. The formulas, rounding, sources and verification status are in [docs/tax-model.md](docs/tax-model.md), including the [known gaps](docs/tax-model.md#known-gaps) against the official guidelines. Treat results as estimates.
+The workday split decides how much salary the Netherlands taxes. The Dutch tax (the app's estimate, or the figures from your Dutch assessment once you enter them) is then treated as paid, code 1250 on the Belgian return is the salary less that tax, and Belgium applies the exemption with progression to the Dutch-sourced part, plus municipal tax on the exempt income. The formulas, rounding, sources and verification status are in [docs/tax-model.md](docs/tax-model.md), including the [known gaps](docs/tax-model.md#known-gaps) against the official guidelines. Treat results as estimates.
 
 ## Not modelled
 

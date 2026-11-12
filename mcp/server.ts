@@ -70,7 +70,7 @@ export function createServer(): McpServer {
   server.registerTool(
     "calculate_tax",
     {
-      description: `Calculate a strict cross-border tax estimate with effective inputs and full breakdown, including mortgage eligibility and effects. ${units}`,
+      description: `Calculate a strict cross-border tax estimate with effective inputs and full breakdown, including mortgage eligibility and effects. Optionally pass assessmentIncomeTaxDue and assessmentPremiumsDue together from the actual Dutch assessment: they replace the estimated Dutch charge in the Belgian figures and totals, and result.nlCharge reports the source and the difference from the estimate. ${units}`,
       inputSchema,
       outputSchema: z.object({ inputs: object, result: object, caveat: z.string() }),
       annotations,

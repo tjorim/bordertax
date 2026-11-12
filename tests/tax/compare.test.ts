@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { compareScenarios } from "@/tax/compare";
 import { DEFAULT_INPUTS } from "@/tax/defaults";
-import { TaxInputSchema } from "@/tax/schema";
+import { PersistedInputsSchema, TaxInputSchema } from "@/tax/schema";
 import type { TaxInputs } from "@/tax/types";
 
 const a: TaxInputs = {
@@ -85,6 +85,26 @@ describe("compareScenarios", () => {
 
   it("groups inputs outside workdays, income and mortgage as other", () => {
     expect(compareScenarios(a, { ...a, dependentChildren: 2 }).changed).toEqual(["other"]);
+  });
+});
+
+describe("Dutch assessment inputs", () => {
+  const assessment = { assessmentIncomeTaxDue: 2700, assessmentPremiumsDue: 5900 };
+
+  it("groups the assessment as other and uses the assessed Dutch tax", () => {
+    const c = compareScenarios(a, { ...a, ...assessment });
+
+    expect(c.changed).toEqual(["other"]);
+    expect(c.b.nlCharge.netTaxNL).toBe(8600);
+    expect(c.delta.nlTax).toBeCloseTo(8600 - c.a.nl.netTaxNL, 8);
+    expect(c.delta.totalTax).toBeCloseTo(c.delta.nlTax + c.delta.beTax, 8);
+    expect(c.attribution.nlTax.other).toBeCloseTo(c.delta.nlTax, 8);
+  });
+
+  it("is not persisted across reloads", () => {
+    const persisted = PersistedInputsSchema.parse({ ...DEFAULT_INPUTS, ...assessment });
+    expect(persisted).not.toHaveProperty("assessmentIncomeTaxDue");
+    expect(persisted).not.toHaveProperty("assessmentPremiumsDue");
   });
 });
 

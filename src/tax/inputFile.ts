@@ -37,6 +37,14 @@ export function serializeInputFile(
 ): { ok: true; json: string; filename: string } | { ok: false } {
   const candidate: Record<string, unknown> = { ...inputs };
   if (!inputs.mortgageEnabled) for (const field of MORTGAGE_FIELDS) delete candidate[field];
+  // The strict schema needs both assessment figures or neither; the form may hold only one.
+  if (
+    (candidate.assessmentIncomeTaxDue === undefined) !==
+    (candidate.assessmentPremiumsDue === undefined)
+  ) {
+    delete candidate.assessmentIncomeTaxDue;
+    delete candidate.assessmentPremiumsDue;
+  }
   for (const [key, value] of Object.entries(candidate)) {
     if (value === undefined) delete candidate[key];
   }

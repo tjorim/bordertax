@@ -56,6 +56,17 @@ The CLI writes `import { cn } from "cn"`; every file here imports `cn` from
 - **Tabs** (`ui/tabs.tsx`): `TabsList` wraps (`flex-wrap`) instead of scrolling horizontally, so
   every tab stays visible without a scroll affordance. Still custom, as recorded above.
 
+## Dutch assessment (issue #432)
+
+- **Assessment inputs** (`InputPanel`): two `CurrencyField`s in the Income section with
+  `FieldDescription` hints and the `FieldError` slot for "enter both"; no new markup.
+- **Dutch charge section** (`NLResult` `DutchChargeSection`, composition): existing `Table` with an
+  optional header row (item with its estimate underneath / assessment / difference) and a `Badge variant="secondary"`
+  for the source (`success` and the brand `primary` badge fail axe contrast on the dark and light
+  summary backgrounds). The registry has no comparison-table component; no new CSS.
+- **Provisional note** (`FilingChecklist`): the existing `Alert` (`warning` while provisional,
+  `success` once the assessment is in use) with `role="note"`.
+
 ## Field composition (issue #305)
 
 `ui/field.tsx` is now the registry `field` structure with Bordertax tokens:

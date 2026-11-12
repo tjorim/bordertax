@@ -15,6 +15,7 @@ allowed scopes are listed in `release.config.json`, and `check` validates `[Unre
 
 ### Added
 
+- **Web:** Enter the income tax and premiums from your actual Dutch assessment (aanslag) in the Income section. They replace the app's Dutch estimate in the Belgian figures, so code 1250, the O.1/O.2 split, the Belgian tax, total tax and net income are final. Both amounts are needed; the Dutch tab shows whether the estimate or your assessment is in use and the difference per item, and the filing checklist marks the Belgian figures as provisional until the assessment is entered.
 - **Web:** Enable income year 2026 (Belgian assessment year 2027). All figures come from the official Belastingdienst (box 1 brackets 35.75% / 37.56% / 49.50%, algemene heffingskorting €3,115, arbeidskorting, eigenwoningforfait with the €1,350,000 threshold, mortgage deduction cap 37.56%) and FOD Financiën pages (brackets up to €16,720 / €29,510 / €51,070, belastingvrije som €11,550 with child supplements, forfait maximum €6,070); the module records the page for each table. No figure is provisional, so there is no provisional-year banner. The year also applies to the MCP server and the multi-year comparison; the default year stays 2025, and an unsupported saved year now falls back to 2026.
 - **Web:** Export the inputs to a local JSON file and import them again, so a filing that takes months does not mean retyping salary and deductions. The file carries the income year, app version and a file version, holds the inputs in the same shape as the MCP `calculate_tax` input, is validated strictly on import and never leaves the browser. The Compare tab can load a saved file as situation A (for example as filed versus corrected).
 - **Web:** Pin a compact result bar (net income, Dutch refund or tax, Belgian tax) below the header while editing, with a "View results" jump on small screens and a shortcut to the Filing tab.
@@ -24,6 +25,7 @@ allowed scopes are listed in `release.config.json`, and `check` validates `[Unre
 
 ### Changed
 
+- Accept the optional `assessmentIncomeTaxDue` and `assessmentPremiumsDue` inputs (together, or neither) in the strict schema, the MCP `calculate_tax` and `compare_scenarios` tools, `get_capabilities` and the input file (file version unchanged; files without them stay valid). `result.nl` stays the estimate; the new `result.nlCharge` reports the source and the difference from it.
 - **Web:** Clamp long field hints to two lines with a "More" toggle, which shortens the input column.
 - **Web:** Stack the filing checklist rows as field / value / source cards on narrow screens instead of scrolling the tables sideways.
 - **Web:** Wrap the result tabs onto a second row on narrow screens so none are hidden off-screen, and show the app name in the collapsed header.
@@ -42,6 +44,7 @@ allowed scopes are listed in `release.config.json`, and `check` validates `[Unre
 
 ### Internal
 
+- Add golden tests for the ACV telework-session worked examples (income year 2025, with and without sick days) and document that ACV's premium/tax split differs from the Belastingdienst split by about €206.
 - Report `incomeTaxDue` and `premiumsDue` in the Dutch result (the credits are split into a tax part and a premium part in proportion to the first-bracket rates); `beIncome` is now the O.1 amount per the FOD guideline.
 - Rewrite the README around the supported profile, inputs, outputs and limits; document the tax model, known gaps and the income-year procedure in `docs/`; move finished migration records to `docs/archive/`.
 - Add a locale-audit check that fails on employer and place names in message files.

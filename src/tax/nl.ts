@@ -12,7 +12,7 @@
  *
  * Year-specific rates live in one module per income year in src/tax/years, assembled by params.ts.
  */
-import type { TaxInputs, NLTaxResult, BracketLine } from "./types";
+import type { TaxInputs, NLTaxResult, BracketLine, DutchCharge } from "./types";
 import {
   isThirtyPercentRulingSupportedResident,
   NL_THIRTY_PERCENT_RULING_TAXABLE_RESIDUAL,
@@ -178,5 +178,38 @@ export function calculateNLTax(
     premiumsDue,
     netTaxNL,
     effectiveRateNL: inputs.grossSalary > 0 ? netTaxNL / inputs.grossSalary : 0,
+  };
+}
+
+/**
+ * The single place where the Dutch assessment replaces the estimate. When both assessment figures
+ * are present they stand in for `nl.incomeTaxDue`/`nl.premiumsDue` everywhere downstream (code
+ * 1250, the O.1/O.2 split, total tax, net income); `nl` itself is left as the app's estimate. A
+ * lone figure is ignored (the strict schema rejects it; the lenient form schema keeps it).
+ */
+export function resolveDutchCharge(inputs: TaxInputs, nl: NLTaxResult): DutchCharge {
+  const { assessmentIncomeTaxDue, assessmentPremiumsDue } = inputs;
+  if (assessmentIncomeTaxDue === undefined || assessmentPremiumsDue === undefined) {
+    return {
+      source: "estimate",
+      incomeTaxDue: nl.incomeTaxDue,
+      premiumsDue: nl.premiumsDue,
+      netTaxNL: nl.netTaxNL,
+      incomeTaxDifference: 0,
+      premiumsDifference: 0,
+      netTaxDifference: 0,
+    };
+  }
+  const incomeTaxDue = Math.max(0, assessmentIncomeTaxDue);
+  const premiumsDue = Math.max(0, assessmentPremiumsDue);
+  const netTaxNL = incomeTaxDue + premiumsDue;
+  return {
+    source: "assessment",
+    incomeTaxDue,
+    premiumsDue,
+    netTaxNL,
+    incomeTaxDifference: incomeTaxDue - nl.incomeTaxDue,
+    premiumsDifference: premiumsDue - nl.premiumsDue,
+    netTaxDifference: netTaxNL - nl.netTaxNL,
   };
 }

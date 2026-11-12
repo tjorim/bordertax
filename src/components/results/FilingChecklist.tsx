@@ -148,7 +148,10 @@ function buildBeGroups(result: TaxResult): Group[] {
           field: m.filing_be_1250(),
           value: fmtExact(be.declaredIncome),
           format: "cents",
-          source: m.filing_be_1250_source(),
+          source:
+            result.nlCharge.source === "assessment"
+              ? m.filing_be_1250_source_assessment()
+              : m.filing_be_1250_source(),
           strong: true,
         },
         {
@@ -221,7 +224,12 @@ function buildBeGroups(result: TaxResult): Group[] {
 }
 
 /** Tab-separated text, ready to paste into a note or spreadsheet. */
-function toClipboardText(nlRows: Row[], beGroups: Group[], year: number): string {
+function toClipboardText(
+  nlRows: Row[],
+  beGroups: Group[],
+  year: number,
+  provisional: boolean,
+): string {
   const line = (row: Row) => `${row.field}\t${row.value}\t${formatLabel(row.format)}`;
   return [
     `${m.filing_title()} · ${year}`,
@@ -232,6 +240,7 @@ function toClipboardText(nlRows: Row[], beGroups: Group[], year: number): string
       ? [
           "",
           m.filing_be_title(),
+          ...(provisional ? [m.filing_be_provisional()] : []),
           ...beGroups.flatMap((group) => [
             ...(group.title ? [group.title] : []),
             ...group.rows.map(line),
@@ -285,10 +294,15 @@ export default function FilingChecklist({ result }: Props) {
   const statementArbeidskorting = Number.isFinite(parsed) ? Math.max(0, parsed) : undefined;
   const nlRows = buildNlRows(result, statementArbeidskorting);
   const beGroups = buildBeGroups(result);
+  // The Belgian figures depend on the Dutch tax actually charged; until the assessment is entered
+  // they rest on the app's estimate.
+  const provisional = result.nlCharge.source !== "assessment";
 
   async function copyValues() {
     try {
-      await navigator.clipboard.writeText(toClipboardText(nlRows, beGroups, inputs.year));
+      await navigator.clipboard.writeText(
+        toClipboardText(nlRows, beGroups, inputs.year, provisional),
+      );
       setCopyStatus("success");
     } catch {
       setCopyStatus("error");
@@ -387,6 +401,9 @@ export default function FilingChecklist({ result }: Props) {
             </a>
             .
           </p>
+          <Alert variant={provisional ? "warning" : "success"} role="note" className="text-sm py-2">
+            {provisional ? m.filing_be_provisional() : m.filing_be_final()}
+          </Alert>
           <Table bordered className="text-sm mb-2 max-table:block">
             <ChecklistHead />
             <TableBody className="max-table:block">

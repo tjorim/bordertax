@@ -89,4 +89,38 @@ describe("input file", () => {
     const text = `{"format":"${INPUT_FILE_FORMAT}","schemaVersion":1,"inputs":{"__proto__":{"x":1}}}`;
     expect(parseInputFile(text).ok).toBe(false);
   });
+
+  describe("Dutch assessment figures", () => {
+    const assessment = { assessmentIncomeTaxDue: 2713.34, assessmentPremiumsDue: 5874.66 };
+
+    it("keeps absent figures absent so files without them stay valid", () => {
+      const file = serializeInputFile(mockInputs);
+      if (!file.ok) throw new Error("export failed");
+      const exported = JSON.parse(file.json).inputs;
+      expect(exported).not.toHaveProperty("assessmentIncomeTaxDue");
+      expect(exported).not.toHaveProperty("assessmentPremiumsDue");
+      const result = parseInputFile(file.json);
+      if (!result.ok) throw new Error(result.error);
+      expect(result.inputs).not.toHaveProperty("assessmentIncomeTaxDue");
+    });
+
+    it("round-trips both figures at schema version 1", () => {
+      const file = serializeInputFile({ ...mockInputs, ...assessment });
+      if (!file.ok) throw new Error("export failed");
+      expect(JSON.parse(file.json).schemaVersion).toBe(1);
+      const result = parseInputFile(file.json);
+      if (!result.ok) throw new Error(result.error);
+      expect(result.inputs).toMatchObject(assessment);
+    });
+
+    it("exports without a lone figure and rejects a file that contains one", () => {
+      const file = serializeInputFile({ ...mockInputs, assessmentIncomeTaxDue: 100 });
+      if (!file.ok) throw new Error("export failed");
+      expect(JSON.parse(file.json).inputs).not.toHaveProperty("assessmentIncomeTaxDue");
+      expect(parseInputFile(wrap({ ...mockInputs, assessmentIncomeTaxDue: 100 }))).toEqual({
+        ok: false,
+        error: "invalid-inputs",
+      });
+    });
+  });
 });

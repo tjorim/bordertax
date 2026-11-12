@@ -239,4 +239,21 @@ describe("long field hints", () => {
     expect(toggle).toHaveTextContent(/less/i);
     expect(document.getElementById(hintId)).not.toHaveClass("line-clamp-2");
   });
+
+  it("takes the two Dutch assessment figures and asks for the missing one", () => {
+    const { getForm } = renderInputPanel();
+    const tax = screen.getByRole("spinbutton", { name: /income tax on the dutch assessment/i });
+    const premiums = screen.getByRole("spinbutton", { name: /premiums on the dutch assessment/i });
+    expect(tax).toHaveValue(null);
+    expect(premiums).toHaveValue(null);
+    fireEvent.change(tax, { target: { value: "2713.34" } });
+    expect(getForm().getFieldValue("assessmentIncomeTaxDue")).toBe(2713.34);
+    expect(premiums).toBeInvalid();
+    expect(screen.getByText(/enter both assessment figures/i)).toBeInTheDocument();
+    fireEvent.change(premiums, { target: { value: "5874.66" } });
+    expect(getForm().getFieldValue("assessmentPremiumsDue")).toBe(5874.66);
+    expect(screen.queryByText(/enter both assessment figures/i)).toBeNull();
+    fireEvent.change(tax, { target: { value: "" } });
+    expect(getForm().getFieldValue("assessmentIncomeTaxDue")).toBeUndefined();
+  });
 });

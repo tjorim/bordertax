@@ -239,6 +239,54 @@ export default function InputPanel({ form }: Props) {
               }}
             </form.Field>
 
+            <div className="col-span-12">
+              <FieldDescription>{m.input_assessment_intro()}</FieldDescription>
+            </div>
+
+            <form.Field name="assessmentIncomeTaxDue">
+              {(field) => (
+                <div className="col-span-12 table:col-span-6">
+                  <CurrencyField
+                    id="assessment-income-tax"
+                    label={m.input_assessment_income_tax()}
+                    min={0}
+                    value={field.value}
+                    onChange={field.handleChange}
+                    onBlur={field.handleBlur}
+                    hint={m.input_assessment_income_tax_hint()}
+                    hintId="assessment-income-tax-hint"
+                    error={
+                      values.assessmentPremiumsDue !== undefined && field.value === undefined
+                        ? m.input_assessment_both_required()
+                        : undefined
+                    }
+                  />
+                </div>
+              )}
+            </form.Field>
+
+            <form.Field name="assessmentPremiumsDue">
+              {(field) => (
+                <div className="col-span-12 table:col-span-6">
+                  <CurrencyField
+                    id="assessment-premiums"
+                    label={m.input_assessment_premiums()}
+                    min={0}
+                    value={field.value}
+                    onChange={field.handleChange}
+                    onBlur={field.handleBlur}
+                    hint={m.input_assessment_premiums_hint()}
+                    hintId="assessment-premiums-hint"
+                    error={
+                      values.assessmentIncomeTaxDue !== undefined && field.value === undefined
+                        ? m.input_assessment_both_required()
+                        : undefined
+                    }
+                  />
+                </div>
+              )}
+            </form.Field>
+
             <form.Field
               name="daysWorkedNL"
               validators={[{ run: z.number().min(0), triggers: ["change"] }]}

@@ -68,9 +68,20 @@ export const mockBEResult: BETaxResult = {
   effectiveRateBE: 0.0463,
 };
 
+const mockNLCharge: TaxResult["nlCharge"] = {
+  source: "estimate",
+  incomeTaxDue: mockNLResult.incomeTaxDue,
+  premiumsDue: mockNLResult.premiumsDue,
+  netTaxNL: mockNLResult.netTaxNL,
+  incomeTaxDifference: 0,
+  premiumsDifference: 0,
+  netTaxDifference: 0,
+};
+
 export const mockTaxResult: TaxResult = {
   inputs: mockInputs,
   nl: mockNLResult,
+  nlCharge: mockNLCharge,
   be: mockBEResult,
   grossIncome: 60000,
   totalTax: 18086.69,
@@ -86,6 +97,7 @@ export const mockTaxResultNoBE: TaxResult = {
   // where calculateBETax returns null; BE is intentionally not supported yet.
   inputs: { ...mockInputs, residentCountry: "NL" as TaxInputs["residentCountry"] },
   nl: mockNLResult,
+  nlCharge: mockNLCharge,
   be: null,
   grossIncome: 60000,
   totalTax: 15307.51,

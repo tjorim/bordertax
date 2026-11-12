@@ -34,8 +34,26 @@ export interface NLTaxResult {
   effectiveRateNL: number;
 }
 
+/**
+ * The Dutch charge the rest of the calculation builds on: the app's estimate, or the figures on
+ * the user's Dutch assessment. `TaxResult.nl` always stays the estimate.
+ */
+export interface DutchCharge {
+  source: "estimate" | "assessment";
+  /** Income tax due after the tax part of the heffingskortingen. */
+  incomeTaxDue: number;
+  /** Premies volksverzekeringen due after the premium part of the heffingskortingen. */
+  premiumsDue: number;
+  /** incomeTaxDue + premiumsDue; feeds code 1250, total tax and net income. */
+  netTaxNL: number;
+  /** Charge minus the app's estimate; always 0 for the estimate. */
+  incomeTaxDifference: number;
+  premiumsDifference: number;
+  netTaxDifference: number;
+}
+
 export interface BETaxResult {
-  /** Declared income (code 1250): grossSalary − nl.netTaxNL */
+  /** Declared income (code 1250): grossSalary − Dutch income tax and premiums due (nlCharge) */
   declaredIncome: number;
   /** Social contributions deducted */
   socialContributionsDeducted: number;
@@ -86,7 +104,10 @@ export interface BETaxResult {
 
 export interface TaxResult {
   inputs: TaxInputs;
+  /** The app's own Dutch estimate, unaffected by any assessment figures entered. */
   nl: NLTaxResult;
+  /** The Dutch charge used for the Belgian calculation, total tax and net income. */
+  nlCharge: DutchCharge;
   be: BETaxResult | null;
   grossIncome: number;
   totalTax: number;

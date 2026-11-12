@@ -1,6 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { DistributionSegment } from "@/components/ui/distribution-segment";
 import { Alert } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CircleArrowDownIcon, CircleArrowUpIcon, ClipboardIcon, RotateCcwIcon } from "lucide-react";
 import {
@@ -27,13 +28,13 @@ interface Props {
 
 export default function SummaryResult({ result, onResetInputs }: Props) {
   const [copyStatus, setCopyStatus] = useState<"idle" | "success" | "error">("idle");
-  const { grossIncome, totalTax, netIncome, effectiveRateTotal, nl, be } = result;
+  const { grossIncome, totalTax, netIncome, effectiveRateTotal, nlCharge, be } = result;
   const { withheldTaxNL } = result.inputs;
-  const nlBalance = withheldTaxNL - nl.netTaxNL;
+  const nlBalance = withheldTaxNL - nlCharge.netTaxNL;
   const netResult = nlBalance - (be?.netTaxBE ?? 0);
   const totalWorkdays = getTotalWorkdays(result.inputs);
 
-  const nlPct = grossIncome > 0 ? (nl.netTaxNL / grossIncome) * 100 : 0;
+  const nlPct = grossIncome > 0 ? (nlCharge.netTaxNL / grossIncome) * 100 : 0;
   const bePct = grossIncome > 0 ? ((be?.netTaxBE ?? 0) / grossIncome) * 100 : 0;
   const netPct = 100 - nlPct - bePct;
 
@@ -50,7 +51,7 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
       `━━━ Bordertax · ${result.inputs.year} ━━━`,
       "",
       pad(m.summary_gross_income(), fmt(grossIncome)),
-      pad(`🇳🇱 ${m.summary_dutch_tax()}`, `−${fmt(nl.netTaxNL)}`),
+      pad(`🇳🇱 ${m.summary_dutch_tax()}`, `−${fmt(nlCharge.netTaxNL)}`),
       ...(be && be.netTaxBE > 0
         ? [pad(`🇧🇪 ${m.summary_belgian_tax()}`, `−${fmt(be.netTaxBE)}`)]
         : []),
@@ -142,7 +143,7 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
             <div className="bt-alloc__legend-item">
               <span className="bt-alloc__legend-dot bt-alloc__legend-dot--nl" />
               <span className="bt-alloc__legend-label">🇳🇱 {m.summary_dutch_tax()}</span>
-              <span className="bt-alloc__legend-value">−{fmt(nl.netTaxNL)}</span>
+              <span className="bt-alloc__legend-value">−{fmt(nlCharge.netTaxNL)}</span>
             </div>
             {be && be.netTaxBE > 0 && (
               <div className="bt-alloc__legend-item">
@@ -163,8 +164,15 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
             <span className="bt-breakdown__value">{fmt(grossIncome)}</span>
           </div>
           <div className="bt-breakdown__row">
-            <span className="bt-breakdown__label">🇳🇱 {m.summary_dutch_tax()}</span>
-            <span className="bt-breakdown__value">−{fmt(nl.netTaxNL)}</span>
+            <span className="bt-breakdown__label">
+              🇳🇱 {m.summary_dutch_tax()}{" "}
+              <Badge variant="secondary">
+                {nlCharge.source === "assessment"
+                  ? m.nl_charge_source_assessment()
+                  : m.nl_charge_source_estimate()}
+              </Badge>
+            </span>
+            <span className="bt-breakdown__value">−{fmt(nlCharge.netTaxNL)}</span>
           </div>
           {be && be.netTaxBE > 0 && (
             <div className="bt-breakdown__row">
@@ -273,7 +281,7 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
             </div>
             <div className="bt-breakdown__row">
               <span className="bt-breakdown__label">🇳🇱 {m.summary_nl_owed()}</span>
-              <span className="bt-breakdown__value">−{fmt(nl.netTaxNL)}</span>
+              <span className="bt-breakdown__value">−{fmt(nlCharge.netTaxNL)}</span>
             </div>
             <div
               className={cn(

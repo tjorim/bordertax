@@ -156,4 +156,69 @@ describe("calculate", () => {
       expect(result.nlFractionBelgianMethod).toBeCloseTo(200 / 230, 10);
     });
   });
+
+  describe("Dutch assessment", () => {
+    const gross = { ...base, daysWorkedNL: 180, daysWorkedBE: 40, sickDays: 0 };
+    const assessment = { assessmentIncomeTaxDue: 3000, assessmentPremiumsDue: 5000 };
+
+    it("uses the estimate and reports no difference when no assessment is entered", () => {
+      const result = calculate(gross);
+      expect(result.nlCharge).toEqual({
+        source: "estimate",
+        incomeTaxDue: result.nl.incomeTaxDue,
+        premiumsDue: result.nl.premiumsDue,
+        netTaxNL: result.nl.netTaxNL,
+        incomeTaxDifference: 0,
+        premiumsDifference: 0,
+        netTaxDifference: 0,
+      });
+      expect(result.be!.declaredIncome).toBe(gross.grossSalary - result.nl.netTaxNL);
+    });
+
+    it("feeds 1250, O.1 and O.2 from the assessed figures and keeps the Dutch estimate", () => {
+      const estimate = calculate(gross);
+      const result = calculate({ ...gross, ...assessment });
+      const be = result.be!;
+      const w = gross.grossSalary - 5000;
+
+      expect(result.nl).toEqual(estimate.nl);
+      expect(result.nlCharge.source).toBe("assessment");
+      expect(result.nlCharge.netTaxNL).toBe(8000);
+      expect(be.declaredIncome).toBe(gross.grossSalary - 8000);
+      expect(be.beIncome).toBeCloseTo(w * be.beFraction, 8);
+      expect(be.declaredIncome - be.beIncome).toBeCloseTo(w - w * be.beFraction - 3000, 8);
+      expect(result.nlCharge.incomeTaxDifference).toBeCloseTo(3000 - estimate.nl.incomeTaxDue, 8);
+      expect(result.nlCharge.premiumsDifference).toBeCloseTo(5000 - estimate.nl.premiumsDue, 8);
+    });
+
+    it("uses the assessed Dutch amount in total tax and net income", () => {
+      const result = calculate({ ...gross, ...assessment });
+      expect(result.totalTax).toBe(8000 + result.be!.netTaxBE);
+      expect(result.netIncome).toBe(gross.grossSalary - result.totalTax);
+    });
+
+    it("ignores a lone assessment figure", () => {
+      const estimate = calculate(gross);
+      expect(calculate({ ...gross, assessmentIncomeTaxDue: 3000 })).toEqual({
+        ...estimate,
+        inputs: { ...gross, assessmentIncomeTaxDue: 3000 },
+      });
+      expect(calculate({ ...gross, assessmentPremiumsDue: 5000 }).nlCharge.source).toBe("estimate");
+    });
+
+    it("measures the mortgage effect on the estimate, not on the fixed assessment", () => {
+      const mortgage = {
+        ...gross,
+        mortgageEnabled: true,
+        mortgageInterest: 8000,
+        mortgageOwnershipShare: 100,
+        mortgageHomeValue: 300000,
+        incomeOutsideNL: 0,
+      };
+      const estimate = calculate(mortgage);
+      const assessed = calculate({ ...mortgage, ...assessment });
+      expect(assessed.mortgage!.potential).toEqual(estimate.mortgage!.potential);
+      expect(assessed.mortgage!.realised).toEqual(estimate.mortgage!.realised);
+    });
+  });
 });

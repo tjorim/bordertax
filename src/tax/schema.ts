@@ -37,6 +37,8 @@ export const TaxInputFields = {
   mortgageInterest: z.number(),
   mortgageOwnershipShare: z.number(),
   incomeOutsideNL: z.number(),
+  assessmentIncomeTaxDue: z.number(),
+  assessmentPremiumsDue: z.number(),
 };
 
 export const TaxInputSchema = z.object({
@@ -84,9 +86,22 @@ export const TaxInputSchema = z.object({
     .transform((v) => Math.max(0, v))
     .optional()
     .catch(undefined),
+  /**
+   * Income tax (inkomstenbelasting) due on the Dutch assessment, after the heffingskortingen.
+   * Only used together with `assessmentPremiumsDue`; a lone value is ignored by the engine.
+   */
+  assessmentIncomeTaxDue: TaxInputFields.assessmentIncomeTaxDue
+    .transform((v) => Math.max(0, v))
+    .optional()
+    .catch(undefined),
+  /** Premies volksverzekeringen due on the Dutch assessment, after the heffingskortingen. */
+  assessmentPremiumsDue: TaxInputFields.assessmentPremiumsDue
+    .transform((v) => Math.max(0, v))
+    .optional()
+    .catch(undefined),
 });
 
-// Privacy: salary and day-count inputs are intentionally not persisted across reloads.
+// Privacy: salary, day-count and assessment inputs are intentionally not persisted across reloads.
 export const PersistedInputsSchema = TaxInputSchema.pick({
   year: true,
   residentCountry: true,

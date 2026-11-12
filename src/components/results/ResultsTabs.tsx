@@ -97,6 +97,7 @@ export default function ResultsTabs({
         <TabsContent value="nl" className="bt-nl-accent">
           <NLResult
             result={result.nl}
+            charge={result.nlCharge}
             withheldTaxNL={inputs.withheldTaxNL}
             thirtyPercentRuling={
               isThirtyPercentRulingSupportedResident(inputs.residentCountry) &&
