@@ -14,8 +14,8 @@ import type { TaxInputs, TaxResult } from "./types";
 export type ChangeGroup = "workdays" | "income" | "mortgage" | "other";
 
 const GROUP_KEYS = {
-  workdays: ["daysWorkedNL", "daysWorkedBE", "daysWorkedOther", "sickDays"],
-  income: ["grossSalary"],
+  workdays: ["daysWorkedNL", "daysWorkedBE", "daysWorkedOther", "sickDaysNL", "sickDaysOutsideNL"],
+  income: ["annualStatements"],
   mortgage: [
     "mortgageEnabled",
     "mortgageInterest",
@@ -38,7 +38,8 @@ const metricOf = (result: TaxResult, metric: CompareMetric): number =>
       : result.netIncome;
 
 export interface ScenarioDelta {
-  grossIncome: number;
+  /** Difference in the taxable wage summed over the annual statements. */
+  taxableWage: number;
   nlTax: number;
   beTax: number;
   totalTax: number;
@@ -57,7 +58,9 @@ export interface ScenarioComparison {
   attribution: Record<CompareMetric, Partial<Record<ChangeGroup, number>>>;
 }
 
-const sameValue = (x: unknown, y: unknown) => Object.is(x, y);
+// The annual statements are a list of plain objects; compare them by their figures.
+const sameValue = (x: unknown, y: unknown) =>
+  Array.isArray(x) && Array.isArray(y) ? JSON.stringify(x) === JSON.stringify(y) : Object.is(x, y);
 
 // Every input key, so the "other" group is whatever the named groups do not cover.
 const ALL_INPUT_KEYS = Object.keys(TaxInputFields) as (keyof TaxInputs)[];
@@ -96,7 +99,7 @@ export function compareScenarios(a: TaxInputs, b: TaxInputs): ScenarioComparison
 
   const delta: ScenarioDelta = {
     // Differences of cent-rounded figures, cleaned of floating-point noise.
-    grossIncome: roundToCents(resultB.grossIncome - resultA.grossIncome),
+    taxableWage: roundToCents(resultB.taxableWage - resultA.taxableWage),
     nlTax: roundToCents(resultB.nlCharge.netTaxNL - resultA.nlCharge.netTaxNL),
     beTax: roundToCents((resultB.be?.netTaxBE ?? 0) - (resultA.be?.netTaxBE ?? 0)),
     totalTax: roundToCents(resultB.totalTax - resultA.totalTax),

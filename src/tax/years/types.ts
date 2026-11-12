@@ -22,7 +22,7 @@ export interface AKStage {
 export interface NLYearParams {
   /** Income-tax-only brackets (social premiums excluded). */
   incomeTaxBrackets: NLBracket[];
-  /** Volksverzekeringen rate applied to min(grossSalary, socialPremiumMax). */
+  /** Volksverzekeringen rate applied to min(taxable wage, socialPremiumMax). */
   socialPremiumRate: number;
   /** Maximum income subject to social premiums (equals bracket 1 ceiling). */
   socialPremiumMax: number;

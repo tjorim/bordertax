@@ -1,23 +1,23 @@
-import type { TaxInputs } from "./schema";
+import { SINGLE_VALUE_DEFAULTS, type AnnualStatement, type TaxInputs } from "./schema";
+
+/** A fresh annual statement, added by "Add another annual statement". */
+export const EMPTY_ANNUAL_STATEMENT: AnnualStatement = { taxableWage: 0, wageTaxWithheld: 0 };
 
 export const DEFAULT_INPUTS: TaxInputs = {
   year: 2025,
-  residentCountry: "BE",
-  civilStatus: "single",
+  ...SINGLE_VALUE_DEFAULTS,
   dependentChildren: 0,
   belowAOWAge: true,
-  belgianRegion: "flemish",
   communalTaxRate: 7,
-  grossSalary: 60000,
+  annualStatements: [{ taxableWage: 60000, wageTaxWithheld: 0 }],
   daysWorkedNL: 200,
   daysWorkedBE: 20,
   daysWorkedOther: 0,
-  thirtyPercentRuling: false,
-  socialContributions: 0,
-  aanvullendPensioen: 0,
-  dienstencheques: 0,
-  roerendeVoorheffing: 0,
-  withheldTaxNL: 0,
-  sickDays: 0,
+  sickDaysNL: 0,
+  sickDaysOutsideNL: 0,
+  healthInsurancePremium: 0,
+  supplementaryPension: 0,
+  serviceVouchers: 0,
+  reclaimableWithholdingTax: 0,
   mortgageEnabled: false,
 };

@@ -33,7 +33,7 @@ export interface NLTaxResult {
   /** Premies volksverzekeringen actually due, after the premium part of the heffingskortingen. */
   premiumsDue: number;
   netTaxNL: number;
-  /** Net tax as fraction of total gross salary */
+  /** Net tax as fraction of the taxable wage */
   effectiveRateNL: number;
 }
 
@@ -61,17 +61,17 @@ export interface DutchCharge {
  * `effectiveRateBE`) are not rounded.
  */
 export interface BETaxResult {
-  /** Declared income (code 1250): grossSalary − Dutch income tax and premiums due (nlCharge) */
+  /** Declared income (code 1250): taxable wage − Dutch income tax and premiums due (nlCharge) */
   declaredIncome: number;
-  /** Social contributions deducted */
-  socialContributionsDeducted: number;
+  /** Dutch health-insurance premium deducted (code 1257) */
+  healthInsurancePremiumDeducted: number;
   /** Professional expenses (forfait) */
   professionalExpenses: number;
-  /** Net professional income: declaredIncome − socialContributions − forfait */
+  /** Net professional income: declaredIncome − healthInsurancePremium − forfait */
   netProfessionalIncome: number;
-  /** Belgian-taxable part of the wage (box IV O.1): (grossSalary − premiums due) × fraction of days outside NL. */
+  /** Belgian-taxable part of the wage (box IV O.1): (taxable wage − premiums due) × fraction of days outside NL. */
   beIncome: number;
-  /** NL-sourced gross income (days in NL fraction of grossSalary), for display purposes. */
+  /** NL-sourced wage (days in NL fraction of the taxable wage), for display purposes. */
   nlExemptIncome: number;
   /** Exempt income (with progression): vrijgesteld portion of netProfessionalIncome */
   vrijgesteld: number;
@@ -93,13 +93,13 @@ export interface BETaxResult {
   gereduceerde: number;
   /** Regional portion (gereduceerde × gewestelijkeRate) */
   gewestelijke: number;
-  /** Federal saldo after pension and roerende voorheffing reductions */
+  /** Federal saldo after the supplementary-pension and withholding-tax reductions */
   saldoFederaal: number;
-  /** Part of the federal reductions (aanvullend pensioen × 30% plus roerende voorheffing, code
-   *  1437) that exceeds the reduced federal portion. The saldo is clamped at zero and this part
+  /** Part of the federal reductions (supplementaryPension × 30% plus reclaimableWithholdingTax,
+   *  code 1437) that exceeds the reduced federal portion. The saldo is clamped at zero and this part
    *  is not used or carried over by the estimate; 0 when the reductions are fully used. */
   federalReductionsUnused: number;
-  /** Regional saldo after dienstencheques reduction */
+  /** Regional saldo after the service-voucher reduction */
   saldoGewestelijk: number;
   /** Total Belgian tax (saldoFederaal + saldoGewestelijk) */
   totaleBelasting: number;
@@ -110,7 +110,7 @@ export interface BETaxResult {
   /** Federal saldo after reductions (saldoFederaal). */
   federalTax: number;
   netTaxBE: number;
-  /** Net tax as fraction of total gross salary */
+  /** Net tax as fraction of the taxable wage */
   effectiveRateBE: number;
 }
 
@@ -121,7 +121,10 @@ export interface TaxResult {
   /** The Dutch charge used for the Belgian calculation, total tax and net income. */
   nlCharge: DutchCharge;
   be: BETaxResult | null;
-  grossIncome: number;
+  /** Taxable wage summed over all annual statements. */
+  taxableWage: number;
+  /** Dutch wage tax withheld, summed over all annual statements. */
+  wageTaxWithheld: number;
   totalTax: number;
   netIncome: number;
   effectiveRateTotal: number;
@@ -130,14 +133,14 @@ export interface TaxResult {
    *  taxable income, premiums or credits) instead of presenting premiums and credits on no income;
    *  the figures only turn meaningful once workdays are entered. */
   noWorkdays: boolean;
-  /** NL income fraction according to the Dutch (NL) method: sick days count as NL workdays
-   *  (added to both numerator and denominator).
-   *  Formula: (NL days + sick days) / (NL days + other days + sick days) */
+  /** NL income fraction according to the Dutch (NL) method: a sick day counts for the country it
+   *  was scheduled in, so sick days scheduled in NL are NL workdays and all sick days are in the
+   *  denominator.
+   *  Formula: (NL days + sick days in NL) / (NL + BE + other days + all sick days) */
   nlFractionDutchMethod: number;
-  /** NL income fraction according to the Belgian (BE) method: sick days excluded entirely from
-   *  both numerator and denominator, typically yielding a lower NL fraction than the NL method
-   *  (because sick days are not counted as NL workdays here).
-   *  Formula: NL days / (NL days + other days) */
+  /** NL income fraction according to the Belgian (BE) method: all sick days excluded from both
+   *  numerator and denominator, wherever they were scheduled.
+   *  Formula: NL days / (NL + BE + other days) */
   nlFractionBelgianMethod: number;
   /** Home/mortgage scenario outcome; null when the scenario is not enabled. */
   mortgage: MortgageResult | null;
