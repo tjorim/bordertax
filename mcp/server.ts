@@ -6,11 +6,15 @@ import { version } from "../package.json";
 import { calculate } from "../src/tax/index";
 import { getCapabilities } from "../src/tax/capabilities";
 import { compareScenarios } from "../src/tax/compare";
-import { parseStrictTaxInputs, StrictTaxInputSchema } from "../src/tax/strict";
+import { INPUT_SCHEMA_VERSION } from "../src/tax/migrations";
+import { assertNoV1Fields, parseStrictTaxInputs, StrictTaxInputSchema } from "../src/tax/strict";
+// Attaches the agent-facing field descriptions to the strict schema (kept out of the web bundle).
+import "../src/tax/strictDescriptions";
 
 const caveat = "Simplified estimate, not tax advice. Consult a qualified tax adviser.";
 const units =
   "Money is EUR per year; communalTaxRate is percent; result rates/shares are fractions unless capability metadata states otherwise; workdays are day counts.";
+const schemaNote = `Input schema version ${INPUT_SCHEMA_VERSION}: inputs are grouped by source document (annual tax statements, workday record, health insurer, pension or payslip, service vouchers, bank, Dutch assessment); residentCountry, civilStatus, belgianRegion and thirtyPercentRuling are optional with defaults; version 1 field names are rejected with the rename map (see get_capabilities.inputSchema).`;
 const annotations = { readOnlyHint: true, idempotentHint: true, openWorldHint: false };
 // Derive discovery and overrides from the strict boundary, including future optional fields.
 export const inputSchema = StrictTaxInputSchema.in;
@@ -48,6 +52,12 @@ export function calculateTax(input: unknown): CallToolResult {
 }
 export function compareTax(input: unknown): CallToolResult {
   return guarded(() => {
+    // Name version 1 fields before the strict checks would only call them unsupported.
+    if (typeof input === "object" && input !== null) {
+      const { base, overrides } = input as Record<string, unknown>;
+      assertNoV1Fields(base, ["base"]);
+      assertNoV1Fields(overrides, ["overrides"]);
+    }
     // Validate overrides separately without materialising defaults before merging.
     const envelope = z.strictObject({ base: z.unknown(), overrides: overridesSchema }).parse(input);
     const base = parseStrictTaxInputs(envelope.base);
@@ -60,7 +70,7 @@ export function createServer(): McpServer {
   server.registerTool(
     "get_capabilities",
     {
-      description: `Discover supported years, profiles, required fields, defaults, units and limitations. ${units}`,
+      description: `Discover the input schema version, supported years, profiles, required fields, defaults, source documents, units and limitations. ${units}`,
       inputSchema: z.strictObject({}),
       outputSchema: z.looseObject({}),
       annotations,
@@ -70,7 +80,7 @@ export function createServer(): McpServer {
   server.registerTool(
     "calculate_tax",
     {
-      description: `Calculate a strict cross-border tax estimate with effective inputs and full breakdown, including mortgage eligibility and effects. Optionally pass assessmentIncomeTaxDue and assessmentPremiumsDue together from the actual Dutch assessment: they replace the estimated Dutch charge in the Belgian figures and totals, and result.nlCharge reports the source and the difference from the estimate. Belgian money figures are rounded to cents (no tax-rounding rule is claimed); result.nl.brackets carry numeric from/to bounds (to is null for the open top bracket) and no label; result.noWorkdays flags zero workdays, where the Dutch and Belgian figures are zero; result.be.federalReductionsUnused is the part of the pension and withholding-tax reductions above the federal tax. ${units}`,
+      description: `Calculate a strict cross-border tax estimate with effective inputs and full breakdown, including mortgage eligibility and effects. Optionally pass assessmentIncomeTaxDue and assessmentPremiumsDue together from the actual Dutch assessment: they replace the estimated Dutch charge in the Belgian figures and totals, and result.nlCharge reports the source and the difference from the estimate. Belgian money figures are rounded to cents (no tax-rounding rule is claimed); result.nl.brackets carry numeric from/to bounds (to is null for the open top bracket) and no label; result.noWorkdays flags zero workdays, where the Dutch and Belgian figures are zero; result.be.federalReductionsUnused is the part of the pension and withholding-tax reductions above the federal tax. ${schemaNote} ${units}`,
       inputSchema,
       outputSchema: z.object({ inputs: object, result: object, caveat: z.string() }),
       annotations,
@@ -80,7 +90,7 @@ export function createServer(): McpServer {
   server.registerTool(
     "compare_scenarios",
     {
-      description: `Compare base inputs with a partial overrides object; returns both results, b-minus-a deltas, changed groups and Shapley attribution. ${units}`,
+      description: `Compare base inputs with a partial overrides object; returns both results, b-minus-a deltas, changed groups and Shapley attribution. An annualStatements override replaces the whole list. ${schemaNote} ${units}`,
       inputSchema: compareSchema,
       outputSchema: z.object({
         inputs: object,

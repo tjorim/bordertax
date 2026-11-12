@@ -10,7 +10,7 @@ import type { TaxInputs } from "@/tax/types";
 
 const base: TaxInputs = {
   ...DEFAULT_INPUTS,
-  grossSalary: 60000,
+  annualStatements: [{ taxableWage: 60000, wageTaxWithheld: 0 }],
   daysWorkedNL: 220,
   daysWorkedBE: 0,
   mortgageEnabled: true,
@@ -23,7 +23,7 @@ describe("mortgage scenario", () => {
     const off = calculate({ ...base, mortgageEnabled: false });
     const none = calculate({
       ...DEFAULT_INPUTS,
-      grossSalary: 60000,
+      annualStatements: [{ taxableWage: 60000, wageTaxWithheld: 0 }],
       daysWorkedNL: 220,
       daysWorkedBE: 0,
     });
@@ -62,7 +62,11 @@ describe("mortgage scenario", () => {
   });
 
   it("relieves the part of the deduction taxed above the cap only at the cap rate", () => {
-    const high = { ...base, grossSalary: 100000, mortgageInterest: 10000 };
+    const high = {
+      ...base,
+      annualStatements: [{ taxableWage: 100000, wageTaxWithheld: 0 }],
+      mortgageInterest: 10000,
+    };
     const without = calculate({ ...high, mortgageEnabled: false });
     const result = calculate(high);
 
@@ -76,7 +80,11 @@ describe("mortgage scenario", () => {
   });
 
   it("never takes NL taxable income below zero", () => {
-    const result = calculate({ ...base, grossSalary: 1000, mortgageInterest: 50000 });
+    const result = calculate({
+      ...base,
+      annualStatements: [{ taxableWage: 1000, wageTaxWithheld: 0 }],
+      mortgageInterest: 50000,
+    });
 
     expect(result.nl.nlTaxableIncome).toBe(0);
     expect(result.nl.mortgageDeduction).toBe(1000);
@@ -197,7 +205,12 @@ describe("inputs and params", () => {
 
   it("calculates a result for every supported year", () => {
     for (const year of VALID_YEARS) {
-      const result = calculate({ ...base, year, grossSalary: 100000, mortgageInterest: 8000 });
+      const result = calculate({
+        ...base,
+        year,
+        annualStatements: [{ taxableWage: 100000, wageTaxWithheld: 0 }],
+        mortgageInterest: 8000,
+      });
       expect(result.mortgage?.realised.netBenefit).toBeGreaterThan(0);
     }
   });
@@ -219,7 +232,12 @@ describe("mortgage premium income", () => {
   for (const year of VALID_YEARS) {
     for (const belowAOWAge of [true, false]) {
       it(`reduces premium income below the ceiling in ${year}, below AOW: ${belowAOWAge}`, () => {
-        const inputs = { ...base, year, belowAOWAge, grossSalary: 30000 };
+        const inputs = {
+          ...base,
+          year,
+          belowAOWAge,
+          annualStatements: [{ taxableWage: 30000, wageTaxWithheld: 0 }],
+        };
         const p = TAX_PARAMS[year].nl[belowAOWAge ? "under" : "over"];
         const without = calculateNLTax(inputs);
         const withMortgage = calculateNLTax(inputs, 6000);
@@ -233,18 +251,29 @@ describe("mortgage premium income", () => {
     }
     it(`only reduces premiums once income falls below the ceiling in ${year}`, () => {
       const p = TAX_PARAMS[year].nl.under;
-      const inputs = { ...base, year, grossSalary: p.socialPremiumMax + 2000 };
+      const inputs = {
+        ...base,
+        year,
+        annualStatements: [{ taxableWage: p.socialPremiumMax + 2000, wageTaxWithheld: 0 }],
+      };
       expect(calculateNLTax(inputs, 1000).volksverzekeringen).toBe(
         calculateNLTax(inputs).volksverzekeringen,
       );
       expect(calculateNLTax(inputs, 3000).volksverzekeringen).toBe(
         Math.floor((p.socialPremiumMax - 1000) * p.socialPremiumRate),
       );
-      expect(calculateNLTax(inputs, inputs.grossSalary + 1000).volksverzekeringen).toBe(0);
+      expect(
+        calculateNLTax(inputs, inputs.annualStatements[0]!.taxableWage + 1000).volksverzekeringen,
+      ).toBe(0);
     });
   }
   it("uses worldwide salary even when only part is taxed in NL", () => {
-    const inputs = { ...base, grossSalary: 30000, daysWorkedNL: 180, daysWorkedBE: 20 };
+    const inputs = {
+      ...base,
+      annualStatements: [{ taxableWage: 30000, wageTaxWithheld: 0 }],
+      daysWorkedNL: 180,
+      daysWorkedBE: 20,
+    };
     const p = TAX_PARAMS[inputs.year].nl.under;
     const result = calculateNLTax(inputs, 28000);
     expect(result.nlTaxableIncome).toBe(0);

@@ -29,14 +29,14 @@ interface Props {
 
 export default function SummaryResult({ result, onResetInputs }: Props) {
   const [copyStatus, setCopyStatus] = useState<"idle" | "success" | "error">("idle");
-  const { grossIncome, totalTax, netIncome, effectiveRateTotal, nlCharge, be } = result;
-  const { withheldTaxNL } = result.inputs;
-  const nlBalance = withheldTaxNL - nlCharge.netTaxNL;
+  const { taxableWage, wageTaxWithheld, totalTax, netIncome, effectiveRateTotal, nlCharge, be } =
+    result;
+  const nlBalance = wageTaxWithheld - nlCharge.netTaxNL;
   const netResult = nlBalance - (be?.netTaxBE ?? 0);
   const totalWorkdays = getTotalWorkdays(result.inputs);
 
-  const nlPct = grossIncome > 0 ? (nlCharge.netTaxNL / grossIncome) * 100 : 0;
-  const bePct = grossIncome > 0 ? ((be?.netTaxBE ?? 0) / grossIncome) * 100 : 0;
+  const nlPct = taxableWage > 0 ? (nlCharge.netTaxNL / taxableWage) * 100 : 0;
+  const bePct = taxableWage > 0 ? ((be?.netTaxBE ?? 0) / taxableWage) * 100 : 0;
   const netPct = 100 - nlPct - bePct;
 
   useEffect(() => {
@@ -51,7 +51,7 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
     const lines = [
       `━━━ ${m.summary_copy_title(yearParams(result.inputs.year))} ━━━`,
       "",
-      pad(m.summary_gross_income(), fmt(grossIncome)),
+      pad(m.summary_taxable_wage(), fmt(taxableWage)),
       pad(`🇳🇱 ${m.summary_dutch_tax()}`, `−${fmt(nlCharge.netTaxNL)}`),
       ...(be && be.netTaxBE > 0
         ? [pad(`🇧🇪 ${m.summary_belgian_tax()}`, `−${fmt(be.netTaxBE)}`)]
@@ -161,8 +161,8 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
       <div>
         <div className="bt-breakdown">
           <div className="bt-breakdown__row">
-            <span className="bt-breakdown__label">{m.summary_gross_income()}</span>
-            <span className="bt-breakdown__value">{fmt(grossIncome)}</span>
+            <span className="bt-breakdown__label">{m.summary_taxable_wage()}</span>
+            <span className="bt-breakdown__value">{fmt(taxableWage)}</span>
           </div>
           <div className="bt-breakdown__row">
             <span className="bt-breakdown__label">
@@ -271,14 +271,14 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
       })()}
 
       {/* Fiscal balance (if NL tax was withheld) */}
-      {withheldTaxNL > 0 && (
+      {wageTaxWithheld > 0 && (
         <div>
           <h6 className="mb-3">{m.summary_eindafrekening()}</h6>
 
           <div className="bt-breakdown">
             <div className="bt-breakdown__row">
               <span className="bt-breakdown__label">🇳🇱 {m.summary_withheld_nl()}</span>
-              <span className="bt-breakdown__value">{fmt(withheldTaxNL)}</span>
+              <span className="bt-breakdown__value">{fmt(wageTaxWithheld)}</span>
             </div>
             <div className="bt-breakdown__row">
               <span className="bt-breakdown__label">🇳🇱 {m.summary_nl_owed()}</span>

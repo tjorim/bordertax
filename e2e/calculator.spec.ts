@@ -25,7 +25,7 @@ test("changing the year and income updates the page", async ({ page }) => {
 
   const summary = page.getByRole("tabpanel");
   const before = await summary.innerText();
-  await page.getByLabel("Gross annual salary (€)").fill("85000");
+  await page.getByLabel("Taxable wage (€)").fill("85000");
   await expect.poll(() => summary.innerText()).not.toBe(before);
 });
 

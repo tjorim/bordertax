@@ -89,17 +89,28 @@ describe("stateless HTTP MCP", () => {
     );
     const comparison = await client.callTool({
       name: "compare_scenarios",
-      arguments: { base: DEFAULT_INPUTS, overrides: { grossSalary: 70000 } },
+      arguments: {
+        base: DEFAULT_INPUTS,
+        overrides: { annualStatements: [{ taxableWage: 70000, wageTaxWithheld: 0 }] },
+      },
     });
     expect(comparison.isError).not.toBe(true);
     expect((comparison.structuredContent as Record<string, unknown>)?.b).toEqual(
-      calculate(parseStrictTaxInputs({ ...DEFAULT_INPUTS, grossSalary: 70000 })),
+      calculate(
+        parseStrictTaxInputs({
+          ...DEFAULT_INPUTS,
+          annualStatements: [{ taxableWage: 70000, wageTaxWithheld: 0 }],
+        }),
+      ),
     );
     expect(
       (
         await client.callTool({
           name: "calculate_tax",
-          arguments: { ...DEFAULT_INPUTS, grossSalary: -1 },
+          arguments: {
+            ...DEFAULT_INPUTS,
+            annualStatements: [{ taxableWage: -1, wageTaxWithheld: 0 }],
+          },
         })
       ).isError,
     ).toBe(true);
@@ -111,13 +122,21 @@ describe("stateless HTTP MCP", () => {
       [a, b].map((client, i) =>
         client.callTool({
           name: "calculate_tax",
-          arguments: { ...DEFAULT_INPUTS, grossSalary: salaries[i] },
+          arguments: {
+            ...DEFAULT_INPUTS,
+            annualStatements: [{ taxableWage: salaries[i], wageTaxWithheld: 0 }],
+          },
         }),
       ),
     );
     results.forEach((result, i) =>
       expect((result.structuredContent as Record<string, unknown>)?.result).toEqual(
-        calculate(parseStrictTaxInputs({ ...DEFAULT_INPUTS, grossSalary: salaries[i] })),
+        calculate(
+          parseStrictTaxInputs({
+            ...DEFAULT_INPUTS,
+            annualStatements: [{ taxableWage: salaries[i], wageTaxWithheld: 0 }],
+          }),
+        ),
       ),
     );
   });
@@ -214,7 +233,10 @@ describe("stateless HTTP MCP", () => {
     const client = await connect();
     await client.callTool({
       name: "calculate_tax",
-      arguments: { ...DEFAULT_INPUTS, grossSalary: 81234.56 },
+      arguments: {
+        ...DEFAULT_INPUTS,
+        annualStatements: [{ taxableWage: 81234.56, wageTaxWithheld: 0 }],
+      },
     });
     await fetch(`${url}/mcp`, { method: "POST", body: "private-invalid-body" });
     for (const spy of spies) expect(spy).not.toHaveBeenCalled();

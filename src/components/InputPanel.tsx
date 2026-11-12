@@ -7,11 +7,31 @@ import {
 } from "@/components/ui/accordion";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field";
+import {
+  Field,
+  FieldDescription,
+  FieldGroup,
+  FieldLabel,
+  FieldLegend,
+  FieldSet,
+} from "@/components/ui/field";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
-import { CoinsIcon, EyeOffIcon, InfoIcon, UserIcon } from "lucide-react";
+import {
+  CalendarDaysIcon,
+  ChevronDownIcon,
+  EyeOffIcon,
+  FileTextIcon,
+  FilesIcon,
+  HouseIcon,
+  InfoIcon,
+  LandmarkIcon,
+  PlusIcon,
+  Trash2Icon,
+  UserIcon,
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSelector } from "@tanstack/react-form";
 import { cn } from "@/lib/utils";
 import { z } from "zod";
@@ -19,6 +39,8 @@ import { z } from "zod";
 import { VALID_YEARS, isThirtyPercentRulingSupportedResident } from "../tax/constants";
 import type { TaxFormApi } from "../App";
 import type { TaxInputs } from "../tax/types";
+import { BELGIAN_CODES, MAX_ANNUAL_STATEMENTS } from "../tax/schema";
+import { sumAnnualStatements } from "../tax/statements";
 import { getMaxDaysInYear, getNLFractions, getTotalWorkdays } from "../tax/workdays";
 import { yearParams } from "@/tax/assessmentYear";
 import * as m from "../paraglide/messages.js";
@@ -26,24 +48,40 @@ import { CheckboxField } from "./fields/CheckboxField";
 import { CurrencyField, NumberField, fieldError } from "./fields/NumberField";
 import { CodeBadge } from "./CodeBadge";
 import { ExportInputsButton, ImportInputsButton } from "./InputFileControls";
-import { DEFAULT_INPUTS } from "../tax/defaults";
+import { DEFAULT_INPUTS, EMPTY_ANNUAL_STATEMENT } from "../tax/defaults";
+import { fmt } from "./format";
 
 interface Props {
   form: TaxFormApi;
 }
 
-type BelgianDeductionKey =
-  | "socialContributions"
-  | "aanvullendPensioen"
-  | "dienstencheques"
-  | "roerendeVoorheffing";
+type BelgianDocumentKey = keyof typeof BELGIAN_CODES;
 
 const allowEmptyNumber = (handleChange: (value: number) => void) => (value: number | undefined) =>
   handleChange(value as number);
 
+const addStatementId = "add-annual-statement";
+/** The first statement keeps the id the single wage field always had. */
+const statementInputId = (index: number) =>
+  index === 0 ? "taxable-wage" : `taxable-wage-${index + 1}`;
+
 export default function InputPanel({ form }: Props) {
   const [showFormulas, setShowFormulas] = useState(false);
   const values = useSelector(form.atom, (s) => s.values);
+  const [sickSplitOpen, setSickSplitOpen] = useState(false);
+  // A split entered elsewhere (an imported file) stays visible.
+  const showSickSplit = sickSplitOpen || (values.sickDaysOutsideNL ?? 0) > 0;
+  // Adding or removing a statement moves focus to the field or button that takes its place,
+  // once the re-render has put it in the DOM.
+  const focusTarget = useRef<string | null>(null);
+  const setFocusTarget = (id: string) => {
+    focusTarget.current = id;
+  };
+  useEffect(() => {
+    if (focusTarget.current === null) return;
+    document.getElementById(focusTarget.current)?.focus();
+    focusTarget.current = null;
+  });
 
   const totalWorkdays = getTotalWorkdays(values);
   const maxWorkdaysInYear = getMaxDaysInYear(values.year);
@@ -62,9 +100,12 @@ export default function InputPanel({ form }: Props) {
       : 0;
 
   return (
-    <Accordion defaultValue={["0", "1", "2"]} multiple>
+    <Accordion
+      defaultValue={["situation", "statements", "workdays", "documents", "assessment", "mortgage"]}
+      multiple
+    >
       {/* ── Section 1: Situation ─────────────────────────────── */}
-      <AccordionItem value="0">
+      <AccordionItem value="situation">
         <AccordionTrigger>
           <UserIcon aria-hidden="true" className="inline size-4 shrink-0 align-text-bottom me-2" />
           {m.input_personal_situation()}
@@ -168,19 +209,41 @@ export default function InputPanel({ form }: Props) {
                 </form.Field>
               </>
             )}
+
+            {isThirtyPercentRulingSupportedResident(values.residentCountry) && (
+              <form.Field name="thirtyPercentRuling">
+                {(field) => (
+                  <div className="col-span-12">
+                    <CheckboxField
+                      id="thirty-ruling"
+                      label={m.input_thirty_percent_ruling()}
+                      checked={field.value}
+                      onCheckedChange={(checked) => field.handleChange(checked)}
+                      aria-describedby="thirty-ruling-hint"
+                    />
+                    <FieldDescription id="thirty-ruling-hint" className="mt-1">
+                      {m.input_thirty_percent_ruling_hint()}
+                    </FieldDescription>
+                  </div>
+                )}
+              </form.Field>
+            )}
           </FieldGroup>
         </AccordionContent>
       </AccordionItem>
 
-      {/* ── Section 2: Income ────────────────────────────────── */}
-      <AccordionItem value="1">
+      {/* ── Section 2: Annual tax statements (jaaropgaven) ───── */}
+      <AccordionItem value="statements">
         <AccordionTrigger>
-          <CoinsIcon aria-hidden="true" className="inline size-4 shrink-0 align-text-bottom me-2" />
-          {m.input_income()}
+          <FileTextIcon
+            aria-hidden="true"
+            className="inline size-4 shrink-0 align-text-bottom me-2"
+          />
+          {m.input_section_statements()}
         </AccordionTrigger>
         <AccordionContent>
-          <FieldGroup className="grid grid-cols-12">
-            <div className="col-span-12">
+          <FieldGroup>
+            <div>
               <FieldDescription className="mt-1">
                 {m.input_income_not_persisted_hint()}
               </FieldDescription>
@@ -195,197 +258,255 @@ export default function InputPanel({ form }: Props) {
               </div>
             </div>
 
-            <form.Field
-              name="grossSalary"
-              validators={[{ run: z.number().min(0), triggers: ["change"] }]}
-            >
-              {(field) => {
-                const err = fieldError(field.errors as unknown[]);
+            <form.Field name="annualStatements">
+              {(listField) => {
+                const several = listField.value.length > 1;
                 return (
-                  <div className="col-span-12">
-                    <CurrencyField
-                      id="gross-salary"
-                      label={m.input_gross_salary()}
-                      min={0}
-                      value={field.value}
-                      onChange={allowEmptyNumber(field.handleChange)}
-                      onBlur={field.handleBlur}
-                      hint={m.input_gross_salary_hint()}
-                      hintId="gross-salary-hint"
-                      error={err}
-                    />
-                  </div>
+                  <>
+                    {listField.value.map((_, index) => {
+                      const number = index + 1;
+                      const fields = (
+                        <>
+                          <form.Field
+                            name={`annualStatements[${index}].taxableWage`}
+                            validators={[{ run: z.number().min(0), triggers: ["change"] }]}
+                          >
+                            {(field) => (
+                              <CurrencyField
+                                id={statementInputId(index)}
+                                label={m.input_taxable_wage()}
+                                min={0}
+                                value={field.value}
+                                onChange={allowEmptyNumber(field.handleChange)}
+                                onBlur={field.handleBlur}
+                                hint={index === 0 ? m.input_taxable_wage_hint() : undefined}
+                                hintId={index === 0 ? "taxable-wage-hint" : undefined}
+                                error={fieldError(field.errors as unknown[])}
+                              />
+                            )}
+                          </form.Field>
+                          <form.Field
+                            name={`annualStatements[${index}].wageTaxWithheld`}
+                            validators={[{ run: z.number().min(0), triggers: ["change"] }]}
+                          >
+                            {(field) => (
+                              <CurrencyField
+                                id={
+                                  index === 0 ? "wage-tax-withheld" : `wage-tax-withheld-${number}`
+                                }
+                                label={m.input_wage_tax_withheld()}
+                                min={0}
+                                value={field.value}
+                                onChange={allowEmptyNumber(field.handleChange)}
+                                onBlur={field.handleBlur}
+                                hint={index === 0 ? m.input_wage_tax_withheld_hint() : undefined}
+                                hintId={index === 0 ? "wage-tax-withheld-hint" : undefined}
+                                error={fieldError(field.errors as unknown[])}
+                              />
+                            )}
+                          </form.Field>
+                        </>
+                      );
+                      // One statement is the plain case: no legend and nothing to remove.
+                      if (!several) return <FieldGroup key={index}>{fields}</FieldGroup>;
+                      return (
+                        <FieldSet key={index} className="rounded-md border border-border-soft p-3">
+                          <FieldLegend className="px-1">
+                            {m.input_statement_title({ number })}
+                          </FieldLegend>
+                          {fields}
+                          <Button
+                            variant="ghost"
+                            size="xs"
+                            className="w-fit"
+                            onClick={() => {
+                              listField.removeValue(index);
+                              setFocusTarget(addStatementId);
+                            }}
+                          >
+                            <Trash2Icon aria-hidden="true" />
+                            {m.input_statement_remove({ number })}
+                          </Button>
+                        </FieldSet>
+                      );
+                    })}
+                    {several && (
+                      <FieldDescription role="status" className="text-text">
+                        {m.input_statements_total({
+                          amount: fmt(sumAnnualStatements(values.annualStatements).taxableWage),
+                        })}
+                      </FieldDescription>
+                    )}
+                    {listField.value.length < MAX_ANNUAL_STATEMENTS && (
+                      <div className="flex flex-col gap-1">
+                        <Button
+                          id={addStatementId}
+                          variant="outline-secondary"
+                          size="sm"
+                          className="w-fit"
+                          aria-describedby="add-statement-hint"
+                          onClick={() => {
+                            const index = listField.value.length;
+                            listField.pushValue({ ...EMPTY_ANNUAL_STATEMENT });
+                            setFocusTarget(statementInputId(index));
+                          }}
+                        >
+                          <PlusIcon aria-hidden="true" />
+                          {m.input_statement_add()}
+                        </Button>
+                        <FieldDescription id="add-statement-hint">
+                          {m.input_statement_add_hint()}
+                        </FieldDescription>
+                      </div>
+                    )}
+                  </>
                 );
               }}
             </form.Field>
+          </FieldGroup>
+        </AccordionContent>
+      </AccordionItem>
 
-            <form.Field
-              name="withheldTaxNL"
-              validators={[{ run: z.number().min(0), triggers: ["change"] }]}
-            >
-              {(field) => {
-                const err = fieldError(field.errors as unknown[]);
-                return (
-                  <div className="col-span-12">
-                    <CurrencyField
-                      id="withheldTaxNL"
-                      label={m.input_withheld_tax_nl()}
-                      min={0}
-                      value={field.value}
-                      onChange={allowEmptyNumber(field.handleChange)}
-                      onBlur={field.handleBlur}
-                      hint={m.input_withheld_tax_nl_hint()}
-                      hintId="withheld-tax-nl-hint"
-                      error={err}
-                    />
-                  </div>
-                );
-              }}
-            </form.Field>
-
-            <div className="col-span-12">
-              <FieldDescription>{m.input_assessment_intro()}</FieldDescription>
-            </div>
-
-            <form.Field name="assessmentIncomeTaxDue">
-              {(field) => (
-                <div className="col-span-12 table:col-span-6">
-                  <CurrencyField
-                    id="assessment-income-tax"
-                    label={m.input_assessment_income_tax()}
-                    min={0}
-                    value={field.value}
-                    onChange={field.handleChange}
-                    onBlur={field.handleBlur}
-                    hint={m.input_assessment_income_tax_hint()}
-                    hintId="assessment-income-tax-hint"
-                    error={
-                      values.assessmentPremiumsDue !== undefined && field.value === undefined
-                        ? m.input_assessment_both_required()
-                        : undefined
-                    }
-                  />
-                </div>
-              )}
-            </form.Field>
-
-            <form.Field name="assessmentPremiumsDue">
-              {(field) => (
-                <div className="col-span-12 table:col-span-6">
-                  <CurrencyField
-                    id="assessment-premiums"
-                    label={m.input_assessment_premiums()}
-                    min={0}
-                    value={field.value}
-                    onChange={field.handleChange}
-                    onBlur={field.handleBlur}
-                    hint={m.input_assessment_premiums_hint()}
-                    hintId="assessment-premiums-hint"
-                    error={
-                      values.assessmentIncomeTaxDue !== undefined && field.value === undefined
-                        ? m.input_assessment_both_required()
-                        : undefined
-                    }
-                  />
-                </div>
-              )}
-            </form.Field>
-
+      {/* ── Section 3: Workday record ────────────────────────── */}
+      <AccordionItem value="workdays">
+        <AccordionTrigger>
+          <CalendarDaysIcon
+            aria-hidden="true"
+            className="inline size-4 shrink-0 align-text-bottom me-2"
+          />
+          {m.input_section_workdays()}
+        </AccordionTrigger>
+        <AccordionContent>
+          <FieldGroup className="grid grid-cols-12">
             <form.Field
               name="daysWorkedNL"
               validators={[{ run: z.number().min(0), triggers: ["change"] }]}
             >
-              {(field) => {
-                const err = fieldError(field.errors as unknown[]);
-                return (
-                  <div className="col-span-12 table:col-span-6">
-                    <NumberField
-                      id="days-worked-nl"
-                      label={m.input_workdays_nl()}
-                      min={0}
-                      value={field.value}
-                      onChange={allowEmptyNumber(field.handleChange)}
-                      onBlur={field.handleBlur}
-                      hint={m.input_workdays_nl_hint()}
-                      hintId="workdays-nl-hint"
-                      error={err}
-                    />
-                  </div>
-                );
-              }}
+              {(field) => (
+                <div className="col-span-12 table:col-span-6">
+                  <NumberField
+                    id="days-worked-nl"
+                    label={m.input_workdays_nl()}
+                    min={0}
+                    value={field.value}
+                    onChange={allowEmptyNumber(field.handleChange)}
+                    onBlur={field.handleBlur}
+                    hint={m.input_workdays_nl_hint()}
+                    hintId="workdays-nl-hint"
+                    error={fieldError(field.errors as unknown[])}
+                  />
+                </div>
+              )}
             </form.Field>
 
             <form.Field
               name="daysWorkedBE"
               validators={[{ run: z.number().min(0), triggers: ["change"] }]}
             >
-              {(field) => {
-                const err = fieldError(field.errors as unknown[]);
-                return (
-                  <div className="col-span-12 table:col-span-6">
-                    <NumberField
-                      id="days-worked-be"
-                      label={m.input_workdays_be()}
-                      min={0}
-                      value={field.value}
-                      onChange={allowEmptyNumber(field.handleChange)}
-                      onBlur={field.handleBlur}
-                      hint={m.input_workdays_be_hint()}
-                      hintId="workdays-be-hint"
-                      error={err}
-                    />
-                  </div>
-                );
-              }}
+              {(field) => (
+                <div className="col-span-12 table:col-span-6">
+                  <NumberField
+                    id="days-worked-be"
+                    label={m.input_workdays_be()}
+                    min={0}
+                    value={field.value}
+                    onChange={allowEmptyNumber(field.handleChange)}
+                    onBlur={field.handleBlur}
+                    hint={m.input_workdays_be_hint()}
+                    hintId="workdays-be-hint"
+                    error={fieldError(field.errors as unknown[])}
+                  />
+                </div>
+              )}
             </form.Field>
 
             <form.Field
               name="daysWorkedOther"
               validators={[{ run: z.number().min(0), triggers: ["change"] }]}
             >
-              {(field) => {
-                const err = fieldError(field.errors as unknown[]);
-                return (
-                  <div className="col-span-12 table:col-span-6">
-                    <NumberField
-                      id="daysWorkedOther"
-                      label={m.input_workdays_other()}
-                      min={0}
-                      value={field.value}
-                      onChange={allowEmptyNumber(field.handleChange)}
-                      onBlur={field.handleBlur}
-                      hint={m.input_workdays_other_hint()}
-                      hintId="days-other-hint"
-                      error={err}
-                    />
-                  </div>
-                );
-              }}
+              {(field) => (
+                <div className="col-span-12 table:col-span-6">
+                  <NumberField
+                    id="daysWorkedOther"
+                    label={m.input_workdays_other()}
+                    min={0}
+                    value={field.value}
+                    onChange={allowEmptyNumber(field.handleChange)}
+                    onBlur={field.handleBlur}
+                    hint={m.input_workdays_other_hint()}
+                    hintId="days-other-hint"
+                    error={fieldError(field.errors as unknown[])}
+                  />
+                </div>
+              )}
             </form.Field>
 
             <form.Field
-              name="sickDays"
+              name="sickDaysNL"
               validators={[{ run: z.number().min(0), triggers: ["change"] }]}
             >
-              {(field) => {
-                const err = fieldError(field.errors as unknown[]);
-                return (
-                  <div className="col-span-12 table:col-span-6">
+              {(field) => (
+                <div className="col-span-12 table:col-span-6">
+                  <NumberField
+                    id="sickDays"
+                    label={showSickSplit ? m.input_sick_days_nl() : m.input_sick_days()}
+                    min={0}
+                    value={field.value}
+                    onChange={allowEmptyNumber(field.handleChange)}
+                    onBlur={field.handleBlur}
+                    hint={m.input_sick_days_hint()}
+                    hintId="sick-days-hint"
+                    error={fieldError(field.errors as unknown[])}
+                  />
+                </div>
+              )}
+            </form.Field>
+
+            <Collapsible
+              className="col-span-12 flex flex-col gap-4"
+              open={showSickSplit}
+              onOpenChange={(open) => {
+                // Closing the split goes back to one figure: every sick day counts as an NL day.
+                if (!open && (values.sickDaysOutsideNL ?? 0) > 0) {
+                  form.setFieldValue(
+                    "sickDaysNL",
+                    (values.sickDaysNL ?? 0) + (values.sickDaysOutsideNL ?? 0),
+                  );
+                  form.setFieldValue("sickDaysOutsideNL", 0);
+                }
+                setSickSplitOpen(open);
+              }}
+            >
+              <CollapsibleTrigger
+                render={<Button variant="link" size="xs" className="w-fit px-0 text-text-muted" />}
+              >
+                <ChevronDownIcon
+                  aria-hidden="true"
+                  className={cn("transition-transform", showSickSplit && "rotate-180")}
+                />
+                {m.input_sick_days_split()}
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <form.Field
+                  name="sickDaysOutsideNL"
+                  validators={[{ run: z.number().min(0), triggers: ["change"] }]}
+                >
+                  {(field) => (
                     <NumberField
-                      id="sickDays"
-                      label={m.input_sick_days()}
+                      id="sick-days-outside-nl"
+                      label={m.input_sick_days_outside_nl()}
                       min={0}
                       value={field.value}
                       onChange={allowEmptyNumber(field.handleChange)}
                       onBlur={field.handleBlur}
-                      hint={m.input_sick_days_hint()}
-                      hintId="sick-days-hint"
-                      error={err}
+                      hint={m.input_sick_days_outside_nl_hint()}
+                      hintId="sick-days-outside-nl-hint"
+                      error={fieldError(field.errors as unknown[])}
                     />
-                  </div>
-                );
-              }}
-            </form.Field>
+                  )}
+                </form.Field>
+              </CollapsibleContent>
+            </Collapsible>
 
             <div className="col-span-12">
               <div
@@ -448,102 +569,6 @@ export default function InputPanel({ form }: Props) {
                 )}
             </div>
 
-            {isThirtyPercentRulingSupportedResident(values.residentCountry) && (
-              <form.Field name="thirtyPercentRuling">
-                {(field) => (
-                  <div className="col-span-12">
-                    <CheckboxField
-                      id="thirty-ruling"
-                      label={m.input_thirty_percent_ruling()}
-                      checked={field.value}
-                      onCheckedChange={(checked) => field.handleChange(checked)}
-                      aria-describedby="thirty-ruling-hint"
-                    />
-                    <FieldDescription id="thirty-ruling-hint" className="mt-1">
-                      {m.input_thirty_percent_ruling_hint()}
-                    </FieldDescription>
-                  </div>
-                )}
-              </form.Field>
-            )}
-
-            {values.residentCountry === "BE" && (
-              <>
-                {(
-                  [
-                    {
-                      key: "socialContributions",
-                      label: m.input_social_contributions(),
-                      code: "1257",
-                      codeDescription: m.code_desc_1257(),
-                      hint: m.input_social_contributions_hint(),
-                    },
-                    {
-                      key: "aanvullendPensioen",
-                      label: m.input_aanvullend_pensioen(),
-                      code: "1285",
-                      codeDescription: m.code_desc_1285(),
-                      hint: m.input_aanvullend_pensioen_hint(),
-                    },
-                    {
-                      key: "dienstencheques",
-                      label: m.input_dienstencheques(),
-                      code: "3364",
-                      codeDescription: m.code_desc_3364(),
-                      hint:
-                        values.year >= 2025 ? m.input_dienstencheques_hint_abolished() : undefined,
-                    },
-                    {
-                      key: "roerendeVoorheffing",
-                      label: m.input_roerende_voorheffing(),
-                      code: "1437",
-                      codeDescription: m.code_desc_1437(),
-                      hint: m.input_roerende_voorheffing_hint(),
-                    },
-                  ] as const satisfies readonly {
-                    key: BelgianDeductionKey;
-                    label: string;
-                    code: string;
-                    codeDescription: string;
-                    hint?: string;
-                  }[]
-                ).map((fieldDef) => (
-                  <form.Field
-                    key={fieldDef.key}
-                    name={fieldDef.key}
-                    validators={[{ run: z.number().min(0), triggers: ["change"] }]}
-                  >
-                    {(field) => {
-                      const err = fieldError(field.errors as unknown[]);
-                      return (
-                        <div className="col-span-12 table:col-span-6">
-                          <CurrencyField
-                            id={fieldDef.key}
-                            label={
-                              <>
-                                {fieldDef.label}
-                                <CodeBadge
-                                  code={fieldDef.code}
-                                  description={fieldDef.codeDescription}
-                                />
-                              </>
-                            }
-                            min={0}
-                            value={field.value}
-                            onChange={allowEmptyNumber(field.handleChange)}
-                            onBlur={field.handleBlur}
-                            error={err}
-                            hint={fieldDef.hint}
-                            hintId={fieldDef.hint ? `${fieldDef.key}-hint` : undefined}
-                          />
-                        </div>
-                      );
-                    }}
-                  </form.Field>
-                ))}
-              </>
-            )}
-
             <div className="col-span-12">
               <Button
                 variant="outline-secondary"
@@ -574,8 +599,161 @@ export default function InputPanel({ form }: Props) {
           </FieldGroup>
         </AccordionContent>
       </AccordionItem>
-      <AccordionItem value="2">
-        <AccordionTrigger>{m.input_mortgage_title()}</AccordionTrigger>
+      {/* ── Section 4: Other documents (Belgian return) ──────── */}
+      {values.residentCountry === "BE" && (
+        <AccordionItem value="documents">
+          <AccordionTrigger>
+            <FilesIcon
+              aria-hidden="true"
+              className="inline size-4 shrink-0 align-text-bottom me-2"
+            />
+            {m.input_section_documents()}
+          </AccordionTrigger>
+          <AccordionContent>
+            <FieldGroup>
+              {(
+                [
+                  {
+                    key: "healthInsurancePremium",
+                    document: m.input_document_health_insurer(),
+                    label: m.input_health_insurance_premium(),
+                    codeDescription: m.code_desc_1257(),
+                    hint: m.input_health_insurance_premium_hint(),
+                  },
+                  {
+                    key: "supplementaryPension",
+                    document: m.input_document_pension(),
+                    label: m.input_supplementary_pension(),
+                    codeDescription: m.code_desc_1285(),
+                    hint: m.input_supplementary_pension_hint(),
+                  },
+                  {
+                    key: "serviceVouchers",
+                    document: m.input_document_service_vouchers(),
+                    label: m.input_service_vouchers(),
+                    codeDescription: m.code_desc_3364(),
+                    hint:
+                      values.year >= 2025 ? m.input_service_vouchers_hint_abolished() : undefined,
+                  },
+                  {
+                    key: "reclaimableWithholdingTax",
+                    document: m.input_document_bank(),
+                    label: m.input_reclaimable_withholding_tax(),
+                    codeDescription: m.code_desc_1437(),
+                    hint: m.input_reclaimable_withholding_tax_hint(),
+                  },
+                ] as const satisfies readonly {
+                  key: BelgianDocumentKey;
+                  document: string;
+                  label: string;
+                  codeDescription: string;
+                  hint?: string;
+                }[]
+              ).map((fieldDef) => (
+                <FieldSet key={fieldDef.key} className="gap-2">
+                  <FieldLegend variant="label" className="mb-0 text-text-muted">
+                    {fieldDef.document}
+                  </FieldLegend>
+                  <form.Field
+                    name={fieldDef.key}
+                    validators={[{ run: z.number().min(0), triggers: ["change"] }]}
+                  >
+                    {(field) => (
+                      <CurrencyField
+                        id={fieldDef.key}
+                        label={
+                          <>
+                            {fieldDef.label}
+                            <CodeBadge
+                              code={BELGIAN_CODES[fieldDef.key]}
+                              description={fieldDef.codeDescription}
+                            />
+                          </>
+                        }
+                        min={0}
+                        value={field.value}
+                        onChange={allowEmptyNumber(field.handleChange)}
+                        onBlur={field.handleBlur}
+                        error={fieldError(field.errors as unknown[])}
+                        hint={fieldDef.hint}
+                        hintId={fieldDef.hint ? `${fieldDef.key}-hint` : undefined}
+                      />
+                    )}
+                  </form.Field>
+                </FieldSet>
+              ))}
+            </FieldGroup>
+          </AccordionContent>
+        </AccordionItem>
+      )}
+
+      {/* ── Section 5: Dutch assessment (aanslag) ────────────── */}
+      <AccordionItem value="assessment">
+        <AccordionTrigger>
+          <LandmarkIcon
+            aria-hidden="true"
+            className="inline size-4 shrink-0 align-text-bottom me-2"
+          />
+          {m.input_section_assessment()}
+        </AccordionTrigger>
+        <AccordionContent>
+          <FieldGroup className="grid grid-cols-12">
+            <div className="col-span-12">
+              <FieldDescription>{m.input_assessment_intro()}</FieldDescription>
+            </div>
+            <form.Field name="assessmentIncomeTaxDue">
+              {(field) => (
+                <div className="col-span-12 table:col-span-6">
+                  <CurrencyField
+                    id="assessment-income-tax"
+                    label={m.input_assessment_income_tax()}
+                    min={0}
+                    value={field.value}
+                    onChange={field.handleChange}
+                    onBlur={field.handleBlur}
+                    hint={m.input_assessment_income_tax_hint()}
+                    hintId="assessment-income-tax-hint"
+                    error={
+                      values.assessmentPremiumsDue !== undefined && field.value === undefined
+                        ? m.input_assessment_both_required()
+                        : undefined
+                    }
+                  />
+                </div>
+              )}
+            </form.Field>
+
+            <form.Field name="assessmentPremiumsDue">
+              {(field) => (
+                <div className="col-span-12 table:col-span-6">
+                  <CurrencyField
+                    id="assessment-premiums"
+                    label={m.input_assessment_premiums()}
+                    min={0}
+                    value={field.value}
+                    onChange={field.handleChange}
+                    onBlur={field.handleBlur}
+                    hint={m.input_assessment_premiums_hint()}
+                    hintId="assessment-premiums-hint"
+                    error={
+                      values.assessmentIncomeTaxDue !== undefined && field.value === undefined
+                        ? m.input_assessment_both_required()
+                        : undefined
+                    }
+                  />
+                </div>
+              )}
+            </form.Field>
+          </FieldGroup>
+        </AccordionContent>
+      </AccordionItem>
+
+      {/* ── Section 6: Home and mortgage ─────────────────────── */}
+      <AccordionItem value="mortgage">
+        <AccordionTrigger>
+          <HouseIcon aria-hidden="true" className="inline size-4 shrink-0 align-text-bottom me-2" />
+          {m.input_mortgage_title()}
+        </AccordionTrigger>
         <AccordionContent>
           <FieldGroup>
             <form.Field name="mortgageEnabled">

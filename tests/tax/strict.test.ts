@@ -6,6 +6,13 @@ import { getMaxDependentChildren, parseStrictTaxInputs, StrictTaxInputSchema } f
 
 const assessmentFields = ["assessmentIncomeTaxDue", "assessmentPremiumsDue"];
 
+const singleValueFields = [
+  "residentCountry",
+  "civilStatus",
+  "belgianRegion",
+  "thirtyPercentRuling",
+];
+
 const mortgageFields = [
   "mortgageEnabled",
   "mortgageInterest",
@@ -38,12 +45,46 @@ describe("strict tax input boundary", () => {
       Object.keys(TaxInputFields).sort(),
     );
     for (const field of Object.keys(TaxInputFields).filter(
-      (key) => !mortgageFields.includes(key) && !assessmentFields.includes(key),
+      (key) =>
+        !mortgageFields.includes(key) &&
+        !assessmentFields.includes(key) &&
+        !singleValueFields.includes(key),
     )) {
       const input = { ...DEFAULT_INPUTS } as Record<string, unknown>;
       delete input[field];
       expect(() => parseStrictTaxInputs(input)).toThrow(field);
     }
+  });
+
+  it("defaults the fields that have a single legal value and still rejects other values", () => {
+    const input = { ...DEFAULT_INPUTS } as Record<string, unknown>;
+    for (const field of singleValueFields) delete input[field];
+    expect(parseStrictTaxInputs(input)).toEqual(parseStrictTaxInputs(DEFAULT_INPUTS));
+    expect(() => parseStrictTaxInputs({ ...input, residentCountry: "NL" })).toThrow(
+      "residentCountry",
+    );
+    expect(() => parseStrictTaxInputs({ ...input, thirtyPercentRuling: true })).toThrow(
+      "thirtyPercentRuling",
+    );
+  });
+
+  it("needs one to ten annual statements, each with both figures", () => {
+    const statement = { taxableWage: 1000, wageTaxWithheld: 0 };
+    expect(() => parseStrictTaxInputs({ ...DEFAULT_INPUTS, annualStatements: [] })).toThrow(
+      "annualStatements: provide at least 1 entry",
+    );
+    expect(() =>
+      parseStrictTaxInputs({ ...DEFAULT_INPUTS, annualStatements: Array(11).fill(statement) }),
+    ).toThrow("annualStatements: at most 10 entries supported");
+    expect(() =>
+      parseStrictTaxInputs({ ...DEFAULT_INPUTS, annualStatements: [{ taxableWage: 1000 }] }),
+    ).toThrow("annualStatements.0.wageTaxWithheld");
+    expect(() =>
+      parseStrictTaxInputs({
+        ...DEFAULT_INPUTS,
+        annualStatements: [{ ...statement, employer: "x" }],
+      }),
+    ).toThrow("unsupported fields employer");
   });
 
   it("rejects invalid types, non-finite numbers, and negative numeric fields", () => {
@@ -100,13 +141,20 @@ describe("strict tax input boundary", () => {
       daysWorkedNL: max - 3,
       daysWorkedBE: 1,
       daysWorkedOther: 1,
-      sickDays: 1,
+      sickDaysNL: 0.5,
+      sickDaysOutsideNL: 0.5,
     };
     expect(parseStrictTaxInputs(input)).toEqual(input);
-    for (const field of ["daysWorkedNL", "daysWorkedBE", "daysWorkedOther", "sickDays"] as const) {
+    for (const field of [
+      "daysWorkedNL",
+      "daysWorkedBE",
+      "daysWorkedOther",
+      "sickDaysNL",
+      "sickDaysOutsideNL",
+    ] as const) {
       expect(() => parseStrictTaxInputs({ ...input, [field]: input[field] + 0.5 })).toThrow(field);
     }
-    expect(() => parseStrictTaxInputs({ ...input, sickDays: 0, daysWorkedNL: max })).toThrow(
+    expect(() => parseStrictTaxInputs({ ...input, sickDaysNL: 0, daysWorkedNL: max })).toThrow(
       "daysWorkedNL",
     );
   });

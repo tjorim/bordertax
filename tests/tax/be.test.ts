@@ -12,23 +12,23 @@ const base: TaxInputs = {
   belowAOWAge: true,
   belgianRegion: "flemish",
   communalTaxRate: 7,
-  grossSalary: 60000,
+  annualStatements: [{ taxableWage: 60000, wageTaxWithheld: 0 }],
   daysWorkedNL: 220,
   daysWorkedBE: 0,
   daysWorkedOther: 0,
   thirtyPercentRuling: false,
-  socialContributions: 0,
-  aanvullendPensioen: 0,
-  dienstencheques: 0,
-  roerendeVoorheffing: 0,
-  withheldTaxNL: 0,
-  sickDays: 0,
+  healthInsurancePremium: 0,
+  supplementaryPension: 0,
+  serviceVouchers: 0,
+  reclaimableWithholdingTax: 0,
+  sickDaysNL: 0,
+  sickDaysOutsideNL: 0,
 };
 
 function mockNL(overrides?: Partial<NLTaxResult>): NLTaxResult {
   const canonicalInputs: TaxInputs = {
     ...base,
-    grossSalary: 60000,
+    annualStatements: [{ taxableWage: 60000, wageTaxWithheld: 0 }],
     daysWorkedNL: 220,
     daysWorkedBE: 0,
   };
@@ -80,11 +80,11 @@ describe("calculateBETax", () => {
 
   it("dienstencheques reduce netTaxBE for income year 2024 (reduction still in force)", () => {
     const withoutVouchers = calculateBETax(
-      { ...base, year: 2024, daysWorkedNL: 200, daysWorkedBE: 20, dienstencheques: 0 },
+      { ...base, year: 2024, daysWorkedNL: 200, daysWorkedBE: 20, serviceVouchers: 0 },
       mockNL(),
     );
     const withVouchers = calculateBETax(
-      { ...base, year: 2024, daysWorkedNL: 200, daysWorkedBE: 20, dienstencheques: 1000 },
+      { ...base, year: 2024, daysWorkedNL: 200, daysWorkedBE: 20, serviceVouchers: 1000 },
       mockNL(),
     );
     expect(withVouchers!.netTaxBE).toBeLessThan(withoutVouchers!.netTaxBE);
@@ -92,11 +92,11 @@ describe("calculateBETax", () => {
 
   it("dienstencheques no longer reduce netTaxBE from income year 2025 onward (reduction abolished)", () => {
     const withoutVouchers = calculateBETax(
-      { ...base, year: 2025, daysWorkedNL: 200, daysWorkedBE: 20, dienstencheques: 0 },
+      { ...base, year: 2025, daysWorkedNL: 200, daysWorkedBE: 20, serviceVouchers: 0 },
       mockNL(),
     );
     const withVouchers = calculateBETax(
-      { ...base, year: 2025, daysWorkedNL: 200, daysWorkedBE: 20, dienstencheques: 1000 },
+      { ...base, year: 2025, daysWorkedNL: 200, daysWorkedBE: 20, serviceVouchers: 1000 },
       mockNL(),
     );
     expect(withVouchers!.netTaxBE).toBeCloseTo(withoutVouchers!.netTaxBE, 6);
@@ -105,7 +105,13 @@ describe("calculateBETax", () => {
   it("returns zero netTaxBE when both day counts are 0 and grossSalary is 0", () => {
     // With grossSalary=0, declared income=0, no tax of any kind
     const result = calculateBETax(
-      { ...base, grossSalary: 0, daysWorkedNL: 0, daysWorkedBE: 0, communalTaxRate: 0 },
+      {
+        ...base,
+        annualStatements: [{ taxableWage: 0, wageTaxWithheld: 0 }],
+        daysWorkedNL: 0,
+        daysWorkedBE: 0,
+        communalTaxRate: 0,
+      },
       mockNL({ nlTaxableIncome: 0, netTaxNL: 0, volksverzekeringen: 0, effectiveRateNL: 0 }),
     );
     expect(result!.beFraction).toBe(0);
@@ -122,7 +128,12 @@ describe("calculateBETax", () => {
 
   it("follows the FOD guideline: premiums before the day fraction, income tax from the exempt side", () => {
     const result = calculateBETax(
-      { ...base, grossSalary: 10000, daysWorkedNL: 9, daysWorkedBE: 1 },
+      {
+        ...base,
+        annualStatements: [{ taxableWage: 10000, wageTaxWithheld: 0 }],
+        daysWorkedNL: 9,
+        daysWorkedBE: 1,
+      },
       mockNL({ nlTaxableIncome: 9000, netTaxNL: 2000, incomeTaxDue: 800, premiumsDue: 1200 }),
     );
     // W = 10,000 − 1,200 = 8,800; Y = W × 1/10 = 880 (O.1); code 1250 = 8,000;
@@ -176,7 +187,7 @@ describe("calculateBETax", () => {
 
   it("effectiveRateBE is 0 when grossSalary is 0", () => {
     const result = calculateBETax(
-      { ...base, grossSalary: 0 },
+      { ...base, annualStatements: [{ taxableWage: 0, wageTaxWithheld: 0 }] },
       mockNL({ nlTaxableIncome: 0, netTaxNL: 0 }),
     );
     expect(result!.effectiveRateBE).toBe(0);
@@ -213,7 +224,12 @@ describe("calculateBETax", () => {
     // Very high income: declared income is high, forfait should hit cap
     // Use netTaxNL=0 so declaredIncome = grossSalary
     const result = calculateBETax(
-      { ...base, grossSalary: 200000, daysWorkedNL: 0, daysWorkedBE: 220 },
+      {
+        ...base,
+        annualStatements: [{ taxableWage: 200000, wageTaxWithheld: 0 }],
+        daysWorkedNL: 0,
+        daysWorkedBE: 220,
+      },
       mockNL({ nlTaxableIncome: 200000, netTaxNL: 0 }),
     );
     expect(result!.professionalExpenses).toBe(5930); // 2025 forfaitMax
@@ -222,7 +238,12 @@ describe("calculateBETax", () => {
   it("professional expenses for low income are a fraction of forfaitBase", () => {
     // Low income, no NL tax: forfait = 30% of (declaredIncome - socialContributions)
     const result = calculateBETax(
-      { ...base, grossSalary: 10000, daysWorkedNL: 0, daysWorkedBE: 220 },
+      {
+        ...base,
+        annualStatements: [{ taxableWage: 10000, wageTaxWithheld: 0 }],
+        daysWorkedNL: 0,
+        daysWorkedBE: 220,
+      },
       mockNL({ nlTaxableIncome: 0, netTaxNL: 0 }),
     );
     expect(result!.professionalExpenses).toBeCloseTo(10000 * 0.3, 1);
@@ -230,7 +251,10 @@ describe("calculateBETax", () => {
 
   it("nlExemptIncome is the days-based Dutch share of the gross wage", () => {
     const result = calculateBETax({ ...base, daysWorkedNL: 200, daysWorkedBE: 20 }, mockNL());
-    expect(result!.nlExemptIncome).toBeCloseTo(base.grossSalary * (200 / 220), 2);
+    expect(result!.nlExemptIncome).toBeCloseTo(
+      base.annualStatements[0]!.taxableWage * (200 / 220),
+      2,
+    );
   });
 
   it("works for tax year 2024", () => {
@@ -271,7 +295,12 @@ describe("calculateBETax", () => {
   it("omTeSlane is never negative", () => {
     // Very low income where personal allowance exceeds tax
     const result = calculateBETax(
-      { ...base, grossSalary: 5000, daysWorkedNL: 0, daysWorkedBE: 220 },
+      {
+        ...base,
+        annualStatements: [{ taxableWage: 5000, wageTaxWithheld: 0 }],
+        daysWorkedNL: 0,
+        daysWorkedBE: 220,
+      },
       mockNL({ nlTaxableIncome: 0, netTaxNL: 0 }),
     );
     expect(result!.omTeSlane).toBeGreaterThanOrEqual(0);
@@ -300,10 +329,10 @@ describe("calculateBETax", () => {
       const result = calculateBETax(
         {
           ...base,
-          grossSalary: 61234.57,
+          annualStatements: [{ taxableWage: 61234.57, wageTaxWithheld: 0 }],
           daysWorkedNL: 191,
           daysWorkedBE: 29,
-          socialContributions: 123.456,
+          healthInsurancePremium: 123.456,
           communalTaxRate: 6.3,
         },
         mockNL(),
@@ -340,7 +369,7 @@ describe("calculateBETax", () => {
     it("is 0 when the reductions are fully used", () => {
       const without = calculateBETax(inputs, mockNL())!;
       expect(without.federalReductionsUnused).toBe(0);
-      const small = calculateBETax({ ...inputs, roerendeVoorheffing: 10 }, mockNL())!;
+      const small = calculateBETax({ ...inputs, reclaimableWithholdingTax: 10 }, mockNL())!;
       expect(small.federalReductionsUnused).toBe(0);
       expect(small.saldoFederaal).toBeCloseTo(without.saldoFederaal - 10, 2);
     });
@@ -348,7 +377,7 @@ describe("calculateBETax", () => {
     it("reports the part of the reductions above the federal part", () => {
       const without = calculateBETax(inputs, mockNL())!;
       const result = calculateBETax(
-        { ...inputs, aanvullendPensioen: 1000, roerendeVoorheffing: 5000 },
+        { ...inputs, supplementaryPension: 1000, reclaimableWithholdingTax: 5000 },
         mockNL(),
       )!;
       // 30% × 1,000 + 5,000, against the reduced federal portion.
@@ -359,7 +388,7 @@ describe("calculateBETax", () => {
 
     it("leaves the regional saldo and the federal portion untouched", () => {
       const without = calculateBETax(inputs, mockNL())!;
-      const result = calculateBETax({ ...inputs, roerendeVoorheffing: 99999 }, mockNL())!;
+      const result = calculateBETax({ ...inputs, reclaimableWithholdingTax: 99999 }, mockNL())!;
       expect(result.gereduceerde).toBe(without.gereduceerde);
       expect(result.saldoGewestelijk).toBe(without.saldoGewestelijk);
       expect(result.federalTax).toBe(result.saldoFederaal);

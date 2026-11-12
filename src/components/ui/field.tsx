@@ -3,6 +3,34 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 
+function FieldSet({ className, ...props }: ComponentProps<"fieldset">) {
+  return (
+    <fieldset
+      data-slot="field-set"
+      className={cn("m-0 flex min-w-0 flex-col gap-4 border-0 p-0", className)}
+      {...props}
+    />
+  );
+}
+
+function FieldLegend({
+  className,
+  variant = "legend",
+  ...props
+}: ComponentProps<"legend"> & { variant?: "legend" | "label" }) {
+  return (
+    <legend
+      data-slot="field-legend"
+      data-variant={variant}
+      className={cn(
+        "mb-2 p-0 font-medium text-text data-[variant=label]:text-hint data-[variant=legend]:text-sm",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
 function FieldGroup({ className, ...props }: ComponentProps<"div">) {
   return (
     <div
@@ -107,4 +135,13 @@ function FieldError({
   );
 }
 
-export { Field, FieldContent, FieldDescription, FieldError, FieldGroup, FieldLabel };
+export {
+  Field,
+  FieldContent,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  FieldLegend,
+  FieldSet,
+};

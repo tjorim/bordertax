@@ -24,18 +24,18 @@ interface Props {
   result: NLTaxResult;
   /** The Dutch charge in use (estimate or assessment); defaults to the estimate in `result`. */
   charge?: DutchCharge;
-  withheldTaxNL?: number;
+  wageTaxWithheld?: number;
   thirtyPercentRuling?: boolean;
 }
 
 export default function NLResult({
   result,
   charge,
-  withheldTaxNL = 0,
+  wageTaxWithheld = 0,
   thirtyPercentRuling = false,
 }: Props) {
   const used = charge ?? estimateCharge(result);
-  const nlBalance = withheldTaxNL - used.netTaxNL;
+  const nlBalance = wageTaxWithheld - used.netTaxNL;
   return (
     <div>
       <h6 className="text-text-muted mb-4">
@@ -167,7 +167,7 @@ export default function NLResult({
       <DutchChargeSection
         result={result}
         charge={used}
-        withheldTaxNL={withheldTaxNL}
+        wageTaxWithheld={wageTaxWithheld}
         nlBalance={nlBalance}
       />
     </div>
@@ -190,12 +190,12 @@ function estimateCharge(result: NLTaxResult): DutchCharge {
 function DutchChargeSection({
   result,
   charge,
-  withheldTaxNL,
+  wageTaxWithheld,
   nlBalance,
 }: {
   result: NLTaxResult;
   charge: DutchCharge;
-  withheldTaxNL: number;
+  wageTaxWithheld: number;
   nlBalance: number;
 }) {
   const assessed = charge.source === "assessment";
@@ -268,11 +268,11 @@ function DutchChargeSection({
               )}
             </TableRow>
           ))}
-          {withheldTaxNL > 0 && (
+          {wageTaxWithheld > 0 && (
             <>
               <TableRow>
                 <TableCell colSpan={assessed ? 2 : 1}>{m.nl_withheld()}</TableCell>
-                <TableCell className="text-end">{fmt(withheldTaxNL)}</TableCell>
+                <TableCell className="text-end">{fmt(wageTaxWithheld)}</TableCell>
               </TableRow>
               <TableRow variant={nlBalance >= 0 ? "success" : "danger"} className="font-bold">
                 <TableCell colSpan={assessed ? 2 : 1}>

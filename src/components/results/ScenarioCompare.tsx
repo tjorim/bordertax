@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import { compareScenarios } from "@/tax/compare";
+import { sumAnnualStatements } from "@/tax/statements";
 import type { TaxInputs } from "@/tax/types";
 import { yearParams } from "@/tax/assessmentYear";
 import * as m from "@/paraglide/messages.js";
@@ -20,18 +21,30 @@ import { ImportInputsButton } from "../InputFileControls";
 import { fmt, fmtSigned } from "../format";
 
 type Overrides = Partial<
-  Pick<
-    TaxInputs,
-    "daysWorkedNL" | "daysWorkedBE" | "grossSalary" | "mortgageEnabled" | "mortgageInterest"
-  >
+  Pick<TaxInputs, "daysWorkedNL" | "daysWorkedBE" | "mortgageEnabled" | "mortgageInterest"> & {
+    /** B's total taxable wage; replaces the annual statements with one when it differs. */
+    taxableWage: number;
+  }
 >;
+
+function withOverrides(inputs: TaxInputs, { taxableWage, ...rest }: Overrides): TaxInputs {
+  const totals = sumAnnualStatements(inputs.annualStatements);
+  if (taxableWage === undefined || taxableWage === totals.taxableWage) {
+    return { ...inputs, ...rest };
+  }
+  return {
+    ...inputs,
+    ...rest,
+    annualStatements: [{ taxableWage, wageTaxWithheld: totals.wageTaxWithheld }],
+  };
+}
 
 export default function ScenarioCompare({ inputs }: { inputs: TaxInputs }) {
   const [overrides, setOverrides] = useState<Overrides>({});
   // A saved file replaces A (for example "as filed"); B then starts from the current inputs.
   const [baseline, setBaseline] = useState<TaxInputs | null>(null);
   const base = baseline ?? inputs;
-  const alternative = useMemo(() => ({ ...inputs, ...overrides }), [inputs, overrides]);
+  const alternative = useMemo(() => withOverrides(inputs, overrides), [inputs, overrides]);
   const comparison = useMemo(() => compareScenarios(base, alternative), [base, alternative]);
   const { a, b, delta, changed, attribution } = comparison;
   const update = (key: keyof Overrides, value: number | undefined) => {
@@ -86,8 +99,8 @@ export default function ScenarioCompare({ inputs }: { inputs: TaxInputs }) {
           id="compare-salary"
           label={m.compare_salary()}
           min={0}
-          value={alternative.grossSalary}
-          onChange={(value) => update("grossSalary", value)}
+          value={sumAnnualStatements(alternative.annualStatements).taxableWage}
+          onChange={(value) => update("taxableWage", value)}
         />
         {inputs.mortgageEnabled !== undefined && (
           <>

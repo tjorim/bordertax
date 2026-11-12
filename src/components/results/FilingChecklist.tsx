@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Alert } from "@/components/ui/alert";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Field, FieldDescription, FieldLabel } from "@/components/ui/field";
@@ -16,9 +17,10 @@ import {
 import { cn } from "@/lib/utils";
 import { MORTGAGE_QUALIFYING_MIN_NL_PERCENT } from "@/tax/constants";
 import { yearParams } from "@/tax/assessmentYear";
+import { compareSourcing, type SourcingComparison } from "@/tax/sourcing";
 import type { TaxResult } from "@/tax/types";
 import * as m from "@/paraglide/messages.js";
-import { fmt, fmtExact } from "../format.js";
+import { fmt, fmtExact, pct } from "../format.js";
 
 interface Props {
   result: TaxResult;
@@ -60,21 +62,29 @@ function buildNlRows(result: TaxResult, statementArbeidskorting: number | undefi
     result.mortgage === null ||
     result.mortgage.nlTaxedPercentIsUpperBound ||
     inputs.incomeOutsideNL === undefined;
+  // The Dutch return lists the wage per employer; one statement keeps the plain labels.
+  const several = inputs.annualStatements.length > 1;
+  const statementRows = inputs.annualStatements.flatMap((statement, index): Row[] => {
+    const number = index + 1;
+    return [
+      {
+        key: `loon-${number}`,
+        field: several ? m.filing_nl_loon_statement({ number }) : m.filing_nl_loon(),
+        value: fmt(statement.taxableWage),
+        format: "whole",
+        source: m.filing_source_jaaropgave(),
+      },
+      {
+        key: `loonheffing-${number}`,
+        field: several ? m.filing_nl_loonheffing_statement({ number }) : m.filing_nl_loonheffing(),
+        value: fmt(statement.wageTaxWithheld),
+        format: "whole",
+        source: m.filing_source_jaaropgave(),
+      },
+    ];
+  });
   return [
-    {
-      key: "loon",
-      field: m.filing_nl_loon(),
-      value: fmt(inputs.grossSalary),
-      format: "whole",
-      source: m.filing_source_jaaropgave(),
-    },
-    {
-      key: "loonheffing",
-      field: m.filing_nl_loonheffing(),
-      value: fmt(inputs.withheldTaxNL),
-      format: "whole",
-      source: m.filing_source_jaaropgave(),
-    },
+    ...statementRows,
     {
       key: "arbeidskorting-statement",
       field: m.filing_nl_arbeidskorting_statement(),
@@ -158,14 +168,14 @@ function buildBeGroups(result: TaxResult): Group[] {
         {
           key: "1257",
           field: m.filing_be_1257(),
-          value: fmtExact(inputs.socialContributions),
+          value: fmtExact(inputs.healthInsurancePremium),
           format: "cents",
           source: m.filing_source_health_insurer(),
         },
         {
           key: "1285",
           field: m.filing_be_1285(),
-          value: fmtExact(inputs.aanvullendPensioen),
+          value: fmtExact(inputs.supplementaryPension),
           format: "cents",
           source: m.filing_source_pension(),
         },
@@ -178,7 +188,7 @@ function buildBeGroups(result: TaxResult): Group[] {
         {
           key: "1437",
           field: m.filing_be_1437(),
-          value: fmtExact(inputs.roerendeVoorheffing),
+          value: fmtExact(inputs.reclaimableWithholdingTax),
           format: "cents",
           source: m.filing_source_bank(),
         },
@@ -193,7 +203,7 @@ function buildBeGroups(result: TaxResult): Group[] {
         {
           key: "3364",
           field: m.filing_be_3364(),
-          value: fmtExact(inputs.dienstencheques),
+          value: fmtExact(inputs.serviceVouchers),
           format: "cents",
           source: m.filing_be_3364_source(),
         },
@@ -215,7 +225,7 @@ function buildBeGroups(result: TaxResult): Group[] {
       {
         key: "1257-nl",
         field: m.filing_be_o2_1257(),
-        value: fmtExact(inputs.socialContributions),
+        value: fmtExact(inputs.healthInsurancePremium),
         format: "cents",
         source: m.filing_source_health_insurer(),
       },
@@ -295,6 +305,7 @@ export default function FilingChecklist({ result }: Props) {
   const statementArbeidskorting = Number.isFinite(parsed) ? Math.max(0, parsed) : undefined;
   const nlRows = buildNlRows(result, statementArbeidskorting);
   const beGroups = buildBeGroups(result);
+  const sourcing = compareSourcing(result);
   // The Belgian figures depend on the Dutch tax actually charged; until the assessment is entered
   // they rest on the app's estimate.
   const provisional = result.nlCharge.source !== "assessment";
@@ -350,7 +361,11 @@ export default function FilingChecklist({ result }: Props) {
       <ul className="text-sm mb-6">
         <li>{m.filing_document_jaaropgave()}</li>
         <li>{m.filing_document_workdays()}</li>
-        <li>{m.filing_document_deductions()}</li>
+        <li>{m.filing_document_health_insurer()}</li>
+        <li>{m.filing_document_pension()}</li>
+        {inputs.year <= 2024 && <li>{m.filing_document_service_vouchers()}</li>}
+        <li>{m.filing_document_bank()}</li>
+        <li>{m.filing_document_assessment()}</li>
       </ul>
 
       <h6 className="mb-1">🇳🇱 {m.filing_nl_title({ year: inputs.year })}</h6>
@@ -420,6 +435,7 @@ export default function FilingChecklist({ result }: Props) {
             </TableBody>
           </Table>
           <p className="text-text-muted text-sm mb-0">{m.filing_be_result_notice()}</p>
+          {sourcing.applies && <SourcingComparisonSection sourcing={sourcing} />}
         </>
       )}
     </section>
@@ -444,5 +460,64 @@ function GroupRows({ group }: { group: Group }) {
         <ChecklistRow key={row.key} row={row} />
       ))}
     </>
+  );
+}
+
+/** The Dutch and Belgian splits of the wage side by side, with what the difference means. */
+function SourcingComparisonSection({ sourcing }: { sourcing: SourcingComparison }) {
+  const sides = [
+    {
+      key: "nl",
+      title: m.filing_sourcing_nl_title(),
+      rule: m.filing_sourcing_nl_rule(),
+      share: sourcing.dutchShareOutsideNL,
+      label: m.nl_not_taxed_income(),
+      amount: fmt(sourcing.notTaxedInNL),
+    },
+    {
+      key: "be",
+      title: m.filing_sourcing_be_title(),
+      rule: m.filing_sourcing_be_rule(),
+      share: sourcing.belgianShareOutsideNL,
+      label: m.filing_sourcing_be_amount(),
+      amount: fmtExact(sourcing.belgianTaxableShareOfWage),
+    },
+  ];
+  return (
+    <section aria-labelledby="filing-sourcing-heading" className="mt-6 flex flex-col gap-2">
+      <h6 id="filing-sourcing-heading" className="mb-0">
+        {m.filing_sourcing_title()}
+      </h6>
+      <p className="text-sm mb-0">{m.filing_sourcing_intro()}</p>
+      <div className="grid grid-cols-1 gap-2 table:grid-cols-2">
+        {sides.map((side) => (
+          <Card key={side.key} className="gap-1 p-3 text-sm">
+            <p className="mb-0 font-semibold">{side.title}</p>
+            <p className="mb-0 text-text-muted">{side.rule}</p>
+            <p className="mb-0 text-text-muted">
+              {m.filing_sourcing_share({ percent: pct(side.share) })}
+            </p>
+            <p className="mb-0">
+              {side.label}: <span className="font-semibold tabular-nums">{side.amount}</span>
+            </p>
+          </Card>
+        ))}
+      </div>
+      <p className="text-sm text-text-muted mb-0">
+        {m.filing_sourcing_o1({ o1: fmtExact(sourcing.o1), o2: fmtExact(sourcing.o2) })}
+      </p>
+      <Alert
+        variant={sourcing.doubleTaxationRisk > 0 ? "warning" : "info"}
+        role="note"
+        className="text-sm py-2 mb-0"
+      >
+        {sourcing.doubleTaxationRisk > 0
+          ? m.filing_sourcing_risk({ amount: fmtExact(sourcing.doubleTaxationRisk) })
+          : sourcing.taxedByNeither > 0
+            ? m.filing_sourcing_neither({ amount: fmtExact(sourcing.taxedByNeither) })
+            : m.filing_sourcing_equal()}
+      </Alert>
+      <p className="text-sm text-text-muted mb-0">{m.filing_sourcing_manual()}</p>
+    </section>
   );
 }

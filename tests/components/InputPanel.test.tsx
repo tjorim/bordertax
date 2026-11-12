@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 import { useForm } from "@tanstack/react-form";
 
@@ -120,21 +120,23 @@ describe("InputPanel", () => {
     expect(getForm().getFieldValue("communalTaxRate")).toBe(8);
   });
 
-  it("updates gross salary", () => {
+  it("updates the taxable wage", () => {
     const { getForm } = renderInputPanel();
-    const grossSalaryInput = screen.getByRole("spinbutton", { name: /gross annual salary/i });
-    fireEvent.change(grossSalaryInput, { target: { value: "80000" } });
-    expect(getForm().getFieldValue("grossSalary")).toBe(80000);
+    const wageInput = screen.getByRole("spinbutton", { name: /taxable wage/i });
+    fireEvent.change(wageInput, { target: { value: "80000" } });
+    expect(getForm().getFieldValue("annualStatements[0].taxableWage")).toBe(80000);
   });
 
   it("allows numeric fields to be cleared while editing", () => {
-    const { getForm } = renderInputPanel({ grossSalary: 60000 });
-    const grossSalaryInput = screen.getByRole("spinbutton", { name: /gross annual salary/i });
+    const { getForm } = renderInputPanel({
+      annualStatements: [{ taxableWage: 60000, wageTaxWithheld: 0 }],
+    });
+    const wageInput = screen.getByRole("spinbutton", { name: /taxable wage/i });
 
-    fireEvent.change(grossSalaryInput, { target: { value: "" } });
+    fireEvent.change(wageInput, { target: { value: "" } });
 
-    expect(grossSalaryInput).toHaveValue(null);
-    expect(getForm().getFieldValue("grossSalary")).toBeUndefined();
+    expect(wageInput).toHaveValue(null);
+    expect(getForm().getFieldValue("annualStatements[0].taxableWage")).toBeUndefined();
   });
 
   it("updates daysWorkedNL", () => {
@@ -255,5 +257,106 @@ describe("long field hints", () => {
     expect(screen.queryByText(/enter both assessment figures/i)).toBeNull();
     fireEvent.change(tax, { target: { value: "" } });
     expect(getForm().getFieldValue("assessmentIncomeTaxDue")).toBeUndefined();
+  });
+});
+
+describe("InputPanel annual statements", () => {
+  beforeEach(() => {
+    setLocale("en", { reload: false });
+  });
+
+  it("starts with one statement and no remove control", () => {
+    renderInputPanel();
+    expect(screen.getAllByRole("spinbutton", { name: /taxable wage/i })).toHaveLength(1);
+    expect(screen.queryByRole("button", { name: /remove annual statement/i })).toBeNull();
+    expect(screen.queryByRole("group", { name: /annual statement 1/i })).toBeNull();
+  });
+
+  it("adds a statement, focuses its wage, sums the total and removes it again", async () => {
+    const { getForm } = renderInputPanel({
+      annualStatements: [{ taxableWage: 40000, wageTaxWithheld: 7000 }],
+    });
+    fireEvent.click(screen.getByRole("button", { name: /add another annual statement/i }));
+
+    const second = screen.getByRole("group", { name: /annual statement 2/i });
+    const wage = within(second).getByRole("spinbutton", { name: /taxable wage/i });
+    await waitFor(() => expect(wage).toHaveFocus());
+    fireEvent.change(wage, { target: { value: "20000" } });
+    expect(getForm().getFieldValue("annualStatements[1].taxableWage")).toBe(20000);
+    expect(screen.getByText(/total taxable wage: €\s?60[.,]000/i)).toBeInTheDocument();
+
+    const first = screen.getByRole("group", { name: /annual statement 1/i });
+    expect(within(first).getByRole("spinbutton", { name: /wage tax withheld/i })).toHaveValue(7000);
+
+    fireEvent.click(screen.getByRole("button", { name: "Remove annual statement 2" }));
+    expect(getForm().getFieldValue("annualStatements")).toEqual([
+      { taxableWage: 40000, wageTaxWithheld: 7000 },
+    ]);
+    await waitFor(() =>
+      expect(screen.getByRole("button", { name: /add another annual statement/i })).toHaveFocus(),
+    );
+  });
+
+  it("stops offering more statements at the maximum", () => {
+    renderInputPanel({
+      annualStatements: Array.from({ length: 10 }, () => ({ taxableWage: 1, wageTaxWithheld: 0 })),
+    });
+    expect(screen.queryByRole("button", { name: /add another annual statement/i })).toBeNull();
+  });
+});
+
+describe("InputPanel sick days", () => {
+  beforeEach(() => {
+    setLocale("en", { reload: false });
+  });
+
+  it("keeps one sick-day field that counts as NL until the split is opened", () => {
+    const { getForm } = renderInputPanel();
+    const sick = screen.getByRole("spinbutton", { name: /^sick days$/i });
+    fireEvent.change(sick, { target: { value: "8" } });
+    expect(getForm().getFieldValue("sickDaysNL")).toBe(8);
+    expect(
+      screen.queryByRole("spinbutton", { name: /scheduled in .*be or elsewhere/i }),
+    ).toBeNull();
+
+    const toggle = screen.getByRole("button", { name: /split sick days by scheduled country/i });
+    expect(toggle).toHaveAttribute("aria-expanded", "false");
+    fireEvent.click(toggle);
+    expect(toggle).toHaveAttribute("aria-expanded", "true");
+    expect(screen.getByRole("spinbutton", { name: /scheduled in .*nl/i })).toHaveValue(8);
+    const outside = screen.getByRole("spinbutton", { name: /scheduled in .*be or elsewhere/i });
+    fireEvent.change(outside, { target: { value: "3" } });
+    expect(getForm().getFieldValue("sickDaysOutsideNL")).toBe(3);
+
+    // Closing the split goes back to one figure that counts every sick day as NL.
+    fireEvent.click(toggle);
+    expect(getForm().getFieldValue("sickDaysNL")).toBe(11);
+    expect(getForm().getFieldValue("sickDaysOutsideNL")).toBe(0);
+  });
+
+  it("shows the split when sick days outside NL are already entered", () => {
+    renderInputPanel({ sickDaysNL: 2, sickDaysOutsideNL: 4 });
+    expect(screen.getByRole("spinbutton", { name: /scheduled in .*be or elsewhere/i })).toHaveValue(
+      4,
+    );
+  });
+});
+
+describe("InputPanel source documents", () => {
+  beforeEach(() => {
+    setLocale("en", { reload: false });
+  });
+
+  it("groups the Belgian inputs under the document they come from", () => {
+    renderInputPanel();
+    for (const [document, field] of [
+      [/health insurer/i, /health-insurance premium/i],
+      [/december payslip or pension statement/i, /supplementary pension/i],
+      [/service-voucher annual statement/i, /service vouchers/i],
+      [/bank's annual tax statement/i, /reclaimable withholding tax/i],
+    ] as const) {
+      const group = screen.getByRole("group", { name: document });
+      expect(within(group).getByRole("spinbutton", { name: field })).toBeInTheDocument();
+    }
   });
 });

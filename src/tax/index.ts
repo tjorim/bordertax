@@ -2,6 +2,7 @@ import type { TaxInputs, TaxResult } from "./types";
 import { calculateNLTax, resolveDutchCharge } from "./nl";
 import { calculateBETax } from "./be";
 import { roundToCents } from "./rounding";
+import { sumAnnualStatements } from "./statements";
 import { getNLFractions } from "./workdays";
 import {
   NO_MORTGAGE_EFFECT,
@@ -28,7 +29,8 @@ function calculateCore(
   // The Dutch charge is whole euros (or the cents of an entered assessment) and the Belgian tax is
   // in cents, so their sum is cleaned of floating-point noise.
   const totalTax = roundToCents(nlCharge.netTaxNL + (be?.netTaxBE ?? 0));
-  const netIncome = roundToCents(inputs.grossSalary - totalTax);
+  const { taxableWage, wageTaxWithheld } = sumAnnualStatements(inputs.annualStatements);
+  const netIncome = roundToCents(taxableWage - totalTax);
 
   const { nlFractionDutchMethod, nlFractionBelgianMethod, noWorkdays } = getNLFractions(inputs);
 
@@ -37,10 +39,11 @@ function calculateCore(
     nl,
     nlCharge,
     be,
-    grossIncome: inputs.grossSalary,
+    taxableWage,
+    wageTaxWithheld,
     totalTax,
     netIncome,
-    effectiveRateTotal: inputs.grossSalary > 0 ? totalTax / inputs.grossSalary : 0,
+    effectiveRateTotal: taxableWage > 0 ? totalTax / taxableWage : 0,
     noWorkdays,
     nlFractionDutchMethod,
     nlFractionBelgianMethod,

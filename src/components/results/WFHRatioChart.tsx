@@ -52,6 +52,8 @@ import { motion } from "@tanstack/charts/motion";
 import { Chart } from "@tanstack/charts/react/core";
 import { calculate } from "@/tax";
 import { eligibilityThreshold } from "@/tax/eligibilityThreshold";
+import { sumAnnualStatements } from "@/tax/statements";
+import { getWorkdayTotals } from "@/tax/workdays";
 import type { TaxInputs } from "@/tax/types";
 import { getLocale } from "@/paraglide/runtime.js";
 import * as m from "@/paraglide/messages.js";
@@ -155,13 +157,17 @@ export default function WFHRatioChart({ inputs }: Props) {
   const nlbeDays = inputs.daysWorkedNL + inputs.daysWorkedBE;
 
   /** T_90 estimates the worldwide-income test; a workday ratio never proves qualification. */
-  const outsideShare = eligibilityThreshold(inputs.grossSalary, inputs.incomeOutsideNL ?? 0);
+  const { taxableWage } = sumAnnualStatements(inputs.annualStatements);
+  const outsideShare = eligibilityThreshold(taxableWage, inputs.incomeOutsideNL ?? 0);
+  // Days outside NL on the Dutch method: BE, other and the sick days scheduled outside NL.
+  const { sickDays, sickDaysOutsideNL } = getWorkdayTotals(inputs);
   const T_90 = Math.max(
     0,
     Math.min(
       1,
-      (outsideShare * (nlbeDays + inputs.daysWorkedOther + inputs.sickDays) -
-        inputs.daysWorkedOther) /
+      (outsideShare * (nlbeDays + inputs.daysWorkedOther + sickDays) -
+        inputs.daysWorkedOther -
+        sickDaysOutsideNL) /
         (nlbeDays || 1),
     ),
   );

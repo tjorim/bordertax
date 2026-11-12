@@ -1,12 +1,21 @@
 import { z } from "zod";
 import { version } from "../../package.json";
+import { migrateV1Inputs } from "./migrations";
 import { parseStrictTaxInputs, StrictTaxInputSchema } from "./strict";
-import type { TaxInputs } from "./schema";
+import { SINGLE_VALUE_DEFAULTS, type TaxInputs } from "./schema";
 
 /** Identifies a Bordertax input file; checked before anything else is read. */
 export const INPUT_FILE_FORMAT = "bordertax-inputs";
-/** Bump when the file layout changes in a way older readers cannot handle. */
-export const INPUT_FILE_SCHEMA_VERSION = 1;
+/**
+ * Bump when the file layout changes in a way older readers cannot handle. Version 2 carries the
+ * version 2 input names; version 1 files are migrated on import (see `migrateV1Inputs`).
+ */
+export const INPUT_FILE_SCHEMA_VERSION = 2;
+
+/** Older file versions this reader still imports, each with the step to the current inputs. */
+const FILE_MIGRATIONS: Record<number, (inputs: unknown) => unknown> = {
+  1: migrateV1Inputs,
+};
 /** Inputs are a few hundred bytes; anything much bigger is not one of our files. */
 export const INPUT_FILE_MAX_BYTES = 64 * 1024;
 
@@ -48,6 +57,10 @@ export function serializeInputFile(
   for (const [key, value] of Object.entries(candidate)) {
     if (value === undefined) delete candidate[key];
   }
+  // Fields with a single legal value are left out; the strict schema supplies their defaults.
+  for (const [key, value] of Object.entries(SINGLE_VALUE_DEFAULTS)) {
+    if (candidate[key] === value) delete candidate[key];
+  }
   const parsed = StrictTaxInputSchema.safeParse(candidate);
   if (!parsed.success) return { ok: false };
   const file = {
@@ -82,11 +95,16 @@ export function parseInputFile(text: string): InputFileResult {
   }
   const envelope = envelopeSchema.safeParse(raw);
   if (!envelope.success) return { ok: false, error: "wrong-format" };
-  if (envelope.data.schemaVersion !== INPUT_FILE_SCHEMA_VERSION) {
-    return { ok: false, error: "unsupported-version" };
-  }
+  const { schemaVersion } = envelope.data;
+  const migrate =
+    schemaVersion === INPUT_FILE_SCHEMA_VERSION
+      ? (inputs: unknown) => inputs
+      : Object.hasOwn(FILE_MIGRATIONS, schemaVersion)
+        ? FILE_MIGRATIONS[schemaVersion]!
+        : undefined;
+  if (!migrate) return { ok: false, error: "unsupported-version" };
   try {
-    const inputs = parseStrictTaxInputs(envelope.data.inputs);
+    const inputs = parseStrictTaxInputs(migrate(envelope.data.inputs));
     return { ok: true, inputs, year: inputs.year, appVersion: envelope.data.appVersion };
   } catch {
     return { ok: false, error: "invalid-inputs" };

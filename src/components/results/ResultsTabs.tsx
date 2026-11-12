@@ -119,7 +119,7 @@ export default function ResultsTabs({
             <NLResult
               result={result.nl}
               charge={result.nlCharge}
-              withheldTaxNL={inputs.withheldTaxNL}
+              wageTaxWithheld={result.wageTaxWithheld}
               thirtyPercentRuling={
                 isThirtyPercentRulingSupportedResident(inputs.residentCountry) &&
                 inputs.thirtyPercentRuling

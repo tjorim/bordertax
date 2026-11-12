@@ -13,11 +13,12 @@ afterEach(cleanup);
 
 const inputs = {
   ...DEFAULT_INPUTS,
-  grossSalary: 60000,
+  annualStatements: [{ taxableWage: 60000, wageTaxWithheld: 0 }],
   daysWorkedNL: 220,
   daysWorkedBE: 0,
   daysWorkedOther: 0,
-  sickDays: 0,
+  sickDaysNL: 0,
+  sickDaysOutsideNL: 0,
   mortgageEnabled: true,
   mortgageInterest: 6000,
 };

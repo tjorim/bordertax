@@ -2,7 +2,7 @@
  * Dutch income tax (Box 1) calculation.
  *
  * Volksverzekeringen (social premiums) are calculated separately on worldwide Box 1 income,
- * approximated here by gross salary less the mortgage deduction.
+ * approximated here by the taxable wage less the mortgage deduction.
  *
  * Income-tax-only bracket rates are derived from the combined rates by subtracting
  * the social premium rate (27.65% for under-AOW, 9.75% for over-AOW).
@@ -19,6 +19,7 @@ import {
 } from "./constants";
 import { getYearParams } from "./params";
 import type { NLBracket, NLYearParams } from "./params";
+import { sumAnnualStatements } from "./statements";
 import { getNLFractions } from "./workdays";
 
 function applyBrackets(
@@ -98,6 +99,8 @@ export function calculateNLTax(
   const p = inputs.belowAOWAge ? yearData.under : yearData.over;
 
   const { nlFractionDutchMethod: nlFraction, noWorkdays } = getNLFractions(inputs);
+  // All annual statements are taxed together: one wage, one set of credits and premiums.
+  const { taxableWage } = sumAnnualStatements(inputs.annualStatements);
 
   // Without workdays nothing is sourced to the Netherlands: no taxable income, so also no
   // premiums and no credits (they would otherwise be charged and applied on income that is not
@@ -108,7 +111,7 @@ export function calculateNLTax(
       nlTaxableIncome: 0,
       mortgageDeduction: 0,
       mortgageRateCapSurcharge: 0,
-      deelNietInNLBelast: inputs.grossSalary,
+      deelNietInNLBelast: taxableWage,
       taxBeforeCredits: 0,
       brackets: [],
       algemeneHeffingskorting: 0,
@@ -124,8 +127,8 @@ export function calculateNLTax(
 
   // "Deel niet in NL belast": entered as its own field on the NL aangifte, separate from Loon.
   // Computed independently of the 30% ruling, which is a distinct exemption on the form.
-  const nlTaxableIncomeBeforeRuling = Math.round(inputs.grossSalary * nlFraction);
-  const deelNietInNLBelast = inputs.grossSalary - nlTaxableIncomeBeforeRuling;
+  const nlTaxableIncomeBeforeRuling = Math.round(taxableWage * nlFraction);
+  const deelNietInNLBelast = taxableWage - nlTaxableIncomeBeforeRuling;
 
   let nlTaxableIncome = nlTaxableIncomeBeforeRuling;
 
@@ -157,7 +160,7 @@ export function calculateNLTax(
 
   // Premium income is worldwide Box 1 income after deductions, not the NL workday fraction.
   // Belastingdienst Fiscale informatie 2020–2025, "U woont buiten Nederland", Gevolgen premieplicht.
-  const premiumIncome = Math.max(0, inputs.grossSalary - Math.max(0, mortgageDeduction));
+  const premiumIncome = Math.max(0, taxableWage - Math.max(0, mortgageDeduction));
   const volksverzekeringen = Math.floor(
     Math.min(premiumIncome, p.socialPremiumMax) * p.socialPremiumRate,
   );
@@ -165,8 +168,8 @@ export function calculateNLTax(
   // Both credits use the full wage. A Belgian resident who is insured in the Netherlands receives
   // the algemene heffingskorting; the Belastingdienst lists it for residents of Belgium
   // (belastingdienst.nl, "Ik woon niet in Nederland: welke aftrekposten en kortingen heb ik?").
-  const ahk = calcAHK(inputs.grossSalary, p);
-  const ak = calcAK(inputs.grossSalary, p);
+  const ahk = calcAHK(taxableWage, p);
+  const ak = calcAK(taxableWage, p);
 
   const totalCredits = Math.min(ahk + ak, taxBeforeCredits + volksverzekeringen);
   const netTaxNL = Math.max(0, taxBeforeCredits + volksverzekeringen - totalCredits);
@@ -198,7 +201,7 @@ export function calculateNLTax(
     incomeTaxDue,
     premiumsDue,
     netTaxNL,
-    effectiveRateNL: inputs.grossSalary > 0 ? netTaxNL / inputs.grossSalary : 0,
+    effectiveRateNL: taxableWage > 0 ? netTaxNL / taxableWage : 0,
   };
 }
 

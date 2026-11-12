@@ -74,7 +74,7 @@ export default function MultiYearComparison({ rows, activeYear }: Props) {
             </>
           ),
         }),
-        columnHelper.accessor((row) => row.result.grossIncome, {
+        columnHelper.accessor((row) => row.result.taxableWage, {
           id: "gross",
           header: () => m.years_gross(),
           cell: (info) => fmt(info.getValue()),
@@ -127,7 +127,7 @@ export default function MultiYearComparison({ rows, activeYear }: Props) {
       {/* Visual year chart */}
       <div className="bt-year-chart">
         {rows.map(({ year, result }) => {
-          const gross = result.grossIncome;
+          const gross = result.taxableWage;
           if (gross === 0) return null;
           const nlPct = (result.nl.netTaxNL / gross) * 100;
           const bePct = ((result.be?.netTaxBE ?? 0) / gross) * 100;

@@ -4,7 +4,7 @@
  * For Belgian residents who work (partly) in the Netherlands under the BE-NL tax treaty.
  * Method used: Exemption with progression (vrijstelling met progressievoorbehoud).
  *
- * The Belgian declared income (code 1250) = grossSalary − Dutch income tax and premiums due, taken
+ * The Belgian declared income (code 1250) = taxable wage − Dutch income tax and premiums due, taken
  * from the Dutch assessment when the user entered it and from the engine's estimate otherwise.
  * NL-sourced income is exempt from Belgian tax but raises the progression rate.
  * Communal tax (gemeentebelasting) is levied on both the taxable AND the exempt portion.
@@ -19,6 +19,7 @@ import { BE_PENSION_REDUCTION_RATE, BE_TAX_FREE_ALLOWANCE_REDUCTION_RATE } from 
 import { getYearParams } from "./params";
 import type { BEBracket, BEYearParams } from "./params";
 import { roundToCents } from "./rounding";
+import { sumAnnualStatements } from "./statements";
 import { getNLFractions } from "./workdays";
 
 function applyBEBrackets(income: number, brackets: BEBracket[]): number {
@@ -58,7 +59,7 @@ function belastingvrijeSomReduction(inputs: TaxInputs, p: BEYearParams): number 
 function noWorkdaysResult(): BETaxResult {
   return {
     declaredIncome: 0,
-    socialContributionsDeducted: 0,
+    healthInsurancePremiumDeducted: 0,
     professionalExpenses: 0,
     netProfessionalIncome: 0,
     beIncome: 0,
@@ -94,6 +95,7 @@ export function calculateBETax(inputs: TaxInputs, nl: DutchChargeForBE): BETaxRe
   const p = getYearParams(inputs.year).be;
 
   const { beFraction, noWorkdays } = getNLFractions(inputs);
+  const { taxableWage } = sumAnnualStatements(inputs.annualStatements);
 
   // Without workdays the wage is not sourced to either country, so there is no Belgian return to
   // estimate: every figure is zero rather than treating the whole wage as exempt Dutch income
@@ -103,20 +105,25 @@ export function calculateBETax(inputs: TaxInputs, nl: DutchChargeForBE): BETaxRe
   // FOD guideline (ACV telework session): W = wage − premiums actually due in the work state,
   // Y = W × (days outside NL ÷ total days) is taxable in Belgium (box IV O.1), and
   // Z = W − Y − income tax actually due in the work state is exempt (box IV O.2).
-  const wageAfterPremiums = Math.max(0, inputs.grossSalary - nl.premiumsDue);
+  const wageAfterPremiums = Math.max(0, taxableWage - nl.premiumsDue);
   const beIncome = wageAfterPremiums * beFraction;
 
-  const { socialContributions, aanvullendPensioen, dienstencheques, roerendeVoorheffing } = inputs;
+  const {
+    healthInsurancePremium,
+    supplementaryPension,
+    serviceVouchers,
+    reclaimableWithholdingTax,
+  } = inputs;
 
-  // Declared income: code 1250 = grossSalary − netTaxNL (paid to NL, not seen by BE)
-  const declaredIncome = inputs.grossSalary - nl.netTaxNL;
+  // Declared income: code 1250 = taxable wage − netTaxNL (paid to NL, not seen by BE)
+  const declaredIncome = taxableWage - nl.netTaxNL;
 
-  // Professional expenses (forfait applied to declared income after social contributions)
-  const forfaitBase = Math.max(0, declaredIncome - socialContributions);
+  // Professional expenses (forfait applied to declared income after the health-insurance premium)
+  const forfaitBase = Math.max(0, declaredIncome - healthInsurancePremium);
   const forfait = Math.min(p.forfaitRate * forfaitBase, p.forfaitMax);
 
   // Net professional income
-  const netProfessionalIncome = Math.max(0, declaredIncome - socialContributions - forfait);
+  const netProfessionalIncome = Math.max(0, declaredIncome - healthInsurancePremium - forfait);
 
   // Code 1250 is Y + Z. Only the Dutch income tax is taken from the exempt side; the premiums are
   // deducted before the day fraction is applied, so they reduce Y and Z in proportion.
@@ -128,7 +135,7 @@ export function calculateBETax(inputs: TaxInputs, nl: DutchChargeForBE): BETaxRe
   const volTarief = netProfessionalIncome - vrijgesteld;
 
   // nlExemptIncome for legacy/display: gross NL income (days-based)
-  const nlExemptIncome = inputs.grossSalary * (1 - beFraction);
+  const nlExemptIncome = taxableWage * (1 - beFraction);
 
   // Belgian progressive tax on total net professional income
   const basisbelasting = applyBEBrackets(netProfessionalIncome, p.brackets);
@@ -151,15 +158,15 @@ export function calculateBETax(inputs: TaxInputs, nl: DutchChargeForBE): BETaxRe
   const gewestelijke = gereduceerde * p.gewestelijkeRate;
 
   // Optional deductions
-  const pensioenRed = aanvullendPensioen * BE_PENSION_REDUCTION_RATE;
-  const dienstchequesRed = dienstencheques * p.serviceVoucherReductionRate;
+  const pensionReduction = supplementaryPension * BE_PENSION_REDUCTION_RATE;
+  const serviceVoucherReduction = serviceVouchers * p.serviceVoucherReductionRate;
 
   // Saldi. The federal reductions are clamped at zero; what they exceed the federal part by is
   // reported rather than dropped silently.
-  const federalReductions = pensioenRed + roerendeVoorheffing;
+  const federalReductions = pensionReduction + reclaimableWithholdingTax;
   const federalReductionsUnused = Math.max(0, federalReductions - gereduceerde);
   const saldoFederaal = Math.max(0, gereduceerde - federalReductions);
-  const saldoGewestelijk = Math.max(0, gewestelijke - dienstchequesRed);
+  const saldoGewestelijk = Math.max(0, gewestelijke - serviceVoucherReduction);
   const totaleBelasting = saldoFederaal + saldoGewestelijk;
 
   const federalTax = saldoFederaal;
@@ -174,7 +181,7 @@ export function calculateBETax(inputs: TaxInputs, nl: DutchChargeForBE): BETaxRe
   const cents = roundToCents;
   return {
     declaredIncome: cents(declaredIncome),
-    socialContributionsDeducted: cents(socialContributions),
+    healthInsurancePremiumDeducted: cents(healthInsurancePremium),
     professionalExpenses: cents(forfait),
     netProfessionalIncome: cents(netProfessionalIncome),
     beIncome: cents(beIncome),
@@ -197,6 +204,6 @@ export function calculateBETax(inputs: TaxInputs, nl: DutchChargeForBE): BETaxRe
     communalTaxOnVrijgesteld: cents(communalTaxOnVrijgesteld),
     federalTax: cents(federalTax),
     netTaxBE: cents(netTaxBE),
-    effectiveRateBE: inputs.grossSalary > 0 ? netTaxBE / inputs.grossSalary : 0,
+    effectiveRateBE: taxableWage > 0 ? netTaxBE / taxableWage : 0,
   };
 }
