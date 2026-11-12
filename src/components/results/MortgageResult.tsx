@@ -17,6 +17,7 @@ export default function MortgageResult({ result }: { result: MortgageCalculation
   };
   const assumptions = {
     income_statement_required: m.mortgage_income_statement_required,
+    income_statement_on_request: m.mortgage_income_statement_on_request,
     qualifying_debt: m.mortgage_qualifying_debt,
     home_value_missing: m.mortgage_no_eigenwoningforfait,
     full_year_main_home: m.mortgage_forfait_full_year,

@@ -90,7 +90,8 @@ export function getCapabilities() {
         potential: "EUR per year: nlTaxSaving, beTaxIncrease, netBenefit if eligible",
         realised: "EUR per year: actual effect in totals; zero when not applied",
         reasons: "machine-readable explanations for eligibility and missing interest",
-        assumptions: "qualifying debt, income statement and other unverified conditions",
+        assumptions:
+          "qualifying debt, income statement (income years up to 2025; only on request from 2026) and other unverified conditions",
       },
     },
     limitations: [

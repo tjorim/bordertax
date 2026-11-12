@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { VALID_YEARS } from "@/tax/constants";
 import { DEFAULT_INPUTS } from "@/tax/defaults";
 import { calculate } from "@/tax/index";
-import { assessEligibility, getDeductibleInterest } from "@/tax/mortgage";
+import { assessEligibility, getDeductibleInterest, getMortgageAssumptions } from "@/tax/mortgage";
 import { calculateNLTax } from "@/tax/nl";
 import { TAX_PARAMS } from "@/tax/params";
 import type { TaxInputs } from "@/tax/types";
@@ -249,5 +249,35 @@ describe("mortgage premium income", () => {
     const result = calculateNLTax(inputs, 28000);
     expect(result.nlTaxableIncome).toBe(0);
     expect(result.volksverzekeringen).toBe(Math.floor(2000 * p.socialPremiumRate));
+  });
+});
+
+describe("mortgage assumptions by income year", () => {
+  it("requires an income statement up to 2025 and only on request from 2026", () => {
+    for (const year of VALID_YEARS) {
+      const assumptions = calculate({ ...base, year }).mortgage!.assumptions;
+      if (year >= 2026) {
+        expect(assumptions).toContain("income_statement_on_request");
+        expect(assumptions).not.toContain("income_statement_required");
+      } else {
+        expect(assumptions).toContain("income_statement_required");
+        expect(assumptions).not.toContain("income_statement_on_request");
+      }
+    }
+  });
+
+  it("keeps the other conditions in every year", () => {
+    expect(getMortgageAssumptions(2025)).toEqual([
+      "income_statement_required",
+      "qualifying_debt",
+      "full_year_main_home",
+      "no_belgian_home_benefit",
+    ]);
+    expect(getMortgageAssumptions(2026)).toEqual([
+      "income_statement_on_request",
+      "qualifying_debt",
+      "full_year_main_home",
+      "no_belgian_home_benefit",
+    ]);
   });
 });

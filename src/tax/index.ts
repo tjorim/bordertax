@@ -3,11 +3,11 @@ import { calculateNLTax, resolveDutchCharge } from "./nl";
 import { calculateBETax } from "./be";
 import { getNLFractions } from "./workdays";
 import {
-  MORTGAGE_ASSUMPTIONS,
   NO_MORTGAGE_EFFECT,
   assessEligibility,
   getDeductibleInterest,
   getEigenwoningforfait,
+  getMortgageAssumptions,
   type MortgageEffect,
 } from "./mortgage";
 
@@ -92,7 +92,7 @@ export function calculate(inputs: TaxInputs): TaxResult {
       ...eligibility,
       reasons,
       assumptions: [
-        ...MORTGAGE_ASSUMPTIONS,
+        ...getMortgageAssumptions(inputs.year),
         ...(benefitIsUpperBound ? ["home_value_missing" as const] : []),
       ],
       eigenwoningforfait,
