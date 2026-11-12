@@ -115,4 +115,28 @@ describe("ACV telework session, income year 2025", () => {
       expect(Math.abs(WITHHELD - result.nl.netTaxNL - ACV_REFUND)).toBeLessThan(25);
     }
   });
+
+  it("returns the Belgian figures in whole cents while the slide figures still match to the cent", () => {
+    for (const [scenario, o1, o2] of [
+      [noSick, 10309.64, 34401.36],
+      [withSick, 11560.81, 33150.19],
+    ] as const) {
+      const premiums = scenario === noSick ? 5874.66 : 5899.68;
+      const tax = scenario === noSick ? 2713.34 : 2688.32;
+      const be = calculate(
+        parseStrictTaxInputs({
+          ...scenario,
+          assessmentPremiumsDue: premiums,
+          assessmentIncomeTaxDue: tax,
+        }),
+      ).be!;
+      // Rounded to cents, the figures equal the slide values exactly, not just approximately.
+      expect(be.declaredIncome).toBe(44711);
+      expect(be.beIncome).toBe(o1);
+      expect(be.declaredIncome - be.beIncome).toBeCloseTo(o2, 10);
+      for (const value of [be.beIncome, be.netTaxBE, be.hoofdsom, be.communalTax]) {
+        expect(value).toBe(Math.round(value * 100) / 100);
+      }
+    }
+  });
 });

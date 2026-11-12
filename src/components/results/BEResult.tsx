@@ -160,6 +160,13 @@ export default function BEResult({ result, residentCountry }: Props) {
         </TableBody>
       </Table>
 
+      {result.federalReductionsUnused > 0 && (
+        <Alert variant="info" role="note" className="mt-4 text-sm mb-0">
+          <InfoIcon aria-hidden="true" className="inline size-4 shrink-0 align-text-bottom me-2" />
+          {m.be_federal_reductions_unused({ amount: fmt(result.federalReductionsUnused) })}
+        </Alert>
+      )}
+
       <Alert variant="warning" className="mt-4 text-sm mb-0">
         <TriangleAlertIcon
           aria-hidden="true"

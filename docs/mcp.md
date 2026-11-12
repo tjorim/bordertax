@@ -153,6 +153,16 @@ actual Dutch assessment, add `assessmentIncomeTaxDue` and `assessmentPremiumsDue
 alone is rejected. When present they replace the estimate in the Belgian calculation
 (code 1250, O.1/O.2), total tax and net income, and `result.nlCharge` reports the source
 (`estimate` or `assessment`) and the difference from the estimate.
+Belgian money figures in `result.be` are rounded to whole cents when the result is built (full
+precision is kept between calculation steps; no Belgian tax-rounding rule is claimed), and
+`totalTax`, `netIncome` and the mortgage effects are cleaned to cents to match. Fractions are not
+rounded. `result.nl.brackets` lists `{ from, to, rate, taxableAmount, tax }` in euros with `to: null`
+for the open top bracket; there is no formatted label, so clients format the bounds themselves.
+`result.noWorkdays` is `true` when all workday inputs are zero: the Dutch and Belgian figures are
+then zero and net income equals gross salary (an entered assessment still counts as the Dutch
+charge). `result.be.federalReductionsUnused` is the part of `aanvullendPensioen × 30%` plus
+`roerendeVoorheffing` that exceeds the federal tax; it is clamped to the federal saldo and not
+carried over.
 The mortgage block is null when disabled. Enable it with `mortgageEnabled: true`
 and consult capability metadata for optional fields, defaults, eligibility,
 assumptions and missing-income handling.
@@ -189,7 +199,8 @@ percent units (7 means 7%). Workdays are day counts, including fractional days;
 sick days count toward the annual maximum. Result rates and shares are fractions
 (0.25 means 25%) except fields explicitly documented otherwise by capabilities,
 such as mortgage `nlTaxedPercent`. Comparison monthly net-income delta is EUR
-per month. Values retain engine precision; clients may round for display.
+per month. Belgian money figures are in whole cents; other values retain engine precision
+and clients may round for display.
 
 Currently supported income years are 2020–2026, for single Belgian residents in
 Flanders working for Dutch employers. Discovery is authoritative as coverage

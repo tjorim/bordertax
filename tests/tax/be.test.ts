@@ -230,7 +230,7 @@ describe("calculateBETax", () => {
 
   it("nlExemptIncome is the days-based Dutch share of the gross wage", () => {
     const result = calculateBETax({ ...base, daysWorkedNL: 200, daysWorkedBE: 20 }, mockNL());
-    expect(result!.nlExemptIncome).toBeCloseTo(base.grossSalary * (200 / 220), 5);
+    expect(result!.nlExemptIncome).toBeCloseTo(base.grossSalary * (200 / 220), 2);
   });
 
   it("works for tax year 2024", () => {
@@ -289,5 +289,80 @@ describe("calculateBETax", () => {
   it("throws for unsupported tax year", () => {
     const invalidYearInputs = { ...base, year: 2030 as TaxInputs["year"] };
     expect(() => calculateBETax(invalidYearInputs, mockNL())).toThrow(/Unsupported tax year/);
+  });
+
+  describe("cent rounding at the engine boundary", () => {
+    const hasCents = (value: number) => Math.abs(value * 100 - Math.round(value * 100)) < 1e-6;
+    // Fractions are not money and keep full precision.
+    const fractions = new Set(["beFraction", "effectiveRateBE"]);
+
+    it("returns every money figure in whole cents", () => {
+      const result = calculateBETax(
+        {
+          ...base,
+          grossSalary: 61234.57,
+          daysWorkedNL: 191,
+          daysWorkedBE: 29,
+          socialContributions: 123.456,
+          communalTaxRate: 6.3,
+        },
+        mockNL(),
+      )!;
+      for (const [key, value] of Object.entries(result)) {
+        if (fractions.has(key)) continue;
+        expect(hasCents(value), `${key} = ${value}`).toBe(true);
+      }
+      expect(result.netTaxBE).toBeGreaterThan(0);
+    });
+
+    it("keeps the fractions at full precision", () => {
+      const result = calculateBETax({ ...base, daysWorkedNL: 200, daysWorkedBE: 20 }, mockNL())!;
+      expect(result.beFraction).toBe(20 / 220);
+      expect(hasCents(result.beFraction)).toBe(false);
+    });
+
+    it("rounds once at the end, not between steps", () => {
+      // Communal tax is computed from the unrounded totaleBelasting, so the rounded figures can
+      // differ from a recomputation on the rounded ones by at most a cent or two.
+      const result = calculateBETax({ ...base, daysWorkedNL: 200, daysWorkedBE: 20 }, mockNL())!;
+      const sum =
+        result.saldoFederaal +
+        result.saldoGewestelijk +
+        result.communalTax +
+        result.communalTaxOnVrijgesteld;
+      expect(Math.abs(sum - result.netTaxBE)).toBeLessThanOrEqual(0.02);
+    });
+  });
+
+  describe("unused federal reductions (code 1437 and supplementary pension)", () => {
+    const inputs = { ...base, daysWorkedNL: 200, daysWorkedBE: 20 };
+
+    it("is 0 when the reductions are fully used", () => {
+      const without = calculateBETax(inputs, mockNL())!;
+      expect(without.federalReductionsUnused).toBe(0);
+      const small = calculateBETax({ ...inputs, roerendeVoorheffing: 10 }, mockNL())!;
+      expect(small.federalReductionsUnused).toBe(0);
+      expect(small.saldoFederaal).toBeCloseTo(without.saldoFederaal - 10, 2);
+    });
+
+    it("reports the part of the reductions above the federal part", () => {
+      const without = calculateBETax(inputs, mockNL())!;
+      const result = calculateBETax(
+        { ...inputs, aanvullendPensioen: 1000, roerendeVoorheffing: 5000 },
+        mockNL(),
+      )!;
+      // 30% × 1,000 + 5,000, against the reduced federal portion.
+      expect(result.saldoFederaal).toBe(0);
+      expect(result.federalReductionsUnused).toBeCloseTo(5300 - without.gereduceerde, 2);
+      expect(result.federalReductionsUnused).toBeGreaterThan(0);
+    });
+
+    it("leaves the regional saldo and the federal portion untouched", () => {
+      const without = calculateBETax(inputs, mockNL())!;
+      const result = calculateBETax({ ...inputs, roerendeVoorheffing: 99999 }, mockNL())!;
+      expect(result.gereduceerde).toBe(without.gereduceerde);
+      expect(result.saldoGewestelijk).toBe(without.saldoGewestelijk);
+      expect(result.federalTax).toBe(result.saldoFederaal);
+    });
   });
 });

@@ -5,6 +5,9 @@ import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { ExternalLinkIcon, FileTextIcon, LightbulbIcon, TriangleAlertIcon } from "lucide-react";
 import { Alert } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
+import { fmtDate } from "@/components/format";
+import { ACV_SESSION, referenceTaxSourceUrl } from "@/tax/reference";
+import * as m from "../../paraglide/messages.js";
 
 // ── Shared styled sub-components for reference pages ────────────
 
@@ -52,6 +55,37 @@ export function NlBadge({ children }: { children: React.ReactNode }) {
 
 export function BeBadge({ children }: { children: React.ReactNode }) {
   return <CountryBadge variant="be">{children}</CountryBadge>;
+}
+
+/**
+ * The fixed place where a reference page states which income year it describes and where its
+ * figures come from. Values come from `src/tax/reference` so both pages say the same thing.
+ */
+export function ReferenceMeta({ year }: { year: number }) {
+  const taxSourceUrl = referenceTaxSourceUrl(year);
+  return (
+    <div className="mb-6 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-center text-xs text-text-muted">
+      <Badge variant="secondary">{m.ref_meta_income_year({ year })}</Badge>
+      <span>
+        {m.ref_meta_acv_source({ date: fmtDate(ACV_SESSION.date), place: ACV_SESSION.place })}
+      </span>
+      <span>
+        {m.ref_meta_tax_source({ year })}{" "}
+        {taxSourceUrl ? (
+          <a
+            href={taxSourceUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="ref-text-info underline"
+          >
+            {m.ref_meta_tax_source_link()}
+          </a>
+        ) : (
+          m.ref_meta_tax_source_link()
+        )}
+      </span>
+    </div>
+  );
 }
 
 export function StatRow({

@@ -67,6 +67,20 @@ The CLI writes `import { cn } from "cn"`; every file here imports `cn` from
 - **Provisional note** (`FilingChecklist`): the existing `Alert` (`warning` while provisional,
   `success` once the assessment is in use) with `role="note"`.
 
+## Reference figures and the source line (issue #438)
+
+- **Source line** (`pages/reference/components.tsx` `ReferenceMeta`, composition): a centred, wrapping line
+  under the page hero with a `Badge variant="secondary"` for the income year and plain `text-text-muted`
+  text for the ACV session and the Belastingdienst link (`text-xs`, so the muted token rather than brand
+  teal for contrast). The registry has no equivalent for a document-provenance line (`badge` and
+  `breadcrumb` cover other jobs); no new CSS. Both reference pages render the same component so the
+  year and dates sit in one fixed place.
+- **Tables** keep the existing `Table`, `StatRow` and `RefAccordionItem` compositions; only their values
+  moved from message strings to typed data (`src/tax/reference`) formatted with `components/format`
+  (`fmt`, `fmtAmount`, `fmtPercent`, `fmtNumber`, `fmtDate`, `fmtAge`).
+- **`ZivTable`** (`PensionReference`, composition): the two ZIV deduction tables were identical markup
+  with different figures, now one local component over the existing `Table`.
+
 ## Field composition (issue #305)
 
 `ui/field.tsx` is now the registry `field` structure with Bordertax tokens:
@@ -243,3 +257,20 @@ arbeidskorting field is local component state, not a tax input.
   file-picker component, and the native input keeps the OS picker and works with assistive technology
   (the input keeps an accessible name; results are announced through a `role="status"` region).
   Export builds a `Blob` download link; nothing is sent over the network.
+
+## Engine result notes (issue #440)
+
+Three result states reuse the shared `Alert` (checked against the registry `alert` and the
+official Base UI documentation; no new primitive, no custom CSS, no arbitrary values):
+
+- **No workdays** (`ResultsTabs`): `Alert variant="warning" role="note"` above the tabs, with
+  `TriangleAlertIcon`, so every tab shows why the Dutch and Belgian figures are zero.
+- **Unused federal reductions** (`BEResult`, `FilingChecklist`): `Alert variant="info" role="note"`
+  with the amount via the `be_federal_reductions_unused` message. Only rendered when the unused part
+  is above zero. `role="note"` replaces the default `role="alert"` so these static explanations are
+  not announced as live alerts (the same pattern as the filing provisional notice).
+- **Bracket ranges** (`NLResult`): plain `TableCell` text from `fmtBracket` in `format.ts`, which
+  formats the numeric `from`/`to` bounds with the existing locale `fmt` helper.
+
+Text uses the default `text-text` Alert colour (no small brand-teal text, so axe contrast is
+unchanged). Strings exist in both `messages/en.json` and `messages/nl.json`.

@@ -34,6 +34,7 @@ import {
   DocLink,
   NlBadge,
   RefAccordionItem,
+  ReferenceMeta,
   SectionCard,
   StatRow,
   TipBox,
@@ -43,10 +44,97 @@ import { AppNavbar } from "../components/AppNavbar";
 import { PageHero } from "../components/PageHero";
 import { PageFooter } from "../components/PageFooter";
 import { useDocumentTitle } from "../lib/useDocumentTitle";
+import {
+  fmt,
+  fmtAge,
+  fmtAmount,
+  fmtDate,
+  fmtNumber,
+  fmtPercent,
+  fmtPercentRange,
+} from "../components/format";
+import {
+  ACV_SESSION,
+  ANW,
+  AOW,
+  BE_PENSION,
+  DEDUCTIONS,
+  REFERENCE_INCOME_YEAR,
+  RVU,
+  SUPPLEMENTARY,
+  aowExample,
+  nlReferenceRates,
+  type CareerRow,
+  type PeriodRow,
+} from "../tax/reference";
+
+const wholePercent = (n: number) => fmtPercent(n, { digits: 0 });
+const twoDecimalPercent = (n: number) => fmtPercent(n, { fixed: true });
+
+/** "2014–2015" or "2012"; years are labels, not quantities, so no digit grouping. */
+const fmtPeriod = ({ from, to }: PeriodRow) => (to ? `${from}–${to}` : String(from));
+
+function birthLabel({ from, to }: PeriodRow) {
+  if (from !== undefined && to !== undefined) return m.ref_birth_range({ from, to });
+  if (from !== undefined) return m.ref_birth_from({ from });
+  return m.ref_birth_until({ to: to ?? 0 });
+}
+
+function ZivTable({
+  bands,
+  none,
+  progressive,
+  flat,
+}: {
+  bands: { lowerMonthly: number; upperMonthly: number };
+  none: string;
+  progressive: string;
+  flat: string;
+}) {
+  const rows = [
+    [m.ref_amount_below_per_month({ amount: fmtAmount(bands.lowerMonthly) }), none],
+    [
+      m.ref_amount_range({
+        from: fmtAmount(bands.lowerMonthly),
+        to: fmtAmount(bands.upperMonthly),
+      }),
+      progressive,
+    ],
+    [m.ref_amount_above_per_month({ amount: fmtAmount(bands.upperMonthly) }), flat],
+  ];
+  return (
+    <Table className="text-table-reference-xs">
+      <TableBody>
+        {rows.map(([range, rule]) => (
+          <TableRow key={range}>
+            <TableCell className="font-mono text-text text-xs">{range}</TableCell>
+            <TableCell className="text-text">{rule}</TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  );
+}
+
+function careerAge(age: CareerRow["age"]) {
+  return typeof age === "number"
+    ? fmtAge({ years: age })
+    : m.ref_pension_age_either({ first: age[0], second: age[1] });
+}
+
+function careerRequirement({ careerYears, extraDays }: CareerRow) {
+  return extraDays === undefined
+    ? m.ref_pension_career_years({ years: careerYears })
+    : m.ref_pension_career_years_days({ years: careerYears, days: extraDays });
+}
 
 // ── Main page ────────────────────────────────────────────────────
 
 export default function PensionReference() {
+  const year = REFERENCE_INCOME_YEAR;
+  const rates = nlReferenceRates(year);
+  const sessionDate = fmtDate(ACV_SESSION.date);
+  const example = aowExample();
   useDocumentTitle(`${m.ref_pension_hero_title()} · ${m.document_title_suffix()}`);
   return (
     <>
@@ -61,7 +149,11 @@ export default function PensionReference() {
       </AppNavbar>
 
       <div className="w-full px-3 pb-12">
-        <PageHero title={m.ref_pension_hero_title()} subtitle={m.ref_pension_hero_subtitle()} />
+        <PageHero
+          title={m.ref_pension_hero_title()}
+          subtitle={m.ref_pension_hero_subtitle({ date: sessionDate })}
+        />
+        <ReferenceMeta year={year} />
 
         {/* ── 3-pijler overzicht ────────────────────────────────── */}
         <SectionCard title={m.ref_pension_s1_title()} icon={LayersIcon} accent="neutral">
@@ -114,28 +206,29 @@ export default function PensionReference() {
           <div className="col-span-12 shell:col-span-6">
             {/* ── AOW ────────────────────────────────────────────── */}
             <SectionCard title={m.ref_pension_s_aow()} icon={FlagIcon} accent="nl">
-              <StatRow label={m.ref_pension_aow_opbouw()} value="2%" />
+              <StatRow
+                label={m.ref_pension_aow_opbouw()}
+                value={wholePercent(AOW.accrualPerYear)}
+              />
               <StatRow
                 label={m.ref_pension_aow_volledig()}
-                value={m.ref_pension_aow_volledig_value()}
+                value={m.ref_pension_aow_volledig_value({
+                  years: fmtNumber(Math.round(1 / AOW.accrualPerYear)),
+                  percent: wholePercent(1),
+                })}
               />
               <StatRow
-                label={m.ref_pension_aow_premie()}
-                value={m.ref_pension_aow_premie_value()}
-                sub={m.ref_pension_aow_premie_sub()}
+                label={m.ref_pension_aow_premie({ year })}
+                value={fmtPercent(AOW.premiumRate, { digits: 1, fixed: true })}
+                sub={m.ref_pension_aow_premie_sub({ amount: fmt(rates.premiumCeiling) })}
               />
-              <StatRow
-                label={m.ref_pension_aow_age_2024()}
-                value={m.ref_pension_aow_age_2024_value()}
-                highlight
-              />
-              <StatRow
-                label={m.ref_pension_aow_age_2028()}
-                value={m.ref_pension_aow_age_2028_value()}
-              />
+              <StatRow label={m.ref_pension_aow_age_2024()} value={fmtAge(AOW.ageNow)} highlight />
+              <StatRow label={m.ref_pension_aow_age_2028()} value={fmtAge(AOW.ageFrom2028)} />
               <StatRow
                 label={m.ref_pension_aow_age_future()}
-                value={m.ref_pension_aow_age_future_value()}
+                value={m.ref_pension_aow_age_future_value({
+                  age: fmtAge({ years: AOW.ageFuture }),
+                })}
               />
               <StatRow
                 label={m.ref_pension_aow_uitvoering()}
@@ -147,7 +240,7 @@ export default function PensionReference() {
               />
 
               <div className="mt-6 mb-2 text-sm font-semibold ref-subsection-label">
-                {m.ref_pension_max_amounts()}
+                {m.ref_pension_max_amounts({ year })}
               </div>
               <Table className="text-table-reference">
                 <TableHeader className="bg-surface-3">
@@ -161,22 +254,22 @@ export default function PensionReference() {
                 <TableBody>
                   <TableRow>
                     <TableCell>{m.ref_pension_aow_ongehuwd()}</TableCell>
-                    <TableCell className="font-mono text-text">70%</TableCell>
-                    <TableCell className="font-mono">
-                      {m.ref_pension_aow_ongehuwd_monthly()}
+                    <TableCell className="font-mono text-text">
+                      {wholePercent(AOW.single.share)}
                     </TableCell>
+                    <TableCell className="font-mono">{fmtAmount(AOW.single.monthly)}</TableCell>
                     <TableCell className="font-mono">
-                      {m.ref_pension_aow_ongehuwd_holiday()}
+                      {m.ref_pension_holiday_x12({ amount: fmtAmount(AOW.single.holidayMonthly) })}
                     </TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell>{m.ref_pension_aow_gehuwd()}</TableCell>
-                    <TableCell className="font-mono text-text">50%</TableCell>
-                    <TableCell className="font-mono">
-                      {m.ref_pension_aow_gehuwd_monthly()}
+                    <TableCell className="font-mono text-text">
+                      {wholePercent(AOW.couple.share)}
                     </TableCell>
+                    <TableCell className="font-mono">{fmtAmount(AOW.couple.monthly)}</TableCell>
                     <TableCell className="font-mono">
-                      {m.ref_pension_aow_gehuwd_holiday()}
+                      {m.ref_pension_holiday_x12({ amount: fmtAmount(AOW.couple.holidayMonthly) })}
                     </TableCell>
                   </TableRow>
                 </TableBody>
@@ -188,17 +281,20 @@ export default function PensionReference() {
                 </div>
                 <StatRow
                   label={m.ref_pension_ex_opgebouwd()}
-                  value="60%"
-                  sub={m.ref_pension_ex_opgebouwd_sub()}
+                  value={wholePercent(example.accrued)}
+                  sub={m.ref_pension_ex_opgebouwd_sub({
+                    years: example.insuredYears,
+                    rate: wholePercent(AOW.accrualPerYear),
+                  })}
                 />
                 <StatRow
                   label={m.ref_pension_ex_alleenstaand()}
-                  value={m.ref_pension_ex_alleenstaand_value()}
+                  value={m.ref_amount_approx_per_month({ amount: fmtAmount(example.single) })}
                   sub={m.ref_pension_ex_alleenstaand_sub()}
                 />
                 <StatRow
                   label={m.ref_pension_ex_gehuwd()}
-                  value={m.ref_pension_ex_gehuwd_value()}
+                  value={m.ref_amount_approx_per_month({ amount: fmtAmount(example.couple) })}
                   sub={m.ref_pension_ex_alleenstaand_sub()}
                 />
               </div>
@@ -212,22 +308,10 @@ export default function PensionReference() {
                 <RefAccordionItem value="aow-history" title={m.ref_pension_aow_history()}>
                   <Table className="text-table-reference-xs">
                     <TableBody>
-                      {[
-                        ["2012", m.ref_pension_aow_h2012()],
-                        ["2013", m.ref_pension_aow_h2013()],
-                        ["2014–2015", m.ref_pension_aow_h2014_2015()],
-                        ["2016", m.ref_pension_aow_h2016()],
-                        ["2017", m.ref_pension_aow_h2017()],
-                        ["2018", m.ref_pension_aow_h2018()],
-                        ["2019–2021", m.ref_pension_aow_h2019_2021()],
-                        ["2022", m.ref_pension_aow_h2022()],
-                        ["2023", m.ref_pension_aow_h2023()],
-                        ["2024–2027", m.ref_pension_aow_h2024_2027()],
-                        ["2028–2031", m.ref_pension_aow_h2028_2031()],
-                      ].map(([yr, age]) => (
-                        <TableRow key={yr}>
-                          <TableCell>{yr}</TableCell>
-                          <TableCell className="font-mono">{age}</TableCell>
+                      {AOW.history.map(({ period, age }) => (
+                        <TableRow key={period.from}>
+                          <TableCell>{fmtPeriod(period)}</TableCell>
+                          <TableCell className="font-mono">{fmtAge(age)}</TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
@@ -240,20 +324,25 @@ export default function PensionReference() {
             <SectionCard title={m.ref_pension_s_anw()} icon={HeartPulseIcon} accent="nl">
               <StatRow
                 label={m.ref_pension_anw_uitkering()}
-                value={m.ref_pension_anw_uitkering_value()}
-                sub={m.ref_pension_anw_uitkering_sub()}
+                value={fmtAmount(ANW.monthly)}
+                sub={m.ref_pension_anw_uitkering_sub({
+                  percent: wholePercent(ANW.netMinimumWageShare),
+                })}
               />
               <StatRow
                 label={m.ref_pension_anw_vakantiegeld()}
-                value={m.ref_pension_anw_vakantiegeld_value()}
+                value={m.ref_amount_per_month({ amount: fmtAmount(ANW.holidayMonthly) })}
               />
               <StatRow
                 label={m.ref_pension_anw_voorwaarden()}
-                value={m.ref_pension_anw_voorwaarden_value()}
+                value={m.ref_pension_anw_voorwaarden_value({
+                  childAge: ANW.maxChildAge,
+                  disability: wholePercent(ANW.minDisability),
+                })}
               />
               <StatRow
                 label={m.ref_pension_anw_wezen()}
-                value={m.ref_pension_anw_wezen_value()}
+                value={m.ref_pension_anw_wezen_value({ age: ANW.orphanMaxAge })}
                 sub={m.ref_pension_anw_wezen_sub()}
               />
 
@@ -262,7 +351,9 @@ export default function PensionReference() {
               </div>
               <StatRow
                 label={m.ref_pension_anw_vrijgesteld()}
-                value={m.ref_pension_anw_vrijgesteld_value()}
+                value={m.ref_pension_anw_vrijgesteld_value({
+                  amount: fmtAmount(ANW.exemptMonthly),
+                })}
               />
               <StatRow
                 label={m.ref_pension_anw_daarboven()}
@@ -270,11 +361,11 @@ export default function PensionReference() {
               />
               <StatRow
                 label={m.ref_pension_anw_geen_recht()}
-                value={m.ref_pension_anw_geen_recht_value()}
+                value={m.ref_amount_per_month({ amount: fmtAmount(ANW.maxIncomeMonthly) })}
               />
               <StatRow
                 label={m.ref_pension_anw_geen_anw()}
-                value={m.ref_pension_anw_geen_anw_value()}
+                value={m.ref_amount_per_month({ amount: fmtAmount(ANW.maxBenefitsMonthly) })}
                 sub={m.ref_pension_anw_geen_anw_sub()}
               />
 
@@ -299,19 +390,27 @@ export default function PensionReference() {
               <p className="text-sm mb-4 ref-text-sub">{m.ref_pension_sup_intro()}</p>
               <StatRow
                 label={m.ref_pension_sup_pensioenpot()}
-                value={m.ref_pension_sup_pensioenpot_value()}
+                value={m.ref_pension_sup_pensioenpot_value({
+                  amount: fmt(SUPPLEMENTARY.potBillions),
+                })}
               />
               <StatRow
                 label={m.ref_pension_sup_fondsen()}
-                value={m.ref_pension_sup_fondsen_value()}
+                value={m.ref_pension_sup_fondsen_value({
+                  count: fmtNumber(SUPPLEMENTARY.industryFunds),
+                })}
               />
               <StatRow
                 label={m.ref_pension_sup_afkoop()}
-                value={m.ref_pension_sup_afkoop_value()}
+                value={m.ref_amount_per_year({
+                  amount: fmtAmount(SUPPLEMENTARY.cashOutBelowYearly),
+                })}
               />
               <StatRow
                 label={m.ref_pension_sup_partner()}
-                value={m.ref_pension_sup_partner_value()}
+                value={m.ref_pension_sup_partner_value({
+                  percent: wholePercent(SUPPLEMENTARY.partnerShare),
+                })}
                 sub={m.ref_pension_sup_partner_sub()}
               />
               <StatRow
@@ -344,13 +443,13 @@ export default function PensionReference() {
             <SectionCard title={m.ref_pension_s_rvu()} icon={DoorOpenIcon} accent="nl">
               <p className="text-sm mb-4 ref-text-sub">{m.ref_pension_rvu_intro()}</p>
               <StatRow
-                label={m.ref_pension_rvu_max()}
-                value={m.ref_pension_rvu_max_value()}
+                label={m.ref_pension_rvu_max({ year })}
+                value={m.ref_amount_per_month({ amount: fmtAmount(RVU.maxMonthly) })}
                 highlight
               />
               <StatRow
                 label={m.ref_pension_rvu_vroegst()}
-                value={m.ref_pension_rvu_vroegst_value()}
+                value={m.ref_pension_rvu_vroegst_value({ months: RVU.monthsBeforeAowAge })}
               />
               <StatRow
                 label={m.ref_pension_rvu_uitbetaling()}
@@ -370,22 +469,22 @@ export default function PensionReference() {
               <p className="text-sm mb-4 ref-text-sub">{m.ref_pension_ded_intro()}</p>
               <StatRow label={m.ref_pension_ded_zorg()} value={m.ref_pension_ded_zorg_value()} />
               <StatRow
-                label={m.ref_pension_ded_verdrag()}
-                value={m.ref_pension_ded_verdrag_value()}
+                label={m.ref_pension_ded_verdrag({ year })}
+                value={fmtNumber(DEDUCTIONS.treatyFactor, 4)}
               />
               <StatRow
                 label={m.ref_pension_ded_zvw()}
-                value={m.ref_pension_ded_zvw_value()}
-                sub={m.ref_pension_ded_zvw_sub()}
+                value={twoDecimalPercent(DEDUCTIONS.zvwRate)}
+                sub={m.ref_pension_ded_zvw_sub({ amount: fmt(DEDUCTIONS.zvwMaxIncome) })}
               />
               <StatRow
                 label={m.ref_pension_ded_nominaal()}
-                value={m.ref_pension_ded_nominaal_value()}
+                value={m.ref_amount_per_month({ amount: fmtAmount(DEDUCTIONS.nominalMonthly) })}
               />
               <StatRow
                 label={m.ref_pension_ded_wlz()}
-                value={m.ref_pension_ded_wlz_value()}
-                sub={m.ref_pension_ded_wlz_sub()}
+                value={twoDecimalPercent(DEDUCTIONS.wlzRate)}
+                sub={m.ref_pension_ded_wlz_sub({ amount: fmt(rates.premiumCeiling) })}
               />
               <TipBox>{m.ref_pension_ded_tip()}</TipBox>
             </SectionCard>
@@ -393,7 +492,7 @@ export default function PensionReference() {
         </div>
 
         {/* ── Belgisch rustpensioen ────────────────────────────────── */}
-        <SectionCard title={m.ref_pension_s_be()} icon={FlagIcon} accent="be">
+        <SectionCard title={m.ref_pension_s_be({ year })} icon={FlagIcon} accent="be">
           <div className="grid grid-cols-12 gap-6">
             <div className="col-span-12 md:col-span-4">
               <div className="text-sm font-semibold mb-2 ref-subsection-label">
@@ -401,37 +500,43 @@ export default function PensionReference() {
               </div>
               <StatRow
                 label={m.ref_pension_be_wet_pensioen()}
-                value={m.ref_pension_be_wet_pensioen_value()}
-                sub={m.ref_pension_be_wet_pensioen_sub()}
+                value={fmtAge({ years: BE_PENSION.statutoryAge })}
+                sub={m.ref_pension_be_wet_pensioen_sub({
+                  age: fmtAge({ years: BE_PENSION.statutoryAgeFrom2030 }),
+                })}
                 highlight
               />
               <StatRow
                 label={m.ref_pension_be_volledig()}
-                value={m.ref_pension_be_volledig_value()}
-                sub={m.ref_pension_be_volledig_sub()}
+                value={m.ref_pension_be_volledig_value({
+                  days: fmtNumber(BE_PENSION.fullCareerDays),
+                })}
+                sub={m.ref_pension_be_volledig_sub({ days: BE_PENSION.daysPerCareerYear })}
               />
               <StatRow
                 label={m.ref_pension_be_vroegst()}
-                value={m.ref_pension_be_vroegst_value()}
-                sub={m.ref_pension_be_vroegst_sub()}
+                value={fmtAge({ years: BE_PENSION.earliestAge })}
+                sub={m.ref_pension_be_vroegst_sub({ years: BE_PENSION.earliestCareerYears })}
               />
               <StatRow
                 label={m.ref_pension_be_loonplafond()}
-                value={m.ref_pension_be_loonplafond_value()}
+                value={m.ref_amount_per_year({ amount: fmtAmount(BE_PENSION.wageCeilingYearly) })}
               />
               <StatRow
                 label={m.ref_pension_be_max_gezin()}
-                value={m.ref_pension_be_max_gezin_value()}
+                value={m.ref_amount_per_month({ amount: fmtAmount(BE_PENSION.maxFamilyMonthly) })}
                 highlight
               />
               <StatRow
                 label={m.ref_pension_be_max_alleenst()}
-                value={m.ref_pension_be_max_alleenst_value()}
+                value={m.ref_amount_per_month({ amount: fmtAmount(BE_PENSION.maxSingleMonthly) })}
                 highlight
               />
               <StatRow
                 label={m.ref_pension_be_aanvraag()}
-                value={m.ref_pension_be_aanvraag_value()}
+                value={m.ref_pension_be_aanvraag_value({
+                  months: BE_PENSION.applicationMonthsAhead,
+                })}
               />
               <StatRow
                 label={m.ref_pension_be_geen_terugw()}
@@ -443,7 +548,7 @@ export default function PensionReference() {
 
             <div className="col-span-12 md:col-span-4">
               <div className="text-sm font-semibold mb-2 ref-subsection-label">
-                {m.ref_pension_be_earliest()}
+                {m.ref_pension_be_earliest({ year })}
               </div>
               <Table className="text-table-reference">
                 <TableHeader className="bg-surface-3">
@@ -453,19 +558,17 @@ export default function PensionReference() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {[
-                    [m.ref_pension_be_age_60(), m.ref_pension_be_career_60()],
-                    [m.ref_pension_be_age_61_62(), m.ref_pension_be_career_61_62()],
-                    [m.ref_pension_be_age_63_64(), m.ref_pension_be_career_63_64()],
-                  ].map(([age, career]) => (
-                    <TableRow key={age}>
-                      <TableCell className="font-mono text-text">{age}</TableCell>
-                      <TableCell className="text-text">{career}</TableCell>
+                  {BE_PENSION.earliest2026.map((row) => (
+                    <TableRow key={String(row.age)}>
+                      <TableCell className="font-mono text-text">{careerAge(row.age)}</TableCell>
+                      <TableCell className="text-text">{careerRequirement(row)}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
-              <TipBox>{m.ref_pension_be_tip_nl_years()}</TipBox>
+              <TipBox>
+                {m.ref_pension_be_tip_nl_years({ days: BE_PENSION.daysPerCareerYear })}
+              </TipBox>
             </div>
 
             <div className="col-span-12 md:col-span-4">
@@ -473,52 +576,47 @@ export default function PensionReference() {
                 {m.ref_pension_be_ziv()}
               </div>
               <p className="text-sm mb-2 ref-text-sub">
-                <strong>{m.ref_pension_ziv_alleenstaand()}</strong>
+                <strong>
+                  {m.ref_pension_ziv_alleenstaand({
+                    percent: twoDecimalPercent(BE_PENSION.ziv.rate),
+                  })}
+                </strong>
               </p>
-              <Table className="text-table-reference-xs">
-                <TableBody>
-                  {[
-                    [
-                      m.ref_amount_below_per_month({ amount: "€2.078,46" }),
-                      m.ref_pension_ziv_rule_geen1(),
-                    ],
-                    ["€2.078,46 – €2.154,94", m.ref_pension_ziv_rule_prog1()],
-                    [
-                      m.ref_amount_above_per_month({ amount: "€2.154,94" }),
-                      m.ref_pension_ziv_rule_355_1(),
-                    ],
-                  ].map(([range, rule]) => (
-                    <TableRow key={range}>
-                      <TableCell className="font-mono text-text text-xs">{range}</TableCell>
-                      <TableCell className="text-text">{rule}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+              <ZivTable
+                bands={BE_PENSION.ziv.single}
+                none={m.ref_pension_ziv_rule_geen1()}
+                progressive={m.ref_pension_ziv_rule_prog1({
+                  amount: fmtAmount(BE_PENSION.ziv.single.subtract),
+                })}
+                flat={m.ref_pension_ziv_rule_355_1({
+                  percent: twoDecimalPercent(BE_PENSION.ziv.rate),
+                })}
+              />
               <p className="text-sm mt-4 mb-2 ref-text-sub">
-                <strong>{m.ref_pension_ziv_gezin()}</strong>
+                <strong>
+                  {m.ref_pension_ziv_gezin({ percent: twoDecimalPercent(BE_PENSION.ziv.rate) })}
+                </strong>
               </p>
-              <Table className="text-table-reference-xs">
-                <TableBody>
-                  {[
-                    [
-                      m.ref_amount_below_per_month({ amount: "€2.463,25" }),
-                      m.ref_pension_ziv_rule_geen2(),
-                    ],
-                    ["€2.463,25 – €2.553,89", m.ref_pension_ziv_rule_prog2()],
-                    [
-                      m.ref_amount_above_per_month({ amount: "€2.553,89" }),
-                      m.ref_pension_ziv_rule_355_2(),
-                    ],
-                  ].map(([range, rule]) => (
-                    <TableRow key={range}>
-                      <TableCell className="font-mono text-text text-xs">{range}</TableCell>
-                      <TableCell className="text-text">{rule}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-              <WarnBox>{m.ref_pension_ziv_warn()}</WarnBox>
+              <ZivTable
+                bands={BE_PENSION.ziv.family}
+                none={m.ref_pension_ziv_rule_geen2()}
+                progressive={m.ref_pension_ziv_rule_prog2({
+                  amount: fmtAmount(BE_PENSION.ziv.family.subtract),
+                })}
+                flat={m.ref_pension_ziv_rule_355_2({
+                  percent: twoDecimalPercent(BE_PENSION.ziv.rate),
+                })}
+              />
+              <WarnBox>
+                {m.ref_pension_ziv_warn({
+                  rate: fmtPercentRange(
+                    BE_PENSION.ziv.solidarityRateFrom,
+                    BE_PENSION.ziv.solidarityRateTo,
+                  ),
+                  single: fmt(BE_PENSION.ziv.solidarityAboveSingleMonthly),
+                  family: fmt(BE_PENSION.ziv.solidarityAboveFamilyMonthly),
+                })}
+              </WarnBox>
             </div>
           </div>
         </SectionCard>
@@ -527,32 +625,28 @@ export default function PensionReference() {
         <div className="grid grid-cols-12 gap-6">
           <div className="col-span-12 md:col-span-4">
             <SectionCard title={m.ref_pension_s_be_2027()} icon={CalendarCheckIcon} accent="be">
-              <p className="text-sm mb-4 ref-text-sub">{m.ref_pension_be2027_intro()}</p>
+              <p className="text-sm mb-4 ref-text-sub">
+                {m.ref_pension_be2027_intro({
+                  from: BE_PENSION.daysPerCareerYear,
+                  to: BE_PENSION.from2027.daysPerCareerYear,
+                })}
+              </p>
               <Table className="text-table-reference">
                 <TableHeader className="bg-surface-3">
                   <TableRow>
                     <TableHead>{m.ref_table_age()}</TableHead>
-                    <TableHead>{m.ref_table_career_156()}</TableHead>
+                    <TableHead>
+                      {m.ref_table_career_156({ days: BE_PENSION.from2027.daysPerCareerYear })}
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {[
-                    [m.ref_pension_be2027_age_60(), m.ref_pension_be2027_row_60_a()],
-                    [m.ref_pension_be2027_age_60(), m.ref_pension_be2027_row_60_b()],
-                    [m.ref_pension_be2027_age_61(), m.ref_pension_be2027_row_61()],
-                    [m.ref_pension_be2027_age_62(), m.ref_pension_be2027_row_62()],
-                    [m.ref_pension_be2027_age_63(), m.ref_pension_be2027_row_63()],
-                    [m.ref_pension_be2027_age_64(), m.ref_pension_be2027_row_64()],
-                    [m.ref_pension_be2027_age_65(), m.ref_pension_be2027_row_65()],
-                  ].map((row) => {
-                    const [age, career] = row;
-                    return (
-                      <TableRow key={String(age) + String(career)}>
-                        <TableCell className="font-mono text-text">{age}</TableCell>
-                        <TableCell className="text-text">{career}</TableCell>
-                      </TableRow>
-                    );
-                  })}
+                  {BE_PENSION.from2027.rows.map((row) => (
+                    <TableRow key={`${row.age}-${row.careerYears}-${row.extraDays ?? 0}`}>
+                      <TableCell className="font-mono text-text">{careerAge(row.age)}</TableCell>
+                      <TableCell className="text-text">{careerRequirement(row)}</TableCell>
+                    </TableRow>
+                  ))}
                 </TableBody>
               </Table>
             </SectionCard>
@@ -560,7 +654,13 @@ export default function PensionReference() {
 
           <div className="col-span-12 md:col-span-4">
             <SectionCard title={m.ref_pension_s_malus()} icon={CircleArrowDownIcon} accent="be">
-              <p className="text-sm mb-4 ref-text-sub">{m.ref_pension_malus_intro()}</p>
+              <p className="text-sm mb-4 ref-text-sub">
+                {m.ref_pension_malus_intro({
+                  years: BE_PENSION.malusMinYears,
+                  days: BE_PENSION.from2027.daysPerCareerYear,
+                  total: fmtNumber(BE_PENSION.malusMinDays),
+                })}
+              </p>
               <Table className="text-table-reference-md">
                 <TableHeader className="bg-surface-3">
                   <TableRow>
@@ -569,14 +669,12 @@ export default function PensionReference() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {[
-                    [m.ref_pension_malus_1961(), "2%"],
-                    [m.ref_pension_malus_1966(), "4%"],
-                    [m.ref_pension_malus_1975(), "5%"],
-                  ].map(([yr, malus]) => (
-                    <TableRow key={yr}>
-                      <TableCell className="text-text">{yr}</TableCell>
-                      <TableCell className="font-mono text-text font-bold">{malus}</TableCell>
+                  {BE_PENSION.malus.map(({ birth, rate }) => (
+                    <TableRow key={birth.from}>
+                      <TableCell className="text-text">{birthLabel(birth)}</TableCell>
+                      <TableCell className="font-mono text-text font-bold">
+                        {wholePercent(rate)}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -586,7 +684,12 @@ export default function PensionReference() {
 
           <div className="col-span-12 md:col-span-4">
             <SectionCard title={m.ref_pension_s_bonus()} icon={CircleArrowUpIcon} accent="be">
-              <p className="text-sm mb-4 ref-text-sub">{m.ref_pension_bonus_intro()}</p>
+              <p className="text-sm mb-4 ref-text-sub">
+                {m.ref_pension_bonus_intro({
+                  years: BE_PENSION.malusMinYears,
+                  total: fmtNumber(BE_PENSION.malusMinDays),
+                })}
+              </p>
               <Table className="text-table-reference-md">
                 <TableHeader className="bg-surface-3">
                   <TableRow>
@@ -595,14 +698,12 @@ export default function PensionReference() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {[
-                    [m.ref_pension_bonus_1962(), "2%"],
-                    [m.ref_pension_bonus_1963(), "4%"],
-                    [m.ref_pension_bonus_1973(), "5%"],
-                  ].map(([yr, bonus]) => (
-                    <TableRow key={yr}>
-                      <TableCell className="text-text">{yr}</TableCell>
-                      <TableCell className="font-mono text-text font-bold">{bonus}</TableCell>
+                  {BE_PENSION.bonus.map(({ birth, rate }) => (
+                    <TableRow key={birth.from ?? birth.to}>
+                      <TableCell className="text-text">{birthLabel(birth)}</TableCell>
+                      <TableCell className="font-mono text-text font-bold">
+                        {wholePercent(rate)}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -650,7 +751,7 @@ export default function PensionReference() {
         </div>
 
         {/* ── Overlevingspensioen BE ───────────────────────────────── */}
-        <SectionCard title={m.ref_pension_s_survivor()} icon={HeartIcon} accent="be">
+        <SectionCard title={m.ref_pension_s_survivor({ year })} icon={HeartIcon} accent="be">
           <div className="grid grid-cols-12 gap-4">
             <div className="col-span-12 md:col-span-6">
               <div className="text-sm font-semibold mb-2 ref-subsection-label">
@@ -725,13 +826,13 @@ export default function PensionReference() {
           <DocLink
             href="/docs/ACV-Pensioen-Infosessie-2026.pdf"
             title={m.ref_pension_source_doc_title()}
-            sub={m.ref_pension_source_doc_sub()}
+            sub={m.ref_pension_source_doc_sub({ date: sessionDate })}
             className="max-w-lg"
           />
         </SectionCard>
 
         <PageFooter>
-          {m.ref_pension_footer()}&nbsp;|&nbsp;
+          {m.ref_pension_footer({ date: sessionDate })}&nbsp;|&nbsp;
           <a
             href="https://www.acvgrensarbeiders.be"
             target="_blank"

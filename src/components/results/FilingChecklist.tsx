@@ -404,6 +404,11 @@ export default function FilingChecklist({ result }: Props) {
           <Alert variant={provisional ? "warning" : "success"} role="note" className="text-sm py-2">
             {provisional ? m.filing_be_provisional() : m.filing_be_final()}
           </Alert>
+          {be.federalReductionsUnused > 0 && (
+            <Alert variant="info" role="note" className="text-sm py-2">
+              {m.be_federal_reductions_unused({ amount: fmtExact(be.federalReductionsUnused) })}
+            </Alert>
+          )}
           <Table bordered className="text-sm mb-2 max-table:block">
             <ChecklistHead />
             <TableBody className="max-table:block">

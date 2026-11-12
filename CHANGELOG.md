@@ -25,14 +25,20 @@ allowed scopes are listed in `release.config.json`, and `check` validates `[Unre
 
 ### Changed
 
+- Change the shape of the calculation output (MCP `calculate_tax` and `compare_scenarios`, and the engine result): `result.nl.brackets` entries now carry numeric `from` and `to` bounds (`to` is `null` for the open top bracket) instead of a Dutch-formatted `label`, and Belgian money figures in `result.be` (plus `totalTax`, `netIncome`, the mortgage effects and the comparison deltas) are rounded to whole cents instead of carrying thirteen decimals. The cent rounding is applied once to the returned result; no Belgian tax-rounding rule is claimed. `federalTax` and `nlExemptIncome` stay for compatibility.
+- **Web:** Format the Dutch bracket ranges in the active language (English and Dutch number formats) instead of always in Dutch.
 - Accept the optional `assessmentIncomeTaxDue` and `assessmentPremiumsDue` inputs (together, or neither) in the strict schema, the MCP `calculate_tax` and `compare_scenarios` tools, `get_capabilities` and the input file (file version unchanged; files without them stay valid). `result.nl` stays the estimate; the new `result.nlCharge` reports the source and the difference from it.
 - **Web:** Clamp long field hints to two lines with a "More" toggle, which shortens the input column.
 - **Web:** Stack the filing checklist rows as field / value / source cards on narrow screens instead of scrolling the tables sideways.
 - **Web:** Wrap the result tabs onto a second row on narrow screens so none are hidden off-screen, and show the app name in the collapsed header.
+- **Web:** Show the income year, the ACV session date and the Belastingdienst source in one fixed line under the title of both reference pages. The Dutch rate table, the algemene heffingskorting and arbeidskorting maxima and the premium ceiling on the salary-split page are now taken from the same income year 2026 parameters as the calculator, and every figure is formatted for the selected language. The arbeidskorting now reads "zero at income ≥ €132,920", as in the 2026 parameters (the page had €132,290).
+- **Web:** Keep the reference figures (pension amounts, AOW ages, ZIV bands, the worked example) out of the translation files: they are typed once in `src/tax/reference`, marked as coming from the ACV session, and the messages only hold prose with parameters.
 
 ### Fixed
 
 - **Web:** Wrap the section headers in the filing checklist on narrow screens instead of cutting off the Box IV O.2 title.
+- **Web:** With no workdays entered the Dutch result no longer charges full premiums and applies the arbeidskorting and algemene heffingskorting on income that is not there: the Dutch and Belgian figures are all zero, the result carries `noWorkdays: true` and the results show a note asking for workdays. Zero workdays stay valid input.
+- **Web:** Show a short note in the Belgian result and the filing checklist when the supplementary pension and withholding tax reductions (code 1437) exceed the federal tax, instead of clamping at zero silently; the unused part is returned as `result.be.federalReductionsUnused`.
 - **Web:** The mortgage interest deduction no longer lists an income statement from the Belgian tax authority as a requirement for income year 2026. The Belastingdienst abolished that condition from 2026 (the tax authority can still ask for proof), so the assumptions list now says so; income years up to 2025 are unchanged. Re-checked against the official sources: the deduction rate caps, the eigenwoningforfait tables and the 90% test for 2020–2026 needed no correction.
 - **Web:** Apply the algemene heffingskorting to Belgian residents who are insured in the Netherlands. The Dutch refund, code 1250 and the Belgian estimate were too low by that credit for wages below the phase-out end.
 - **Web:** Split the code 1250 amount into box IV O.1 and O.2 as in the FOD guideline: Dutch premiums come off before the workday fraction, and only the Dutch income tax is taken from the exempt part. The salary-split reference page states the same formula.
