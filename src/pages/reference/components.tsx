@@ -7,6 +7,7 @@ import { Alert } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { fmtDate } from "@/components/format";
 import { ACV_SESSION, referenceTaxSourceUrl } from "@/tax/reference";
+import { yearParams } from "@/tax/assessmentYear";
 import * as m from "../../paraglide/messages.js";
 
 // ── Shared styled sub-components for reference pages ────────────
@@ -65,7 +66,7 @@ export function ReferenceMeta({ year }: { year: number }) {
   const taxSourceUrl = referenceTaxSourceUrl(year);
   return (
     <div className="mb-6 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-center text-xs text-text-muted">
-      <Badge variant="secondary">{m.ref_meta_income_year({ year })}</Badge>
+      <Badge variant="secondary">{m.ref_meta_income_year(yearParams(year))}</Badge>
       <span>
         {m.ref_meta_acv_source({ date: fmtDate(ACV_SESSION.date), place: ACV_SESSION.place })}
       </span>

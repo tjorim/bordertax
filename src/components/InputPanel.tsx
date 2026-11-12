@@ -20,6 +20,7 @@ import { VALID_YEARS, isThirtyPercentRulingSupportedResident } from "../tax/cons
 import type { TaxFormApi } from "../App";
 import type { TaxInputs } from "../tax/types";
 import { getMaxDaysInYear, getNLFractions, getTotalWorkdays } from "../tax/workdays";
+import { yearParams } from "@/tax/assessmentYear";
 import * as m from "../paraglide/messages.js";
 import { CheckboxField } from "./fields/CheckboxField";
 import { CurrencyField, NumberField, fieldError } from "./fields/NumberField";
@@ -73,7 +74,7 @@ export default function InputPanel({ form }: Props) {
             <form.Field name="year">
               {(field) => (
                 <Field className="col-span-12 table:col-span-6">
-                  <FieldLabel htmlFor="tax-year">{m.input_tax_year()}</FieldLabel>
+                  <FieldLabel htmlFor="tax-year">{m.input_income_year()}</FieldLabel>
                   <NativeSelect
                     id="tax-year"
                     value={field.value}
@@ -84,10 +85,13 @@ export default function InputPanel({ form }: Props) {
                   >
                     {VALID_YEARS.map((y) => (
                       <NativeSelectOption key={y} value={y}>
-                        {y}
+                        {m.year_with_assessment(yearParams(y))}
                       </NativeSelectOption>
                     ))}
                   </NativeSelect>
+                  <FieldDescription className="mt-1">
+                    {m.input_income_year_hint(yearParams(field.value))}
+                  </FieldDescription>
                 </Field>
               )}
             </form.Field>
@@ -185,7 +189,7 @@ export default function InputPanel({ form }: Props) {
                 <ExportInputsButton inputs={values as TaxInputs} />
                 <ImportInputsButton
                   label={m.file_import()}
-                  successMessage={(year) => m.file_imported({ year })}
+                  successMessage={(year) => m.file_imported(yearParams(year))}
                   onLoad={(imported) => form.reset({ ...DEFAULT_INPUTS, ...imported })}
                 />
               </div>

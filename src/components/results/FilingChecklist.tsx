@@ -15,6 +15,7 @@ import {
 
 import { cn } from "@/lib/utils";
 import { MORTGAGE_QUALIFYING_MIN_NL_PERCENT } from "@/tax/constants";
+import { yearParams } from "@/tax/assessmentYear";
 import type { TaxResult } from "@/tax/types";
 import * as m from "@/paraglide/messages.js";
 import { fmt, fmtExact } from "../format.js";
@@ -232,14 +233,14 @@ function toClipboardText(
 ): string {
   const line = (row: Row) => `${row.field}\t${row.value}\t${formatLabel(row.format)}`;
   return [
-    `${m.filing_title()} · ${year}`,
+    `${m.filing_title()} · ${m.income_year_with_assessment(yearParams(year))}`,
     "",
-    m.filing_nl_title(),
+    m.filing_nl_title({ year }),
     ...nlRows.map(line),
     ...(beGroups.length > 0
       ? [
           "",
-          m.filing_be_title(),
+          m.filing_be_title(yearParams(year)),
           ...(provisional ? [m.filing_be_provisional()] : []),
           ...beGroups.flatMap((group) => [
             ...(group.title ? [group.title] : []),
@@ -314,6 +315,7 @@ export default function FilingChecklist({ result }: Props) {
       <h5 id="filing-heading" tabIndex={-1} className="mb-1 scroll-mt-32">
         {m.filing_title()}
       </h5>
+      <p className="text-sm font-medium mb-1">{m.filing_year_line(yearParams(inputs.year))}</p>
       <p className="text-text-muted text-sm mb-4">{m.filing_intro()}</p>
 
       <Alert variant="warning" role="note" className="text-sm py-2">
@@ -351,7 +353,7 @@ export default function FilingChecklist({ result }: Props) {
         <li>{m.filing_document_deductions()}</li>
       </ul>
 
-      <h6 className="mb-1">🇳🇱 {m.filing_nl_title()}</h6>
+      <h6 className="mb-1">🇳🇱 {m.filing_nl_title({ year: inputs.year })}</h6>
       <p className="text-sm mb-2">
         {m.filing_nl_intro()}{" "}
         <a href="https://mijn.belastingdienst.nl/" target="_blank" rel="noreferrer">
@@ -389,7 +391,7 @@ export default function FilingChecklist({ result }: Props) {
 
       {be && (
         <>
-          <h6 className="mb-1">🇧🇪 {m.filing_be_title()}</h6>
+          <h6 className="mb-1">🇧🇪 {m.filing_be_title(yearParams(inputs.year))}</h6>
           <p className="text-sm mb-2">
             {m.filing_be_intro()}{" "}
             <a

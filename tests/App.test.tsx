@@ -138,13 +138,13 @@ describe("App", () => {
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(savedInputs));
     render(<App />);
-    expect(screen.getByText(/Tax year.*2024/)).toBeInTheDocument();
+    expect(screen.getByText("Income year 2024", { exact: true })).toBeInTheDocument();
   });
 
   it("moves inputs saved under the legacy key to the current key", () => {
     localStorage.setItem(LEGACY_STORAGE_KEY, JSON.stringify({ year: 2023 }));
     render(<App />);
-    expect(screen.getByText(/Tax year.*2023/)).toBeInTheDocument();
+    expect(screen.getByText("Income year 2023", { exact: true })).toBeInTheDocument();
     expect(localStorage.getItem(LEGACY_STORAGE_KEY)).toBeNull();
     expect(JSON.parse(localStorage.getItem(STORAGE_KEY)!)).toMatchObject({ year: 2023 });
   });
@@ -152,7 +152,7 @@ describe("App", () => {
   it("ignores invalid localStorage data and uses defaults", () => {
     localStorage.setItem(STORAGE_KEY, "not valid json{{");
     render(<App />);
-    expect(screen.getByText(/Tax year.*2025/)).toBeInTheDocument();
+    expect(screen.getByText("Income year 2025", { exact: true })).toBeInTheDocument();
   });
 
   it("loads a saved year 2026 without a provisional alert", () => {
@@ -171,7 +171,7 @@ describe("App", () => {
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(savedInputs));
     render(<App />);
-    expect(screen.getByText(/Tax year.*2026/)).toBeInTheDocument();
+    expect(screen.getByText("Income year 2026", { exact: true })).toBeInTheDocument();
     expect(
       screen
         .queryAllByRole("alert")
@@ -196,7 +196,7 @@ describe("App", () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(badInputs));
     render(<App />);
     // An unsupported year falls back to the latest supported year.
-    expect(screen.getByText(/Tax year.*2026/)).toBeInTheDocument();
+    expect(screen.getByText("Income year 2026", { exact: true })).toBeInTheDocument();
   });
 
   it("sanitizes non-finite numeric fields from localStorage", () => {
@@ -216,13 +216,13 @@ describe("App", () => {
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(inputsWithNulls));
     render(<App />);
-    expect(screen.getByText(/Tax year.*2025/)).toBeInTheDocument();
+    expect(screen.getByText("Income year 2025", { exact: true })).toBeInTheDocument();
   });
 
   it("falls back to defaults when localStorage contains null JSON", () => {
     // JSON.parse("null") === null → sanitizeInputs early return → DEFAULT_INPUTS
     localStorage.setItem(STORAGE_KEY, JSON.stringify(null));
     render(<App />);
-    expect(screen.getByText(/Tax year.*2025/)).toBeInTheDocument();
+    expect(screen.getByText("Income year 2025", { exact: true })).toBeInTheDocument();
   });
 });

@@ -127,7 +127,11 @@ export default function ResultsTabs({
             />
           </TabsContent>
           <TabsContent value="be" className="bt-be-accent">
-            <BEResult result={result.be} residentCountry={inputs.residentCountry} />
+            <BEResult
+              result={result.be}
+              residentCountry={inputs.residentCountry}
+              year={inputs.year}
+            />
           </TabsContent>
           <TabsContent value="filing">
             <FilingChecklist result={result} />

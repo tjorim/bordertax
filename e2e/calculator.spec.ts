@@ -8,18 +8,20 @@ test.beforeEach(async ({ page }) => {
 
 test("loads the calculator with a summary result", async ({ page }) => {
   await expect(page.getByRole("link", { name: "Bordertax" })).toBeVisible();
-  await expect(page.getByLabel("Tax year", { exact: true })).toBeVisible();
+  await expect(page.getByLabel("Income year", { exact: true })).toBeVisible();
   await expect(page.getByRole("tab", { name: "Summary" })).toHaveAttribute("aria-selected", "true");
   await expect(page.getByRole("tabpanel")).toBeVisible();
 });
 
 test("changing the year and income updates the page", async ({ page }) => {
-  const year = page.getByLabel("Tax year", { exact: true });
-  const options = await year.locator("option").allTextContents();
-  const otherYear = options.find((y) => y !== "2025");
+  const year = page.getByLabel("Income year", { exact: true });
+  const values = await year
+    .locator("option")
+    .evaluateAll((nodes) => nodes.map((node) => node.getAttribute("value") ?? ""));
+  const otherYear = values.find((y) => y !== "2025");
   expect(otherYear).toBeDefined();
   await year.selectOption(otherYear!);
-  await expect(page.getByText(`Tax year ${otherYear}`)).toBeVisible();
+  await expect(page.getByText(`Income year ${otherYear}`, { exact: true })).toBeVisible();
 
   const summary = page.getByRole("tabpanel");
   const before = await summary.innerText();
