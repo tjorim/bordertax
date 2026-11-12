@@ -4,7 +4,7 @@ import { expectNoAxeViolations, seedPreferences } from "./helpers";
 test("exports inputs and imports them again", async ({ page }) => {
   await seedPreferences(page, "en", "light");
   await page.goto("/");
-  const salary = page.getByLabel("Gross annual salary (€)");
+  const salary = page.getByLabel("Taxable wage (€)");
   await salary.fill("85000");
 
   const download = page.waitForEvent("download");

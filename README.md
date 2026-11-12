@@ -4,18 +4,20 @@ Bordertax estimates the Dutch and Belgian income tax of a Belgian resident who w
 
 ## Who it is for
 
-One supported profile: a **single Belgian resident in the Flemish region with one Dutch employer, income years 2020–2026**. Other situations (Dutch residents, married or cohabiting taxpayers, other regions, several employers, partial years) are not modelled.
+One supported profile: a **single Belgian resident in the Flemish region with one Dutch employer, income years 2020–2026**. Other situations (Dutch residents, married or cohabiting taxpayers, other regions, partial years) are not modelled. Several Dutch annual statements in one year (a job change, agency plus direct employment) are added up.
 
 ## What goes in
 
-- Income year, age category (under/over AOW age), dependent children and municipal tax rate
-- Gross annual salary and, optionally, the Dutch loonheffing already withheld
-- Optionally, the income tax and premiums on your actual Dutch assessment (aanslag), which replace the app's Dutch estimate in the Belgian figures
-- Workdays in the Netherlands, in Belgium (home working), in other countries and sick days
-- Optional Belgian items: social contributions, supplementary pension, dienstencheques, roerende voorheffing
-- Optional home scenario: mortgage interest, ownership share, home value and income outside the Netherlands
+Inputs are grouped by the document you read them from:
 
-Inputs are kept in your browser's local storage so they survive a reload.
+- **Profile:** income year, age category (under/over AOW age), dependent children and municipal tax rate
+- **Annual tax statement (jaaropgave):** the taxable wage (Loon) and the Dutch wage tax withheld (loonheffing); add one statement per employer or payroll
+- **Workday record:** workdays in the Netherlands, in Belgium (home working) and in other countries, and sick days (optionally split by the country they were scheduled in)
+- **Other documents for the Belgian return:** health-insurance premium (health insurer, code 1257), supplementary pension (payslip or pension statement, code 1285), service vouchers (code 3364), reclaimable withholding tax (bank, code 1437)
+- **Dutch assessment (aanslag), optional:** the income tax and premiums due, which replace the app's Dutch estimate in the Belgian figures
+- **Home scenario, optional:** mortgage interest, ownership share, home value and income outside the Netherlands
+
+Only the profile is kept in your browser's local storage; wages, day counts and document amounts reset on reload. Export and import an input file to keep them.
 
 ## What comes out
 

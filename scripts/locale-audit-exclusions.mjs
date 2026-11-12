@@ -3,6 +3,8 @@
 export const excludedFiles = {
   "tax/capabilities.ts":
     "machine-readable capability description for programmatic callers (agents), not interface copy",
+  "tax/migrations.ts":
+    "version 1 rename map reported to programmatic callers (agents) in errors and capabilities, not interface copy",
   "tax/strict.ts": "validation errors for programmatic callers (agents), not interface copy",
   "tax/years/":
     "yearly tax parameters; the source and verification notes are developer-facing provenance, not interface copy",

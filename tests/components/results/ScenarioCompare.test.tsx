@@ -40,7 +40,7 @@ describe("ScenarioCompare", () => {
     const causes = screen.getByRole("region", {
       name: "What caused the difference in annual net income",
     });
-    expect(causes).toHaveTextContent("Gross salary");
+    expect(causes).toHaveTextContent("Taxable wage");
     expect(causes).toHaveTextContent(fmtSigned(comparison.attribution.netIncome.income!));
     await user.click(screen.getByRole("button", { name: "Copy current situation" }));
     expect(screen.getByText("Both scenarios are identical.")).toBeInTheDocument();

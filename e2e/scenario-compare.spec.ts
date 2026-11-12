@@ -28,7 +28,7 @@ for (const locale of LOCALES) {
         expect(compareChunks.length).toBeGreaterThan(0);
         await expect(
           page.getByRole("region", { name: /annual net income|jaarlijkse netto-inkomen/ }),
-        ).toContainText(locale === "en" ? "Gross salary" : "Brutoloon");
+        ).toContainText(locale === "en" ? "Taxable wage" : "Fiscaal loon");
         await page
           .getByRole("button", {
             name: locale === "en" ? "Copy current situation" : "Huidige situatie kopiëren",

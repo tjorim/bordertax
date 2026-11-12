@@ -113,39 +113,90 @@ with read effects, no confirmation required, and empty access requirements.
 ## Tools and examples
 
 All three tools are read-only, idempotent, and closed-world. Discover the
-current supported profiles, years, required fields, defaults, units and
-limitations first with `get_capabilities`, arguments `{}`. Its structured result
-is exactly the shared engine's `getCapabilities()` output. Tool schemas derive
-from the strict tax schema, so additions to that boundary appear automatically.
+input schema version, supported profiles, years, required fields, defaults,
+source documents, units and limitations first with `get_capabilities`,
+arguments `{}`. Its structured result is exactly the shared engine's
+`getCapabilities()` output. Tool schemas derive from the strict tax schema, so
+additions to that boundary appear automatically; each field's description
+starts with the document it is read from.
 
-Example `calculate_tax` arguments:
+Example `calculate_tax` arguments, grouped by source document:
 
 ```json
 {
   "year": 2025,
-  "residentCountry": "BE",
-  "civilStatus": "single",
   "dependentChildren": 0,
   "belowAOWAge": true,
-  "belgianRegion": "flemish",
   "communalTaxRate": 7,
-  "grossSalary": 60000,
+
+  "annualStatements": [{ "taxableWage": 60000, "wageTaxWithheld": 0 }],
+
   "daysWorkedNL": 200,
   "daysWorkedBE": 20,
   "daysWorkedOther": 0,
-  "thirtyPercentRuling": false,
-  "socialContributions": 0,
-  "aanvullendPensioen": 0,
-  "dienstencheques": 0,
-  "roerendeVoorheffing": 0,
-  "withheldTaxNL": 0,
-  "sickDays": 0
+  "sickDaysNL": 0,
+  "sickDaysOutsideNL": 0,
+
+  "healthInsurancePremium": 0,
+  "supplementaryPension": 0,
+  "serviceVouchers": 0,
+  "reclaimableWithholdingTax": 0
 }
 ```
 
+| Source document                       | Fields                                                                                                                                           |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Profile                               | `year`, `dependentChildren`, `belowAOWAge`, `communalTaxRate`; optional `residentCountry`, `civilStatus`, `belgianRegion`, `thirtyPercentRuling` |
+| Annual tax statement (jaaropgave)     | `annualStatements[]`: `taxableWage` (Loon), `wageTaxWithheld` (loonheffing); 1–10 statements                                                     |
+| Workday record or workday statement   | `daysWorkedNL`, `daysWorkedBE`, `daysWorkedOther`, `sickDaysNL`, `sickDaysOutsideNL`                                                             |
+| Health insurer's annual statement     | `healthInsurancePremium` (Belgian code 1257)                                                                                                     |
+| December payslip or pension statement | `supplementaryPension` (code 1285)                                                                                                               |
+| Service-voucher annual statement      | `serviceVouchers` (code 3364; reduces tax up to income year 2024)                                                                                |
+| Bank's annual tax statement           | `reclaimableWithholdingTax` (code 1437)                                                                                                          |
+| Dutch assessment (aanslag), optional  | `assessmentIncomeTaxDue`, `assessmentPremiumsDue`, together                                                                                      |
+| Home, optional                        | `mortgageEnabled` and the mortgage fields                                                                                                        |
+
+Fields with a single legal value default when left out: `residentCountry`
+`"BE"`, `civilStatus` `"single"`, `belgianRegion` `"flemish"`,
+`thirtyPercentRuling` `false`. Several annual statements (job change, agency
+plus direct employment) are summed: the heffingskortingen, premiums and both
+returns are computed on the total wage, and `result.taxableWage` and
+`result.wageTaxWithheld` are the sums. A caller with one sick-day figure sends
+it as `sickDaysNL` with `sickDaysOutsideNL: 0`; sick days on days scheduled in
+Belgium or a third country count as days outside NL on the Dutch return. The
+Belgian method leaves all sick days out.
+
+### Input schema version 2
+
+`get_capabilities.inputSchema.version` is `2`. Version 2 is a breaking change
+for agent clients: the version 1 names below are rejected with an error that
+names the replacement and lists every rename, instead of being reported as
+unsupported fields. Input files saved at `schemaVersion` 1 are still imported
+(the web app migrates them).
+
+| Version 1                               | Version 2                                          |
+| --------------------------------------- | -------------------------------------------------- |
+| `grossSalary`                           | `annualStatements[].taxableWage`                   |
+| `withheldTaxNL`                         | `annualStatements[].wageTaxWithheld`               |
+| `sickDays`                              | `sickDaysNL` (with `sickDaysOutsideNL: 0`)         |
+| `socialContributions`                   | `healthInsurancePremium`                           |
+| `aanvullendPensioen`                    | `supplementaryPension`                             |
+| `dienstencheques`                       | `serviceVouchers`                                  |
+| `roerendeVoorheffing`                   | `reclaimableWithholdingTax`                        |
+| `result.grossIncome`                    | `result.taxableWage`                               |
+| `delta.grossIncome` (compare)           | `delta.taxableWage`                                |
+| `result.be.socialContributionsDeducted` | `result.be.healthInsurancePremiumDeducted`         |
+| —                                       | `result.wageTaxWithheld` (new: summed withholding) |
+
+To migrate a version 1 request: wrap `grossSalary` and `withheldTaxNL` in
+`annualStatements: [{ taxableWage, wageTaxWithheld }]`, rename `sickDays` to
+`sickDaysNL` and add `sickDaysOutsideNL: 0`, rename the four Belgian items, and
+optionally drop `residentCountry`, `civilStatus`, `belgianRegion` and
+`thirtyPercentRuling`. The figures are unchanged for the same inputs.
+
 The response contains `inputs` (effective inputs including explicit defaults),
-`result` (the complete shared engine breakdown: `inputs`, `nl`, `be`, gross and
-net income, total tax, rates, workday fractions, and `mortgage`), and `caveat`:
+`result` (the complete shared engine breakdown: `inputs`, `nl`, `be`, taxable
+wage, withheld wage tax and net income, total tax, rates, workday fractions, and `mortgage`), and `caveat`:
 `"Simplified estimate, not tax advice. Consult a qualified tax adviser."`
 `result.nl` is always the app's estimate of the Dutch tax. To use the figures from the
 actual Dutch assessment, add `assessmentIncomeTaxDue` and `assessmentPremiumsDue`
@@ -159,9 +210,9 @@ precision is kept between calculation steps; no Belgian tax-rounding rule is cla
 rounded. `result.nl.brackets` lists `{ from, to, rate, taxableAmount, tax }` in euros with `to: null`
 for the open top bracket; there is no formatted label, so clients format the bounds themselves.
 `result.noWorkdays` is `true` when all workday inputs are zero: the Dutch and Belgian figures are
-then zero and net income equals gross salary (an entered assessment still counts as the Dutch
-charge). `result.be.federalReductionsUnused` is the part of `aanvullendPensioen × 30%` plus
-`roerendeVoorheffing` that exceeds the federal tax; it is clamped to the federal saldo and not
+then zero and net income equals the taxable wage (an entered assessment still counts as the Dutch
+charge). `result.be.federalReductionsUnused` is the part of `supplementaryPension × 30%` plus
+`reclaimableWithholdingTax` that exceeds the federal tax; it is clamped to the federal saldo and not
 carried over.
 The mortgage block is null when disabled. Enable it with `mortgageEnabled: true`
 and consult capability metadata for optional fields, defaults, eligibility,
@@ -173,7 +224,11 @@ only changes as `overrides`, for example:
 ```json
 {
   "base": { "...": "the complete calculation arguments above" },
-  "overrides": { "grossSalary": 70000, "daysWorkedNL": 210, "daysWorkedBE": 10 }
+  "overrides": {
+    "annualStatements": [{ "taxableWage": 70000, "wageTaxWithheld": 0 }],
+    "daysWorkedNL": 210,
+    "daysWorkedBE": 10
+  }
 }
 ```
 
@@ -182,21 +237,22 @@ The placeholder is illustrative; send the actual base object. Responses contain
 (alternative minus base), `changed` groups, `attribution` (Shapley shares of
 NL tax, BE tax and net income differences), and the estimate caveat. Overrides
 are merged onto effective base inputs and the alternative is strictly validated.
-Defaults are not applied to omitted overrides. To disable a mortgage scenario,
+Defaults are not applied to omitted overrides. An `annualStatements` override
+replaces the whole list. To disable a mortgage scenario,
 start from a base without mortgage-only fields; fields supplied while disabled
 are rejected by the strict boundary.
 
 Successful tools return the same JSON object in `structuredContent` and a JSON
 text content block. Invalid, missing, unknown, unsupported, or non-finite inputs
 return `isError: true` with field paths and validation messages. For example,
-a negative salary identifies `grossSalary` and its minimum of zero. Fix the
+a negative wage identifies `annualStatements.0.taxableWage` and its minimum of zero. Fix the
 identified fields and retry; invalid inputs are never silently clamped.
 
 ## Units, limitations and retry safety
 
 Money is EUR per year. `communalTaxRate` and mortgage ownership share are whole
 percent units (7 means 7%). Workdays are day counts, including fractional days;
-sick days count toward the annual maximum. Result rates and shares are fractions
+both sick-day fields count toward the annual maximum. Result rates and shares are fractions
 (0.25 means 25%) except fields explicitly documented otherwise by capabilities,
 such as mortgage `nlTaxedPercent`. Comparison monthly net-income delta is EUR
 per month. Belgian money figures are in whole cents; other values retain engine precision
