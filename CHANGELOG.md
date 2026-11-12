@@ -15,6 +15,7 @@ allowed scopes are listed in `release.config.json`, and `check` validates `[Unre
 
 ### Added
 
+- **Web:** Enable income year 2026 (Belgian assessment year 2027). All figures come from the official Belastingdienst (box 1 brackets 35.75% / 37.56% / 49.50%, algemene heffingskorting €3,115, arbeidskorting, eigenwoningforfait with the €1,350,000 threshold, mortgage deduction cap 37.56%) and FOD Financiën pages (brackets up to €16,720 / €29,510 / €51,070, belastingvrije som €11,550 with child supplements, forfait maximum €6,070); the module records the page for each table. No figure is provisional, so there is no provisional-year banner. The year also applies to the MCP server and the multi-year comparison; the default year stays 2025, and an unsupported saved year now falls back to 2026.
 - **Web:** Export the inputs to a local JSON file and import them again, so a filing that takes months does not mean retyping salary and deductions. The file carries the income year, app version and a file version, holds the inputs in the same shape as the MCP `calculate_tax` input, is validated strictly on import and never leaves the browser. The Compare tab can load a saved file as situation A (for example as filed versus corrected).
 - **Web:** Pin a compact result bar (net income, Dutch refund or tax, Belgian tax) below the header while editing, with a "View results" jump on small screens and a shortcut to the Filing tab.
 - **Web:** Give every page its own document title, so the calculator and the reference guides can be told apart in tabs and history.

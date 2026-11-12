@@ -20,13 +20,17 @@ interface Bracket {
 const KNOWN_DEVIATIONS: Record<string, string> = {};
 
 /**
- * Official tables whose printed rounding leaves a wider gap at a stage join than the usual one euro.
+ * Official tables whose printed rounding leaves a wider gap at a stage join (including the join into the final zero stage) than the usual one euro.
  * The figures are as published, so the tolerance is widened instead of altering them.
  */
 const OFFICIAL_ROUNDING_TOLERANCE: Record<string, { euros: number; why: string }> = {
   "2024 over-AOW AK": {
     euros: 2,
     why: "Belastingdienst prints 4,346% x 11.490 = 499,4 against a first build-up maximum of 501 (Heffingskortingen 2024; Nieuwsbrief Loonheffingen 2024, bijlage)",
+  },
+  "2026 over-AOW AK": {
+    euros: 2,
+    why: "Belastingdienst prints 3,250% x (132.920 - 45.592) = 2.838,2 against a phase-out start of 2.840 (Fiscale informatie 2026, Heffingskortingen, section 21.3.1)",
   },
 };
 
@@ -149,7 +153,9 @@ describe("tax parameters", () => {
           // The phase-out reaches zero where the last stage starts.
           const phaseOut = stages.at(-2)!;
           expect(phaseOut.rate).toBeLessThan(0);
-          expect(Math.abs(stageEnd(phaseOut))).toBeLessThanOrEqual(EURO_TOLERANCE);
+          expect(Math.abs(stageEnd(phaseOut))).toBeLessThanOrEqual(
+            OFFICIAL_ROUNDING_TOLERANCE[`${year} ${regimeName}-AOW AK`]?.euros ?? EURO_TOLERANCE,
+          );
         });
       },
     );

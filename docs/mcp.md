@@ -185,7 +185,7 @@ sick days count toward the annual maximum. Result rates and shares are fractions
 such as mortgage `nlTaxedPercent`. Comparison monthly net-income delta is EUR
 per month. Values retain engine precision; clients may round for display.
 
-Currently supported income years are 2020–2025, for single Belgian residents in
+Currently supported income years are 2020–2026, for single Belgian residents in
 Flanders working for Dutch employers. Discovery is authoritative as coverage
 changes. The Belgian-resident profile does not support the 30% ruling. BBSZ and
 Belgian home benefits are not modelled. Mortgage eligibility and debt conditions
