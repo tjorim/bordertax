@@ -42,13 +42,23 @@ Sick days count as Dutch workdays under the Dutch method and are left out entire
 
 Under-AOW and over-AOW age use separate premium rates and credit tables. All per-year numbers live in one module per income year (`src/tax/years/<year>.ts`); `TAX_PARAMS` and `EIGENWONINGFORFAIT` in `src/tax/params.ts` are assembled from them, and values that never changed (premium rates, Belgian forfait and federal/regional rates, the eigenwoningforfait bands) are declared once in `src/tax/years/shared.ts`. Each module records its sources and what was verified. `tests/tax/params.test.ts` checks that brackets, credit curves and tables are internally consistent.
 
+### The Dutch assessment replaces the estimate
+
+The Belgian return is filed after the Dutch one, and code 1250 depends on the Dutch tax actually charged. Two optional inputs, `assessmentIncomeTaxDue` and `assessmentPremiumsDue` (euros: income tax and premies volksverzekeringen due on the aanslag, after the heffingskortingen; both are on the assessment), take the place of the estimate.
+
+- They must be given **together**. The strict schema (MCP, input file import) rejects exactly one; the lenient form schema keeps a lone value but the engine ignores it.
+- `resolveDutchCharge` in `src/tax/nl.ts` is the only place where the substitution happens. It returns `TaxResult.nlCharge`: the source (`estimate` or `assessment`), income tax, premiums and their sum, plus the difference from the estimate (zero for the estimate). `calculateCore` in `src/tax/index.ts` passes that charge, not `nl`, to the Belgian calculation and uses its `netTaxNL` for total tax, net income and the effective rate.
+- `TaxResult.nl` always stays the app's own estimate, so the two can be compared. Nothing changes when the fields are absent.
+- The mortgage saving and the extra Belgian tax are measured on the estimate: an assessment already fixes the Dutch charge, so it cannot show what the deduction changes.
+- The values are not persisted across reloads (like salary and workdays) and are written to and read from the input file only when both are present; files without them stay valid at `schemaVersion` 1.
+
 ## 3. Belgian result (`src/tax/be.ts`)
 
 Method: exemption with progression (vrijstelling met progressievoorbehoud) under the Belgium–Netherlands treaty. Dutch-sourced income is exempt in Belgium but raises the rate on the rest.
 
-1. **Code 1250 (declared income)** = `grossSalary − netTaxNL` = Y + Z (step 3). The Dutch tax and premiums are treated as already paid, so the Belgian return starts from what remains.
+1. **Code 1250 (declared income)** = `grossSalary − (income tax due + premiums due)` = Y + Z (step 3), using the Dutch charge in use: the estimate (`netTaxNL`) or, when entered, the assessment. The Dutch tax and premiums are treated as already paid, so the Belgian return starts from what remains.
 2. **Social contributions** entered by the user (code 1257) are deducted. The **professional-expenses forfait** is `min(forfaitRate × (1250 − social contributions), forfaitMax)`, giving **net professional income**.
-3. **O.1 and O.2 (FOD guideline).** `W = grossSalary − premiumsDue`; `Y = W × beFraction` is taxable in Belgium (box IV O.1); `Z = W − Y − incomeTaxDue` is exempt (O.2), which equals `1250 − Y`, floored at zero. Premiums come off before the day fraction is applied; only the Dutch income tax is taken from the exempt side. The exempt fraction of code 1250 is applied to net professional income to get the exempt (`vrijgesteld`) and taxable (`volTarief`) parts.
+3. **O.1 and O.2 (FOD guideline).** `W = grossSalary − premiumsDue` (assessed premiums when entered); `Y = W × beFraction` is taxable in Belgium (box IV O.1); `Z = W − Y − incomeTaxDue` is exempt (O.2), which equals `1250 − Y`, floored at zero. Premiums come off before the day fraction is applied; only the Dutch income tax is taken from the exempt side. The exempt fraction of code 1250 is applied to net professional income to get the exempt (`vrijgesteld`) and taxable (`volTarief`) parts.
 4. **Progressive tax** (`basisbelasting`) is computed on the **whole** net professional income, then reduced by the belastingvrije som (25% of the base allowance plus the child supplements; more than 4 children uses `extraPerChildAbove4` where defined, otherwise it is rejected). This is `omTeSlane`.
 5. **Exemption with progression.** The share of `omTeSlane` that corresponds to the exempt part (`vrijstellingReduction`) is removed, leaving `hoofdsom`.
 6. **Federal/regional split.** `gereduceerde = hoofdsom × gereduceerdRate` (1 ÷ 1.33257 ≈ 0.75043, the Flemish opcentiemen are 33.257%); `gewestelijke = gereduceerde × gewestelijkeRate`.
@@ -56,11 +66,11 @@ Method: exemption with progression (vrijstelling met progressievoorbehoud) under
 8. **Communal tax** = `communalTaxRate × totaleBelasting` plus `communalTaxRate × vrijstellingReduction`: municipal tax is levied on the exempt income too.
 9. **Net Belgian tax** = federal saldo + regional saldo + communal tax (both parts).
 
-Total tax is net Dutch tax plus net Belgian tax; net income is gross salary minus total tax.
+Total tax is the Dutch charge in use (estimate or assessment) plus net Belgian tax; net income is gross salary minus total tax.
 
 ## 4. Filing checklist
 
-The checklist (`src/components/results/FilingChecklist.tsx`) does not run its own calculation. It shows inputs the user copies from their jaaropgave and statements, plus values from the engine: code 1250 (`be.declaredIncome`), the Dutch "Deel niet in NL belast", and the exempt amount `max(0, 1250 − beIncome)` under section O.2. It states that the Dutch figure should be replaced by the actual assessment when it arrives.
+The checklist (`src/components/results/FilingChecklist.tsx`) does not run its own calculation. It shows inputs the user copies from their jaaropgave and statements, plus values from the engine: code 1250 (`be.declaredIncome`), the Dutch "Deel niet in NL belast", and the exempt amount `max(0, 1250 − beIncome)` under section O.2. The Belgian group carries a note (an `Alert`) saying the figures are provisional until both assessment figures are entered, and that they use the assessment once they are. The Dutch tab shows which source is in use and the difference from the estimate for income tax and premiums.
 
 ## 5. Rounding
 
@@ -83,8 +93,8 @@ Income year 2026 is not enabled and has no module; its figures must come from th
 ## Known gaps
 
 - **Premium base.** Premiums use the full gross salary (less any mortgage deduction) as worldwide income, with no other income, partial-year insurance or partner effects.
-- **Dutch tax is an estimate, not the assessment.** The Belgian side starts from the _calculated_ Dutch tax. The app does not take the actual assessment as input.
+- **Dutch tax is an estimate until the assessment is entered.** Without `assessmentIncomeTaxDue` and `assessmentPremiumsDue` the Belgian side starts from the _calculated_ Dutch tax and the checklist marks the Belgian figures as provisional. With them, code 1250, O.1/O.2, total tax and net income are final, but the Dutch result itself (`nl`) is still the estimate, shown next to the assessment ([#432](https://github.com/tjorim/bordertax/issues/432)).
 
-- **ACV's premium/tax split differs from the Belastingdienst split.** The ACV worked example (wage €53,299, 2025) gives premiums due €5,874.66 and income tax due €2,713.34. The official 2025 split of the credits gives about €5,668 and €2,900. The difference (about €206) equals a 9.32/35.82 tax share, which is the 2024 tax-part rate mixed into the 2025 denominator. The engine follows the Belastingdienst split; ACV's figures can be reproduced by entering them as the actual assessment ([#432](https://github.com/tjorim/bordertax/issues/432)). The ACV refund itself (€4,314) is reproduced to within €20, the effect of the 181/231 day fraction ACV uses on the slide instead of 180/230.
+- **ACV's premium/tax split differs from the Belastingdienst split.** The ACV worked example (wage €53,299, 2025) gives premiums due €5,874.66 and income tax due €2,713.34. The official 2025 split of the credits gives about €5,668 and €2,900. The difference (about €206) equals a 9.32/35.82 tax share, which is the 2024 tax-part rate mixed into the 2025 denominator. The engine follows the Belastingdienst split; ACV's figures are reproduced by entering them as the actual assessment ([#432](https://github.com/tjorim/bordertax/issues/432), `tests/tax/golden/acv.test.ts`). The ACV refund itself (€4,314) is reproduced to within €20, the effect of the 181/231 day fraction ACV uses on the slide instead of 180/230.
 
-Golden tests for the ACV examples are tracked in [#436](https://github.com/tjorim/bordertax/issues/436).
+`tests/tax/golden/acv.test.ts` asserts both ACV scenarios (no sick days; 25 sick days, fraction 50/205) to the cent with the assessment entered, and that the estimate alone lands within €25 of ACV's refund. Further golden tests are tracked in [#436](https://github.com/tjorim/bordertax/issues/436).

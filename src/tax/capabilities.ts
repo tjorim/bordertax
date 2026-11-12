@@ -29,6 +29,8 @@ export function getCapabilities() {
           "mortgageOwnershipShare",
           "mortgageHomeValue",
           "incomeOutsideNL",
+          "assessmentIncomeTaxDue",
+          "assessmentPremiumsDue",
         ].includes(field),
     ),
     units: {
@@ -36,6 +38,23 @@ export function getCapabilities() {
       communalTaxRate: { unit: "percent", min: 0, max: 15 },
       resultRatesAndShares: "fractions (0–1)",
       workdays: "day counts; fractional days allowed; sickDays count toward the annual maximum",
+    },
+    dutchAssessment: {
+      inputs: {
+        assessmentIncomeTaxDue: {
+          unit: "EUR per year, income tax due on the Dutch assessment after the heffingskortingen",
+          optional: true,
+          omittedMeaning: "the Dutch income tax is the engine's estimate",
+        },
+        assessmentPremiumsDue: {
+          unit: "EUR per year, premies volksverzekeringen due on the Dutch assessment after the heffingskortingen",
+          optional: true,
+          omittedMeaning: "the Dutch premiums are the engine's estimate",
+        },
+      },
+      mustBeGivenTogether: true,
+      effect:
+        "When both are given, code 1250, the FOD O.1/O.2 split, total tax and net income use them in place of the estimated Dutch charge; result.nl stays the estimate and result.nlCharge reports the source and the difference",
     },
     mortgage: {
       inputs: {

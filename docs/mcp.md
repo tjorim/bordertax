@@ -147,6 +147,12 @@ The response contains `inputs` (effective inputs including explicit defaults),
 `result` (the complete shared engine breakdown: `inputs`, `nl`, `be`, gross and
 net income, total tax, rates, workday fractions, and `mortgage`), and `caveat`:
 `"Simplified estimate, not tax advice. Consult a qualified tax adviser."`
+`result.nl` is always the app's estimate of the Dutch tax. To use the figures from the
+actual Dutch assessment, add `assessmentIncomeTaxDue` and `assessmentPremiumsDue`
+(euros, after the heffingskortingen, from the aanslag). They must be given together; one
+alone is rejected. When present they replace the estimate in the Belgian calculation
+(code 1250, O.1/O.2), total tax and net income, and `result.nlCharge` reports the source
+(`estimate` or `assessment`) and the difference from the estimate.
 The mortgage block is null when disabled. Enable it with `mortgageEnabled: true`
 and consult capability metadata for optional fields, defaults, eligibility,
 assumptions and missing-income handling.

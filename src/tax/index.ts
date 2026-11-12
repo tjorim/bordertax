@@ -1,5 +1,5 @@
 import type { TaxInputs, TaxResult } from "./types";
-import { calculateNLTax } from "./nl";
+import { calculateNLTax, resolveDutchCharge } from "./nl";
 import { calculateBETax } from "./be";
 import { getNLFractions } from "./workdays";
 import {
@@ -19,9 +19,12 @@ function calculateCore(
   grossInterest = mortgageDeduction,
 ): CoreResult {
   const nl = calculateNLTax(inputs, mortgageDeduction, grossInterest);
-  const be = calculateBETax(inputs, nl);
+  // The Dutch assessment, when entered, replaces the estimate here and only here; `nl` stays the
+  // app's own estimate so the two can be compared.
+  const nlCharge = resolveDutchCharge(inputs, nl);
+  const be = calculateBETax(inputs, nlCharge);
 
-  const totalTax = nl.netTaxNL + (be?.netTaxBE ?? 0);
+  const totalTax = nlCharge.netTaxNL + (be?.netTaxBE ?? 0);
   const netIncome = inputs.grossSalary - totalTax;
 
   const { nlFractionDutchMethod, nlFractionBelgianMethod } = getNLFractions(inputs);
@@ -29,6 +32,7 @@ function calculateCore(
   return {
     inputs,
     nl,
+    nlCharge,
     be,
     grossIncome: inputs.grossSalary,
     totalTax,
@@ -60,7 +64,23 @@ export function calculate(inputs: TaxInputs): TaxResult {
   const benefitIsUpperBound = inputs.mortgageHomeValue === undefined;
   const withMortgage =
     netDeduction > 0 ? calculateCore(inputs, netDeduction, deductibleInterest) : withoutMortgage;
-  const potential = effectOf(withoutMortgage, withMortgage);
+  // An assessment already fixes the Dutch charge, so it cannot show what the deduction changes.
+  // The saving and the extra Belgian tax are measured on the estimate, with the same inputs
+  // otherwise, so that they stay consistent with each other.
+  const assessed = withoutMortgage.nlCharge.source === "assessment";
+  const estimateInputs: TaxInputs = {
+    ...inputs,
+    assessmentIncomeTaxDue: undefined,
+    assessmentPremiumsDue: undefined,
+  };
+  const effectWithout = assessed ? calculateCore(estimateInputs, 0) : withoutMortgage;
+  const effectWith =
+    netDeduction <= 0
+      ? effectWithout
+      : assessed
+        ? calculateCore(estimateInputs, netDeduction, deductibleInterest)
+        : withMortgage;
+  const potential = effectOf(effectWithout, effectWith);
   const applied = eligibility.status === "eligible" && netDeduction > 0;
   const reasons = [...eligibility.reasons];
   if (eligibility.status === "eligible" && deductibleInterest <= 0) reasons.push("no_interest");

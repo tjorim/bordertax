@@ -250,4 +250,11 @@ Existing ceilings are preserved; previously unguarded measurements use about
 5% headroom. The JSON config is the source of truth for limits. CI runs
 `pnpm bundle:test && pnpm bundle:check` after building.
 
+### Dutch assessment inputs (issue #432)
+
+The main entry grew from 688.31 kB raw / 211.75 kB gzip to 696.81 kB / 213.59 kB: two input fields,
+the source/difference section of the Dutch tab, the checklist note and 19 translated messages in
+both locales. The `main` ceiling is raised to 700,000 raw and 216,000 gzip bytes (about 0.5%
+headroom raw, 1.1% gzip over the new measurement). No dependency changed.
+
 See [Redact compatibility checks](redact-compatibility.md) for repeatable runtime/browser commands, recorded results and unresolved coverage.

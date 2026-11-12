@@ -13,16 +13,16 @@ interface Props {
 
 /** Compact headline numbers, pinned below the navbar so edits show their effect without scrolling. */
 export function ResultBar({ result, onShowResults, onShowFiling }: Props) {
-  const { netIncome, nl, be } = result;
+  const { netIncome, nlCharge, be } = result;
   const withheld = result.inputs.withheldTaxNL;
-  const nlBalance = withheld - nl.netTaxNL;
+  const nlBalance = withheld - nlCharge.netTaxNL;
   const nlLabel =
     withheld > 0
       ? nlBalance >= 0
         ? m.result_bar_dutch_refund()
         : m.result_bar_dutch_due()
       : stripColon(m.summary_dutch_tax());
-  const nlValue = withheld > 0 ? fmtSigned(nlBalance) : fmt(nl.netTaxNL);
+  const nlValue = withheld > 0 ? fmtSigned(nlBalance) : fmt(nlCharge.netTaxNL);
 
   return (
     <section

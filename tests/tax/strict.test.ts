@@ -4,6 +4,8 @@ import { VALID_YEARS } from "@/tax/constants";
 import { TaxInputFields, TaxInputSchema } from "@/tax/schema";
 import { getMaxDependentChildren, parseStrictTaxInputs, StrictTaxInputSchema } from "@/tax/strict";
 
+const assessmentFields = ["assessmentIncomeTaxDue", "assessmentPremiumsDue"];
+
 const mortgageFields = [
   "mortgageEnabled",
   "mortgageInterest",
@@ -36,7 +38,7 @@ describe("strict tax input boundary", () => {
       Object.keys(TaxInputFields).sort(),
     );
     for (const field of Object.keys(TaxInputFields).filter(
-      (key) => !mortgageFields.includes(key),
+      (key) => !mortgageFields.includes(key) && !assessmentFields.includes(key),
     )) {
       const input = { ...DEFAULT_INPUTS } as Record<string, unknown>;
       delete input[field];
@@ -141,5 +143,47 @@ describe("strict tax input boundary", () => {
         communalTaxRate,
       );
     }
+  });
+
+  describe("Dutch assessment figures", () => {
+    const both = { assessmentIncomeTaxDue: 2713.34, assessmentPremiumsDue: 5874.66 };
+
+    it("are optional and accepted together", () => {
+      expect(parseStrictTaxInputs(DEFAULT_INPUTS)).not.toHaveProperty("assessmentIncomeTaxDue");
+      expect(parseStrictTaxInputs({ ...DEFAULT_INPUTS, ...both })).toMatchObject(both);
+      expect(
+        parseStrictTaxInputs({
+          ...DEFAULT_INPUTS,
+          assessmentIncomeTaxDue: 0,
+          assessmentPremiumsDue: 0,
+        }),
+      ).toMatchObject({ assessmentIncomeTaxDue: 0, assessmentPremiumsDue: 0 });
+    });
+
+    it.each(assessmentFields)("rejects %s without its counterpart", (field) => {
+      const other = assessmentFields.find((f) => f !== field)!;
+      expect(() => parseStrictTaxInputs({ ...DEFAULT_INPUTS, [field]: 100 })).toThrow(other);
+    });
+
+    it.each(assessmentFields)("rejects negative or non-finite %s", (field) => {
+      for (const invalid of [-1, NaN, Infinity, "1", null]) {
+        expect(() =>
+          parseStrictTaxInputs({ ...DEFAULT_INPUTS, ...both, [field]: invalid }),
+        ).toThrow(field);
+      }
+    });
+
+    it("keeps a lone value in the lenient form schema, which the engine then ignores", () => {
+      const parsed = TaxInputSchema.parse({ ...DEFAULT_INPUTS, assessmentIncomeTaxDue: 100 });
+      expect(parsed.assessmentIncomeTaxDue).toBe(100);
+      expect(parsed.assessmentPremiumsDue).toBeUndefined();
+      expect(TaxInputSchema.parse({ ...DEFAULT_INPUTS, assessmentPremiumsDue: -5 })).toMatchObject({
+        assessmentPremiumsDue: 0,
+      });
+      expect(
+        TaxInputSchema.parse({ ...DEFAULT_INPUTS, assessmentPremiumsDue: "lots" })
+          .assessmentPremiumsDue,
+      ).toBeUndefined();
+    });
   });
 });

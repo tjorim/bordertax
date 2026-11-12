@@ -6,8 +6,8 @@
   "budgets": {
     "entries": {
       "main": {
-        "raw": 689000,
-        "gzip": 213000
+        "raw": 700000,
+        "gzip": 216000
       }
     },
     "total": {

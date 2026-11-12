@@ -9,23 +9,27 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import type { NLTaxResult } from "@/tax/types";
+import type { DutchCharge, NLTaxResult } from "@/tax/types";
 import * as m from "@/paraglide/messages.js";
-import { fmtExact as fmt, pctExact as pct } from "../format.js";
+import { fmt as fmtWhole, fmtExact as fmt, fmtSigned, pctExact as pct } from "../format.js";
 import { CodeBadge } from "../CodeBadge";
 
 interface Props {
   result: NLTaxResult;
+  /** The Dutch charge in use (estimate or assessment); defaults to the estimate in `result`. */
+  charge?: DutchCharge;
   withheldTaxNL?: number;
   thirtyPercentRuling?: boolean;
 }
 
 export default function NLResult({
   result,
+  charge,
   withheldTaxNL = 0,
   thirtyPercentRuling = false,
 }: Props) {
-  const nlBalance = withheldTaxNL - result.netTaxNL;
+  const used = charge ?? estimateCharge(result);
+  const nlBalance = withheldTaxNL - used.netTaxNL;
   return (
     <div>
       <h6 className="text-text-muted mb-4">
@@ -139,7 +143,7 @@ export default function NLResult({
         </TableBody>
       </Table>
 
-      <Table bordered>
+      <Table bordered className="mb-6">
         <TableBody>
           <TableRow variant="nl" className="font-bold">
             <TableCell>{m.nl_tax_payable()}</TableCell>
@@ -151,14 +155,123 @@ export default function NLResult({
               {pct(result.effectiveRateNL)}
             </TableCell>
           </TableRow>
+        </TableBody>
+      </Table>
+
+      <DutchChargeSection
+        result={result}
+        charge={used}
+        withheldTaxNL={withheldTaxNL}
+        nlBalance={nlBalance}
+      />
+    </div>
+  );
+}
+
+/** The estimate as a charge, for callers that only have the Dutch result. */
+function estimateCharge(result: NLTaxResult): DutchCharge {
+  return {
+    source: "estimate",
+    incomeTaxDue: result.incomeTaxDue,
+    premiumsDue: result.premiumsDue,
+    netTaxNL: result.netTaxNL,
+    incomeTaxDifference: 0,
+    premiumsDifference: 0,
+    netTaxDifference: 0,
+  };
+}
+
+function DutchChargeSection({
+  result,
+  charge,
+  withheldTaxNL,
+  nlBalance,
+}: {
+  result: NLTaxResult;
+  charge: DutchCharge;
+  withheldTaxNL: number;
+  nlBalance: number;
+}) {
+  const assessed = charge.source === "assessment";
+  const rows = [
+    {
+      key: "income-tax",
+      label: m.nl_charge_income_tax(),
+      estimate: result.incomeTaxDue,
+      used: charge.incomeTaxDue,
+      difference: charge.incomeTaxDifference,
+    },
+    {
+      key: "premiums",
+      label: m.nl_charge_premiums(),
+      estimate: result.premiumsDue,
+      used: charge.premiumsDue,
+      difference: charge.premiumsDifference,
+    },
+    {
+      key: "total",
+      label: m.nl_charge_total(),
+      estimate: result.netTaxNL,
+      used: charge.netTaxNL,
+      difference: charge.netTaxDifference,
+    },
+  ];
+  return (
+    <section aria-labelledby="nl-charge-heading">
+      <h6 id="nl-charge-heading" className="mb-1">
+        {m.nl_charge_title()}
+      </h6>
+      <p className="mb-2 flex flex-wrap items-center gap-2 text-sm text-text-muted">
+        {m.nl_charge_source()}
+        <Badge variant="secondary">
+          {assessed ? m.nl_charge_source_assessment() : m.nl_charge_source_estimate()}
+        </Badge>
+      </p>
+      <Table bordered className="mb-2 text-sm">
+        {assessed && (
+          <TableHeader className="bg-surface-3">
+            <TableRow>
+              <TableHead>{m.nl_charge_col_item()}</TableHead>
+              <TableHead className="text-end">{m.nl_charge_col_assessment()}</TableHead>
+              <TableHead className="text-end">{m.nl_charge_col_difference()}</TableHead>
+            </TableRow>
+          </TableHeader>
+        )}
+        <TableBody>
+          {rows.map((row) => (
+            <TableRow
+              key={row.key}
+              variant={row.key === "total" ? "secondary" : undefined}
+              className={cn(row.key === "total" && "font-semibold")}
+            >
+              <TableCell>
+                {row.label}
+                {assessed && (
+                  <span className="block font-normal text-text-muted">
+                    {m.nl_charge_source_estimate()} {fmtWhole(row.estimate)}
+                  </span>
+                )}
+              </TableCell>
+              {assessed ? (
+                <>
+                  <TableCell className="text-end">{fmt(row.used)}</TableCell>
+                  <TableCell className="text-end">{fmtSigned(row.difference)}</TableCell>
+                </>
+              ) : (
+                <TableCell className="text-end">{fmt(row.used)}</TableCell>
+              )}
+            </TableRow>
+          ))}
           {withheldTaxNL > 0 && (
             <>
               <TableRow>
-                <TableCell>{m.nl_withheld()}</TableCell>
+                <TableCell colSpan={assessed ? 2 : 1}>{m.nl_withheld()}</TableCell>
                 <TableCell className="text-end">{fmt(withheldTaxNL)}</TableCell>
               </TableRow>
               <TableRow variant={nlBalance >= 0 ? "success" : "danger"} className="font-bold">
-                <TableCell>{nlBalance >= 0 ? m.nl_balance_refund() : m.nl_balance_due()}</TableCell>
+                <TableCell colSpan={assessed ? 2 : 1}>
+                  {nlBalance >= 0 ? m.nl_balance_refund() : m.nl_balance_due()}
+                </TableCell>
                 <TableCell
                   className={cn("text-end", nlBalance >= 0 ? "text-success" : "text-danger")}
                 >
@@ -170,6 +283,9 @@ export default function NLResult({
           )}
         </TableBody>
       </Table>
-    </div>
+      <p className="mb-0 text-sm text-text-muted">
+        {assessed ? m.nl_charge_hint_assessment() : m.nl_charge_hint_estimate()}
+      </p>
+    </section>
   );
 }

@@ -53,6 +53,31 @@ describe("MCP tax adapter", () => {
     expect(response.isError).toBe(true);
     expect(JSON.stringify(response.content)).toContain(field);
   });
+  it("accepts the Dutch assessment figures together and reports the source", () => {
+    const assessed = {
+      ...DEFAULT_INPUTS,
+      assessmentIncomeTaxDue: 3000,
+      assessmentPremiumsDue: 5000,
+    };
+    const response = calculateTax(assessed);
+    expect(response.isError).not.toBe(true);
+    const { result } = response.structuredContent as {
+      result: ReturnType<typeof calculate>;
+    };
+    expect(result.nlCharge.source).toBe("assessment");
+    expect(result.nlCharge.netTaxNL).toBe(8000);
+    expect(result.nl.netTaxNL).toBe(calculate(parseStrictTaxInputs(DEFAULT_INPUTS)).nl.netTaxNL);
+    const lone = calculateTax({ ...DEFAULT_INPUTS, assessmentIncomeTaxDue: 3000 });
+    expect(lone.isError).toBe(true);
+    expect(JSON.stringify(lone.content)).toContain("assessmentPremiumsDue");
+    expect(inputSchema.shape.assessmentIncomeTaxDue.description).toContain("Dutch assessment");
+    expect(
+      compareTax({ base: DEFAULT_INPUTS, overrides: { assessmentIncomeTaxDue: 3000 } }).isError,
+    ).toBe(true);
+    expect(
+      compareTax({ base: assessed, overrides: { assessmentIncomeTaxDue: 3100 } }).isError,
+    ).not.toBe(true);
+  });
   it("compares effective scenarios with shared attribution", () => {
     const overrides = { grossSalary: 70000, daysWorkedBE: 10, daysWorkedNL: 210 };
     const base = parseStrictTaxInputs(mortgage);

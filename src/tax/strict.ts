@@ -12,7 +12,10 @@ export function getMaxDependentChildren(year: TaxYear): number {
 
 const fields = TaxInputFields;
 
-/** All core fields are required. Only the mortgage scenario has defaults. */
+/**
+ * All core fields are required. Only the mortgage scenario has defaults, and the Dutch
+ * assessment figures are optional (both or neither).
+ */
 export const StrictTaxInputSchema = z
   .strictObject({
     ...fields,
@@ -33,6 +36,18 @@ export const StrictTaxInputSchema = z
     mortgageInterest: fields.mortgageInterest.nonnegative().optional(),
     mortgageOwnershipShare: fields.mortgageOwnershipShare.min(0).max(100).optional(),
     incomeOutsideNL: fields.incomeOutsideNL.nonnegative().optional(),
+    assessmentIncomeTaxDue: fields.assessmentIncomeTaxDue
+      .nonnegative()
+      .optional()
+      .describe(
+        "EUR per year: income tax due on the Dutch assessment, after the heffingskortingen. Give together with assessmentPremiumsDue to replace the estimate in the Belgian calculation (code 1250, O.1/O.2), total tax and net income.",
+      ),
+    assessmentPremiumsDue: fields.assessmentPremiumsDue
+      .nonnegative()
+      .optional()
+      .describe(
+        "EUR per year: premies volksverzekeringen due on the Dutch assessment, after the heffingskortingen. Give together with assessmentIncomeTaxDue.",
+      ),
   })
   .superRefine((inputs, ctx) => {
     const issue = (field: keyof typeof inputs, message: string) =>
@@ -57,6 +72,20 @@ export const StrictTaxInputSchema = z
       !isThirtyPercentRulingSupportedResident(inputs.residentCountry)
     ) {
       issue("thirtyPercentRuling", `must be false for residentCountry ${inputs.residentCountry}`);
+    }
+    // The two assessment figures only make sense together: income tax or premiums alone would
+    // leave the other half of the Dutch charge as an estimate inside an "assessed" total.
+    if (
+      (inputs.assessmentIncomeTaxDue === undefined) !==
+      (inputs.assessmentPremiumsDue === undefined)
+    ) {
+      const missing =
+        inputs.assessmentIncomeTaxDue === undefined
+          ? "assessmentIncomeTaxDue"
+          : "assessmentPremiumsDue";
+      const given =
+        missing === "assessmentIncomeTaxDue" ? "assessmentPremiumsDue" : "assessmentIncomeTaxDue";
+      issue(missing, `required when ${given} is given; provide both assessment figures or neither`);
     }
     if (!inputs.mortgageEnabled) {
       for (const field of [

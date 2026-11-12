@@ -4,13 +4,14 @@
  * For Belgian residents who work (partly) in the Netherlands under the BE-NL tax treaty.
  * Method used: Exemption with progression (vrijstelling met progressievoorbehoud).
  *
- * The Belgian declared income (code 1250) = grossSalary − nl.netTaxNL.
+ * The Belgian declared income (code 1250) = grossSalary − Dutch income tax and premiums due, taken
+ * from the Dutch assessment when the user entered it and from the engine's estimate otherwise.
  * NL-sourced income is exempt from Belgian tax but raises the progression rate.
  * Communal tax (gemeentebelasting) is levied on both the taxable AND the exempt portion.
  *
  * Year-specific rates live in one module per income year in src/tax/years, assembled by params.ts.
  */
-import type { TaxInputs, BETaxResult, NLTaxResult } from "./types";
+import type { TaxInputs, BETaxResult, DutchCharge } from "./types";
 import { BE_PENSION_REDUCTION_RATE, BE_TAX_FREE_ALLOWANCE_REDUCTION_RATE } from "./constants";
 import { getYearParams } from "./params";
 import type { BEBracket, BEYearParams } from "./params";
@@ -50,7 +51,10 @@ function belastingvrijeSomReduction(inputs: TaxInputs, p: BEYearParams): number 
   return (baseAmount + childAmount) * BE_TAX_FREE_ALLOWANCE_REDUCTION_RATE;
 }
 
-export function calculateBETax(inputs: TaxInputs, nl: NLTaxResult): BETaxResult | null {
+/** What the Belgian side needs from the Dutch side; `NLTaxResult` and `DutchCharge` both fit. */
+export type DutchChargeForBE = Pick<DutchCharge, "incomeTaxDue" | "premiumsDue" | "netTaxNL">;
+
+export function calculateBETax(inputs: TaxInputs, nl: DutchChargeForBE): BETaxResult | null {
   if (inputs.residentCountry !== "BE") return null;
 
   const p = getYearParams(inputs.year).be;

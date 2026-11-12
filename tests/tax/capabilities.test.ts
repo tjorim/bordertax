@@ -62,4 +62,15 @@ describe("tax capabilities", () => {
       ]),
     );
   });
+
+  it("describes the optional Dutch assessment figures without requiring them", () => {
+    const capabilities = getCapabilities();
+    expect(capabilities.requiredInputs).not.toContain("assessmentIncomeTaxDue");
+    expect(capabilities.requiredInputs).not.toContain("assessmentPremiumsDue");
+    expect(Object.keys(capabilities.dutchAssessment.inputs)).toEqual([
+      "assessmentIncomeTaxDue",
+      "assessmentPremiumsDue",
+    ]);
+    expect(capabilities.dutchAssessment.mustBeGivenTogether).toBe(true);
+  });
 });
