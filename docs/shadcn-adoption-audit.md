@@ -67,6 +67,20 @@ The CLI writes `import { cn } from "cn"`; every file here imports `cn` from
 - **Provisional note** (`FilingChecklist`): the existing `Alert` (`warning` while provisional,
   `success` once the assessment is in use) with `role="note"`.
 
+## Reference figures and the source line (issue #438)
+
+- **Source line** (`pages/reference/components.tsx` `ReferenceMeta`, composition): a centred, wrapping line
+  under the page hero with a `Badge variant="secondary"` for the income year and plain `text-text-muted`
+  text for the ACV session and the Belastingdienst link (`text-xs`, so the muted token rather than brand
+  teal for contrast). The registry has no equivalent for a document-provenance line (`badge` and
+  `breadcrumb` cover other jobs); no new CSS. Both reference pages render the same component so the
+  year and dates sit in one fixed place.
+- **Tables** keep the existing `Table`, `StatRow` and `RefAccordionItem` compositions; only their values
+  moved from message strings to typed data (`src/tax/reference`) formatted with `components/format`
+  (`fmt`, `fmtAmount`, `fmtPercent`, `fmtNumber`, `fmtDate`, `fmtAge`).
+- **`ZivTable`** (`PensionReference`, composition): the two ZIV deduction tables were identical markup
+  with different figures, now one local component over the existing `Table`.
+
 ## Field composition (issue #305)
 
 `ui/field.tsx` is now the registry `field` structure with Bordertax tokens:

@@ -24,6 +24,7 @@ import {
   DocLink,
   NlBadge,
   RefAccordionItem,
+  ReferenceMeta,
   SectionCard,
   StatRow,
   TipBox,
@@ -33,6 +34,16 @@ import { AppNavbar } from "../components/AppNavbar";
 import { PageHero } from "../components/PageHero";
 import { useDocumentTitle } from "../lib/useDocumentTitle";
 import { PageFooter } from "../components/PageFooter";
+import { fmt, fmtDate, fmtNumber, fmtPercent, fmtSigned } from "../components/format";
+import { MORTGAGE_QUALIFYING_MIN_NL_PERCENT } from "../tax/constants";
+import {
+  ACV_SESSION,
+  COMBINATIEKORTING_MAX,
+  REFERENCE_INCOME_YEAR,
+  TELEWORK_AGREEMENT,
+  nlReferenceRates,
+  salarySplitExample,
+} from "../tax/reference";
 
 function Formula({ children }: { children: React.ReactNode }) {
   return (
@@ -45,9 +56,21 @@ function Formula({ children }: { children: React.ReactNode }) {
   );
 }
 
+const fraction = ({ days, base }: { days: number; base: number }) => `${days}/${base}`;
+const shareFormat = { digits: 1, fixed: true };
+
 // ── Main page ────────────────────────────────────────────────────
 
 export default function SalarySplitReference() {
+  const year = REFERENCE_INCOME_YEAR;
+  const rates = nlReferenceRates(year);
+  const example = salarySplitExample();
+  const { input } = example;
+  const { scenarioA, scenarioB } = input;
+  const sessionDate = fmtDate(ACV_SESSION.date);
+  const wage = fmtNumber(input.fiscalWage);
+  const nlFraction = fraction(input.nlFraction);
+  const qualifyingPercent = fmtPercent(MORTGAGE_QUALIFYING_MIN_NL_PERCENT / 100, { digits: 0 });
   useDocumentTitle(`${m.ref_ss_hero_title()} · ${m.document_title_suffix()}`);
   return (
     <>
@@ -62,11 +85,18 @@ export default function SalarySplitReference() {
       </AppNavbar>
 
       <div className="w-full px-3 pb-12">
-        <PageHero title={m.ref_ss_hero_title()} subtitle={m.ref_ss_hero_subtitle()} />
+        <PageHero
+          title={m.ref_ss_hero_title()}
+          subtitle={m.ref_ss_hero_subtitle({ date: sessionDate, year })}
+        />
+        <ReferenceMeta year={year} />
 
         {/* ── Alert: geen neutralisatieregeling ─────────────────── */}
         <WarnBox>
-          <strong>{m.ref_ss_tax_vs_ss_title()}</strong> {m.ref_ss_tax_vs_ss_body()}
+          <strong>{m.ref_ss_tax_vs_ss_title()}</strong>{" "}
+          {m.ref_ss_tax_vs_ss_body({
+            percent: fmtPercent(TELEWORK_AGREEMENT.maxTeleworkShare, { digits: 0 }),
+          })}
         </WarnBox>
 
         <div className="grid grid-cols-12 gap-6">
@@ -78,8 +108,8 @@ export default function SalarySplitReference() {
               <div className="mt-4 flex gap-2 flex-wrap">
                 <TipBox>{m.ref_ss_s1_tip_20pct()}</TipBox>
               </div>
-              <TipBox>{m.ref_ss_s1_tip_60_40()}</TipBox>
-              <WarnBox>{m.ref_ss_s1_warn_qualification()}</WarnBox>
+              <TipBox>{m.ref_ss_s1_tip_60_40({ percent: qualifyingPercent })}</TipBox>
+              <WarnBox>{m.ref_ss_s1_warn_qualification({ percent: qualifyingPercent })}</WarnBox>
             </SectionCard>
 
             {/* ── 2. Dagentelling ────────────────────────────────── */}
@@ -132,7 +162,14 @@ export default function SalarySplitReference() {
                   ))}
                 </TableBody>
               </Table>
-              <WarnBox>{m.ref_ss_s2_warn()}</WarnBox>
+              <WarnBox>
+                {m.ref_ss_s2_warn({
+                  teleworkDays: input.teleworkDays,
+                  sickDays: input.sickDays,
+                  from: fraction(input.beFraction),
+                  to: fraction(example.sickFraction),
+                })}
+              </WarnBox>
               <TipBox>{m.ref_ss_s2_tip()}</TipBox>
             </SectionCard>
 
@@ -183,8 +220,8 @@ export default function SalarySplitReference() {
           </div>
 
           <div className="col-span-12 shell:col-span-5">
-            {/* ── 4. NL Belastingtarieven 2026 ──────────────────── */}
-            <SectionCard title={m.ref_ss_s4_title()} icon={PercentIcon} accent="nl">
+            {/* ── 4. NL Belastingtarieven (derived from the year module) ── */}
+            <SectionCard title={m.ref_ss_s4_title({ year })} icon={PercentIcon} accent="nl">
               <Table responsive className="text-table-reference">
                 <TableHeader className="bg-surface-3">
                   <TableRow>
@@ -194,21 +231,26 @@ export default function SalarySplitReference() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  <TableRow>
-                    <TableCell>{m.ref_ss_s4_bracket1()}</TableCell>
-                    <TableCell className="font-mono text-text">{m.ref_ss_s4_rate1()}</TableCell>
-                    <TableCell className="text-text">{m.ref_ss_s4_buildup1()}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>{m.ref_ss_s4_bracket2()}</TableCell>
-                    <TableCell className="font-mono text-text">{m.ref_ss_s4_rate2()}</TableCell>
-                    <TableCell className="text-text">{m.ref_ss_s4_enkel_lb()}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>{m.ref_ss_s4_bracket3()}</TableCell>
-                    <TableCell className="font-mono text-text">{m.ref_ss_s4_rate3()}</TableCell>
-                    <TableCell className="text-text">{m.ref_ss_s4_enkel_lb()}</TableCell>
-                  </TableRow>
+                  {rates.rows.map((row) => (
+                    <TableRow key={row.from}>
+                      <TableCell>
+                        {row.to === null
+                          ? m.ref_amount_above({ amount: fmt(row.from) })
+                          : m.ref_amount_range({ from: fmt(row.from), to: fmt(row.to) })}
+                      </TableCell>
+                      <TableCell className="font-mono text-text">
+                        {fmtPercent(row.combinedRate, { fixed: true })}
+                      </TableCell>
+                      <TableCell className="text-text">
+                        {row.premiumRate > 0
+                          ? m.ref_ss_s4_buildup1({
+                              premium: fmtPercent(row.premiumRate, { fixed: true }),
+                              tax: fmtPercent(row.incomeTaxRate, { fixed: true }),
+                            })
+                          : m.ref_ss_s4_enkel_lb()}
+                      </TableCell>
+                    </TableRow>
+                  ))}
                 </TableBody>
               </Table>
               <p className="mt-4 mb-2 text-sm ref-text-sub">{m.ref_ss_heffingskortingen_title()}</p>
@@ -217,34 +259,38 @@ export default function SalarySplitReference() {
                   <TableRow>
                     <TableCell>{m.ref_ss_ahk()}</TableCell>
                     <TableCell className="font-mono text-text text-end">
-                      {m.ref_ss_s4_ahk_max()}
+                      {m.ref_max_amount({ amount: fmt(rates.ahkMax) })}
                     </TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell className="text-text text-xs">{m.ref_ss_ahk_expires()}</TableCell>
+                    <TableCell className="text-text text-xs">
+                      {m.ref_ss_ahk_expires({ amount: fmt(rates.ahkPhaseOutEnd) })}
+                    </TableCell>
                     <TableCell />
                   </TableRow>
                   <TableRow>
                     <TableCell>{m.ref_ss_arbeidskorting()}</TableCell>
                     <TableCell className="font-mono text-text text-end">
-                      {m.ref_ss_s4_arbeidskorting_max()}
+                      {m.ref_max_amount({ amount: fmt(rates.arbeidskortingMax) })}
                     </TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell className="text-text text-xs">
-                      {m.ref_ss_arbeidskorting_zero()}
+                      {m.ref_ss_arbeidskorting_zero({ amount: fmt(rates.arbeidskortingZeroFrom) })}
                     </TableCell>
                     <TableCell />
                   </TableRow>
                   <TableRow>
                     <TableCell>{m.ref_ss_combinatiekorting()}</TableCell>
                     <TableCell className="font-mono text-text text-end">
-                      {m.ref_ss_s4_combinatiekorting_max()}
+                      {m.ref_max_amount({ amount: fmt(COMBINATIEKORTING_MAX) })}
                     </TableCell>
                   </TableRow>
                 </TableBody>
               </Table>
-              <p className="mt-2 text-sm ref-footnote">{m.ref_ss_vv_footnote()}</p>
+              <p className="mt-2 text-sm ref-footnote">
+                {m.ref_ss_vv_footnote({ amount: fmt(rates.premiumCeiling) })}
+              </p>
             </SectionCard>
 
             {/* ── 5. Kaderovereenkomst Telewerk (SZ) ────────────── */}
@@ -255,24 +301,36 @@ export default function SalarySplitReference() {
                   <TableRow>
                     <TableCell>{m.ref_ss_s5_row_effective()}</TableCell>
                     <TableCell className="font-mono">
-                      {m.ref_ss_s5_effective_date_value()}
+                      {fmtDate(TELEWORK_AGREEMENT.effectiveDate)}
                     </TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell>{m.ref_ss_s5_row_max_telework()}</TableCell>
-                    <TableCell className="font-mono text-text font-bold">49%</TableCell>
+                    <TableCell className="font-mono text-text font-bold">
+                      {fmtPercent(TELEWORK_AGREEMENT.maxTeleworkShare, { digits: 0 })}
+                    </TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell>{m.ref_ss_s5_row_a1_validity()}</TableCell>
-                    <TableCell className="font-mono">{m.ref_ss_s5_a1_validity_value()}</TableCell>
+                    <TableCell className="font-mono">
+                      {m.ref_ss_s5_a1_validity_value({ years: TELEWORK_AGREEMENT.a1ValidityYears })}
+                    </TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell>{m.ref_ss_s5_row_apply_at()}</TableCell>
                     <TableCell>{m.ref_ss_s5_apply_at_value()}</TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell>{m.ref_ss_s5_row_retro()}</TableCell>
-                    <TableCell className="font-mono">{m.ref_ss_s5_retro_value()}</TableCell>
+                    <TableCell>
+                      {m.ref_ss_s5_row_retro({
+                        date: fmtDate(TELEWORK_AGREEMENT.retroactivityFrom),
+                      })}
+                    </TableCell>
+                    <TableCell className="font-mono">
+                      {m.ref_ss_s5_retro_value({
+                        months: TELEWORK_AGREEMENT.retroactivityMaxMonths,
+                      })}
+                    </TableCell>
                   </TableRow>
                 </TableBody>
               </Table>
@@ -317,9 +375,21 @@ export default function SalarySplitReference() {
           </div>
         </div>
 
-        {/* ── 7. Worked Examples ──────────────────────────────────── */}
-        <SectionCard title={m.ref_ss_s7_title()} icon={CalculatorIcon} accent="be">
-          <p className="mb-4 ref-section-intro">{m.ref_ss_s7_intro()}</p>
+        {/* ── 7. Worked Examples (figures from the ACV slides, see src/tax/reference) ── */}
+        <SectionCard
+          title={m.ref_ss_s7_title({ date: sessionDate })}
+          icon={CalculatorIcon}
+          accent="be"
+        >
+          <p className="mb-4 ref-section-intro">
+            {m.ref_ss_s7_intro({
+              year: input.incomeYear,
+              holidays: input.publicHolidays,
+              vacation: input.vacationDays,
+              telework: input.teleworkDays,
+              wage: fmt(input.fiscalWage),
+            })}
+          </p>
           <div className="grid grid-cols-12 gap-4">
             {/* Basisdata */}
             <div className="col-span-12 md:col-span-4">
@@ -327,13 +397,22 @@ export default function SalarySplitReference() {
                 <h6 className="mb-4 text-sm font-semibold ref-subsection-label">
                   {m.ref_ss_base_data()}
                 </h6>
-                <StatRow label={m.ref_ss_label_fiscal_loon_nl()} value="€53.299" />
-                <StatRow label={m.ref_ss_label_loonheffing()} value="€12.902" />
-                <StatRow label={m.ref_ss_label_reiskosten()} value="€3.889" />
-                <StatRow label={m.ref_ss_label_zorgpremie()} value="€1.560" />
-                <StatRow label={m.ref_ss_label_werkdagen_nl()} value="181 / 231" />
-                <StatRow label={m.ref_ss_label_werkdagen_be()} value="50" />
-                <StatRow label={m.ref_ss_label_breuk_be()} value="180 / 230" />
+                <StatRow label={m.ref_ss_label_fiscal_loon_nl()} value={fmt(input.fiscalWage)} />
+                <StatRow label={m.ref_ss_label_loonheffing()} value={fmt(input.withheldWageTax)} />
+                <StatRow label={m.ref_ss_label_reiskosten()} value={fmt(input.travelAllowance)} />
+                <StatRow label={m.ref_ss_label_zorgpremie()} value={fmt(input.healthPremium)} />
+                <StatRow
+                  label={m.ref_ss_label_werkdagen_nl()}
+                  value={`${input.nlFraction.days} / ${input.nlFraction.base}`}
+                />
+                <StatRow
+                  label={m.ref_ss_label_werkdagen_be()}
+                  value={fmtNumber(input.teleworkDays)}
+                />
+                <StatRow
+                  label={m.ref_ss_label_breuk_be()}
+                  value={`${input.beFraction.days} / ${input.beFraction.base}`}
+                />
               </div>
             </div>
 
@@ -344,34 +423,54 @@ export default function SalarySplitReference() {
                   {m.ref_ss_scenario_a_title()}
                 </h6>
                 <StatRow
-                  label={m.ref_ss_label_nl_belastbaar_a()}
-                  value="€41.763"
-                  sub={m.ref_ss_example_sub_a_nl()}
+                  label={m.ref_ss_label_nl_belastbaar_a({ fraction: nlFraction })}
+                  value={fmt(scenarioA.nlTaxable)}
+                  sub={m.ref_ss_example_sub_a_nl({ wage, fraction: nlFraction })}
                 />
                 <StatRow
                   label={m.ref_ss_label_be_deel_bruto()}
-                  value="€11.536"
-                  sub={m.ref_ss_example_sub_be_share()}
+                  value={fmt(example.beShareGross)}
+                  sub={m.ref_ss_example_sub_be_share({
+                    wage,
+                    fraction: `${input.teleworkDays}/${input.nlFraction.base}`,
+                  })}
                 />
-                <StatRow label={m.ref_ss_label_nl_teruggaaf()} value="€4.314" highlight />
+                <StatRow
+                  label={m.ref_ss_label_nl_teruggaaf()}
+                  value={fmt(scenarioA.nlRefund)}
+                  highlight
+                />
                 <div className="mt-4 ref-scenario-divider">
                   <h6 className="mb-2 text-sm font-semibold ref-subsection-label ref-text-be">
                     {m.ref_ss_be_declaration()}
                   </h6>
                   <StatRow
                     label={m.ref_ss_label_w_grondslag()}
-                    value="€44.711"
-                    sub={m.ref_ss_example_sub_w_base()}
+                    value={fmt(example.baseW)}
+                    sub={m.ref_ss_example_sub_w_base({
+                      wage,
+                      withheld: fmtNumber(input.withheldWageTax),
+                      refund: fmtNumber(scenarioA.nlRefund),
+                    })}
                   />
-                  <StatRow label={m.ref_ss_label_y_o1()} value="€10.310" />
-                  <StatRow label={m.ref_ss_label_z_o2()} value="€34.401" />
-                  <StatRow label={m.ref_ss_label_be_te_betalen()} value="€3.277" highlight />
+                  <StatRow label={m.ref_ss_label_y_o1()} value={fmt(scenarioA.y)} />
+                  <StatRow label={m.ref_ss_label_z_o2()} value={fmt(scenarioA.z)} />
+                  <StatRow
+                    label={m.ref_ss_label_be_te_betalen()}
+                    value={fmt(scenarioA.beTax)}
+                    highlight
+                  />
                 </div>
                 <div className="ref-scenario-result-success mt-4 p-2 rounded-md text-center">
                   <span className="font-mono text-success font-bold">
-                    {m.ref_ss_netto_voordeel_a()}
+                    {m.ref_ss_netto_voordeel_a({ amount: fmtSigned(example.netBenefitA) })}
                   </span>
-                  <div className="ref-footnote">{m.ref_ss_netto_voordeel_a_sub()}</div>
+                  <div className="ref-footnote">
+                    {m.ref_ss_netto_voordeel_a_sub({
+                      refund: fmt(scenarioA.nlRefund),
+                      be: fmt(scenarioA.beTax),
+                    })}
+                  </div>
                 </div>
               </div>
             </div>
@@ -384,17 +483,24 @@ export default function SalarySplitReference() {
                 </h6>
                 <StatRow
                   label={m.ref_ss_label_breuk_nl_be()}
-                  value="155 / 205"
-                  sub={m.ref_ss_example_sub_fraction_b()}
+                  value={`${example.sickFraction.days} / ${example.sickFraction.base}`}
+                  sub={m.ref_ss_example_sub_fraction_b({
+                    days: input.beFraction.days,
+                    base: input.beFraction.base,
+                    sick: input.sickDays,
+                  })}
                 />
                 <StatRow
                   label={m.ref_ss_label_be_aandeel_stijgt()}
-                  value="50/205 = 24,4%"
-                  sub={m.ref_ss_example_sub_be_share_b()}
+                  value={`${input.teleworkDays}/${example.sickFraction.base} = ${fmtPercent(example.beShareSick, shareFormat)}`}
+                  sub={m.ref_ss_example_sub_be_share_b({
+                    fraction: `${input.teleworkDays}/${input.beFraction.base}`,
+                    percent: fmtPercent(example.beShareNoSick, shareFormat),
+                  })}
                 />
                 <StatRow
                   label={m.ref_ss_label_nl_teruggaaf()}
-                  value="€4.314"
+                  value={fmt(scenarioB.nlRefund)}
                   sub={m.ref_ss_example_unchanged()}
                 />
                 <div className="mt-4 ref-scenario-divider">
@@ -403,18 +509,27 @@ export default function SalarySplitReference() {
                   </h6>
                   <StatRow
                     label={m.ref_ss_label_w_grondslag()}
-                    value="€44.711"
+                    value={fmt(example.baseW)}
                     sub={m.ref_ss_example_unchanged()}
                   />
-                  <StatRow label={m.ref_ss_label_y_o1()} value="€11.561" />
-                  <StatRow label={m.ref_ss_label_z_o2()} value="€33.150" />
-                  <StatRow label={m.ref_ss_label_be_te_betalen()} value="€3.600" highlight />
+                  <StatRow label={m.ref_ss_label_y_o1()} value={fmt(scenarioB.y)} />
+                  <StatRow label={m.ref_ss_label_z_o2()} value={fmt(scenarioB.z)} />
+                  <StatRow
+                    label={m.ref_ss_label_be_te_betalen()}
+                    value={fmt(scenarioB.beTax)}
+                    highlight
+                  />
                 </div>
                 <div className="ref-scenario-result-warning mt-4 p-2 rounded-md text-center">
                   <span className="font-mono text-warning font-bold">
-                    {m.ref_ss_netto_voordeel_b()}
+                    {m.ref_ss_netto_voordeel_b({ amount: fmtSigned(example.netBenefitB) })}
                   </span>
-                  <div className="ref-footnote">{m.ref_ss_netto_voordeel_b_sub()}</div>
+                  <div className="ref-footnote">
+                    {m.ref_ss_netto_voordeel_b_sub({
+                      refund: fmt(scenarioB.nlRefund),
+                      be: fmt(scenarioB.beTax),
+                    })}
+                  </div>
                 </div>
               </div>
             </div>
@@ -437,25 +552,39 @@ export default function SalarySplitReference() {
               <TableBody>
                 <TableRow>
                   <TableCell>{m.ref_ss_scenario_100pct_office()}</TableCell>
-                  <TableCell className="font-mono">€600</TableCell>
-                  <TableCell className="font-mono">€0</TableCell>
+                  <TableCell className="font-mono">{fmt(input.officeOnly.beTax)}</TableCell>
+                  <TableCell className="font-mono">{fmt(0)}</TableCell>
                   <TableCell className="text-text">—</TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell>{m.ref_ss_scenario_50_no_sick()}</TableCell>
-                  <TableCell className="font-mono">€3.277</TableCell>
-                  <TableCell className="font-mono text-text">+€4.314</TableCell>
-                  <TableCell className="font-mono text-text font-bold">+€1.037 ✓</TableCell>
+                  <TableCell className="font-mono">{fmt(scenarioA.beTax)}</TableCell>
+                  <TableCell className="font-mono text-text">
+                    {fmtSigned(scenarioA.nlRefund)}
+                  </TableCell>
+                  <TableCell className="font-mono text-text font-bold">
+                    {fmtSigned(example.netBenefitA)} ✓
+                  </TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell>{m.ref_ss_scenario_50_25_sick()}</TableCell>
-                  <TableCell className="font-mono">€3.600</TableCell>
-                  <TableCell className="font-mono text-text">+€4.314</TableCell>
-                  <TableCell className="font-mono text-text font-bold">+€714 ⚠️</TableCell>
+                  <TableCell className="font-mono">{fmt(scenarioB.beTax)}</TableCell>
+                  <TableCell className="font-mono text-text">
+                    {fmtSigned(scenarioB.nlRefund)}
+                  </TableCell>
+                  <TableCell className="font-mono text-text font-bold">
+                    {fmtSigned(example.netBenefitB)} ⚠️
+                  </TableCell>
                 </TableRow>
               </TableBody>
             </Table>
-            <p className="text-sm mb-0 ref-footnote">{m.ref_ss_s7_footnote()}</p>
+            <p className="text-sm mb-0 ref-footnote">
+              {m.ref_ss_s7_footnote({
+                amount: fmt(input.officeOnly.beTax),
+                rate: fmtPercent(input.officeOnly.municipalTaxRate, { digits: 0 }),
+                date: sessionDate,
+              })}
+            </p>
           </div>
         </SectionCard>
 
@@ -474,14 +603,14 @@ export default function SalarySplitReference() {
               <DocLink
                 href="/docs/ACV-Telewerk-Infosessie-2026.pdf"
                 title={m.ref_ss_doc2_title()}
-                sub={m.ref_ss_doc2_sub()}
+                sub={m.ref_ss_doc2_sub({ date: sessionDate })}
               />
             </div>
           </div>
         </SectionCard>
 
         <PageFooter>
-          {m.ref_ss_footer()}&nbsp; |&nbsp;{" "}
+          {m.ref_ss_footer({ year, date: sessionDate })}&nbsp; |&nbsp;{" "}
           <a
             href="https://www.acvgrensarbeiders.be"
             target="_blank"

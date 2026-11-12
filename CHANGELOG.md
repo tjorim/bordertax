@@ -29,6 +29,8 @@ allowed scopes are listed in `release.config.json`, and `check` validates `[Unre
 - **Web:** Clamp long field hints to two lines with a "More" toggle, which shortens the input column.
 - **Web:** Stack the filing checklist rows as field / value / source cards on narrow screens instead of scrolling the tables sideways.
 - **Web:** Wrap the result tabs onto a second row on narrow screens so none are hidden off-screen, and show the app name in the collapsed header.
+- **Web:** Show the income year, the ACV session date and the Belastingdienst source in one fixed line under the title of both reference pages. The Dutch rate table, the algemene heffingskorting and arbeidskorting maxima and the premium ceiling on the salary-split page are now taken from the same income year 2026 parameters as the calculator, and every figure is formatted for the selected language. The arbeidskorting now reads "zero at income ≥ €132,920", as in the 2026 parameters (the page had €132,290).
+- **Web:** Keep the reference figures (pension amounts, AOW ages, ZIV bands, the worked example) out of the translation files: they are typed once in `src/tax/reference`, marked as coming from the ACV session, and the messages only hold prose with parameters.
 
 ### Fixed
 
