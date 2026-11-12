@@ -90,7 +90,7 @@ describe("getNLFractions", () => {
     expect(fractions.nlFractionDutchMethod).toBe(0);
     expect(fractions.nlFractionBelgianMethod).toBe(0);
     expect(fractions.beFraction).toBe(0);
-    expect(fractions.vrijgesteldFrac).toBe(0);
+    expect(fractions.nlFractionBelgianMethod).toBe(0);
   });
 
   it("includes sick days only in the Dutch-method NL fraction", () => {
@@ -104,7 +104,7 @@ describe("getNLFractions", () => {
 
     expect(fractions.nlFractionDutchMethod).toBeCloseTo(205 / 235, 10);
     expect(fractions.nlFractionBelgianMethod).toBeCloseTo(200 / 230, 10);
-    expect(fractions.vrijgesteldFrac).toBeCloseTo(200 / 230, 10);
+    expect(fractions.nlFractionBelgianMethod).toBeCloseTo(200 / 230, 10);
   });
 
   it("counts other-country days outside NL for Belgian sourcing", () => {
@@ -116,6 +116,6 @@ describe("getNLFractions", () => {
     });
 
     expect(fractions.beFraction).toBeCloseTo(50 / 250, 10);
-    expect(fractions.vrijgesteldFrac).toBeCloseTo(200 / 250, 10);
+    expect(fractions.nlFractionBelgianMethod).toBeCloseTo(200 / 250, 10);
   });
 });

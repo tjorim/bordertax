@@ -38,8 +38,6 @@ export type MortgageAssumption =
   | "home_value_missing"
   /** Full-year ordinary occupied main home; special situations not modelled. */
   | "full_year_main_home"
-  /** Legacy identifier retained for compatibility; no longer returned: mortgage deductions reduce premium income. */
-  | "premium_base_unchanged"
   /** Belgian tax is recomputed from the lower Dutch tax; no Belgian home benefit (woonbonus) is modelled. */
   | "no_belgian_home_benefit";
 

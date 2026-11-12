@@ -7,6 +7,7 @@
  * shares add up exactly to the total difference.
  */
 import { calculate } from "./index";
+import { TaxInputFields } from "./schema";
 import type { TaxInputs, TaxResult } from "./types";
 
 export type ChangeGroup = "workdays" | "income" | "mortgage" | "other";
@@ -58,31 +59,7 @@ export interface ScenarioComparison {
 const sameValue = (x: unknown, y: unknown) => Object.is(x, y);
 
 // Every input key, so the "other" group is whatever the named groups do not cover.
-const ALL_INPUT_KEYS = [
-  "year",
-  "residentCountry",
-  "civilStatus",
-  "dependentChildren",
-  "belowAOWAge",
-  "belgianRegion",
-  "communalTaxRate",
-  "grossSalary",
-  "daysWorkedNL",
-  "daysWorkedBE",
-  "daysWorkedOther",
-  "thirtyPercentRuling",
-  "socialContributions",
-  "aanvullendPensioen",
-  "dienstencheques",
-  "roerendeVoorheffing",
-  "withheldTaxNL",
-  "sickDays",
-  "mortgageEnabled",
-  "mortgageInterest",
-  "mortgageOwnershipShare",
-  "mortgageHomeValue",
-  "incomeOutsideNL",
-] as const satisfies readonly (keyof TaxInputs)[];
+const ALL_INPUT_KEYS = Object.keys(TaxInputFields) as (keyof TaxInputs)[];
 
 const GROUPED_KEYS = new Set<string>(Object.values(GROUP_KEYS).flat());
 

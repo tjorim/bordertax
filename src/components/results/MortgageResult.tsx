@@ -20,7 +20,6 @@ export default function MortgageResult({ result }: { result: MortgageCalculation
     qualifying_debt: m.mortgage_qualifying_debt,
     home_value_missing: m.mortgage_no_eigenwoningforfait,
     full_year_main_home: m.mortgage_forfait_full_year,
-    premium_base_unchanged: m.mortgage_premium_base_unchanged,
     no_belgian_home_benefit: m.mortgage_no_belgian_home_benefit,
   };
   const status = {

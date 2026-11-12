@@ -26,6 +26,13 @@ export const TAX_PARAMS = Object.fromEntries(
   YEAR_MODULES.map((module) => [module.year, module.params]),
 ) as Record<TaxYear, YearParams>;
 
+/** Parameters for an income year; throws for a year without a module in `src/tax/years`. */
+export function getYearParams(year: number): YearParams {
+  const params = (TAX_PARAMS as Partial<Record<number, YearParams>>)[year];
+  if (!params) throw new Error(`Unsupported tax year: ${year}`);
+  return params;
+}
+
 /**
  * Ordinary occupied main home, full year. Rates apply to the whole value, not marginal bands.
  * Above threshold: base + excess rate. Per-year sources are in each year module.

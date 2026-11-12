@@ -14,7 +14,7 @@ interface Props {
 /** Compact headline numbers, pinned below the navbar so edits show their effect without scrolling. */
 export function ResultBar({ result, onShowResults, onShowFiling }: Props) {
   const { netIncome, nl, be } = result;
-  const withheld = result.inputs.withheldTaxNL ?? 0;
+  const withheld = result.inputs.withheldTaxNL;
   const nlBalance = withheld - nl.netTaxNL;
   const nlLabel =
     withheld > 0

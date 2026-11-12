@@ -9,6 +9,7 @@ import { ResultBar } from "./components/ResultBar";
 import ResultsTabs, { type ResultsTabsProps } from "./components/results/ResultsTabs";
 import { calculate } from "./tax";
 import { DEFAULT_INPUTS } from "./tax/defaults";
+import { STORAGE_KEY, readSavedInputs } from "./lib/inputStorage";
 import { useDocumentTitle } from "./lib/useDocumentTitle";
 import type { TaxInputs, TaxResult } from "./tax/types";
 import { TaxInputSchema, PersistedInputsSchema, type PersistedInputs } from "./tax/schema";
@@ -19,8 +20,6 @@ import { PageFooter } from "./components/PageFooter";
 
 const taxFormOptions = formOptions({ defaultValues: DEFAULT_INPUTS });
 export type TaxFormApi = ReactFormType<typeof taxFormOptions>;
-
-const STORAGE_KEY = "grensarbeider-tax-inputs-v1";
 
 function toPersistedInputs(inputs: TaxInputs): PersistedInputs {
   return PersistedInputsSchema.parse(inputs);
@@ -33,7 +32,7 @@ function mergeWithDefaults(raw: unknown): TaxInputs {
 
 function loadInitialInputs(): TaxInputs {
   try {
-    const saved = localStorage.getItem(STORAGE_KEY);
+    const saved = readSavedInputs();
     return saved ? mergeWithDefaults(JSON.parse(saved)) : DEFAULT_INPUTS;
   } catch {
     return DEFAULT_INPUTS;

@@ -8,11 +8,11 @@
  * NL-sourced income is exempt from Belgian tax but raises the progression rate.
  * Communal tax (gemeentebelasting) is levied on both the taxable AND the exempt portion.
  *
- * Year-specific rates are in params.ts — that is the only file that needs updating each year.
+ * Year-specific rates live in one module per income year in src/tax/years, assembled by params.ts.
  */
 import type { TaxInputs, BETaxResult, NLTaxResult } from "./types";
 import { BE_PENSION_REDUCTION_RATE, BE_TAX_FREE_ALLOWANCE_REDUCTION_RATE } from "./constants";
-import { TAX_PARAMS } from "./params";
+import { getYearParams } from "./params";
 import type { BEBracket, BEYearParams } from "./params";
 import { getNLFractions } from "./workdays";
 
@@ -53,22 +53,14 @@ function belastingvrijeSomReduction(inputs: TaxInputs, p: BEYearParams): number 
 export function calculateBETax(inputs: TaxInputs, nl: NLTaxResult): BETaxResult | null {
   if (inputs.residentCountry !== "BE") return null;
 
-  const yearParams = TAX_PARAMS[inputs.year];
-  if (!yearParams) {
-    throw new Error(`Unsupported tax year: ${inputs.year}`);
-  }
-  const p = yearParams.be;
+  const p = getYearParams(inputs.year).be;
 
   const { beFraction } = getNLFractions(inputs);
 
   // Gross split for reference fields
   const beIncome = inputs.grossSalary * beFraction;
 
-  // Optional deduction inputs (default to 0)
-  const socialContributions = inputs.socialContributions ?? 0;
-  const aanvullendPensioen = inputs.aanvullendPensioen ?? 0;
-  const dienstencheques = inputs.dienstencheques ?? 0;
-  const roerendeVoorheffing = inputs.roerendeVoorheffing ?? 0;
+  const { socialContributions, aanvullendPensioen, dienstencheques, roerendeVoorheffing } = inputs;
 
   // Declared income: code 1250 = grossSalary − netTaxNL (paid to NL, not seen by BE)
   const declaredIncome = inputs.grossSalary - nl.netTaxNL;
@@ -84,10 +76,10 @@ export function calculateBETax(inputs: TaxInputs, nl: NLTaxResult): BETaxResult 
   // is therefore taken from the NL-exempt side of code 1250, not allocated pro rata
   // across both sides. This mirrors the 1250/Netherlands split on the Belgian return.
   const nlExemptDeclaredIncome = Math.max(0, declaredIncome - beIncome);
-  const vrijgesteldFrac = declaredIncome > 0 ? nlExemptDeclaredIncome / declaredIncome : 0;
+  const nlExemptShare = declaredIncome > 0 ? nlExemptDeclaredIncome / declaredIncome : 0;
 
   // Exempt and taxable portions of net professional income
-  const vrijgesteld = vrijgesteldFrac * netProfessionalIncome;
+  const vrijgesteld = nlExemptShare * netProfessionalIncome;
   const volTarief = netProfessionalIncome - vrijgesteld;
 
   // nlExemptIncome for legacy/display: gross NL income (days-based)

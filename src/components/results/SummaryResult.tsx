@@ -28,7 +28,7 @@ interface Props {
 export default function SummaryResult({ result, onResetInputs }: Props) {
   const [copyStatus, setCopyStatus] = useState<"idle" | "success" | "error">("idle");
   const { grossIncome, totalTax, netIncome, effectiveRateTotal, nl, be } = result;
-  const withheldTaxNL = result.inputs.withheldTaxNL ?? 0;
+  const { withheldTaxNL } = result.inputs;
   const nlBalance = withheldTaxNL - nl.netTaxNL;
   const netResult = nlBalance - (be?.netTaxBE ?? 0);
   const totalWorkdays = getTotalWorkdays(result.inputs);
