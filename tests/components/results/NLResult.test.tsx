@@ -2,7 +2,8 @@ import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
 import NLResult from "@/components/results/NLResult";
-import { fmtExact, fmtSigned } from "@/components/format";
+import { fmtBracket, fmtExact, fmtSigned } from "@/components/format";
+import { setLocale } from "@/paraglide/runtime";
 import * as m from "@/paraglide/messages.js";
 import { mockNLResult } from "../../test-utils/mockData";
 
@@ -60,5 +61,34 @@ describe("NLResult", () => {
     expect(screen.getByText(m.nl_balance_refund()).closest("tr")).toHaveTextContent(
       fmtExact(30000 - charge.netTaxNL),
     );
+  });
+});
+
+describe("NLResult bracket labels", () => {
+  it("formats the numeric bounds with the locale helpers", () => {
+    render(<NLResult result={mockNLResult} />);
+    expect(screen.getByText(fmtBracket(0, 38441))).toBeInTheDocument();
+    expect(screen.getByText(fmtBracket(38441, 76817))).toBeInTheDocument();
+  });
+
+  it("shows the open top bracket as a lower bound", () => {
+    const result = {
+      ...mockNLResult,
+      brackets: [{ from: 76817, to: null, rate: 0.495, taxableAmount: 1000, tax: 495 }],
+    };
+    render(<NLResult result={result} />);
+    expect(screen.getByText(fmtBracket(76817, null))).toBeInTheDocument();
+    expect(fmtBracket(76817, null).startsWith("> ")).toBe(true);
+  });
+
+  it("formats the bounds in the active locale, not always Dutch", () => {
+    setLocale("en", { reload: false });
+    expect(fmtBracket(0, 38441)).toContain("38,441");
+    setLocale("nl", { reload: false });
+    try {
+      expect(fmtBracket(0, 38441)).toContain("38.441");
+    } finally {
+      setLocale("en", { reload: false });
+    }
   });
 });

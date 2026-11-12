@@ -34,10 +34,8 @@ function applyBrackets(
     const size = b.to === Infinity ? remaining : Math.min(remaining, b.to - b.from);
     const tax = Math.floor(size * b.rate);
     lines.push({
-      label:
-        b.to === Infinity
-          ? `> €${b.from.toLocaleString("nl-NL")}`
-          : `€${b.from.toLocaleString("nl-NL")} – €${b.to.toLocaleString("nl-NL")}`,
+      from: b.from,
+      to: b.to === Infinity ? null : b.to,
       rate: b.rate,
       taxableAmount: size,
       tax,
@@ -99,7 +97,30 @@ export function calculateNLTax(
   const yearData = getYearParams(inputs.year).nl;
   const p = inputs.belowAOWAge ? yearData.under : yearData.over;
 
-  const { nlFractionDutchMethod: nlFraction } = getNLFractions(inputs);
+  const { nlFractionDutchMethod: nlFraction, noWorkdays } = getNLFractions(inputs);
+
+  // Without workdays nothing is sourced to the Netherlands: no taxable income, so also no
+  // premiums and no credits (they would otherwise be charged and applied on income that is not
+  // there). `TaxResult.noWorkdays` tells the caller; the figures only mean something once
+  // workdays are entered.
+  if (noWorkdays) {
+    return {
+      nlTaxableIncome: 0,
+      mortgageDeduction: 0,
+      mortgageRateCapSurcharge: 0,
+      deelNietInNLBelast: inputs.grossSalary,
+      taxBeforeCredits: 0,
+      brackets: [],
+      algemeneHeffingskorting: 0,
+      arbeidskorting: 0,
+      totalCredits: 0,
+      volksverzekeringen: 0,
+      incomeTaxDue: 0,
+      premiumsDue: 0,
+      netTaxNL: 0,
+      effectiveRateNL: 0,
+    };
+  }
 
   // "Deel niet in NL belast": entered as its own field on the NL aangifte, separate from Loon.
   // Computed independently of the 30% ruling, which is a distinct exemption on the form.

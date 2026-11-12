@@ -221,4 +221,51 @@ describe("calculate", () => {
       expect(assessed.mortgage!.realised).toEqual(estimate.mortgage!.realised);
     });
   });
+
+  describe("no workdays state", () => {
+    const none = { ...base, daysWorkedNL: 0, daysWorkedBE: 0, daysWorkedOther: 0, sickDays: 0 };
+
+    it("is flagged, with zero Dutch figures and no Belgian tax", () => {
+      const result = calculate(none);
+      expect(result.noWorkdays).toBe(true);
+      expect(result.nl.netTaxNL).toBe(0);
+      expect(result.nlCharge.netTaxNL).toBe(0);
+      expect(result.be!.beIncome).toBe(0);
+      expect(result.be!.netTaxBE).toBe(0);
+      expect(result.totalTax).toBe(0);
+      expect(result.netIncome).toBe(none.grossSalary);
+    });
+
+    it("is not flagged once any workday or sick day is entered", () => {
+      expect(calculate(base).noWorkdays).toBe(false);
+      expect(calculate({ ...none, daysWorkedOther: 1 }).noWorkdays).toBe(false);
+      expect(calculate({ ...none, sickDays: 1 }).noWorkdays).toBe(false);
+    });
+
+    it("keeps an entered assessment as the Dutch charge", () => {
+      const result = calculate({
+        ...none,
+        assessmentIncomeTaxDue: 1000,
+        assessmentPremiumsDue: 500,
+      });
+      expect(result.noWorkdays).toBe(true);
+      expect(result.nlCharge.source).toBe("assessment");
+      expect(result.nlCharge.netTaxNL).toBe(1500);
+    });
+  });
+
+  describe("Belgian rounding at the boundary", () => {
+    it("returns cent-clean totals", () => {
+      const result = calculate({
+        ...base,
+        grossSalary: 61234.57,
+        daysWorkedNL: 191,
+        daysWorkedBE: 29,
+      });
+      expect(result.be!.netTaxBE).toBe(Math.round(result.be!.netTaxBE * 100) / 100);
+      expect(result.totalTax).toBe(Math.round(result.totalTax * 100) / 100);
+      expect(result.totalTax).toBeCloseTo(result.nlCharge.netTaxNL + result.be!.netTaxBE, 6);
+      expect(result.netIncome).toBe(Math.round(result.netIncome * 100) / 100);
+    });
+  });
 });

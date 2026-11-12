@@ -90,6 +90,43 @@ describe("MCP tax adapter", () => {
     expect(compareTax({ base: DEFAULT_INPUTS, overrides: { grossSalary: -1 } }).isError).toBe(true);
     expect(compareTax({ base: DEFAULT_INPUTS, overrides: { unknown: 1 } }).isError).toBe(true);
   });
+  it("returns numeric bracket bounds without a locale-formatted label", () => {
+    const response = calculateTax({ ...DEFAULT_INPUTS, grossSalary: 120000 });
+    const json = JSON.parse((response.content[0] as { text: string }).text) as {
+      result: { nl: { brackets: Record<string, unknown>[] } };
+    };
+    const { brackets } = json.result.nl;
+    expect(brackets.length).toBeGreaterThan(1);
+    for (const bracket of brackets) {
+      expect(bracket).not.toHaveProperty("label");
+      expect(typeof bracket.from).toBe("number");
+    }
+    expect(brackets[0]!.to).toEqual(expect.any(Number));
+    // The open top bracket is an explicit null (JSON has no Infinity).
+    expect(brackets.at(-1)!.to).toBeNull();
+  });
+  it("returns the Belgian figures in cents and reports unused federal reductions", () => {
+    const response = calculateTax({ ...DEFAULT_INPUTS, roerendeVoorheffing: 50000 });
+    const { result } = response.structuredContent as { result: ReturnType<typeof calculate> };
+    const be = result.be!;
+    expect(be.netTaxBE).toBe(Math.round(be.netTaxBE * 100) / 100);
+    expect(be.saldoFederaal).toBe(0);
+    expect(be.federalReductionsUnused).toBeGreaterThan(0);
+    expect(result.noWorkdays).toBe(false);
+  });
+  it("flags a calculation without workdays and keeps the strict schema accepting it", () => {
+    const response = calculateTax({
+      ...DEFAULT_INPUTS,
+      daysWorkedNL: 0,
+      daysWorkedBE: 0,
+      daysWorkedOther: 0,
+      sickDays: 0,
+    });
+    expect(response.isError).not.toBe(true);
+    const { result } = response.structuredContent as { result: ReturnType<typeof calculate> };
+    expect(result.noWorkdays).toBe(true);
+    expect(result.nl.netTaxNL).toBe(0);
+  });
   it("discovers capabilities and returns validation errors through the SDK", async () => {
     const server = createServer();
     const client = new Client({ name: "test", version: "1" });

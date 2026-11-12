@@ -243,3 +243,20 @@ arbeidskorting field is local component state, not a tax input.
   file-picker component, and the native input keeps the OS picker and works with assistive technology
   (the input keeps an accessible name; results are announced through a `role="status"` region).
   Export builds a `Blob` download link; nothing is sent over the network.
+
+## Engine result notes (issue #440)
+
+Three result states reuse the shared `Alert` (checked against the registry `alert` and the
+official Base UI documentation; no new primitive, no custom CSS, no arbitrary values):
+
+- **No workdays** (`ResultsTabs`): `Alert variant="warning" role="note"` above the tabs, with
+  `TriangleAlertIcon`, so every tab shows why the Dutch and Belgian figures are zero.
+- **Unused federal reductions** (`BEResult`, `FilingChecklist`): `Alert variant="info" role="note"`
+  with the amount via the `be_federal_reductions_unused` message. Only rendered when the unused part
+  is above zero. `role="note"` replaces the default `role="alert"` so these static explanations are
+  not announced as live alerts (the same pattern as the filing provisional notice).
+- **Bracket ranges** (`NLResult`): plain `TableCell` text from `fmtBracket` in `format.ts`, which
+  formats the numeric `from`/`to` bounds with the existing locale `fmt` helper.
+
+Text uses the default `text-text` Alert colour (no small brand-teal text, so axe contrast is
+unchanged). Strings exist in both `messages/en.json` and `messages/nl.json`.

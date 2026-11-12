@@ -1,5 +1,12 @@
 import { useState } from "react";
-import { ChartColumnIcon, ChartPieIcon, ClipboardCheckIcon, HouseIcon } from "lucide-react";
+import {
+  ChartColumnIcon,
+  ChartPieIcon,
+  ClipboardCheckIcon,
+  HouseIcon,
+  TriangleAlertIcon,
+} from "lucide-react";
+import { Alert } from "@/components/ui/alert";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { lazyView } from "@/lib/lazyView";
 import { isThirtyPercentRulingSupportedResident } from "@/tax/constants";
@@ -45,94 +52,109 @@ export default function ResultsTabs({
   const [requested, setRequested] = useState({ years: false, wfh: false, compare: false });
 
   return (
-    <Tabs
-      value={tab}
-      onValueChange={(next) => {
-        onTabChange(next);
-        if (next === "years" || next === "wfh" || next === "compare") {
-          setRequested((prev) => ({ ...prev, [next]: true }));
-        }
-      }}
-    >
-      <TabsList aria-label={m.tabs_results_label()}>
-        <TabsTrigger value="summary" aria-label={m.tabs_summary()}>
-          <ChartPieIcon className="size-3" aria-hidden="true" />
-          {m.tabs_summary()}
-        </TabsTrigger>
-        <TabsTrigger value="nl" aria-label={m.tabs_nl()}>
-          🇳🇱 {m.tabs_nl()}
-        </TabsTrigger>
-        <TabsTrigger value="be" aria-label={m.tabs_be()}>
-          🇧🇪 {m.tabs_be()}
-        </TabsTrigger>
-        <TabsTrigger value="filing" aria-label={m.tabs_filing()}>
-          <ClipboardCheckIcon className="size-3" aria-hidden="true" />
-          {m.tabs_filing()}
-        </TabsTrigger>
-        <TabsTrigger value="wfh" aria-label={m.tabs_wfh_ratio()} {...preloadOnIntent(wfhChartView)}>
-          <HouseIcon className="size-3" aria-hidden="true" />
-          {m.tabs_wfh_ratio()}
-        </TabsTrigger>
-        <TabsTrigger
-          value="years"
-          aria-label={m.tabs_year_comparison()}
-          {...preloadOnIntent(yearComparisonView)}
-        >
-          <ChartColumnIcon className="size-3" aria-hidden="true" />
-          {m.tabs_year_comparison()}
-        </TabsTrigger>
-        <TabsTrigger
-          value="compare"
-          aria-label={m.tabs_compare()}
-          {...preloadOnIntent(scenarioCompareView)}
-        >
-          {m.tabs_compare()}
-        </TabsTrigger>
-      </TabsList>
-
-      <div>
-        <TabsContent value="summary">
-          <SummaryResult result={result} onResetInputs={onResetInputs} />
-        </TabsContent>
-        <TabsContent value="nl" className="bt-nl-accent">
-          <NLResult
-            result={result.nl}
-            charge={result.nlCharge}
-            withheldTaxNL={inputs.withheldTaxNL}
-            thirtyPercentRuling={
-              isThirtyPercentRulingSupportedResident(inputs.residentCountry) &&
-              inputs.thirtyPercentRuling
-            }
+    <>
+      {result.noWorkdays && (
+        <Alert variant="warning" role="note" className="text-sm py-2">
+          <TriangleAlertIcon
+            aria-hidden="true"
+            className="inline size-4 shrink-0 align-text-bottom me-2"
           />
-        </TabsContent>
-        <TabsContent value="be" className="bt-be-accent">
-          <BEResult result={result.be} residentCountry={inputs.residentCountry} />
-        </TabsContent>
-        <TabsContent value="filing">
-          <FilingChecklist result={result} />
-        </TabsContent>
-        <TabsContent value="wfh">
-          {requested.wfh && (
-            <LazyBoundary view={wfhChartView} loadingClassName="min-h-200">
-              <WFHRatioChart inputs={inputs} />
-            </LazyBoundary>
-          )}
-        </TabsContent>
-        <TabsContent value="years">
-          {requested.years && (
-            <LazyBoundary view={yearComparisonView} loadingClassName="min-h-180">
-              <YearComparison inputs={inputs} result={result} />
-            </LazyBoundary>
-          )}
-        </TabsContent>
-        <TabsContent value="compare">
-          {requested.compare && (
-            <LazyBoundary view={scenarioCompareView} loadingClassName="min-h-180">
-              <ScenarioCompare inputs={inputs} />
-            </LazyBoundary>
-          )}
-        </TabsContent>
-      </div>
-    </Tabs>
+          {m.results_no_workdays()}
+        </Alert>
+      )}
+      <Tabs
+        value={tab}
+        onValueChange={(next) => {
+          onTabChange(next);
+          if (next === "years" || next === "wfh" || next === "compare") {
+            setRequested((prev) => ({ ...prev, [next]: true }));
+          }
+        }}
+      >
+        <TabsList aria-label={m.tabs_results_label()}>
+          <TabsTrigger value="summary" aria-label={m.tabs_summary()}>
+            <ChartPieIcon className="size-3" aria-hidden="true" />
+            {m.tabs_summary()}
+          </TabsTrigger>
+          <TabsTrigger value="nl" aria-label={m.tabs_nl()}>
+            🇳🇱 {m.tabs_nl()}
+          </TabsTrigger>
+          <TabsTrigger value="be" aria-label={m.tabs_be()}>
+            🇧🇪 {m.tabs_be()}
+          </TabsTrigger>
+          <TabsTrigger value="filing" aria-label={m.tabs_filing()}>
+            <ClipboardCheckIcon className="size-3" aria-hidden="true" />
+            {m.tabs_filing()}
+          </TabsTrigger>
+          <TabsTrigger
+            value="wfh"
+            aria-label={m.tabs_wfh_ratio()}
+            {...preloadOnIntent(wfhChartView)}
+          >
+            <HouseIcon className="size-3" aria-hidden="true" />
+            {m.tabs_wfh_ratio()}
+          </TabsTrigger>
+          <TabsTrigger
+            value="years"
+            aria-label={m.tabs_year_comparison()}
+            {...preloadOnIntent(yearComparisonView)}
+          >
+            <ChartColumnIcon className="size-3" aria-hidden="true" />
+            {m.tabs_year_comparison()}
+          </TabsTrigger>
+          <TabsTrigger
+            value="compare"
+            aria-label={m.tabs_compare()}
+            {...preloadOnIntent(scenarioCompareView)}
+          >
+            {m.tabs_compare()}
+          </TabsTrigger>
+        </TabsList>
+
+        <div>
+          <TabsContent value="summary">
+            <SummaryResult result={result} onResetInputs={onResetInputs} />
+          </TabsContent>
+          <TabsContent value="nl" className="bt-nl-accent">
+            <NLResult
+              result={result.nl}
+              charge={result.nlCharge}
+              withheldTaxNL={inputs.withheldTaxNL}
+              thirtyPercentRuling={
+                isThirtyPercentRulingSupportedResident(inputs.residentCountry) &&
+                inputs.thirtyPercentRuling
+              }
+            />
+          </TabsContent>
+          <TabsContent value="be" className="bt-be-accent">
+            <BEResult result={result.be} residentCountry={inputs.residentCountry} />
+          </TabsContent>
+          <TabsContent value="filing">
+            <FilingChecklist result={result} />
+          </TabsContent>
+          <TabsContent value="wfh">
+            {requested.wfh && (
+              <LazyBoundary view={wfhChartView} loadingClassName="min-h-200">
+                <WFHRatioChart inputs={inputs} />
+              </LazyBoundary>
+            )}
+          </TabsContent>
+          <TabsContent value="years">
+            {requested.years && (
+              <LazyBoundary view={yearComparisonView} loadingClassName="min-h-180">
+                <YearComparison inputs={inputs} result={result} />
+              </LazyBoundary>
+            )}
+          </TabsContent>
+          <TabsContent value="compare">
+            {requested.compare && (
+              <LazyBoundary view={scenarioCompareView} loadingClassName="min-h-180">
+                <ScenarioCompare inputs={inputs} />
+              </LazyBoundary>
+            )}
+          </TabsContent>
+        </div>
+      </Tabs>
+    </>
   );
 }

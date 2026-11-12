@@ -218,4 +218,58 @@ describe("calculateNLTax", () => {
     expect(result).toHaveProperty("netTaxNL");
     expect(result).toHaveProperty("effectiveRateNL");
   });
+
+  describe("bracket lines", () => {
+    it("return numeric bounds, with null for the open top bracket, and no label", () => {
+      const result = calculateNLTax({ ...base, grossSalary: 120000 });
+      const [first, ...rest] = result.brackets;
+      expect(first!.from).toBe(0);
+      expect(first!.to).toBeGreaterThan(0);
+      expect(rest.at(-1)!.to).toBeNull();
+      for (const bracket of result.brackets) {
+        expect(bracket).not.toHaveProperty("label");
+        expect(typeof bracket.from).toBe("number");
+      }
+      // Contiguous bounds: each bracket starts where the previous one ends.
+      result.brackets.slice(1).forEach((bracket, i) => {
+        expect(bracket.from).toBe(result.brackets[i]!.to);
+      });
+    });
+
+    it("survive a JSON round trip unchanged", () => {
+      const { brackets } = calculateNLTax({ ...base, grossSalary: 120000 });
+      expect(JSON.parse(JSON.stringify(brackets))).toEqual(brackets);
+    });
+  });
+
+  describe("no workdays", () => {
+    const none = { ...base, daysWorkedNL: 0, daysWorkedBE: 0, daysWorkedOther: 0, sickDays: 0 };
+
+    it("charges no premiums and applies no credits on income that is not there", () => {
+      const result = calculateNLTax(none);
+      expect(result.nlTaxableIncome).toBe(0);
+      expect(result.brackets).toEqual([]);
+      expect(result.volksverzekeringen).toBe(0);
+      expect(result.arbeidskorting).toBe(0);
+      expect(result.algemeneHeffingskorting).toBe(0);
+      expect(result.totalCredits).toBe(0);
+      expect(result.incomeTaxDue).toBe(0);
+      expect(result.premiumsDue).toBe(0);
+      expect(result.netTaxNL).toBe(0);
+      expect(result.deelNietInNLBelast).toBe(none.grossSalary);
+    });
+
+    it("ignores a mortgage deduction there is no income to take it from", () => {
+      const result = calculateNLTax(none, 5000, 8000);
+      expect(result.mortgageDeduction).toBe(0);
+      expect(result.mortgageRateCapSurcharge).toBe(0);
+      expect(result.netTaxNL).toBe(0);
+    });
+
+    it("only sick days still count as Dutch workdays", () => {
+      const result = calculateNLTax({ ...none, sickDays: 10 });
+      expect(result.nlTaxableIncome).toBe(none.grossSalary);
+      expect(result.volksverzekeringen).toBeGreaterThan(0);
+    });
+  });
 });

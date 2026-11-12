@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 import BEResult from "@/components/results/BEResult";
 import type { TaxInputs } from "@/tax/types";
 import * as m from "@/paraglide/messages.js";
+import { fmtExact } from "@/components/format";
 import { mockBEResult } from "../../test-utils/mockData";
 
 describe("BEResult", () => {
@@ -59,5 +60,24 @@ describe("BEResult", () => {
     expect(finalRowsTotal).toBeCloseTo(mockBEResult.netTaxBE, 2);
     expect(screen.getByText(m.be_regional_tax())).toBeInTheDocument();
     expect(screen.getByText(m.be_municipal_tax_on_exempt())).toBeInTheDocument();
+  });
+});
+
+describe("BEResult unused federal reductions", () => {
+  it("shows no note when the reductions are fully used", () => {
+    render(<BEResult result={mockBEResult} residentCountry="BE" />);
+    expect(screen.queryByRole("note")).not.toBeInTheDocument();
+  });
+
+  it("notes the unused part when the reductions exceed the federal tax", () => {
+    render(
+      <BEResult
+        result={{ ...mockBEResult, saldoFederaal: 0, federalReductionsUnused: 1234.5 }}
+        residentCountry="BE"
+      />,
+    );
+    expect(screen.getByRole("note")).toHaveTextContent(
+      m.be_federal_reductions_unused({ amount: fmtExact(1234.5) }),
+    );
   });
 });
