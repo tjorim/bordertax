@@ -116,7 +116,7 @@ export default function App() {
     <>
       <AppNavbar onLocaleSwitch={() => setCurrentLocale(getLocale())}>
         <span className="font-mono text-xs tracking-wide text-text-muted">
-          {m.app_tax_year()} {inputs.year}
+          {m.app_income_year({ year: inputs.year })}
         </span>
       </AppNavbar>
 

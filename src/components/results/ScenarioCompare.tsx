@@ -14,6 +14,7 @@ import {
 import { cn } from "@/lib/utils";
 import { compareScenarios } from "@/tax/compare";
 import type { TaxInputs } from "@/tax/types";
+import { yearParams } from "@/tax/assessmentYear";
 import * as m from "@/paraglide/messages.js";
 import { ImportInputsButton } from "../InputFileControls";
 import { fmt, fmtSigned } from "../format";
@@ -116,7 +117,7 @@ export default function ScenarioCompare({ inputs }: { inputs: TaxInputs }) {
         </Button>
         <ImportInputsButton
           label={m.compare_baseline_load()}
-          successMessage={(year) => m.compare_baseline_loaded({ year })}
+          successMessage={(year) => m.compare_baseline_loaded(yearParams(year))}
           onLoad={setBaseline}
         />
         {baseline && (

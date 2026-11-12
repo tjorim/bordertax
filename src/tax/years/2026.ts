@@ -113,7 +113,7 @@ export const year2026 = defineYear({
         },
       ],
       verified:
-        "Brackets, belastingvrije som (11,550), child supplements, forfait (30%, max 6,070) and the dienstencheques rule checked against the cited FOD Financiën pages on 12 November 2026; none is marked provisional. gereduceerdRate and gewestelijkeRate are the unchanged Flemish opcentiemen of 33.257% (Vlaamse overheid), as in the other years",
+        "Brackets, belastingvrije som (11,550), child supplements, forfait (30%, max 6,070) and the dienstencheques rule checked against the cited FOD Financiën pages on 12 November 2026; none is marked provisional. gereduceerdRate and gewestelijkeRate are the unchanged Flemish opcentiemen of 33.257% (Vlaamse overheid), as in the other years. The Vlaanderen statistics page (https://www.vlaanderen.be/statistiek-vlaanderen/overheidsfinancien/fiscale-autonomie-belastingen-vlaamse-overheid) states 'Sinds 2018 bedraagt het tarief 33,257%' in the present tense. No official source names assessment year 2027 explicitly; a third-party table (practicali.be, 'geindexeerde bedragen aj 2027') lists 33,257 for aanslagjaar 2025, 2026 and 2027",
     },
     home: {
       sources: [

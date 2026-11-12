@@ -27,6 +27,7 @@ import {
 import { VALID_YEARS } from "@/tax/constants";
 import type { TaxYear } from "@/tax/constants";
 import type { TaxResult } from "@/tax/types";
+import { yearParams } from "@/tax/assessmentYear";
 import * as m from "@/paraglide/messages.js";
 import { fmt, pct } from "../format.js";
 
@@ -64,7 +65,7 @@ export default function MultiYearComparison({ rows, activeYear }: Props) {
           header: () => m.years_year(),
           cell: (info) => (
             <>
-              {info.getValue()}
+              {m.year_with_assessment(yearParams(info.getValue()))}
               {info.getValue() === activeYear && (
                 <Badge variant="primary" className="ms-2">
                   {m.years_active()}

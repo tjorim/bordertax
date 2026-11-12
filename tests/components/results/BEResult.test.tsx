@@ -11,18 +11,22 @@ describe("BEResult", () => {
   // TODO: Re-enable when NL-resident support is re-integrated
   it.skip("shows info alert for NL residents", () => {
     render(
-      <BEResult result={null} residentCountry={"NL" as unknown as TaxInputs["residentCountry"]} />,
+      <BEResult
+        result={null}
+        residentCountry={"NL" as unknown as TaxInputs["residentCountry"]}
+        year={2025}
+      />,
     );
     expect(screen.getByRole("alert")).toBeInTheDocument();
   });
 
   it("renders nothing when result is null for BE resident", () => {
-    const { container } = render(<BEResult result={null} residentCountry="BE" />);
+    const { container } = render(<BEResult result={null} residentCountry="BE" year={2025} />);
     expect(container.firstChild).toBeNull();
   });
 
   it("renders full result for BE resident with BE income", () => {
-    render(<BEResult result={mockBEResult} residentCountry="BE" />);
+    render(<BEResult result={mockBEResult} residentCountry="BE" year={2025} />);
     const alerts = screen.getAllByRole("alert");
     expect(alerts).toHaveLength(1);
     expect(alerts[0]).toHaveTextContent(m.be_warning_note());
@@ -30,26 +34,26 @@ describe("BEResult", () => {
   });
 
   it("shows the effective rate for BE", () => {
-    render(<BEResult result={mockBEResult} residentCountry="BE" />);
+    render(<BEResult result={mockBEResult} residentCountry="BE" year={2025} />);
     expect(screen.getByText("4.63%")).toBeInTheDocument();
   });
 
   it("shows a success alert when beIncome is 0", () => {
     const resultNoBeIncome = { ...mockBEResult, beIncome: 0 };
-    render(<BEResult result={resultNoBeIncome} residentCountry="BE" />);
+    render(<BEResult result={resultNoBeIncome} residentCountry="BE" year={2025} />);
     const alerts = screen.getAllByRole("alert");
     expect(alerts).toHaveLength(2);
     expect(screen.getByText(m.be_no_home_working())).toBeInTheDocument();
   });
 
   it("displays the beFraction as percentage", () => {
-    render(<BEResult result={mockBEResult} residentCountry="BE" />);
+    render(<BEResult result={mockBEResult} residentCountry="BE" year={2025} />);
     // beFraction of 0.0909 → "9.09%"
     expect(screen.getByText("9.09%")).toBeInTheDocument();
   });
 
   it("shows final calculation rows that reconcile to BE tax payable", () => {
-    render(<BEResult result={mockBEResult} residentCountry="BE" />);
+    render(<BEResult result={mockBEResult} residentCountry="BE" year={2025} />);
 
     const finalRowsTotal =
       mockBEResult.saldoFederaal +
@@ -65,7 +69,7 @@ describe("BEResult", () => {
 
 describe("BEResult unused federal reductions", () => {
   it("shows no note when the reductions are fully used", () => {
-    render(<BEResult result={mockBEResult} residentCountry="BE" />);
+    render(<BEResult result={mockBEResult} residentCountry="BE" year={2025} />);
     expect(screen.queryByRole("note")).not.toBeInTheDocument();
   });
 
@@ -74,6 +78,7 @@ describe("BEResult unused federal reductions", () => {
       <BEResult
         result={{ ...mockBEResult, saldoFederaal: 0, federalReductionsUnused: 1234.5 }}
         residentCountry="BE"
+        year={2025}
       />,
     );
     expect(screen.getByRole("note")).toHaveTextContent(

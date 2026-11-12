@@ -2,6 +2,7 @@ import { fireEvent, render, screen, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import FilingChecklist from "@/components/results/FilingChecklist";
+import { yearParams } from "@/tax/assessmentYear";
 import * as m from "@/paraglide/messages.js";
 import { fmt, fmtExact } from "@/components/format";
 import { mockTaxResult, mockTaxResultNoBE } from "../../test-utils/mockData";
@@ -100,7 +101,9 @@ describe("FilingChecklist", () => {
 
   it("omits the Belgian table when there is no Belgian result", () => {
     render(<FilingChecklist result={mockTaxResultNoBE} />);
-    expect(screen.queryByText(m.filing_be_title())).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(m.filing_be_title(yearParams(mockTaxResult.inputs.year))),
+    ).not.toBeInTheDocument();
   });
 
   it("marks the Belgian figures provisional until the assessment is entered", () => {

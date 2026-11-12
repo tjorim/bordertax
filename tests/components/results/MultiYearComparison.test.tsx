@@ -19,8 +19,8 @@ describe("MultiYearComparison", () => {
 
   it("renders a row for each year", () => {
     render(<MultiYearComparison rows={rows} activeYear={2025} />);
-    expect(screen.getAllByText("2024").length).toBeGreaterThan(0);
-    expect(screen.getAllByText("2025").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("2024 (aanslagjaar 2025)").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("2025 (aanslagjaar 2026)").length).toBeGreaterThan(0);
   });
 
   it("renders a row for year 2026", () => {
@@ -39,7 +39,7 @@ describe("MultiYearComparison", () => {
     render(<MultiYearComparison rows={rows} activeYear={2025} />);
     // Year appears in both the chart label and the table cell; find the table cell specifically
     const activeYearCell = screen
-      .getAllByText("2025")
+      .getAllByText("2025 (aanslagjaar 2026)")
       .map((el) => el.closest("td"))
       .find((el) => el !== null);
     const activeRow = activeYearCell?.closest("tr");

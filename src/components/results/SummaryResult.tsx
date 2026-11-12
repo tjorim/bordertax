@@ -17,6 +17,7 @@ import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import type { TaxResult } from "@/tax/types";
 import { getNLFractions, getTotalWorkdays } from "@/tax/workdays";
+import { yearParams } from "@/tax/assessmentYear";
 import * as m from "@/paraglide/messages.js";
 import { fmt, fmtSigned, pct, stripColon } from "../format.js";
 import MortgageResult from "./MortgageResult";
@@ -48,7 +49,7 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
     const pad = (label: string, value: string) => `  ${label.padEnd(28, ".")} ${value}`;
 
     const lines = [
-      `━━━ Bordertax · ${result.inputs.year} ━━━`,
+      `━━━ ${m.summary_copy_title(yearParams(result.inputs.year))} ━━━`,
       "",
       pad(m.summary_gross_income(), fmt(grossIncome)),
       pad(`🇳🇱 ${m.summary_dutch_tax()}`, `−${fmt(nlCharge.netTaxNL)}`),

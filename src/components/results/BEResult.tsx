@@ -5,14 +5,16 @@ import { Table, TableBody, TableRow, TableCell } from "@/components/ui/table";
 import type { BETaxResult, TaxInputs } from "@/tax/types";
 import * as m from "@/paraglide/messages.js";
 import { fmtExact as fmt, pctExact as pct } from "../format.js";
+import { yearParams } from "@/tax/assessmentYear";
 import { CodeBadge } from "../CodeBadge";
 
 interface Props {
   result: BETaxResult | null;
   residentCountry: TaxInputs["residentCountry"];
+  year: number;
 }
 
-export default function BEResult({ result, residentCountry }: Props) {
+export default function BEResult({ result, residentCountry, year }: Props) {
   if (residentCountry !== "BE") {
     return (
       <Alert variant="info" className="mb-0">
@@ -28,7 +30,7 @@ export default function BEResult({ result, residentCountry }: Props) {
 
   return (
     <div>
-      <h6 className="text-text-muted mb-4">🇧🇪 {m.be_title()}</h6>
+      <h6 className="text-text-muted mb-4">🇧🇪 {m.be_title(yearParams(year))}</h6>
 
       {!hasBeIncome && (
         <Alert variant="success" className="mb-4">

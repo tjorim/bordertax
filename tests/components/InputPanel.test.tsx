@@ -72,7 +72,7 @@ describe("InputPanel", () => {
 
   it("updates year when dropdown is changed", () => {
     const { getForm } = renderInputPanel();
-    const year = screen.getByRole("combobox", { name: /tax year/i });
+    const year = screen.getByRole("combobox", { name: /income year/i });
     fireEvent.change(year, { target: { value: "2024" } });
     expect(getForm().getFieldValue("year")).toBe(2024);
   });
