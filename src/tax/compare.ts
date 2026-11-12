@@ -8,6 +8,7 @@
  */
 import { calculate } from "./index";
 import { TaxInputFields } from "./schema";
+import { roundToCents } from "./rounding";
 import type { TaxInputs, TaxResult } from "./types";
 
 export type ChangeGroup = "workdays" | "income" | "mortgage" | "other";
@@ -94,11 +95,12 @@ export function compareScenarios(a: TaxInputs, b: TaxInputs): ScenarioComparison
   const changed = changedGroups(a, b);
 
   const delta: ScenarioDelta = {
-    grossIncome: resultB.grossIncome - resultA.grossIncome,
-    nlTax: resultB.nlCharge.netTaxNL - resultA.nlCharge.netTaxNL,
-    beTax: (resultB.be?.netTaxBE ?? 0) - (resultA.be?.netTaxBE ?? 0),
-    totalTax: resultB.totalTax - resultA.totalTax,
-    netIncome: resultB.netIncome - resultA.netIncome,
+    // Differences of cent-rounded figures, cleaned of floating-point noise.
+    grossIncome: roundToCents(resultB.grossIncome - resultA.grossIncome),
+    nlTax: roundToCents(resultB.nlCharge.netTaxNL - resultA.nlCharge.netTaxNL),
+    beTax: roundToCents((resultB.be?.netTaxBE ?? 0) - (resultA.be?.netTaxBE ?? 0)),
+    totalTax: roundToCents(resultB.totalTax - resultA.totalTax),
+    netIncome: roundToCents(resultB.netIncome - resultA.netIncome),
     netIncomeMonthly: (resultB.netIncome - resultA.netIncome) / 12,
   };
 

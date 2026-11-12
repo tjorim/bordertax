@@ -17,6 +17,8 @@ export interface WorkdayFractions extends WorkdayTotals {
   nlFractionDutchMethod: number;
   nlFractionBelgianMethod: number;
   beFraction: number;
+  /** No workdays at all (sick days included): there is nothing to source the wage to. */
+  noWorkdays: boolean;
 }
 
 const nonNegative = (value: number | undefined): number => Math.max(0, value ?? 0);
@@ -70,5 +72,6 @@ export function getNLFractions(inputs: TaxInputs): WorkdayFractions {
     nlFractionDutchMethod,
     nlFractionBelgianMethod,
     beFraction,
+    noWorkdays: totals.totalWithSick <= 0,
   };
 }

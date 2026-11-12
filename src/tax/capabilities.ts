@@ -39,6 +39,16 @@ export function getCapabilities() {
       resultRatesAndShares: "fractions (0–1)",
       workdays: "day counts; fractional days allowed; sickDays count toward the annual maximum",
     },
+    resultShape: {
+      belgianRounding:
+        "Belgian money figures in result.be are rounded to whole cents when the result is built, for display; full precision is kept between calculation steps and no Belgian tax-rounding rule is claimed. Fractions (beFraction, effectiveRateBE) are not rounded. Dutch figures follow the Belastingdienst rounding",
+      brackets:
+        "result.nl.brackets lists { from, to, rate, taxableAmount, tax } in euros; to is null for the open-ended top bracket. There is no formatted label",
+      noWorkdays:
+        "result.noWorkdays is true when NL, Belgian, other and sick days add up to zero. The wage is then not sourced to either country: the Dutch and Belgian figures are all zero (no taxable income, premiums, credits or Belgian tax), total tax is only an entered assessment and net income equals gross salary. The figures mean something once workdays are entered",
+      federalReductionsUnused:
+        "result.be.federalReductionsUnused is the part of aanvullendPensioen × 30% plus roerendeVoorheffing (code 1437) that exceeds the reduced federal portion; the federal saldo is clamped at zero and the excess is not used or carried over. 0 when fully used",
+    },
     dutchAssessment: {
       inputs: {
         assessmentIncomeTaxDue: {

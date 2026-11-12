@@ -11,7 +11,13 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import type { DutchCharge, NLTaxResult } from "@/tax/types";
 import * as m from "@/paraglide/messages.js";
-import { fmt as fmtWhole, fmtExact as fmt, fmtSigned, pctExact as pct } from "../format.js";
+import {
+  fmt as fmtWhole,
+  fmtBracket,
+  fmtExact as fmt,
+  fmtSigned,
+  pctExact as pct,
+} from "../format.js";
 import { CodeBadge } from "../CodeBadge";
 
 interface Props {
@@ -97,8 +103,8 @@ export default function NLResult({
         </TableHeader>
         <TableBody>
           {result.brackets.map((b) => (
-            <TableRow key={b.label}>
-              <TableCell className="text-sm">{b.label}</TableCell>
+            <TableRow key={b.from}>
+              <TableCell className="text-sm">{fmtBracket(b.from, b.to)}</TableCell>
               <TableCell className="text-end text-sm">{pct(b.rate)}</TableCell>
               <TableCell className="text-end text-sm">{fmt(b.taxableAmount)}</TableCell>
               <TableCell className="text-end text-sm">{fmt(b.tax)}</TableCell>

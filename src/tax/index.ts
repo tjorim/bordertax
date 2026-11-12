@@ -1,6 +1,7 @@
 import type { TaxInputs, TaxResult } from "./types";
 import { calculateNLTax, resolveDutchCharge } from "./nl";
 import { calculateBETax } from "./be";
+import { roundToCents } from "./rounding";
 import { getNLFractions } from "./workdays";
 import {
   NO_MORTGAGE_EFFECT,
@@ -24,10 +25,12 @@ function calculateCore(
   const nlCharge = resolveDutchCharge(inputs, nl);
   const be = calculateBETax(inputs, nlCharge);
 
-  const totalTax = nlCharge.netTaxNL + (be?.netTaxBE ?? 0);
-  const netIncome = inputs.grossSalary - totalTax;
+  // The Dutch charge is whole euros (or the cents of an entered assessment) and the Belgian tax is
+  // in cents, so their sum is cleaned of floating-point noise.
+  const totalTax = roundToCents(nlCharge.netTaxNL + (be?.netTaxBE ?? 0));
+  const netIncome = roundToCents(inputs.grossSalary - totalTax);
 
-  const { nlFractionDutchMethod, nlFractionBelgianMethod } = getNLFractions(inputs);
+  const { nlFractionDutchMethod, nlFractionBelgianMethod, noWorkdays } = getNLFractions(inputs);
 
   return {
     inputs,
@@ -38,6 +41,7 @@ function calculateCore(
     totalTax,
     netIncome,
     effectiveRateTotal: inputs.grossSalary > 0 ? totalTax / inputs.grossSalary : 0,
+    noWorkdays,
     nlFractionDutchMethod,
     nlFractionBelgianMethod,
   };
@@ -45,8 +49,10 @@ function calculateCore(
 
 function effectOf(without: CoreResult, withDeduction: CoreResult): MortgageEffect {
   const nlTaxSaving = without.nl.netTaxNL - withDeduction.nl.netTaxNL;
-  const beTaxIncrease = (withDeduction.be?.netTaxBE ?? 0) - (without.be?.netTaxBE ?? 0);
-  return { nlTaxSaving, beTaxIncrease, netBenefit: nlTaxSaving - beTaxIncrease };
+  const beTaxIncrease = roundToCents(
+    (withDeduction.be?.netTaxBE ?? 0) - (without.be?.netTaxBE ?? 0),
+  );
+  return { nlTaxSaving, beTaxIncrease, netBenefit: roundToCents(nlTaxSaving - beTaxIncrease) };
 }
 
 export function calculate(inputs: TaxInputs): TaxResult {

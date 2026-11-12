@@ -9,12 +9,16 @@
  * NL-sourced income is exempt from Belgian tax but raises the progression rate.
  * Communal tax (gemeentebelasting) is levied on both the taxable AND the exempt portion.
  *
+ * Calculation steps keep full precision; the returned result is rounded to whole cents once, at the
+ * end (display and MCP boundary). No Belgian tax-rounding rule is claimed.
+ *
  * Year-specific rates live in one module per income year in src/tax/years, assembled by params.ts.
  */
 import type { TaxInputs, BETaxResult, DutchCharge } from "./types";
 import { BE_PENSION_REDUCTION_RATE, BE_TAX_FREE_ALLOWANCE_REDUCTION_RATE } from "./constants";
 import { getYearParams } from "./params";
 import type { BEBracket, BEYearParams } from "./params";
+import { roundToCents } from "./rounding";
 import { getNLFractions } from "./workdays";
 
 function applyBEBrackets(income: number, brackets: BEBracket[]): number {
@@ -51,6 +55,36 @@ function belastingvrijeSomReduction(inputs: TaxInputs, p: BEYearParams): number 
   return (baseAmount + childAmount) * BE_TAX_FREE_ALLOWANCE_REDUCTION_RATE;
 }
 
+function noWorkdaysResult(): BETaxResult {
+  return {
+    declaredIncome: 0,
+    socialContributionsDeducted: 0,
+    professionalExpenses: 0,
+    netProfessionalIncome: 0,
+    beIncome: 0,
+    nlExemptIncome: 0,
+    vrijgesteld: 0,
+    volTarief: 0,
+    beFraction: 0,
+    basisbelasting: 0,
+    belastingvrijeSomReduction: 0,
+    omTeSlane: 0,
+    vrijstellingReduction: 0,
+    hoofdsom: 0,
+    gereduceerde: 0,
+    gewestelijke: 0,
+    saldoFederaal: 0,
+    federalReductionsUnused: 0,
+    saldoGewestelijk: 0,
+    totaleBelasting: 0,
+    communalTax: 0,
+    communalTaxOnVrijgesteld: 0,
+    federalTax: 0,
+    netTaxBE: 0,
+    effectiveRateBE: 0,
+  };
+}
+
 /** What the Belgian side needs from the Dutch side; `NLTaxResult` and `DutchCharge` both fit. */
 export type DutchChargeForBE = Pick<DutchCharge, "incomeTaxDue" | "premiumsDue" | "netTaxNL">;
 
@@ -59,7 +93,12 @@ export function calculateBETax(inputs: TaxInputs, nl: DutchChargeForBE): BETaxRe
 
   const p = getYearParams(inputs.year).be;
 
-  const { beFraction } = getNLFractions(inputs);
+  const { beFraction, noWorkdays } = getNLFractions(inputs);
+
+  // Without workdays the wage is not sourced to either country, so there is no Belgian return to
+  // estimate: every figure is zero rather than treating the whole wage as exempt Dutch income
+  // (which would still levy communal tax on it). `TaxResult.noWorkdays` flags the state.
+  if (noWorkdays) return noWorkdaysResult();
 
   // FOD guideline (ACV telework session): W = wage − premiums actually due in the work state,
   // Y = W × (days outside NL ÷ total days) is taxable in Belgium (box IV O.1), and
@@ -115,8 +154,11 @@ export function calculateBETax(inputs: TaxInputs, nl: DutchChargeForBE): BETaxRe
   const pensioenRed = aanvullendPensioen * BE_PENSION_REDUCTION_RATE;
   const dienstchequesRed = dienstencheques * p.serviceVoucherReductionRate;
 
-  // Saldi
-  const saldoFederaal = Math.max(0, gereduceerde - pensioenRed - roerendeVoorheffing);
+  // Saldi. The federal reductions are clamped at zero; what they exceed the federal part by is
+  // reported rather than dropped silently.
+  const federalReductions = pensioenRed + roerendeVoorheffing;
+  const federalReductionsUnused = Math.max(0, federalReductions - gereduceerde);
+  const saldoFederaal = Math.max(0, gereduceerde - federalReductions);
   const saldoGewestelijk = Math.max(0, gewestelijke - dienstchequesRed);
   const totaleBelasting = saldoFederaal + saldoGewestelijk;
 
@@ -129,30 +171,32 @@ export function calculateBETax(inputs: TaxInputs, nl: DutchChargeForBE): BETaxRe
 
   const netTaxBE = saldoFederaal + saldoGewestelijk + communalTax + communalTaxOnVrijgesteld;
 
+  const cents = roundToCents;
   return {
-    declaredIncome,
-    socialContributionsDeducted: socialContributions,
-    professionalExpenses: forfait,
-    netProfessionalIncome,
-    beIncome,
-    nlExemptIncome,
-    vrijgesteld,
-    volTarief,
+    declaredIncome: cents(declaredIncome),
+    socialContributionsDeducted: cents(socialContributions),
+    professionalExpenses: cents(forfait),
+    netProfessionalIncome: cents(netProfessionalIncome),
+    beIncome: cents(beIncome),
+    nlExemptIncome: cents(nlExemptIncome),
+    vrijgesteld: cents(vrijgesteld),
+    volTarief: cents(volTarief),
     beFraction,
-    basisbelasting,
-    belastingvrijeSomReduction: bvReduction,
-    omTeSlane,
-    vrijstellingReduction,
-    hoofdsom,
-    gereduceerde,
-    gewestelijke,
-    saldoFederaal,
-    saldoGewestelijk,
-    totaleBelasting,
-    communalTax,
-    communalTaxOnVrijgesteld,
-    federalTax,
-    netTaxBE,
+    basisbelasting: cents(basisbelasting),
+    belastingvrijeSomReduction: cents(bvReduction),
+    omTeSlane: cents(omTeSlane),
+    vrijstellingReduction: cents(vrijstellingReduction),
+    hoofdsom: cents(hoofdsom),
+    gereduceerde: cents(gereduceerde),
+    gewestelijke: cents(gewestelijke),
+    saldoFederaal: cents(saldoFederaal),
+    federalReductionsUnused: cents(federalReductionsUnused),
+    saldoGewestelijk: cents(saldoGewestelijk),
+    totaleBelasting: cents(totaleBelasting),
+    communalTax: cents(communalTax),
+    communalTaxOnVrijgesteld: cents(communalTaxOnVrijgesteld),
+    federalTax: cents(federalTax),
+    netTaxBE: cents(netTaxBE),
     effectiveRateBE: inputs.grossSalary > 0 ? netTaxBE / inputs.grossSalary : 0,
   };
 }
