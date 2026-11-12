@@ -37,6 +37,7 @@ allowed scopes are listed in `release.config.json`, and `check` validates `[Unre
 
 ### Fixed
 
+- **Web:** Wrap the section headers in the filing checklist on narrow screens instead of cutting off the Box IV O.2 title.
 - **Web:** With no workdays entered the Dutch result no longer charges full premiums and applies the arbeidskorting and algemene heffingskorting on income that is not there: the Dutch and Belgian figures are all zero, the result carries `noWorkdays: true` and the results show a note asking for workdays. Zero workdays stay valid input.
 - **Web:** Show a short note in the Belgian result and the filing checklist when the supplementary pension and withholding tax reductions (code 1437) exceed the federal tax, instead of clamping at zero silently; the unused part is returned as `result.be.federalReductionsUnused`.
 - **Web:** The mortgage interest deduction no longer lists an income statement from the Belgian tax authority as a requirement for income year 2026. The Belastingdienst abolished that condition from 2026 (the tax authority can still ask for proof), so the assumptions list now says so; income years up to 2025 are unchanged. Re-checked against the official sources: the deduction rate caps, the eigenwoningforfait tables and the 90% test for 2020–2026 needed no correction.

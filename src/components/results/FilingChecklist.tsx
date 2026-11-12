@@ -432,7 +432,7 @@ function GroupRows({ group }: { group: Group }) {
           <TableHead
             colSpan={4}
             scope="colgroup"
-            className="text-sm leading-table normal-case tracking-normal text-text px-2 py-table-mobile max-table:block table:px-3 table:py-table-cell"
+            className="text-sm leading-table normal-case tracking-normal text-text px-2 py-table-mobile max-table:block whitespace-normal table:px-3 table:py-table-cell"
           >
             {group.title}
           </TableHead>
