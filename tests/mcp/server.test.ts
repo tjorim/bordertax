@@ -211,6 +211,17 @@ describe("MCP tax adapter", () => {
         "calculate_tax",
         "compare_scenarios",
       ]);
+      // Every advertised input names its source document, also behind a default.
+      const properties = tools.find((tool) => tool.name === "calculate_tax")!.inputSchema
+        .properties as Record<string, { description?: string }>;
+      expect(Object.keys(properties)).toEqual(Object.keys(inputSchema.shape));
+      for (const [field, property] of Object.entries(properties)) {
+        expect(property.description, field).toEqual(expect.any(String));
+      }
+      expect(properties.healthInsurancePremium!.description).toMatch(
+        /^Health insurer's annual statement: .*Belgian code 1257/,
+      );
+      expect(properties.residentCountry!.description).toMatch(/^Profile: /);
       for (const tool of tools)
         expect(tool.annotations).toMatchObject({
           readOnlyHint: true,

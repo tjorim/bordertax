@@ -9,7 +9,6 @@ import {
 import { TAX_PARAMS } from "./params";
 import {
   AnnualStatementFields,
-  BELGIAN_CODES,
   INPUT_GROUPS,
   MAX_ANNUAL_STATEMENTS,
   SINGLE_VALUE_DEFAULTS,
@@ -25,32 +24,10 @@ export function getMaxDependentChildren(year: TaxYear): number {
 
 const fields = TaxInputFields;
 
-const DOCUMENT = {
-  profile: "Profile",
-  annualTaxStatement: "Annual tax statement (jaaropgave)",
-  workdayRecord: "Workday record or cross-border workday statement",
-  healthInsurer: "Health insurer's annual statement",
-  pensionOrPayslip: "December payslip or pension statement",
-  serviceVoucherStatement: "Service-voucher annual statement",
-  bank: "Bank's annual tax statement",
-  dutchAssessment: "Dutch assessment (aanslag)",
-  home: "Home and mortgage",
-} as const satisfies Record<keyof typeof INPUT_GROUPS, string>;
-
-const code = (field: keyof typeof BELGIAN_CODES) => `Belgian code ${BELGIAN_CODES[field]}`;
-
 /** One annual tax statement; the engine sums them. */
 export const StrictAnnualStatementSchema = z.strictObject({
-  taxableWage: AnnualStatementFields.taxableWage
-    .nonnegative()
-    .describe(
-      "EUR per year: Taxable wage (Loon, fiscaal loon) on this annual tax statement. Not the gross salary.",
-    ),
-  wageTaxWithheld: AnnualStatementFields.wageTaxWithheld
-    .nonnegative()
-    .describe(
-      "EUR per year: Dutch wage tax withheld (loonheffing) on this statement. Only used for the settlement against the Dutch charge.",
-    ),
+  taxableWage: AnnualStatementFields.taxableWage.nonnegative(),
+  wageTaxWithheld: AnnualStatementFields.wageTaxWithheld.nonnegative(),
 });
 
 /**
@@ -60,112 +37,33 @@ export const StrictAnnualStatementSchema = z.strictObject({
  */
 export const StrictTaxInputSchema = z
   .strictObject({
-    year: fields.year.describe(`${DOCUMENT.profile}: income year.`),
-    dependentChildren: fields.dependentChildren
-      .min(0)
-      .max(10)
-      .describe(`${DOCUMENT.profile}: dependent children.`),
-    belowAOWAge: fields.belowAOWAge.describe(
-      `${DOCUMENT.profile}: below the Dutch AOW pension age.`,
+    year: fields.year,
+    dependentChildren: fields.dependentChildren.min(0).max(10),
+    belowAOWAge: fields.belowAOWAge,
+    communalTaxRate: fields.communalTaxRate.min(0).max(15),
+    residentCountry: fields.residentCountry.default(SINGLE_VALUE_DEFAULTS.residentCountry),
+    civilStatus: fields.civilStatus.default(SINGLE_VALUE_DEFAULTS.civilStatus),
+    belgianRegion: fields.belgianRegion.default(SINGLE_VALUE_DEFAULTS.belgianRegion),
+    thirtyPercentRuling: fields.thirtyPercentRuling.default(
+      SINGLE_VALUE_DEFAULTS.thirtyPercentRuling,
     ),
-    communalTaxRate: fields.communalTaxRate
-      .min(0)
-      .max(15)
-      .describe(`${DOCUMENT.profile}: Belgian municipal tax rate in percent.`),
-    residentCountry: fields.residentCountry
-      .describe(`${DOCUMENT.profile}: country of residence; only BE is supported.`)
-      .default(SINGLE_VALUE_DEFAULTS.residentCountry),
-    civilStatus: fields.civilStatus
-      .describe(`${DOCUMENT.profile}: civil status; only single is supported.`)
-      .default(SINGLE_VALUE_DEFAULTS.civilStatus),
-    belgianRegion: fields.belgianRegion
-      .describe(`${DOCUMENT.profile}: Belgian region; only flemish is supported.`)
-      .default(SINGLE_VALUE_DEFAULTS.belgianRegion),
-    thirtyPercentRuling: fields.thirtyPercentRuling
-      .describe(`${DOCUMENT.profile}: Dutch 30% ruling; must be false for Belgian residents.`)
-      .default(SINGLE_VALUE_DEFAULTS.thirtyPercentRuling),
-    annualStatements: z
-      .array(StrictAnnualStatementSchema)
-      .min(1)
-      .max(MAX_ANNUAL_STATEMENTS)
-      .describe(
-        `${DOCUMENT.annualTaxStatement}: one entry per statement for the income year (job change, agency and direct employment), at least one. The wages are summed; the heffingskortingen and premiums are computed on the total.`,
-      ),
-    daysWorkedNL: fields.daysWorkedNL
-      .nonnegative()
-      .describe(`${DOCUMENT.workdayRecord}: days worked in the Netherlands.`),
-    daysWorkedBE: fields.daysWorkedBE
-      .nonnegative()
-      .describe(`${DOCUMENT.workdayRecord}: days worked in Belgium, home working included.`),
-    daysWorkedOther: fields.daysWorkedOther
-      .nonnegative()
-      .describe(`${DOCUMENT.workdayRecord}: days worked in a third country.`),
-    sickDaysNL: fields.sickDaysNL
-      .nonnegative()
-      .describe(
-        `${DOCUMENT.workdayRecord}: sick days on days scheduled to be worked in the Netherlands. Dutch method: NL workdays. Belgian method: left out of both counts.`,
-      ),
-    sickDaysOutsideNL: fields.sickDaysOutsideNL
-      .nonnegative()
-      .describe(
-        `${DOCUMENT.workdayRecord}: sick days on days scheduled to be worked in Belgium or a third country. Dutch method: days outside NL, so part of deel niet in NL belast. Belgian method: left out of both counts.`,
-      ),
-    healthInsurancePremium: fields.healthInsurancePremium
-      .nonnegative()
-      .describe(
-        `${DOCUMENT.healthInsurer}: EUR per year, net Dutch basic health-insurance premium (${code("healthInsurancePremium")}).`,
-      ),
-    supplementaryPension: fields.supplementaryPension
-      .nonnegative()
-      .describe(
-        `${DOCUMENT.pensionOrPayslip}: EUR per year, personal supplementary pension contributions (${code("supplementaryPension")}).`,
-      ),
-    serviceVouchers: fields.serviceVouchers
-      .nonnegative()
-      .describe(
-        `${DOCUMENT.serviceVoucherStatement}: EUR per year paid for service vouchers (${code("serviceVouchers")}); reduces tax for income years up to 2024 only.`,
-      ),
-    reclaimableWithholdingTax: fields.reclaimableWithholdingTax
-      .nonnegative()
-      .describe(
-        `${DOCUMENT.bank}: EUR per year, reclaimable Belgian withholding tax on eligible dividends (${code("reclaimableWithholdingTax")}). Not the Dutch wage tax.`,
-      ),
-    assessmentIncomeTaxDue: fields.assessmentIncomeTaxDue
-      .nonnegative()
-      .optional()
-      .describe(
-        `${DOCUMENT.dutchAssessment}: EUR per year, income tax due after the heffingskortingen. Give together with assessmentPremiumsDue to replace the estimate in the Belgian calculation (code 1250, O.1/O.2), total tax and net income.`,
-      ),
-    assessmentPremiumsDue: fields.assessmentPremiumsDue
-      .nonnegative()
-      .optional()
-      .describe(
-        `${DOCUMENT.dutchAssessment}: EUR per year, premies volksverzekeringen due after the heffingskortingen. Give together with assessmentIncomeTaxDue.`,
-      ),
-    mortgageEnabled: fields.mortgageEnabled
-      .describe(`${DOCUMENT.home}: estimate the mortgage interest deduction.`)
-      .default(false),
-    mortgageHomeValue: fields.mortgageHomeValue
-      .nonnegative()
-      .optional()
-      .describe(
-        `${DOCUMENT.home}: EUR, whole-home market value at 1 January of the preceding year.`,
-      ),
-    mortgageInterest: fields.mortgageInterest
-      .nonnegative()
-      .optional()
-      .describe(`${DOCUMENT.home}: EUR per year, interest on the whole qualifying loan.`),
-    mortgageOwnershipShare: fields.mortgageOwnershipShare
-      .min(0)
-      .max(100)
-      .optional()
-      .describe(`${DOCUMENT.home}: ownership share in percent.`),
-    incomeOutsideNL: fields.incomeOutsideNL
-      .nonnegative()
-      .optional()
-      .describe(
-        `${DOCUMENT.home}: EUR per year, worldwide income not taxed in NL (partner included).`,
-      ),
+    annualStatements: z.array(StrictAnnualStatementSchema).min(1).max(MAX_ANNUAL_STATEMENTS),
+    daysWorkedNL: fields.daysWorkedNL.nonnegative(),
+    daysWorkedBE: fields.daysWorkedBE.nonnegative(),
+    daysWorkedOther: fields.daysWorkedOther.nonnegative(),
+    sickDaysNL: fields.sickDaysNL.nonnegative(),
+    sickDaysOutsideNL: fields.sickDaysOutsideNL.nonnegative(),
+    healthInsurancePremium: fields.healthInsurancePremium.nonnegative(),
+    supplementaryPension: fields.supplementaryPension.nonnegative(),
+    serviceVouchers: fields.serviceVouchers.nonnegative(),
+    reclaimableWithholdingTax: fields.reclaimableWithholdingTax.nonnegative(),
+    assessmentIncomeTaxDue: fields.assessmentIncomeTaxDue.nonnegative().optional(),
+    assessmentPremiumsDue: fields.assessmentPremiumsDue.nonnegative().optional(),
+    mortgageEnabled: fields.mortgageEnabled.default(false),
+    mortgageHomeValue: fields.mortgageHomeValue.nonnegative().optional(),
+    mortgageInterest: fields.mortgageInterest.nonnegative().optional(),
+    mortgageOwnershipShare: fields.mortgageOwnershipShare.min(0).max(100).optional(),
+    incomeOutsideNL: fields.incomeOutsideNL.nonnegative().optional(),
   })
   .superRefine((inputs, ctx) => {
     const issue = (field: keyof typeof inputs, message: string) =>

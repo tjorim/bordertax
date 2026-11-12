@@ -8,6 +8,8 @@ import { getCapabilities } from "../src/tax/capabilities";
 import { compareScenarios } from "../src/tax/compare";
 import { INPUT_SCHEMA_VERSION } from "../src/tax/migrations";
 import { assertNoV1Fields, parseStrictTaxInputs, StrictTaxInputSchema } from "../src/tax/strict";
+// Attaches the agent-facing field descriptions to the strict schema (kept out of the web bundle).
+import "../src/tax/strictDescriptions";
 
 const caveat = "Simplified estimate, not tax advice. Consult a qualified tax adviser.";
 const units =
