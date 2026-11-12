@@ -5,6 +5,8 @@ import FilingChecklist from "@/components/results/FilingChecklist";
 import { yearParams } from "@/tax/assessmentYear";
 import * as m from "@/paraglide/messages.js";
 import { fmt, fmtExact } from "@/components/format";
+import { calculate } from "@/tax";
+import { DEFAULT_INPUTS } from "@/tax/defaults";
 import { mockTaxResult, mockTaxResultNoBE } from "../../test-utils/mockData";
 
 const rowFor = (label: string) => screen.getByText(label).closest("tr")!;
@@ -53,7 +55,7 @@ describe("FilingChecklist", () => {
       <FilingChecklist
         result={{
           ...mockTaxResult,
-          inputs: { ...mockTaxResult.inputs, year: 2024, dienstencheques: 600 },
+          inputs: { ...mockTaxResult.inputs, year: 2024, serviceVouchers: 600 },
         }}
       />,
     );
@@ -142,5 +144,77 @@ describe("FilingChecklist unused federal reductions", () => {
       />,
     );
     expect(screen.getByText(unused)).toBeInTheDocument();
+  });
+});
+
+describe("FilingChecklist source documents and statements", () => {
+  it("lists the documents by source", () => {
+    render(<FilingChecklist result={mockTaxResult} />);
+    for (const text of [
+      m.filing_document_jaaropgave(),
+      m.filing_document_workdays(),
+      m.filing_document_health_insurer(),
+      m.filing_document_pension(),
+      m.filing_document_bank(),
+      m.filing_document_assessment(),
+    ]) {
+      expect(screen.getByText(text)).toBeInTheDocument();
+    }
+    // Service vouchers only reduce tax up to income year 2024.
+    expect(screen.queryByText(m.filing_document_service_vouchers())).toBeNull();
+  });
+
+  it("shows Loon and Loonheffing per annual statement when there are several", () => {
+    const result = calculate({
+      ...DEFAULT_INPUTS,
+      annualStatements: [
+        { taxableWage: 40000, wageTaxWithheld: 7000 },
+        { taxableWage: 20000, wageTaxWithheld: 3000 },
+      ],
+    });
+    render(<FilingChecklist result={result} />);
+    expect(within(rowFor("Loon (annual statement 1)")).getByText(fmt(40000))).toBeInTheDocument();
+    expect(within(rowFor("Loon (annual statement 2)")).getByText(fmt(20000))).toBeInTheDocument();
+    expect(
+      within(rowFor("Loonheffing (annual statement 2)")).getByText(fmt(3000)),
+    ).toBeInTheDocument();
+  });
+});
+
+describe("FilingChecklist two workday splits", () => {
+  const withSick = (sick: { sickDaysNL?: number; sickDaysOutsideNL?: number }) =>
+    calculate({
+      ...DEFAULT_INPUTS,
+      annualStatements: [{ taxableWage: 80000, wageTaxWithheld: 0 }],
+      daysWorkedNL: 180,
+      daysWorkedBE: 20,
+      ...sick,
+    });
+
+  it("is not shown without sick days", () => {
+    render(<FilingChecklist result={withSick({})} />);
+    expect(screen.queryByRole("heading", { name: m.filing_sourcing_title() })).toBeNull();
+  });
+
+  it("shows both amounts side by side with the double-taxation risk", () => {
+    render(<FilingChecklist result={withSick({ sickDaysNL: 30 })} />);
+    const section = screen
+      .getByRole("heading", { name: m.filing_sourcing_title() })
+      .closest("section")!;
+    expect(within(section).getByText(m.filing_sourcing_nl_title())).toBeInTheDocument();
+    expect(within(section).getByText(m.filing_sourcing_be_title())).toBeInTheDocument();
+    expect(within(section).getByText(fmt(6957))).toBeInTheDocument();
+    expect(within(section).getByText(fmtExact(8000))).toBeInTheDocument();
+    expect(
+      within(section).getByText(m.filing_sourcing_risk({ amount: fmtExact(1043) })),
+    ).toBeInTheDocument();
+    expect(within(section).getByText(m.filing_sourcing_manual())).toBeInTheDocument();
+  });
+
+  it("names the part taxed by neither country when the sick days fell outside NL", () => {
+    render(<FilingChecklist result={withSick({ sickDaysOutsideNL: 30 })} />);
+    expect(
+      screen.getByText(m.filing_sourcing_neither({ amount: fmtExact(9391) })),
+    ).toBeInTheDocument();
   });
 });
