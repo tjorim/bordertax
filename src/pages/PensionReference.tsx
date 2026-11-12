@@ -42,10 +42,12 @@ import {
 import { AppNavbar } from "../components/AppNavbar";
 import { PageHero } from "../components/PageHero";
 import { PageFooter } from "../components/PageFooter";
+import { useDocumentTitle } from "../lib/useDocumentTitle";
 
 // ── Main page ────────────────────────────────────────────────────
 
 export default function PensionReference() {
+  useDocumentTitle(`${m.ref_pension_hero_title()} · ${m.document_title_suffix()}`);
   return (
     <>
       <AppNavbar>

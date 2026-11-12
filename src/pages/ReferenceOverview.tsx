@@ -5,9 +5,11 @@ import { Link } from "@tanstack/react-router";
 import * as m from "../paraglide/messages.js";
 import { AppNavbar } from "../components/AppNavbar";
 import { PageHero } from "../components/PageHero";
+import { useDocumentTitle } from "../lib/useDocumentTitle";
 import { REFERENCE_PAGES } from "../referencePages";
 
 export default function ReferenceOverview() {
+  useDocumentTitle(`${m.ref_overview_page_title()} · ${m.document_title_suffix()}`);
   return (
     <>
       <AppNavbar>

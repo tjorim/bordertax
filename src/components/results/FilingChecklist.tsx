@@ -15,22 +15,158 @@ import {
   TableCell,
 } from "@/components/ui/table";
 
+import { cn } from "@/lib/utils";
 import type { TaxResult } from "@/tax/types";
 import * as m from "@/paraglide/messages.js";
 import { fmtExact as fmt } from "../format.js";
 
 interface Props {
   result: TaxResult;
+  /** Controlled open state; the checklist manages its own state when omitted. */
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+}
+
+type FilingRow =
+  | { kind: "row"; label: string; value: string; source: string; strong?: boolean }
+  | { kind: "group"; label: string };
+
+/**
+ * One table from the `table` breakpoint up. Below it the rows stack as field / value / source
+ * cards, so no column needs sideways scrolling; the header row stays for screen readers.
+ */
+function FilingRows({ rows }: { rows: FilingRow[] }) {
+  return (
+    <Table bordered className="mb-2 text-sm max-table:block">
+      <TableHeader className="bg-surface-3 max-table:sr-only">
+        <TableRow>
+          <TableHead>{m.filing_field()}</TableHead>
+          <TableHead className="text-end">{m.filing_value()}</TableHead>
+          <TableHead>{m.filing_source()}</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody className="max-table:block">
+        {rows.map((row) =>
+          row.kind === "group" ? (
+            <TableRow key={row.label} variant="secondary" className="max-table:block">
+              <TableHead
+                colSpan={3}
+                scope="colgroup"
+                className="px-2 py-table-mobile text-sm leading-table tracking-normal text-text normal-case max-table:block table:px-3 table:py-table-cell"
+              >
+                {row.label}
+              </TableHead>
+            </TableRow>
+          ) : (
+            <TableRow
+              key={row.label}
+              className="max-table:mb-2 max-table:flex max-table:flex-col max-table:rounded-sm max-table:border max-table:border-border max-table:bg-surface-2"
+            >
+              <TableCell className="max-table:pb-0 max-table:font-medium">{row.label}</TableCell>
+              <TableCell className={cn("text-end max-table:py-0", row.strong && "font-semibold")}>
+                {row.value}
+              </TableCell>
+              <TableCell className="max-table:pt-0 max-table:text-text-muted">
+                {row.source}
+              </TableCell>
+            </TableRow>
+          ),
+        )}
+      </TableBody>
+    </Table>
+  );
 }
 
 /** Turns the calculator's inputs and results into the entries needed in each return. */
-export default function FilingChecklist({ result }: Props) {
+export default function FilingChecklist({ result, open, onOpenChange }: Props) {
   const { inputs, nl, be } = result;
 
+  const nlRows: FilingRow[] = [
+    {
+      kind: "row",
+      label: m.filing_nl_loon(),
+      value: fmt(inputs.grossSalary),
+      source: m.filing_source_jaaropgave(),
+    },
+    {
+      kind: "row",
+      label: m.filing_nl_loonheffing(),
+      value: fmt(inputs.withheldTaxNL),
+      source: m.filing_source_jaaropgave(),
+    },
+    {
+      kind: "row",
+      label: m.filing_nl_arbeidskorting(),
+      value: m.filing_nl_arbeidskorting_value(),
+      source: m.filing_nl_arbeidskorting_source(),
+    },
+    {
+      kind: "row",
+      label: m.filing_nl_fully_taxed(),
+      value: m.filing_nl_fully_taxed_value(),
+      source: m.filing_source_workdays(),
+    },
+    {
+      kind: "row",
+      label: m.nl_not_taxed_income(),
+      value: fmt(nl.deelNietInNLBelast),
+      source: m.filing_source_calculated_workdays(),
+      strong: true,
+    },
+  ];
+  const beRows: FilingRow[] = be
+    ? [
+        {
+          kind: "row",
+          label: m.filing_be_1250(),
+          value: fmt(be.declaredIncome),
+          source: m.filing_be_1250_source(),
+          strong: true,
+        },
+        {
+          kind: "row",
+          label: m.filing_be_1257(),
+          value: fmt(inputs.socialContributions),
+          source: m.filing_source_health_insurer(),
+        },
+        { kind: "group", label: m.filing_be_o2_title() },
+        {
+          kind: "row",
+          label: m.filing_be_1250_nl(),
+          value: fmt(Math.max(0, be.declaredIncome - be.beIncome)),
+          source: m.filing_be_1250_nl_source(),
+          strong: true,
+        },
+        {
+          kind: "row",
+          label: m.filing_be_o2_1257(),
+          value: fmt(inputs.socialContributions),
+          source: m.filing_source_health_insurer(),
+        },
+        {
+          kind: "row",
+          label: m.filing_be_1285(),
+          value: fmt(inputs.aanvullendPensioen),
+          source: m.filing_source_pension(),
+        },
+        {
+          kind: "row",
+          label: m.filing_be_1437(),
+          value: fmt(inputs.roerendeVoorheffing),
+          source: m.filing_source_bank(),
+        },
+      ]
+    : [];
+
   return (
-    <Accordion className="mt-6">
+    <Accordion
+      id="filing-checklist"
+      className="mt-6 scroll-mt-32"
+      value={open === undefined ? undefined : open ? ["filing"] : []}
+      onValueChange={(value) => onOpenChange?.(value.includes("filing"))}
+    >
       <AccordionItem value="filing">
-        <AccordionTrigger>
+        <AccordionTrigger id="filing-checklist-trigger">
           <ClipboardCheckIcon aria-hidden="true" className="size-4 shrink-0 self-start mt-0.5" />
           <span className="flex flex-col gap-0.5">
             <span>{m.filing_title()}</span>
@@ -65,44 +201,7 @@ export default function FilingChecklist({ result }: Props) {
             </a>
             .
           </p>
-          <Table bordered className="text-sm mb-2">
-            <TableHeader className="bg-surface-3">
-              <TableRow>
-                <TableHead>{m.filing_field()}</TableHead>
-                <TableHead className="text-end">{m.filing_value()}</TableHead>
-                <TableHead>{m.filing_source()}</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              <TableRow>
-                <TableCell>{m.filing_nl_loon()}</TableCell>
-                <TableCell className="text-end">{fmt(inputs.grossSalary)}</TableCell>
-                <TableCell>{m.filing_source_jaaropgave()}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>{m.filing_nl_loonheffing()}</TableCell>
-                <TableCell className="text-end">{fmt(inputs.withheldTaxNL)}</TableCell>
-                <TableCell>{m.filing_source_jaaropgave()}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>{m.filing_nl_arbeidskorting()}</TableCell>
-                <TableCell className="text-end">{m.filing_nl_arbeidskorting_value()}</TableCell>
-                <TableCell>{m.filing_nl_arbeidskorting_source()}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>{m.filing_nl_fully_taxed()}</TableCell>
-                <TableCell className="text-end">{m.filing_nl_fully_taxed_value()}</TableCell>
-                <TableCell>{m.filing_source_workdays()}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>{m.nl_not_taxed_income()}</TableCell>
-                <TableCell className="text-end font-semibold">
-                  {fmt(nl.deelNietInNLBelast)}
-                </TableCell>
-                <TableCell>{m.filing_source_calculated_workdays()}</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
+          <FilingRows rows={nlRows} />
           <p className="text-text-muted text-sm mb-6">{m.filing_nl_result_notice()}</p>
 
           {be && (
@@ -119,60 +218,7 @@ export default function FilingChecklist({ result }: Props) {
                 </a>
                 .
               </p>
-              <Table bordered className="text-sm mb-2">
-                <TableHeader className="bg-surface-3">
-                  <TableRow>
-                    <TableHead>{m.filing_field()}</TableHead>
-                    <TableHead className="text-end">{m.filing_value()}</TableHead>
-                    <TableHead>{m.filing_source()}</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  <TableRow>
-                    <TableCell>{m.filing_be_1250()}</TableCell>
-                    <TableCell className="text-end font-semibold">
-                      {fmt(be.declaredIncome)}
-                    </TableCell>
-                    <TableCell>{m.filing_be_1250_source()}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>{m.filing_be_1257()}</TableCell>
-                    <TableCell className="text-end">{fmt(inputs.socialContributions)}</TableCell>
-                    <TableCell>{m.filing_source_health_insurer()}</TableCell>
-                  </TableRow>
-                  <TableRow variant="secondary" className="">
-                    <TableHead
-                      colSpan={3}
-                      scope="colgroup"
-                      className="text-sm leading-table normal-case tracking-normal text-text px-2 py-table-mobile table:px-3 table:py-table-cell"
-                    >
-                      {m.filing_be_o2_title()}
-                    </TableHead>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>{m.filing_be_1250_nl()}</TableCell>
-                    <TableCell className="text-end font-semibold">
-                      {fmt(Math.max(0, be.declaredIncome - be.beIncome))}
-                    </TableCell>
-                    <TableCell>{m.filing_be_1250_nl_source()}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>{m.filing_be_o2_1257()}</TableCell>
-                    <TableCell className="text-end">{fmt(inputs.socialContributions)}</TableCell>
-                    <TableCell>{m.filing_source_health_insurer()}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>{m.filing_be_1285()}</TableCell>
-                    <TableCell className="text-end">{fmt(inputs.aanvullendPensioen)}</TableCell>
-                    <TableCell>{m.filing_source_pension()}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>{m.filing_be_1437()}</TableCell>
-                    <TableCell className="text-end">{fmt(inputs.roerendeVoorheffing)}</TableCell>
-                    <TableCell>{m.filing_source_bank()}</TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
+              <FilingRows rows={beRows} />
               <p className="text-text-muted text-sm mb-0">{m.filing_be_result_notice()}</p>
             </>
           )}

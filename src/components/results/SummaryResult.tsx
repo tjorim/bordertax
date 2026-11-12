@@ -24,9 +24,17 @@ import FilingChecklist from "./FilingChecklist";
 interface Props {
   result: TaxResult;
   onResetInputs: () => void;
+  /** Controls the filing checklist; it manages its own state when omitted. */
+  filingOpen?: boolean;
+  onFilingOpenChange?: (open: boolean) => void;
 }
 
-export default function SummaryResult({ result, onResetInputs }: Props) {
+export default function SummaryResult({
+  result,
+  onResetInputs,
+  filingOpen,
+  onFilingOpenChange,
+}: Props) {
   const [copyStatus, setCopyStatus] = useState<"idle" | "success" | "error">("idle");
   const { grossIncome, totalTax, netIncome, effectiveRateTotal, nl, be } = result;
   const withheldTaxNL = result.inputs.withheldTaxNL ?? 0;
@@ -321,7 +329,7 @@ export default function SummaryResult({ result, onResetInputs }: Props) {
 
       {result.mortgage && <MortgageResult result={result.mortgage} />}
 
-      <FilingChecklist result={result} />
+      <FilingChecklist result={result} open={filingOpen} onOpenChange={onFilingOpenChange} />
     </div>
   );
 }

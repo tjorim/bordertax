@@ -67,7 +67,6 @@
   "input_workdays_other_hint": "Bijv. klantinstallaties in het buitenland. Telt mee als BE-dagen voor de Belgische belasting.",
   "input_thirty_percent_ruling": "30%-regeling van toepassing (NL)",
   "input_thirty_percent_ruling_hint": "Expat-regeling: 30% van het loon is onbelast",
-  "input_thirty_percent_ruling_unavailable_be": "Niet beschikbaar voor dit profiel van een Belgische grensarbeider: de expatregeling vereist normaal dat u vóór uw Nederlandse dienstverband meer dan 150 km van de Nederlandse grens woonde. Een bestaande geldige beschikking na werving van verder weg is een uitzondering die deze calculator niet berekent.",
   "input_social_contributions": "NL-zorgverzekeringspremie (€)",
   "input_social_contributions_hint": "Code 1257: netto jaarlijkse basispremie op het jaaroverzicht of de polis van uw zorgverzekeraar.",
   "input_aanvullend_pensioen": "Aanvullend pensioen (€)",
@@ -251,9 +250,7 @@
   "input_social_security_above_50": "Meer dan 49% BE-dagen: Belgische sociale zekerheid is van toepassing. Controleer uw werkregeling.",
   "summary_sourcing_method_col": "Methode",
   "formulas_panel_label": "Berekeningsformules",
-
   "ref_nav_read_more": "Lees meer",
-
   "ref_overview_hub_title": "Naslagwerk",
   "ref_overview_page_title": "Naslagwerk Grensarbeiders",
   "ref_overview_subtitle": "Praktische fiches over de fiscale en sociale regels voor grensarbeiders tussen België en Nederland.",
@@ -261,7 +258,6 @@
   "ref_overview_ss_desc": "Dagentelling, FOD-formule, telewerk 49%-grens, NL belastingtarieven 2026 en een volledig rekenvoorbeeld.",
   "ref_overview_pension_title": "Pensioen",
   "ref_overview_pension_desc": "AOW, ANW, RVU, Belgisch rustpensioen, inhoudingen, pensioenmalus/-bonus en grensarbeiderspensioen.",
-
   "ref_ss_nav_title": "Naslagwerk Salary Split",
   "ref_ss_hero_title": "Fiscale Salary Split",
   "ref_ss_hero_subtitle": "Referentiegids voor grensarbeiders die in België wonen en in Nederland werken. Gebaseerd op ACV Infosessie 24 maart 2026 & Grensarbeiders Checklist 2026.",
@@ -284,7 +280,6 @@
   "ref_ss_tax_vs_ss_title": "Belasting ≠ Sociale zekerheid:",
   "ref_ss_tax_vs_ss_body": "Voor sociale zekerheid bestaat een kaderovereenkomst die thuiswerk neutraliseert (tot 49%). Voor belasting bestaat géén vergelijkbare regeling. Elke dag thuiswerken in België is een dag waarover België belasting heft.",
   "ref_ss_footer": "Gebaseerd op ACV Grensarbeiders Checklist 2026 & Infosessie 24 maart 2026 (Pelt). Geen rechten te ontlenen. Raadpleeg ACV Grensarbeiders of een fiscalist voor uw persoonlijke situatie.",
-
   "ref_table_component": "Component",
   "ref_table_bracket": "Schijf",
   "ref_table_rate": "Tarief",
@@ -303,7 +298,6 @@
   "ref_table_malus_per_year": "Malus per vervroegd jaar",
   "ref_table_bonus_per_year": "Bonus per extra jaar",
   "ref_table_career_156": "Loopbaan (156 dgn/jr)",
-
   "ref_pension_nav_title": "Naslagwerk Pensioen",
   "ref_pension_hero_title": "Pensioen als Grensarbeider",
   "ref_pension_hero_subtitle": "Referentiegids over AOW, ANW, aanvullend pensioen (NL) en Belgisch rustpensioen voor wie in België woont en in Nederland werkt. Gebaseerd op ACV Infosessie 24 maart 2026 (Pelt).",
@@ -340,7 +334,6 @@
   "ref_pension_term_confusion_title": "Begripsverwarring:",
   "ref_pension_term_confusion_body": "\"Pensioen\" in Nederland = aanvullend op AOW (2e pijler). \"Pensioen\" in België = het wettelijk pensioen. Niet verwarren bij gesprekken met HR of pensioenfondsen.",
   "ref_pension_footer": "Gebaseerd op ACV Grensarbeiders Infosessie 24 maart 2026 (Pelt). Geen rechten te ontlenen. Raadpleeg ACV Grensarbeiders of een pensioenspecialist.",
-
   "ref_ss_s1_intro": "Op basis van het dubbelbelastingverdrag BE–NL geldt:",
   "ref_ss_s1_formula": "Thuiswerkdag in België  →  heffingsrecht: BELGIË\nKantoordag in Nederland →  heffingsrecht: NEDERLAND",
   "ref_ss_s1_tip_20pct": "20%-regel: Werk je meer dan 20% van een dag thuis, dan telt die dag als een volledige thuiswerkdag voor de Belgische belasting.",
@@ -430,7 +423,6 @@
   "ref_ss_doc1_sub": "Volledig naslagwerk BE→NL · 8 pagina's",
   "ref_ss_doc2_title": "ACV Infosessie Telewerk & Grensarbeiders",
   "ref_ss_doc2_sub": "Presentatie 24 maart 2026, Pelt · 47 slides",
-
   "ref_pension_p1_pillar": "1e pijler",
   "ref_pension_p1_nl": "AOW (ouderdom) + ANW (overlijden)",
   "ref_pension_p1_be": "Wettelijk rustpensioen + overlevingspensioen",
@@ -587,7 +579,6 @@
   "ref_pension_tax_tip2": "AOW altijd belastbaar in België (woonland). 2e pijlerpensioen ook, tenzij ambtenaar met uitsluitend NL nationaliteit.",
   "ref_pension_source_doc_title": "ACV Infosessie Grensarbeiders & Pensioen",
   "ref_pension_source_doc_sub": "Presentatie 24 maart 2026, Pelt · 47 slides",
-
   "ref_ss_col_nl": "🇳🇱 Nederland",
   "ref_ss_col_be": "🇧🇪 België",
   "ref_ss_s3_consult_specialist": "Overweeg een fiscalist.",
@@ -611,7 +602,6 @@
   "ref_ss_example_sub_fraction_b": "breuk daalt: 180−25 / 230−25",
   "ref_ss_example_sub_be_share_b": "vs 50/230 = 21,7% zonder ziek",
   "ref_ss_example_unchanged": "ongewijzigd",
-
   "ref_pension_aow_volledig_value": "50 jaar = 100%",
   "ref_pension_aow_premie_value": "17,9%",
   "ref_pension_aow_age_2024_value": "67 jaar",
@@ -745,5 +735,17 @@
   "mortgage_forfait_share": "Eigenwoningforfait (jouw aandeel)",
   "mortgage_forfait_net_deduction": "Netto eigenwoningaftrek",
   "mortgage_forfait_exceeds_interest": "Het eigenwoningforfait is hoger dan de rente. De aftrek is nul; extra belastbaar inkomen en de aftrek volgens de Wet Hillen worden niet berekend.",
-  "mortgage_forfait_full_year": "We gaan uit van een gewone eigen woning die het hele jaar je hoofdverblijf is; een deel van het jaar en bijzondere situaties worden niet berekend."
+  "mortgage_forfait_full_year": "We gaan uit van een gewone eigen woning die het hele jaar je hoofdverblijf is; een deel van het jaar en bijzondere situaties worden niet berekend.",
+  "hint_more": "Meer",
+  "hint_less": "Minder",
+  "result_bar_label": "Belangrijkste resultaten",
+  "result_bar_dutch_refund": "Nederlandse teruggave",
+  "result_bar_dutch_due": "Nederlandse bijbetaling",
+  "result_bar_view_results": "Naar resultaten",
+  "result_bar_filing": "Aangifte-checklist",
+  "results_back_to_inputs": "Terug naar invoer",
+  "app_document_title": "Bordertax · NL/BE grensarbeiders belastingcalculator",
+  "document_title_suffix": "Bordertax",
+  "footer_limitations": "Niet gemodelleerd: de 30%-regeling. Voor Belgische inwoners vereist de expatregeling normaal dat u vóór de Nederlandse dienstbetrekking meer dan 150 km van de Nederlandse grens woonde; een geldige bestaande regeling na werving van verder weg is een uitzondering die deze calculator niet inschat.",
+  "app_name": "Bordertax"
 }

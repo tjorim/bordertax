@@ -158,14 +158,9 @@ describe("InputPanel", () => {
     expect(getForm().getFieldValue("belowAOWAge")).toBe(false);
   });
 
-  it("shows the 30% ruling as unavailable for Belgian-resident users", () => {
+  it("omits the 30% ruling control for Belgian-resident users", () => {
     renderInputPanel();
-    const thirtyPercentRuling = screen.getByRole("checkbox", { name: /30% ruling/i });
-    expect(thirtyPercentRuling).toHaveAttribute("aria-disabled", "true");
-    expect(thirtyPercentRuling).not.toBeChecked();
-    expect(
-      screen.getByText(/not available for this belgian-resident cross-border profile/i),
-    ).toBeInTheDocument();
+    expect(screen.queryByRole("checkbox", { name: /30% ruling/i })).not.toBeInTheDocument();
   });
 
   it("updates dependents count", () => {
@@ -230,5 +225,18 @@ describe("fieldError", () => {
   it("returns undefined for empty errors", () => {
     expect(fieldError(undefined)).toBeUndefined();
     expect(fieldError([])).toBeUndefined();
+  });
+});
+
+describe("long field hints", () => {
+  it("clamps a long hint behind a More toggle without removing it from the description", () => {
+    renderInputPanel({ residentCountry: "BE" });
+    const toggle = screen.getAllByRole("button", { name: /^more$/i })[0]!;
+    const hintId = toggle.getAttribute("aria-controls")!;
+    expect(toggle).toHaveAttribute("aria-expanded", "false");
+    fireEvent.click(toggle);
+    expect(toggle).toHaveAttribute("aria-expanded", "true");
+    expect(toggle).toHaveTextContent(/less/i);
+    expect(document.getElementById(hintId)).not.toHaveClass("line-clamp-2");
   });
 });

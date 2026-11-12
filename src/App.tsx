@@ -1,12 +1,16 @@
-import { TriangleAlertIcon } from "lucide-react";
+import { ArrowUpIcon, TriangleAlertIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { formOptions, useForm, useSelector, type ReactFormType } from "@tanstack/react-form";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { ErrorBoundary, type FallbackProps } from "react-error-boundary";
 
 import InputPanel from "./components/InputPanel";
-import ResultsTabs from "./components/results/ResultsTabs";
+import { ResultBar } from "./components/ResultBar";
+import ResultsTabs, { type ResultsTabsProps } from "./components/results/ResultsTabs";
+import { calculate } from "./tax";
 import { DEFAULT_INPUTS } from "./tax/defaults";
-import type { TaxInputs } from "./tax/types";
+import { useDocumentTitle } from "./lib/useDocumentTitle";
+import type { TaxInputs, TaxResult } from "./tax/types";
 import { TaxInputSchema, PersistedInputsSchema, type PersistedInputs } from "./tax/schema";
 import * as m from "./paraglide/messages.js";
 import { getLocale } from "./paraglide/runtime.js";
@@ -51,6 +55,32 @@ function ResultsErrorFallback({ error }: FallbackProps) {
   );
 }
 
+type Calculation = { result: TaxResult } | { error: unknown };
+
+function runCalculation(inputs: TaxInputs): Calculation {
+  try {
+    return { result: calculate(inputs) };
+  } catch (error) {
+    return { error };
+  }
+}
+
+/** Rethrows a calculation failure inside the results error boundary. */
+function ResultsPanel({
+  calculation,
+  ...props
+}: { calculation: Calculation } & Omit<ResultsTabsProps, "result">) {
+  if ("error" in calculation) throw calculation.error;
+  return <ResultsTabs result={calculation.result} {...props} />;
+}
+
+function scrollToAndFocus(id: string) {
+  const element = document.getElementById(id);
+  if (!element) return;
+  element.scrollIntoView({ block: "start" });
+  element.focus({ preventScroll: true });
+}
+
 export default function App() {
   const [initialValues] = useState(loadInitialInputs);
   const form = useForm({ defaultValues: initialValues });
@@ -59,7 +89,23 @@ export default function App() {
     const parsed = TaxInputSchema.safeParse(rawValues);
     return parsed.success ? parsed.data : DEFAULT_INPUTS;
   }, [rawValues]);
+  const calculation = useMemo(() => runCalculation(inputs), [inputs]);
   const [, setCurrentLocale] = useState(getLocale());
+  const [tab, setTab] = useState<string | number | null>("summary");
+  const [filingOpen, setFilingOpen] = useState(false);
+  const [filingRequests, setFilingRequests] = useState(0);
+  useDocumentTitle(m.app_document_title());
+
+  const showFiling = useCallback(() => {
+    setTab("summary");
+    setFilingOpen(true);
+    setFilingRequests((count) => count + 1);
+  }, []);
+
+  // Scroll once the summary tab and the opened checklist are in the DOM.
+  useEffect(() => {
+    if (filingRequests > 0) scrollToAndFocus("filing-checklist-trigger");
+  }, [filingRequests]);
 
   useEffect(() => {
     try {
@@ -78,23 +124,52 @@ export default function App() {
       </AppNavbar>
 
       <main className="px-3 pb-12">
+        {"result" in calculation && (
+          <ResultBar
+            result={calculation.result}
+            onShowResults={() => scrollToAndFocus("results")}
+            onShowFiling={showFiling}
+          />
+        )}
         <div className="grid grid-cols-1 gap-6 shell:flex shell:items-start">
           {/* ── Left column: inputs ────────────────────────────── */}
-          <div className="min-w-0 shell:w-96 shell:shrink-0">
+          <div id="inputs" tabIndex={-1} className="min-w-0 scroll-mt-32 shell:w-96 shell:shrink-0">
             <InputPanel form={form} />
           </div>
 
           {/* ── Right column: results ──────────────────────────── */}
-          <div className="min-w-0 shell:flex-1">
+          <section
+            id="results"
+            tabIndex={-1}
+            aria-label={m.tabs_results_label()}
+            className="min-w-0 scroll-mt-32 outline-none shell:flex-1"
+          >
+            <Button
+              variant="ghost"
+              size="xs"
+              className="mb-2 shell:hidden"
+              onClick={() => scrollToAndFocus("inputs")}
+            >
+              <ArrowUpIcon aria-hidden="true" />
+              {m.results_back_to_inputs()}
+            </Button>
             <ErrorBoundary FallbackComponent={ResultsErrorFallback}>
-              <ResultsTabs inputs={inputs} onResetInputs={() => form.reset(DEFAULT_INPUTS)} />
+              <ResultsPanel
+                calculation={calculation}
+                inputs={inputs}
+                tab={tab}
+                onTabChange={setTab}
+                filingOpen={filingOpen}
+                onFilingOpenChange={setFilingOpen}
+                onResetInputs={() => form.reset(DEFAULT_INPUTS)}
+              />
             </ErrorBoundary>
-          </div>
+          </section>
         </div>
       </main>
 
       <PageFooter variant="main">
-        {m.footer_disclaimer()}
+        {m.footer_disclaimer()} {m.footer_limitations()}
         &nbsp;|&nbsp; {m.footer_sources()}:{" "}
         <a href="https://www.belastingdienst.nl" target="_blank" rel="noreferrer">
           Belastingdienst

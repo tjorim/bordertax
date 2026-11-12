@@ -13,6 +13,21 @@ allowed scopes are listed in `release.config.json`, and `check` validates `[Unre
 
 ## [Unreleased]
 
+### Added
+
+- **Web:** Pin a compact result bar (net income, Dutch refund or tax, Belgian tax) below the header while editing, with a "View results" jump on small screens and a shortcut that opens the filing checklist.
+- **Web:** Give every page its own document title, so the calculator and the reference guides can be told apart in tabs and history.
+
+### Changed
+
+- **Web:** Clamp long field hints to two lines with a "More" toggle, which shortens the input column.
+- **Web:** Stack the filing checklist rows as field / value / source cards on narrow screens instead of scrolling the tables sideways.
+- **Web:** Wrap the result tabs onto a second row on narrow screens so none are hidden off-screen, and show the app name in the collapsed header.
+
+### Removed
+
+- **Web:** Remove the disabled 30% ruling checkbox for Belgian residents; the limitation is now stated in the page footer.
+
 ### Internal
 
 - Rename the release workflow to `release.yml` and give it the shared job graph used by every app: `validate` → `draft`, with a read-only default token that only the draft job can write with.
