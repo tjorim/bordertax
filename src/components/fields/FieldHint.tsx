@@ -24,7 +24,7 @@ export function FieldHint({ id, children }: { id: string; children: string }) {
         <Button
           variant="link"
           size="xs"
-          className="w-fit px-0 text-hint"
+          className="w-fit px-0 text-hint text-text-muted underline"
           aria-expanded={expanded}
           aria-controls={id}
           aria-describedby={id}
