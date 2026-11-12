@@ -32,6 +32,7 @@ allowed scopes are listed in `release.config.json`, and `check` validates `[Unre
 
 ### Fixed
 
+- **Web:** Wrap the section headers in the filing checklist on narrow screens instead of cutting off the Box IV O.2 title.
 - **Web:** The mortgage interest deduction no longer lists an income statement from the Belgian tax authority as a requirement for income year 2026. The Belastingdienst abolished that condition from 2026 (the tax authority can still ask for proof), so the assumptions list now says so; income years up to 2025 are unchanged. Re-checked against the official sources: the deduction rate caps, the eigenwoningforfait tables and the 90% test for 2020–2026 needed no correction.
 - **Web:** Apply the algemene heffingskorting to Belgian residents who are insured in the Netherlands. The Dutch refund, code 1250 and the Belgian estimate were too low by that credit for wages below the phase-out end.
 - **Web:** Split the code 1250 amount into box IV O.1 and O.2 as in the FOD guideline: Dutch premiums come off before the workday fraction, and only the Dutch income tax is taken from the exempt part. The salary-split reference page states the same formula.
