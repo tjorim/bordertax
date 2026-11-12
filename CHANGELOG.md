@@ -42,6 +42,7 @@ allowed scopes are listed in `release.config.json`, and `check` validates `[Unre
 - Rename the release workflow to `release.yml` and give it the shared job graph used by every app: `validate` → `draft`, with a read-only default token that only the draft job can write with.
 - Report the built source commit alongside the app version in the health response; VPS builds receive the full commit from the shared deployment tooling (tjorim/apps#345).
 - Read the MCP server version from `package.json` so releases no longer rewrite `mcp/server.ts`.
+- Restructure the yearly tax parameters into one module per income year under `src/tax/years/` (#435): repeated values (over-AOW brackets, premium ceiling and rates, unchanged Belgian rates, the eigenwoningforfait bands) are declared once, every table records its sources and what was verified, and `VALID_YEARS` and `TaxYear` derive from the year registry. No tax figure changes; a snapshot test pins every existing value and new integrity tests check brackets, credit curves and tables. The unfinished commented-out 2026 block is removed.
 
 ## [2026.11.1] - 2026-11-10
 

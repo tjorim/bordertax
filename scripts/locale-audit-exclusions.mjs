@@ -4,6 +4,8 @@ export const excludedFiles = {
   "tax/capabilities.ts":
     "machine-readable capability description for programmatic callers (agents), not interface copy",
   "tax/strict.ts": "validation errors for programmatic callers (agents), not interface copy",
+  "tax/years/":
+    "yearly tax parameters; the source and verification notes are developer-facing provenance, not interface copy",
 };
 // Functions that only log for developers; their string arguments are not interface copy.
 export const diagnosticCallees = [];
