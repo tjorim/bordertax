@@ -704,7 +704,7 @@
   "input_mortgage_home_hint": "Waarde in het economisch verkeer van de volledige woning op 1 januari van het voorgaande jaar (WOZ-equivalent). We gaan uit van een volledig jaar als hoofdverblijf. Laat leeg voor een bovengrens.",
   "mortgage_forfait_share": "Eigenwoningforfait (jouw aandeel)",
   "mortgage_forfait_net_deduction": "Netto eigenwoningaftrek",
-  "mortgage_forfait_exceeds_interest": "Het eigenwoningforfait is hoger dan de rente. De aftrek is nul; extra belastbaar inkomen en de aftrek volgens de Wet Hillen worden niet berekend.",
+  "mortgage_forfait_exceeds_interest": "Het eigenwoningforfait is hoger dan de rente. De aftrek is nul. Voor een kwalificerend buitenlands belastingplichtige wordt een positief saldo van een eigen woning in het buitenland niet bij het Nederlandse belastbare inkomen geteld (art. 7.8 lid 1 Wet IB 2001). Een klein effect via het premie-inkomen en het inkomen voor de algemene heffingskorting, ongeveer tot enkele honderden euro bij een laag inkomen, wordt niet berekend.",
   "mortgage_forfait_full_year": "We gaan uit van een gewone eigen woning die het hele jaar je hoofdverblijf is; een deel van het jaar en bijzondere situaties worden niet berekend.",
   "hint_more": "Meer",
   "hint_less": "Minder",
