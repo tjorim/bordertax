@@ -16,13 +16,7 @@ import { useSelector } from "@tanstack/react-form";
 import { cn } from "@/lib/utils";
 import { z } from "zod";
 
-import {
-  VALID_YEARS,
-  VALID_RESIDENT_COUNTRIES,
-  VALID_CIVIL_STATUSES,
-  VALID_BELGIAN_REGIONS,
-  isThirtyPercentRulingSupportedResident,
-} from "../tax/constants";
+import { VALID_YEARS, isThirtyPercentRulingSupportedResident } from "../tax/constants";
 import type { TaxFormApi } from "../App";
 import type { TaxInputs } from "../tax/types";
 import { getMaxDaysInYear, getNLFractions, getTotalWorkdays } from "../tax/workdays";
@@ -98,73 +92,6 @@ export default function InputPanel({ form }: Props) {
               )}
             </form.Field>
 
-            {VALID_RESIDENT_COUNTRIES.length > 1 && (
-              <form.Field name="residentCountry">
-                {(field) => (
-                  <Field className="col-span-12 table:col-span-6">
-                    <FieldLabel htmlFor="resident-country">{m.input_resident_country()}</FieldLabel>
-                    <NativeSelect
-                      id="resident-country"
-                      value={field.value}
-                      onChange={(e) =>
-                        field.handleChange(e.target.value as TaxInputs["residentCountry"])
-                      }
-                      onBlur={field.handleBlur}
-                    >
-                      {(VALID_RESIDENT_COUNTRIES as readonly string[]).includes("BE") && (
-                        <NativeSelectOption value="BE">
-                          🇧🇪 {m.input_resident_country_be()}
-                        </NativeSelectOption>
-                      )}
-                      {(VALID_RESIDENT_COUNTRIES as readonly string[]).includes("NL") && (
-                        <NativeSelectOption value="NL">
-                          🇳🇱 {m.input_resident_country_nl()}
-                        </NativeSelectOption>
-                      )}
-                    </NativeSelect>
-                  </Field>
-                )}
-              </form.Field>
-            )}
-
-            {VALID_CIVIL_STATUSES.length > 1 && (
-              <form.Field name="civilStatus">
-                {(field) => (
-                  <Field className="col-span-12 table:col-span-6">
-                    <FieldLabel htmlFor="civil-status">
-                      {m.input_civil_status()}{" "}
-                      <Badge
-                        variant="label"
-                        className="ms-1"
-                        aria-label={m.input_civil_status_not_used()}
-                      >
-                        {m.input_civil_status_not_used()}
-                      </Badge>
-                    </FieldLabel>
-                    <NativeSelect
-                      id="civil-status"
-                      value={field.value}
-                      onChange={(e) =>
-                        field.handleChange(e.target.value as TaxInputs["civilStatus"])
-                      }
-                      onBlur={field.handleBlur}
-                    >
-                      {(VALID_CIVIL_STATUSES as readonly string[]).includes("single") && (
-                        <NativeSelectOption value="single">
-                          {m.input_civil_status_single()}
-                        </NativeSelectOption>
-                      )}
-                      {(VALID_CIVIL_STATUSES as readonly string[]).includes("married") && (
-                        <NativeSelectOption value="married">
-                          {m.input_civil_status_married()}
-                        </NativeSelectOption>
-                      )}
-                    </NativeSelect>
-                  </Field>
-                )}
-              </form.Field>
-            )}
-
             <form.Field
               name="dependentChildren"
               validators={[{ run: z.number().int().min(0).max(10), triggers: ["change"] }]}
@@ -203,49 +130,6 @@ export default function InputPanel({ form }: Props) {
 
             {values.residentCountry === "BE" && (
               <>
-                {VALID_BELGIAN_REGIONS.length > 1 && (
-                  <form.Field name="belgianRegion">
-                    {(field) => (
-                      <Field className="col-span-12 table:col-span-6">
-                        <FieldLabel htmlFor="belgian-region">
-                          {m.input_belgian_region()}{" "}
-                          <Badge
-                            variant="label"
-                            className="ms-1"
-                            aria-label={m.input_belgian_region_not_used()}
-                          >
-                            {m.input_belgian_region_not_used()}
-                          </Badge>
-                        </FieldLabel>
-                        <NativeSelect
-                          id="belgian-region"
-                          value={field.value}
-                          onChange={(e) =>
-                            field.handleChange(e.target.value as TaxInputs["belgianRegion"])
-                          }
-                          onBlur={field.handleBlur}
-                        >
-                          {(VALID_BELGIAN_REGIONS as readonly string[]).includes("flemish") && (
-                            <NativeSelectOption value="flemish">
-                              {m.input_belgian_region_flemish()}
-                            </NativeSelectOption>
-                          )}
-                          {(VALID_BELGIAN_REGIONS as readonly string[]).includes("walloon") && (
-                            <NativeSelectOption value="walloon">
-                              {m.input_belgian_region_walloon()}
-                            </NativeSelectOption>
-                          )}
-                          {(VALID_BELGIAN_REGIONS as readonly string[]).includes("brussels") && (
-                            <NativeSelectOption value="brussels">
-                              {m.input_belgian_region_brussels()}
-                            </NativeSelectOption>
-                          )}
-                        </NativeSelect>
-                      </Field>
-                    )}
-                  </form.Field>
-                )}
-
                 <form.Field
                   name="communalTaxRate"
                   validators={[{ run: z.number().min(0).max(15), triggers: ["change"] }]}

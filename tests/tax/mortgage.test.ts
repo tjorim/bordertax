@@ -249,7 +249,4 @@ describe("mortgage premium income", () => {
     expect(result.nlTaxableIncome).toBe(0);
     expect(result.volksverzekeringen).toBe(Math.floor(2000 * p.socialPremiumRate));
   });
-  it("no longer reports an unchanged premium base", () => {
-    expect(calculate(base).mortgage?.assumptions).not.toContain("premium_base_unchanged");
-  });
 });

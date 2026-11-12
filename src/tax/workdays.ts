@@ -17,7 +17,6 @@ export interface WorkdayFractions extends WorkdayTotals {
   nlFractionDutchMethod: number;
   nlFractionBelgianMethod: number;
   beFraction: number;
-  vrijgesteldFrac: number;
 }
 
 const nonNegative = (value: number | undefined): number => Math.max(0, value ?? 0);
@@ -71,6 +70,5 @@ export function getNLFractions(inputs: TaxInputs): WorkdayFractions {
     nlFractionDutchMethod,
     nlFractionBelgianMethod,
     beFraction,
-    vrijgesteldFrac: nlFractionBelgianMethod,
   };
 }

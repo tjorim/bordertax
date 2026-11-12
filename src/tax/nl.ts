@@ -10,14 +10,14 @@
  * For Belgian residents, algemeneHeffingskorting (AHK) is 0 per Belastingdienst
  * policy for buitenlandse belastingplichtigen.
  *
- * Year-specific rates are in params.ts — that is the only file that needs updating each year.
+ * Year-specific rates live in one module per income year in src/tax/years, assembled by params.ts.
  */
 import type { TaxInputs, NLTaxResult, BracketLine } from "./types";
 import {
   isThirtyPercentRulingSupportedResident,
   NL_THIRTY_PERCENT_RULING_TAXABLE_RESIDUAL,
 } from "./constants";
-import { TAX_PARAMS } from "./params";
+import { getYearParams } from "./params";
 import type { NLBracket, NLYearParams } from "./params";
 import { getNLFractions } from "./workdays";
 
@@ -96,7 +96,7 @@ export function calculateNLTax(
   mortgageDeduction = 0,
   grossInterest = mortgageDeduction,
 ): NLTaxResult {
-  const yearData = TAX_PARAMS[inputs.year]?.nl ?? TAX_PARAMS[2025].nl;
+  const yearData = getYearParams(inputs.year).nl;
   const p = inputs.belowAOWAge ? yearData.under : yearData.over;
 
   const { nlFractionDutchMethod: nlFraction } = getNLFractions(inputs);

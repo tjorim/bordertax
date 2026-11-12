@@ -22,9 +22,8 @@ vi.mock("@tanstack/react-router", async (importOriginal) => {
 });
 
 import App from "@/App";
+import { LEGACY_STORAGE_KEY, STORAGE_KEY } from "@/lib/inputStorage";
 import { setLocale } from "@/paraglide/runtime";
-
-const STORAGE_KEY = "grensarbeider-tax-inputs-v1";
 
 describe("App", () => {
   beforeEach(() => {
@@ -140,6 +139,14 @@ describe("App", () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(savedInputs));
     render(<App />);
     expect(screen.getByText(/Tax year.*2024/)).toBeInTheDocument();
+  });
+
+  it("moves inputs saved under the legacy key to the current key", () => {
+    localStorage.setItem(LEGACY_STORAGE_KEY, JSON.stringify({ year: 2023 }));
+    render(<App />);
+    expect(screen.getByText(/Tax year.*2023/)).toBeInTheDocument();
+    expect(localStorage.getItem(LEGACY_STORAGE_KEY)).toBeNull();
+    expect(JSON.parse(localStorage.getItem(STORAGE_KEY)!)).toMatchObject({ year: 2023 });
   });
 
   it("ignores invalid localStorage data and uses defaults", () => {

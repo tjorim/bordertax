@@ -44,6 +44,9 @@ allowed scopes are listed in `release.config.json`, and `check` validates `[Unre
 - Report the built source commit alongside the app version in the health response; VPS builds receive the full commit from the shared deployment tooling (tjorim/apps#345).
 - Read the MCP server version from `package.json` so releases no longer rewrite `mcp/server.ts`.
 - Restructure the yearly tax parameters into one module per income year under `src/tax/years/` (#435): repeated values (over-AOW brackets, premium ceiling and rates, unchanged Belgian rates, the eigenwoningforfait bands) are declared once, every table records its sources and what was verified, and `VALID_YEARS` and `TaxYear` derive from the year registry. No tax figure changes; a snapshot test pins every existing value and new integrity tests check brackets, credit curves and tables. The unfinished commented-out 2026 block is removed.
+- Clean up leftovers in the tax engine without changing any result (#440): derive the comparison's input keys from the schema, drop `?? 0` guards on required fields, remove the `vrijgesteldFrac` duplicate of `nlFractionBelgianMethod` and the unused `premium_base_unchanged` mortgage assumption (and its message keys), make the Dutch engine throw for an unsupported income year like the Belgian one instead of falling back to 2025, and correct stale header comments. Verified against a before/after snapshot of results across 2020–2025, Belgian and Dutch residents, with and without the mortgage scenario.
+- **Web:** Store the saved inputs under a new browser key, `bt-inputs-v1`; inputs saved under the old `grensarbeider-tax-inputs-v1` key are moved over once on the next visit.
+- **Web:** Remove the unreachable resident-country, civil-status and region selectors from the input panel (their constants still allow only one value), along with their message keys.
 
 ## [2026.11.1] - 2026-11-10
 

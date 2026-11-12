@@ -131,6 +131,12 @@ describe("calculateNLTax", () => {
     expect(result.brackets.length).toBeGreaterThan(0);
   });
 
+  it("throws for an unsupported tax year instead of falling back to another year", () => {
+    expect(() => calculateNLTax({ ...base, year: 2030 as TaxInputs["year"] })).toThrow(
+      /Unsupported tax year: 2030/,
+    );
+  });
+
   // TODO: Re-enable when 2026 support is re-integrated
   it.skip("works for tax year 2026", () => {
     const result = calculateNLTax({ ...base, year: 2026 as unknown as TaxInputs["year"] });
