@@ -3,7 +3,10 @@ import type { MortgageResult } from "./mortgage";
 export type { TaxInputs };
 
 export interface BracketLine {
-  label: string;
+  /** Lower bound of the bracket in euros (inclusive). */
+  from: number;
+  /** Upper bound in euros, or `null` for the open-ended top bracket (JSON has no Infinity). */
+  to: number | null;
   rate: number;
   taxableAmount: number;
   tax: number;
@@ -52,6 +55,11 @@ export interface DutchCharge {
   netTaxDifference: number;
 }
 
+/**
+ * Money figures are rounded to whole cents when the result is built (full precision is kept
+ * between calculation steps); no Belgian tax-rounding rule is claimed. Fractions (`beFraction`,
+ * `effectiveRateBE`) are not rounded.
+ */
 export interface BETaxResult {
   /** Declared income (code 1250): grossSalary − Dutch income tax and premiums due (nlCharge) */
   declaredIncome: number;
@@ -87,6 +95,10 @@ export interface BETaxResult {
   gewestelijke: number;
   /** Federal saldo after pension and roerende voorheffing reductions */
   saldoFederaal: number;
+  /** Part of the federal reductions (aanvullend pensioen × 30% plus roerende voorheffing, code
+   *  1437) that exceeds the reduced federal portion. The saldo is clamped at zero and this part
+   *  is not used or carried over by the estimate; 0 when the reductions are fully used. */
+  federalReductionsUnused: number;
   /** Regional saldo after dienstencheques reduction */
   saldoGewestelijk: number;
   /** Total Belgian tax (saldoFederaal + saldoGewestelijk) */
@@ -113,6 +125,11 @@ export interface TaxResult {
   totalTax: number;
   netIncome: number;
   effectiveRateTotal: number;
+  /** True when the entered workdays (NL, Belgium, other and sick days) add up to zero. There is
+   *  then no basis to source the wage to either country, so the Dutch figures are all zero (no
+   *  taxable income, premiums or credits) instead of presenting premiums and credits on no income;
+   *  the figures only turn meaningful once workdays are entered. */
+  noWorkdays: boolean;
   /** NL income fraction according to the Dutch (NL) method: sick days count as NL workdays
    *  (added to both numerator and denominator).
    *  Formula: (NL days + sick days) / (NL days + other days + sick days) */

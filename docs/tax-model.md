@@ -28,7 +28,7 @@ This documents what the engine does today. Where that differs from official guid
 | Belgian method | NL ÷ (NL + Belgian + other)                 | Reported alongside the Dutch fraction     |
 | `beFraction`   | (Belgian + other) ÷ (NL + Belgian + other)  | Belgian-taxable share of wage (section 3) |
 
-Sick days count as Dutch workdays under the Dutch method and are left out entirely under the Belgian method. All fractions are 0 when the denominator is 0. Fractional day counts are allowed. Total days (including sick days) may not exceed the days in the year (`StrictTaxInputSchema`).
+Sick days count as Dutch workdays under the Dutch method and are left out entirely under the Belgian method. All fractions are 0 when the denominator is 0, and `noWorkdays` is true when the total including sick days is 0 (see the "No workdays" note in section 2). Fractional day counts are allowed. Total days (including sick days) may not exceed the days in the year (`StrictTaxInputSchema`).
 
 ## 2. Dutch result (`src/tax/nl.ts`)
 
@@ -41,6 +41,15 @@ Sick days count as Dutch workdays under the Dutch method and are left out entire
 7. **Income tax due and premiums due.** Every credit has a tax part and a premium part in proportion to the first-bracket rates (2025: 8.17/35.82 tax, 27.65/35.82 premiums; 2026: 8.10/35.75 and 27.65/35.75; [Belastingdienst, Heffingskortingen](https://www.belastingdienst.nl/wps/wcm/connect/fisin/fisin2025/heffingskortingen)). The tax part reduces income tax and the premium part reduces the premiums; a part that exceeds what it is set against is used against the other charge. The two results, `incomeTaxDue` and `premiumsDue`, add up to the net Dutch tax.
 
 Under-AOW and over-AOW age use separate premium rates and credit tables. All per-year numbers live in one module per income year (`src/tax/years/<year>.ts`); `TAX_PARAMS` and `EIGENWONINGFORFAIT` in `src/tax/params.ts` are assembled from them, and values that never changed (premium rates, Belgian forfait and federal/regional rates, the eigenwoningforfait bands) are declared once in `src/tax/years/shared.ts`. Each module records its sources and what was verified. `tests/tax/params.test.ts` checks that brackets, credit curves and tables are internally consistent.
+
+### No workdays
+
+When NL, Belgian, other and sick days are all zero there is nothing to source the wage to. `getNLFractions` reports `noWorkdays` and `TaxResult.noWorkdays` carries it. The previous behaviour (taxable income 0 but full premiums and credits) charged premiums and applied the arbeidskorting on income that is not there, so the state is explicit instead:
+
+- `calculateNLTax` returns zero for taxable income, brackets (empty), mortgage deduction and surcharge, premiums, both credits, income tax due, premiums due and net Dutch tax. `deelNietInNLBelast` equals the gross salary (nothing is taxed in NL).
+- `calculateBETax` returns a result with every figure zero (`beFraction` 0): the whole wage would otherwise count as exempt Dutch income and still carry communal tax. Total tax is then only an entered assessment, if any (an assessment is the user's own figure and is still honoured), and net income equals gross salary.
+- The zeros mean "not calculated", not "no tax is due". The results show a note (an `Alert`) above the tabs asking for workdays. With only sick days the state does not apply: sick days count as Dutch workdays.
+- The strict schema is unchanged; zero workdays remain valid input.
 
 ### The Dutch assessment replaces the estimate
 
@@ -62,7 +71,7 @@ Method: exemption with progression (vrijstelling met progressievoorbehoud) under
 4. **Progressive tax** (`basisbelasting`) is computed on the **whole** net professional income, then reduced by the belastingvrije som (25% of the base allowance plus the child supplements; more than 4 children uses `extraPerChildAbove4` where defined, otherwise it is rejected). This is `omTeSlane`.
 5. **Exemption with progression.** The share of `omTeSlane` that corresponds to the exempt part (`vrijstellingReduction`) is removed, leaving `hoofdsom`.
 6. **Federal/regional split.** `gereduceerde = hoofdsom × gereduceerdRate` (1 ÷ 1.33257 ≈ 0.75043, the Flemish opcentiemen are 33.257%); `gewestelijke = gereduceerde × gewestelijkeRate`.
-7. **Optional reductions.** Supplementary pension: 30% credit against the federal part. Roerende voorheffing: credited against the federal part. Dienstencheques: reduce the regional part (20% up to income year 2024, abolished from 2025). Each saldo is floored at zero.
+7. **Optional reductions.** Supplementary pension: 30% credit against the federal part. Roerende voorheffing: credited against the federal part. Dienstencheques: reduce the regional part (20% up to income year 2024, abolished from 2025). Each saldo is floored at zero. What the federal reductions (pension × 30% plus code 1437) exceed the federal part by is returned as `federalReductionsUnused`; the estimate neither uses nor carries it over, and the Belgian result and the filing checklist show a short note when it is above zero. How the excess is treated in the real return is not modelled.
 8. **Communal tax** = `communalTaxRate × totaleBelasting` plus `communalTaxRate × vrijstellingReduction`: municipal tax is levied on the exempt income too.
 9. **Net Belgian tax** = federal saldo + regional saldo + communal tax (both parts).
 
@@ -74,7 +83,11 @@ The checklist (`src/components/results/FilingChecklist.tsx`) does not run its ow
 
 ## 5. Rounding
 
-Rounding follows how the Belastingdienst computes the Dutch side and is applied only there: taxable income `round`, each bracket `floor`, premiums `floor`, the credit tables `ceil`, the rate-cap surcharge `round`. The Belgian side keeps full precision and is only formatted for display.
+Tax rounding follows how the Belastingdienst computes the Dutch side and is applied only there: taxable income `round`, each bracket `floor`, premiums `floor`, the credit tables `ceil`, the rate-cap surcharge `round`. The Belgian side keeps full precision between calculation steps.
+
+**Belgian figures are trimmed to cents at the engine boundary.** `calculateBETax` rounds every money figure of `BETaxResult` to two decimals once, when it builds the returned result (`roundToCents` in `src/tax/rounding.ts`), so the UI, the filing checklist and MCP clients see the same numbers and no longer get thirteen decimals. This is a presentation boundary, **not** a tax-rounding rule: the Belgian rounding rules could not be verified, so none is claimed, and intermediate steps are never rounded (communal tax, for example, is computed from the unrounded federal and regional saldi). Fractions (`beFraction`, `effectiveRateBE`) are not money and are not rounded. `TaxResult.totalTax`, `netIncome`, the mortgage effects and the comparison deltas are cleaned to cents so sums of integers and cents carry no floating-point noise. The golden tests still reproduce the ACV figures to the cent.
+
+**Bracket bounds are data, not text.** `BracketLine` carries `from` and `to` (`to` is `null` for the open top bracket, since JSON has no Infinity) and no label. The UI formats the bounds per locale with `fmtBracket` in `src/components/format.ts`; MCP clients get the numbers.
 
 ## 6. Sources and verification status
 

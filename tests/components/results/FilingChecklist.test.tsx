@@ -122,3 +122,22 @@ describe("FilingChecklist", () => {
     expect(rowFor(m.filing_be_1250())).toHaveTextContent(m.filing_be_1250_source_assessment());
   });
 });
+
+describe("FilingChecklist unused federal reductions", () => {
+  const unused = m.be_federal_reductions_unused({ amount: fmtExact(321.5) });
+
+  it("shows the note in the Belgian section only when the unused part is above zero", () => {
+    const { rerender } = render(<FilingChecklist result={mockTaxResult} />);
+    expect(screen.queryByText(unused)).not.toBeInTheDocument();
+
+    rerender(
+      <FilingChecklist
+        result={{
+          ...mockTaxResult,
+          be: { ...mockTaxResult.be!, saldoFederaal: 0, federalReductionsUnused: 321.5 },
+        }}
+      />,
+    );
+    expect(screen.getByText(unused)).toBeInTheDocument();
+  });
+});

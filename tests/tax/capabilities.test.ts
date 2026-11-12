@@ -63,6 +63,15 @@ describe("tax capabilities", () => {
     );
   });
 
+  it("describes the result conventions: cents, bracket bounds, no workdays, unused reductions", () => {
+    const { resultShape } = getCapabilities();
+    expect(resultShape.belgianRounding).toContain("whole cents");
+    expect(resultShape.belgianRounding).toContain("no Belgian tax-rounding rule");
+    expect(resultShape.brackets).toContain("null for the open-ended top bracket");
+    expect(resultShape.noWorkdays).toContain("result.noWorkdays");
+    expect(resultShape.federalReductionsUnused).toContain("code 1437");
+  });
+
   it("describes the optional Dutch assessment figures without requiring them", () => {
     const capabilities = getCapabilities();
     expect(capabilities.requiredInputs).not.toContain("assessmentIncomeTaxDue");
