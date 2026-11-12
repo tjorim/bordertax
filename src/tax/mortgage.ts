@@ -11,6 +11,7 @@
  */
 import { MORTGAGE_QUALIFYING_MIN_NL_PERCENT } from "./constants";
 import { EIGENWONINGFORFAIT } from "./params";
+import { EIGENWONINGFORFAIT_BAND_LIMITS } from "./years/shared";
 import type { TaxInputs } from "./schema";
 
 export type MortgageStatus = "eligible" | "ineligible" | "unknown";
@@ -154,8 +155,7 @@ export function getEigenwoningforfait(inputs: TaxInputs): number {
   if (inputs.mortgageHomeValue === undefined) return 0;
   const value = Math.max(0, inputs.mortgageHomeValue);
   const p = EIGENWONINGFORFAIT[inputs.year];
-  const band =
-    value <= 12500 ? 0 : value <= 25000 ? 1 : value <= 50000 ? 2 : value <= 75000 ? 3 : 4;
+  const band = EIGENWONINGFORFAIT_BAND_LIMITS.filter((limit) => value > limit).length;
   const whole =
     value > p.threshold ? p.base + (value - p.threshold) * p.excessRate : value * p.rates[band]!;
   return (whole * Math.min(100, Math.max(0, inputs.mortgageOwnershipShare ?? 100))) / 100;

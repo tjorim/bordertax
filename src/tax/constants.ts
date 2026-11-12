@@ -1,4 +1,8 @@
-export const VALID_YEARS = [2020, 2021, 2022, 2023, 2024, 2025] as const;
+import { SUPPORTED_YEARS, type SupportedYear } from "./years";
+import { BE_PENSION_REDUCTION_RATE, BE_TAX_FREE_ALLOWANCE_REDUCTION_RATE } from "./years/shared";
+
+/** Supported income years, derived from the modules in `src/tax/years`. */
+export const VALID_YEARS: readonly SupportedYear[] = SUPPORTED_YEARS;
 export const VALID_RESIDENT_COUNTRIES = [
   "BE",
   // "NL",
@@ -13,9 +17,9 @@ export const VALID_BELGIAN_REGIONS = [
   // "brussels",
 ] as const;
 
-// Policy rates used in the tax engines. Keep year-scoping in params.ts for rates that vary by year.
-export const BE_TAX_FREE_ALLOWANCE_REDUCTION_RATE = 0.25;
-export const BE_PENSION_REDUCTION_RATE = 0.3;
+// Policy rates used in the tax engines, declared in years/shared.ts next to the other shared
+// parameters. Rates that vary by year live in the year modules.
+export { BE_PENSION_REDUCTION_RATE, BE_TAX_FREE_ALLOWANCE_REDUCTION_RATE };
 export const NL_THIRTY_PERCENT_RULING_TAXABLE_RESIDUAL = 0.7;
 
 /**
@@ -27,7 +31,7 @@ export function isThirtyPercentRulingSupportedResident(residentCountry: string):
   return residentCountry === "NL";
 }
 
-export type TaxYear = (typeof VALID_YEARS)[number];
+export type TaxYear = SupportedYear;
 export type ResidentCountry = (typeof VALID_RESIDENT_COUNTRIES)[number];
 export type CivilStatus = (typeof VALID_CIVIL_STATUSES)[number];
 export type BelgianRegion = (typeof VALID_BELGIAN_REGIONS)[number];

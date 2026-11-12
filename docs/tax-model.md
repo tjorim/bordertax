@@ -12,7 +12,7 @@ This documents what the engine does today. Where that differs from official guid
 | Civil status   | Single only                                                                                                                                                            |
 | Belgian region | Flemish only (`communalTaxRate` is the only local input)                                                                                                               |
 | Employer       | One Dutch employer: a single gross salary and one set of workday counts                                                                                                |
-| Income years   | 2020–2025. 2026 is not enabled; a commented-out block in `params.ts` is not shipped                                                                                    |
+| Income years   | 2020–2025. 2026 is not enabled and has no year module yet                                                                                                              |
 | 30%-regeling   | Not available: `isThirtyPercentRulingSupportedResident` is true only for NL residents                                                                                  |
 | Not modelled   | BBSZ (special social security contribution), regional Belgian supplements beyond the Flemish opcentiemen, Belgian home benefits, partners, partial years, other income |
 
@@ -39,7 +39,7 @@ Sick days count as Dutch workdays under the Dutch method and are left out entire
 5. **Credits.** Arbeidskorting is computed on the **full** gross salary (staged table, rounded **up**). The algemene heffingskorting is set to **0** for Belgian residents (see [Known gaps](#known-gaps)). Credits are capped at income tax plus premiums.
 6. **Net Dutch tax** = income tax + surcharge + premiums − credits, never below zero.
 
-Under-AOW and over-AOW age use separate premium rates and credit tables. All per-year numbers live in `TAX_PARAMS` (`src/tax/params.ts`).
+Under-AOW and over-AOW age use separate premium rates and credit tables. All per-year numbers live in one module per income year (`src/tax/years/<year>.ts`); `TAX_PARAMS` and `EIGENWONINGFORFAIT` in `src/tax/params.ts` are assembled from them, and values that never changed (premium rates, Belgian forfait and federal/regional rates, the eigenwoningforfait bands) are declared once in `src/tax/years/shared.ts`. Each module records its sources and what was verified. `tests/tax/params.test.ts` checks that brackets, credit curves and tables are internally consistent.
 
 ## 3. Belgian result (`src/tax/be.ts`)
 
@@ -67,23 +67,24 @@ Rounding follows how the Belastingdienst computes the Dutch side and is applied 
 
 ## 6. Sources and verification status
 
-| Area                                          | Source                                                                            | Status                                                                                               |
-| --------------------------------------------- | --------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| Dutch brackets, premiums, credits (2020–2025) | Belastingdienst yearly tables                                                     | Taken from published tables. 2024 checked against an actual Dutch assessment (per `params.ts`)       |
-| Arbeidskorting                                | Belastingdienst                                                                   | Matches filed Dutch returns (see [#430](https://github.com/tjorim/bordertax/issues/430))             |
-| Algemene heffingskorting                      | Belastingdienst                                                                   | Tables exist but are **not applied** to Belgian residents ([Known gaps](#known-gaps))                |
-| Belgian brackets, belastingvrije som, forfait | FOD Financiën                                                                     | Taken from published tables; not individually checked against assessments                            |
-| `gereduceerdRate`, `gewestelijkeRate`         | Belgian aanslagbiljet                                                             | Verified from official aanslagbiljet values (see the comments in `params.ts`)                        |
-| Eigenwoningforfait and mortgage rules         | Belastingdienst, Wet IB 2001                                                      | Verified per year in [hypotheekrenteaftrek-rules.md](hypotheekrenteaftrek-rules.md)                  |
-| Salary-split method and worked example        | ACV telework info session, [PDF](../public/docs/ACV-Telewerk-Infosessie-2026.pdf) | Engine **differs** from the guideline ([Known gaps](#known-gaps))                                    |
-| Whole calculator                              | —                                                                                 | Not certified. "Checked" means a specific figure was compared, not that a full return was reproduced |
+| Area                                          | Source                                                                            | Status                                                                                                                                 |
+| --------------------------------------------- | --------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| Dutch brackets, premiums, credits (2020–2025) | Belastingdienst yearly tables                                                     | Taken from published tables. 2024 checked against an actual Dutch assessment (per `years/2024.ts`)                                     |
+| Arbeidskorting                                | Belastingdienst                                                                   | Matches filed Dutch returns (see [#430](https://github.com/tjorim/bordertax/issues/430))                                               |
+| Algemene heffingskorting                      | Belastingdienst                                                                   | Tables exist but are **not applied** to Belgian residents ([Known gaps](#known-gaps))                                                  |
+| Belgian brackets, belastingvrije som, forfait | FOD Financiën                                                                     | Taken from published tables; not individually checked against assessments                                                              |
+| `gereduceerdRate`, `gewestelijkeRate`         | Belgian aanslagbiljet                                                             | Verified from the official aanslagbiljet for income year 2024 only (per `years/2024.ts`); the same values are used for the other years |
+| Eigenwoningforfait and mortgage rules         | Belastingdienst, Wet IB 2001                                                      | Verified per year in [hypotheekrenteaftrek-rules.md](hypotheekrenteaftrek-rules.md)                                                    |
+| Salary-split method and worked example        | ACV telework info session, [PDF](../public/docs/ACV-Telewerk-Infosessie-2026.pdf) | Engine **differs** from the guideline ([Known gaps](#known-gaps))                                                                      |
+| Whole calculator                              | —                                                                                 | Not certified. "Checked" means a specific figure was compared, not that a full return was reproduced                                   |
 
-Income year 2026 is not enabled; its parameters are unfinished and the Dutch arbeidskorting stages are provisional.
+Income year 2026 is not enabled and has no module; its figures must come from the official tables ([#144](https://github.com/tjorim/bordertax/issues/144)).
 
 ## Known gaps
 
 - **Code 1250 split (O.1/O.2) differs from the FOD guideline ([#442](https://github.com/tjorim/bordertax/issues/442)).** The guideline in the ACV session is `W = wage − social contributions due in the work state`, `Y = W × days fraction` (taxable in Belgium), `Z = W − Y − income tax due in the work state` (exempt). The engine takes Y from the full wage and deducts the whole Dutch charge, premiums included, from the exempt side, so the Belgian-taxable amount is too high by `beFraction × premiums due`. In the ACV example (2025, wage €53,299, 50 home days of 230, 6% municipal tax) the engine gives O.1 €11,586.74 and O.2 €31,653.26 against ACV's €10,309.64 and €34,401.36. The text of the FOD formula on the `/reference/salary-split` page mirrors the engine rather than the source for the same reason.
 - **Algemene heffingskorting is zero for Belgian residents ([#430](https://github.com/tjorim/bordertax/issues/430)).** A Belgian resident who is insured in the Netherlands receives it, subject to the income phase-out. The Dutch refund, code 1250 and the Belgian estimate are consequently off by that credit for wages below the phase-out end.
+- **2024 over-AOW credit tables look inconsistent ([#435](https://github.com/tjorim/bordertax/issues/435)).** The algemene heffingskorting phase-out start and end are the 2023 values, and the arbeidskorting stage 3 → 4 join is off by about €110. The integrity tests list both as known deviations; the figures are unchanged until they are checked against the official 2024 table.
 - **Premium base.** Premiums use the full gross salary (less any mortgage deduction) as worldwide income, with no other income, partial-year insurance or partner effects.
 - **Dutch tax is an estimate, not the assessment.** The Belgian side starts from the _calculated_ Dutch tax. The app does not take the actual assessment as input.
 
