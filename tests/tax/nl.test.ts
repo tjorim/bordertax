@@ -151,31 +151,57 @@ describe("calculateNLTax", () => {
     expect(topBracket!.tax).toBeGreaterThan(0);
   });
 
-  it("AHK is 0 for Belgian residents", () => {
+  it("applies the algemene heffingskorting to Belgian residents", () => {
+    // 2025 under AOW age, full wage €60,000: 3,068 − 6.337% × (60,000 − 28,406), rounded up.
     const result = calculateNLTax({ ...base, residentCountry: "BE" });
-    expect(result.algemeneHeffingskorting).toBe(0);
+    expect(result.algemeneHeffingskorting).toBe(1066);
   });
 
-  // TODO: Re-enable when NL-resident support is re-integrated
-  it.skip("AHK is zero for very high income (above phase-out end)", () => {
-    const nlBase = { ...base, residentCountry: "NL" as unknown as TaxInputs["residentCountry"] };
-    const result = calculateNLTax({ ...nlBase, grossSalary: 200000 });
-    expect(result.algemeneHeffingskorting).toBe(0);
+  it("AHK is zero for very high income (above phase-out end)", () => {
+    expect(calculateNLTax({ ...base, grossSalary: 200000 }).algemeneHeffingskorting).toBe(0);
   });
 
-  // TODO: Re-enable when NL-resident support is re-integrated
-  it.skip("AHK is at maximum for very low income (below phase-out start)", () => {
-    const nlBase = { ...base, residentCountry: "NL" as unknown as TaxInputs["residentCountry"] };
-    const result = calculateNLTax({ ...nlBase, grossSalary: 20000 });
-    expect(result.algemeneHeffingskorting).toBe(3068);
+  it("AHK is at maximum for very low income (below phase-out start)", () => {
+    expect(calculateNLTax({ ...base, grossSalary: 20000 }).algemeneHeffingskorting).toBe(3068);
   });
 
-  // TODO: Re-enable when NL-resident support is re-integrated
-  it.skip("above-AOW age uses lower AHK max", () => {
-    const nlBase = { ...base, residentCountry: "NL" as unknown as TaxInputs["residentCountry"] };
-    const under = calculateNLTax({ ...nlBase, grossSalary: 10000, belowAOWAge: true });
-    const over = calculateNLTax({ ...nlBase, grossSalary: 10000, belowAOWAge: false });
+  it("above-AOW age uses lower AHK max", () => {
+    const under = calculateNLTax({ ...base, grossSalary: 10000, belowAOWAge: true });
+    const over = calculateNLTax({ ...base, grossSalary: 10000, belowAOWAge: false });
+    expect(over.algemeneHeffingskorting).toBe(1536);
     expect(over.algemeneHeffingskorting).toBeLessThan(under.algemeneHeffingskorting);
+  });
+
+  it("splits the credits by the first-bracket rates into income tax due and premiums due", () => {
+    const result = calculateNLTax({
+      ...base,
+      grossSalary: 53299,
+      daysWorkedNL: 180,
+      daysWorkedBE: 50,
+    });
+    const share = 0.0817 / (0.0817 + 0.2765);
+    expect(result.incomeTaxDue + result.premiumsDue).toBeCloseTo(result.netTaxNL, 6);
+    expect(result.incomeTaxDue).toBeCloseTo(
+      result.taxBeforeCredits - result.totalCredits * share,
+      6,
+    );
+    expect(result.premiumsDue).toBeCloseTo(
+      result.volksverzekeringen - result.totalCredits * (1 - share),
+      6,
+    );
+  });
+
+  it("keeps income tax and premiums adding up to the net tax when a credit part overflows", () => {
+    // Tiny Dutch share: income tax is smaller than the tax part of the credits.
+    const result = calculateNLTax({
+      ...base,
+      grossSalary: 40000,
+      daysWorkedNL: 5,
+      daysWorkedBE: 215,
+    });
+    expect(result.incomeTaxDue).toBeGreaterThanOrEqual(0);
+    expect(result.premiumsDue).toBeGreaterThanOrEqual(0);
+    expect(result.incomeTaxDue + result.premiumsDue).toBeCloseTo(result.netTaxNL, 6);
   });
 
   it("returns correct structure", () => {
@@ -188,6 +214,8 @@ describe("calculateNLTax", () => {
     expect(result).toHaveProperty("arbeidskorting");
     expect(result).toHaveProperty("totalCredits");
     expect(result).toHaveProperty("volksverzekeringen");
+    expect(result).toHaveProperty("incomeTaxDue");
+    expect(result).toHaveProperty("premiumsDue");
     expect(result).toHaveProperty("netTaxNL");
     expect(result).toHaveProperty("effectiveRateNL");
   });

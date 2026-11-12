@@ -35,6 +35,8 @@ export const mockNLResult: NLTaxResult = {
   arbeidskorting: 4500,
   totalCredits: 4500,
   volksverzekeringen: 10000,
+  incomeTaxDue: 5307.51,
+  premiumsDue: 10000,
   netTaxNL: 15307.51,
   effectiveRateNL: 0.2806,
 };

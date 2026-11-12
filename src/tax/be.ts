@@ -57,8 +57,11 @@ export function calculateBETax(inputs: TaxInputs, nl: NLTaxResult): BETaxResult 
 
   const { beFraction } = getNLFractions(inputs);
 
-  // Gross split for reference fields
-  const beIncome = inputs.grossSalary * beFraction;
+  // FOD guideline (ACV telework session): W = wage − premiums actually due in the work state,
+  // Y = W × (days outside NL ÷ total days) is taxable in Belgium (box IV O.1), and
+  // Z = W − Y − income tax actually due in the work state is exempt (box IV O.2).
+  const wageAfterPremiums = Math.max(0, inputs.grossSalary - nl.premiumsDue);
+  const beIncome = wageAfterPremiums * beFraction;
 
   const { socialContributions, aanvullendPensioen, dienstencheques, roerendeVoorheffing } = inputs;
 
@@ -72,9 +75,8 @@ export function calculateBETax(inputs: TaxInputs, nl: NLTaxResult): BETaxResult 
   // Net professional income
   const netProfessionalIncome = Math.max(0, declaredIncome - socialContributions - forfait);
 
-  // The Belgian-taxable part is the gross income sourced outside NL. The NL tax paid
-  // is therefore taken from the NL-exempt side of code 1250, not allocated pro rata
-  // across both sides. This mirrors the 1250/Netherlands split on the Belgian return.
+  // Code 1250 is Y + Z. Only the Dutch income tax is taken from the exempt side; the premiums are
+  // deducted before the day fraction is applied, so they reduce Y and Z in proportion.
   const nlExemptDeclaredIncome = Math.max(0, declaredIncome - beIncome);
   const nlExemptShare = declaredIncome > 0 ? nlExemptDeclaredIncome / declaredIncome : 0;
 
@@ -83,7 +85,7 @@ export function calculateBETax(inputs: TaxInputs, nl: NLTaxResult): BETaxResult 
   const volTarief = netProfessionalIncome - vrijgesteld;
 
   // nlExemptIncome for legacy/display: gross NL income (days-based)
-  const nlExemptIncome = inputs.grossSalary - beIncome;
+  const nlExemptIncome = inputs.grossSalary * (1 - beFraction);
 
   // Belgian progressive tax on total net professional income
   const basisbelasting = applyBEBrackets(netProfessionalIncome, p.brackets);

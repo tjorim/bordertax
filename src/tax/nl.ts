@@ -7,8 +7,8 @@
  * Income-tax-only bracket rates are derived from the combined rates by subtracting
  * the social premium rate (27.65% for under-AOW, 9.75% for over-AOW).
  *
- * For Belgian residents, algemeneHeffingskorting (AHK) is 0 per Belastingdienst
- * policy for buitenlandse belastingplichtigen.
+ * Belgian residents who are insured in the Netherlands receive both heffingskortingen, each split
+ * into a tax part and a premium part so that income tax due and premiums due can be reported apart.
  *
  * Year-specific rates live in one module per income year in src/tax/years, assembled by params.ts.
  */
@@ -141,14 +141,27 @@ export function calculateNLTax(
     Math.min(premiumIncome, p.socialPremiumMax) * p.socialPremiumRate,
   );
 
-  // AHK: 0 for Belgian residents (buitenlandse belastingplichtige policy)
-  const ahk = inputs.residentCountry === "BE" ? 0 : calcAHK(inputs.grossSalary, p);
-
-  // AK: always calculated on full gross salary (verified from Belastingdienst aanslag)
+  // Both credits use the full wage. A Belgian resident who is insured in the Netherlands receives
+  // the algemene heffingskorting; the Belastingdienst lists it for residents of Belgium
+  // (belastingdienst.nl, "Ik woon niet in Nederland: welke aftrekposten en kortingen heb ik?").
+  const ahk = calcAHK(inputs.grossSalary, p);
   const ak = calcAK(inputs.grossSalary, p);
 
   const totalCredits = Math.min(ahk + ak, taxBeforeCredits + volksverzekeringen);
   const netTaxNL = Math.max(0, taxBeforeCredits + volksverzekeringen - totalCredits);
+
+  // Each credit is split into a tax part and a premium part in proportion to the first-bracket
+  // rates (2025: 8.17 / 35.82 tax, 27.65 / 35.82 premiums; Belastingdienst, "Heffingskortingen").
+  // A part that exceeds what it is set against is used against the other charge, so the two
+  // charges always add up to netTaxNL.
+  const firstBracketRate = p.incomeTaxBrackets[0]?.rate ?? 0;
+  const taxShare = firstBracketRate / (firstBracketRate + p.socialPremiumRate);
+  const taxPartOfCredits = totalCredits * taxShare;
+  const premiumPartOfCredits = totalCredits - taxPartOfCredits;
+  const taxCreditOverflow = Math.max(0, taxPartOfCredits - taxBeforeCredits);
+  const premiumCreditOverflow = Math.max(0, premiumPartOfCredits - volksverzekeringen);
+  const incomeTaxDue = Math.max(0, taxBeforeCredits - taxPartOfCredits - premiumCreditOverflow);
+  const premiumsDue = Math.max(0, volksverzekeringen - premiumPartOfCredits - taxCreditOverflow);
 
   return {
     nlTaxableIncome,
@@ -161,6 +174,8 @@ export function calculateNLTax(
     arbeidskorting: ak,
     totalCredits,
     volksverzekeringen,
+    incomeTaxDue,
+    premiumsDue,
     netTaxNL,
     effectiveRateNL: inputs.grossSalary > 0 ? netTaxNL / inputs.grossSalary : 0,
   };

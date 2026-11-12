@@ -29,6 +29,9 @@ allowed scopes are listed in `release.config.json`, and `check` validates `[Unre
 
 ### Fixed
 
+- **Web:** Apply the algemene heffingskorting to Belgian residents who are insured in the Netherlands. The Dutch refund, code 1250 and the Belgian estimate were too low by that credit for wages below the phase-out end.
+- **Web:** Split the code 1250 amount into box IV O.1 and O.2 as in the FOD guideline: Dutch premiums come off before the workday fraction, and only the Dutch income tax is taken from the exempt part. The salary-split reference page states the same formula.
+- Correct the 2024 over-AOW algemene heffingskorting and arbeidskorting tables to the Belastingdienst figures.
 - **Web:** Show Belgian codes 1285 and 1437 outside the O.2 (Netherlands) group, under general Box IV entries and movable income, and show Dutch return amounts in whole euros.
 - Remove employer and place names from the interface text: the workday hint and filing checklist now speak of "your employer's" jaaropgave and workday statement, and say what to use when the employer provides no statement (calendar, badge or access records, travel receipts).
 
@@ -38,6 +41,7 @@ allowed scopes are listed in `release.config.json`, and `check` validates `[Unre
 
 ### Internal
 
+- Report `incomeTaxDue` and `premiumsDue` in the Dutch result (the credits are split into a tax part and a premium part in proportion to the first-bracket rates); `beIncome` is now the O.1 amount per the FOD guideline.
 - Rewrite the README around the supported profile, inputs, outputs and limits; document the tax model, known gaps and the income-year procedure in `docs/`; move finished migration records to `docs/archive/`.
 - Add a locale-audit check that fails on employer and place names in message files.
 - Rename the release workflow to `release.yml` and give it the shared job graph used by every app: `validate` → `draft`, with a read-only default token that only the draft job can write with.
