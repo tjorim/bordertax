@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { ChartColumnIcon, ChartPieIcon, HouseIcon } from "lucide-react";
+import { ChartColumnIcon, ChartPieIcon, ClipboardCheckIcon, HouseIcon } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { lazyView } from "@/lib/lazyView";
 import { calculate } from "@/tax";
@@ -8,6 +8,7 @@ import type { TaxInputs } from "@/tax/types";
 import * as m from "@/paraglide/messages.js";
 import { LazyBoundary } from "../LazyBoundary";
 import BEResult from "./BEResult";
+import FilingChecklist from "./FilingChecklist";
 import NLResult from "./NLResult";
 import SummaryResult from "./SummaryResult";
 
@@ -58,6 +59,10 @@ export default function ResultsTabs({ inputs, onResetInputs }: ResultsTabsProps)
         <TabsTrigger value="be" aria-label={m.tabs_be()}>
           🇧🇪 {m.tabs_be()}
         </TabsTrigger>
+        <TabsTrigger value="filing" aria-label={m.tabs_filing()}>
+          <ClipboardCheckIcon className="size-3" aria-hidden="true" />
+          {m.tabs_filing()}
+        </TabsTrigger>
         <TabsTrigger value="wfh" aria-label={m.tabs_wfh_ratio()} {...preloadOnIntent(wfhChartView)}>
           <HouseIcon className="size-3" aria-hidden="true" />
           {m.tabs_wfh_ratio()}
@@ -95,6 +100,9 @@ export default function ResultsTabs({ inputs, onResetInputs }: ResultsTabsProps)
         </TabsContent>
         <TabsContent value="be" className="bt-be-accent">
           <BEResult result={result.be} residentCountry={inputs.residentCountry} />
+        </TabsContent>
+        <TabsContent value="filing">
+          <FilingChecklist result={result} />
         </TabsContent>
         <TabsContent value="wfh">
           {requested.wfh && (

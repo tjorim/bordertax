@@ -1,11 +1,9 @@
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+import { useEffect, useState } from "react";
 import { Alert } from "@/components/ui/alert";
-import { ClipboardCheckIcon, TriangleAlertIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Field, FieldDescription, FieldLabel } from "@/components/ui/field";
+import { ClipboardIcon, TriangleAlertIcon } from "lucide-react";
 import {
   Table,
   TableHeader,
@@ -15,169 +13,409 @@ import {
   TableCell,
 } from "@/components/ui/table";
 
+import { MORTGAGE_QUALIFYING_MIN_NL_PERCENT } from "@/tax/constants";
 import type { TaxResult } from "@/tax/types";
 import * as m from "@/paraglide/messages.js";
-import { fmtExact as fmt } from "../format.js";
+import { fmt, fmtExact } from "../format.js";
 
 interface Props {
   result: TaxResult;
 }
 
+type EntryFormat = "whole" | "cents" | "answer";
+
+interface Row {
+  key: string;
+  field: string;
+  value: string;
+  format: EntryFormat;
+  source: string;
+  strong?: boolean;
+}
+
+interface Group {
+  key: string;
+  title?: string;
+  rows: Row[];
+}
+
+const formatLabel = (format: EntryFormat) =>
+  format === "whole"
+    ? m.filing_format_whole()
+    : format === "cents"
+      ? m.filing_format_cents()
+      : m.filing_format_answer();
+
+/** Share of worldwide income taxed in NL as a whole percent, rounded down like the mortgage test. */
+function nlTaxedPercent(result: TaxResult): number {
+  return result.mortgage?.nlTaxedPercent ?? Math.floor(result.nlFractionDutchMethod * 100 + 1e-9);
+}
+
+function buildNlRows(result: TaxResult, statementArbeidskorting: number | undefined): Row[] {
+  const { inputs, nl } = result;
+  const percent = nlTaxedPercent(result);
+  const ninetyPercentEstimate =
+    result.mortgage === null ||
+    result.mortgage.nlTaxedPercentIsUpperBound ||
+    inputs.incomeOutsideNL === undefined;
+  return [
+    {
+      key: "loon",
+      field: m.filing_nl_loon(),
+      value: fmt(inputs.grossSalary),
+      format: "whole",
+      source: m.filing_source_jaaropgave(),
+    },
+    {
+      key: "loonheffing",
+      field: m.filing_nl_loonheffing(),
+      value: fmt(inputs.withheldTaxNL),
+      format: "whole",
+      source: m.filing_source_jaaropgave(),
+    },
+    {
+      key: "arbeidskorting-statement",
+      field: m.filing_nl_arbeidskorting_statement(),
+      value:
+        statementArbeidskorting === undefined
+          ? m.filing_nl_arbeidskorting_statement_empty()
+          : fmt(statementArbeidskorting),
+      format: "whole",
+      source: m.filing_nl_arbeidskorting_statement_source(),
+    },
+    {
+      key: "arbeidskorting-calculated",
+      field: m.filing_nl_arbeidskorting_calculated(),
+      value: fmt(nl.arbeidskorting),
+      format: "whole",
+      source: m.filing_nl_arbeidskorting_calculated_source(),
+    },
+    {
+      key: "lives-in-be",
+      field: m.filing_nl_lives_in_be(),
+      value: m.filing_answer_yes(),
+      format: "answer",
+      source: m.filing_nl_lives_in_be_source(),
+    },
+    {
+      key: "insured",
+      field: m.filing_nl_insured(),
+      value: m.filing_answer_yes(),
+      format: "answer",
+      source: m.filing_nl_insured_source(),
+    },
+    {
+      key: "ninety-percent",
+      field: m.filing_nl_ninety_percent(),
+      value:
+        percent >= MORTGAGE_QUALIFYING_MIN_NL_PERCENT
+          ? m.filing_answer_yes()
+          : m.filing_answer_no(),
+      format: "answer",
+      source: ninetyPercentEstimate
+        ? m.filing_nl_ninety_percent_source_estimate({ percent })
+        : m.filing_nl_ninety_percent_source({ percent }),
+    },
+    {
+      key: "fully-taxed",
+      field: m.filing_nl_fully_taxed(),
+      value: m.filing_answer_no(),
+      format: "answer",
+      source: m.filing_source_workdays(),
+    },
+    {
+      key: "not-taxed",
+      field: m.nl_not_taxed_income(),
+      value: fmt(nl.deelNietInNLBelast),
+      format: "whole",
+      source: m.filing_source_calculated_workdays(),
+      strong: true,
+    },
+  ];
+}
+
+function buildBeGroups(result: TaxResult): Group[] {
+  const { inputs, be } = result;
+  if (!be) return [];
+  const groups: Group[] = [
+    {
+      key: "general",
+      title: m.filing_be_group_general(),
+      rows: [
+        {
+          key: "1250",
+          field: m.filing_be_1250(),
+          value: fmtExact(be.declaredIncome),
+          format: "cents",
+          source: m.filing_be_1250_source(),
+          strong: true,
+        },
+        {
+          key: "1257",
+          field: m.filing_be_1257(),
+          value: fmtExact(inputs.socialContributions),
+          format: "cents",
+          source: m.filing_source_health_insurer(),
+        },
+        {
+          key: "1285",
+          field: m.filing_be_1285(),
+          value: fmtExact(inputs.aanvullendPensioen),
+          format: "cents",
+          source: m.filing_source_pension(),
+        },
+      ],
+    },
+    {
+      key: "movable",
+      title: m.filing_be_group_movable(),
+      rows: [
+        {
+          key: "1437",
+          field: m.filing_be_1437(),
+          value: fmtExact(inputs.roerendeVoorheffing),
+          format: "cents",
+          source: m.filing_source_bank(),
+        },
+      ],
+    },
+  ];
+  if (inputs.year <= 2024) {
+    groups.push({
+      key: "reductions",
+      title: m.filing_be_group_reductions(),
+      rows: [
+        {
+          key: "3364",
+          field: m.filing_be_3364(),
+          value: fmtExact(inputs.dienstencheques),
+          format: "cents",
+          source: m.filing_be_3364_source(),
+        },
+      ],
+    });
+  }
+  groups.push({
+    key: "o2",
+    title: m.filing_be_o2_title(),
+    rows: [
+      {
+        key: "1250-nl",
+        field: m.filing_be_1250_nl(),
+        value: fmtExact(Math.max(0, be.declaredIncome - be.beIncome)),
+        format: "cents",
+        source: m.filing_be_1250_nl_source(),
+        strong: true,
+      },
+      {
+        key: "1257-nl",
+        field: m.filing_be_o2_1257(),
+        value: fmtExact(inputs.socialContributions),
+        format: "cents",
+        source: m.filing_source_health_insurer(),
+      },
+    ],
+  });
+  return groups;
+}
+
+/** Tab-separated text, ready to paste into a note or spreadsheet. */
+function toClipboardText(nlRows: Row[], beGroups: Group[], year: number): string {
+  const line = (row: Row) => `${row.field}\t${row.value}\t${formatLabel(row.format)}`;
+  return [
+    `${m.filing_title()} · ${year}`,
+    "",
+    m.filing_nl_title(),
+    ...nlRows.map(line),
+    ...(beGroups.length > 0
+      ? [
+          "",
+          m.filing_be_title(),
+          ...beGroups.flatMap((group) => [
+            ...(group.title ? [group.title] : []),
+            ...group.rows.map(line),
+          ]),
+        ]
+      : []),
+  ].join("\n");
+}
+
+function ChecklistHead() {
+  return (
+    <TableHeader className="bg-surface-3">
+      <TableRow>
+        <TableHead>{m.filing_field()}</TableHead>
+        <TableHead className="text-end">{m.filing_value()}</TableHead>
+        <TableHead>{m.filing_format()}</TableHead>
+        <TableHead>{m.filing_source()}</TableHead>
+      </TableRow>
+    </TableHeader>
+  );
+}
+
+function ChecklistRow({ row }: { row: Row }) {
+  return (
+    <TableRow>
+      <TableCell>{row.field}</TableCell>
+      <TableCell className={row.strong ? "text-end font-semibold" : "text-end"}>
+        {row.value}
+      </TableCell>
+      <TableCell>{formatLabel(row.format)}</TableCell>
+      <TableCell>{row.source}</TableCell>
+    </TableRow>
+  );
+}
+
 /** Turns the calculator's inputs and results into the entries needed in each return. */
 export default function FilingChecklist({ result }: Props) {
-  const { inputs, nl, be } = result;
+  const { inputs, be } = result;
+  const [statementValue, setStatementValue] = useState("");
+  const [copyStatus, setCopyStatus] = useState<"idle" | "success" | "error">("idle");
+
+  useEffect(() => {
+    if (copyStatus === "idle") return;
+    const timer = window.setTimeout(() => setCopyStatus("idle"), 3000);
+    return () => window.clearTimeout(timer);
+  }, [copyStatus]);
+
+  const parsed = statementValue === "" ? Number.NaN : Number(statementValue);
+  const statementArbeidskorting = Number.isFinite(parsed) ? Math.max(0, parsed) : undefined;
+  const nlRows = buildNlRows(result, statementArbeidskorting);
+  const beGroups = buildBeGroups(result);
+
+  async function copyValues() {
+    try {
+      await navigator.clipboard.writeText(toClipboardText(nlRows, beGroups, inputs.year));
+      setCopyStatus("success");
+    } catch {
+      setCopyStatus("error");
+    }
+  }
 
   return (
-    <Accordion className="mt-6">
-      <AccordionItem value="filing">
-        <AccordionTrigger>
-          <ClipboardCheckIcon aria-hidden="true" className="size-4 shrink-0 self-start mt-0.5" />
-          <span className="flex flex-col gap-0.5">
-            <span>{m.filing_title()}</span>
-            <span className="text-sm font-normal tracking-normal text-text-muted">
-              {m.filing_summary()}
-            </span>
-          </span>
-        </AccordionTrigger>
-        <AccordionContent>
-          <p className="text-text-muted text-sm mb-4">{m.filing_intro()}</p>
+    <section aria-labelledby="filing-heading" className="flex flex-col gap-1">
+      <h5 id="filing-heading" className="mb-1">
+        {m.filing_title()}
+      </h5>
+      <p className="text-text-muted text-sm mb-4">{m.filing_intro()}</p>
 
-          <Alert variant="warning" role="note" className="text-sm py-2">
-            <TriangleAlertIcon
-              aria-hidden="true"
-              className="inline size-4 shrink-0 align-text-bottom me-2"
-            />
-            {m.filing_estimate_notice()}
+      <Alert variant="warning" role="note" className="text-sm py-2">
+        <TriangleAlertIcon
+          aria-hidden="true"
+          className="inline size-4 shrink-0 align-text-bottom me-2"
+        />
+        {m.filing_estimate_notice()}
+      </Alert>
+
+      <div className="mb-4">
+        <Button variant="outline-primary" size="sm" onClick={() => void copyValues()}>
+          <ClipboardIcon
+            aria-hidden="true"
+            className="inline size-4 shrink-0 align-text-bottom me-1"
+          />
+          {m.filing_copy()}
+        </Button>
+        {copyStatus === "success" && (
+          <Alert variant="success" className="mt-4 mb-0 py-2">
+            {m.filing_copy_success()}
           </Alert>
+        )}
+        {copyStatus === "error" && (
+          <Alert variant="warning" className="mt-4 mb-0 py-2">
+            {m.filing_copy_error()}
+          </Alert>
+        )}
+      </div>
 
-          <h6 className="mb-1">{m.filing_documents_title()}</h6>
-          <ul className="text-sm mb-6">
-            <li>{m.filing_document_jaaropgave()}</li>
-            <li>{m.filing_document_workdays()}</li>
-            <li>{m.filing_document_deductions()}</li>
-          </ul>
+      <h6 className="mb-1">{m.filing_documents_title()}</h6>
+      <ul className="text-sm mb-6">
+        <li>{m.filing_document_jaaropgave()}</li>
+        <li>{m.filing_document_workdays()}</li>
+        <li>{m.filing_document_deductions()}</li>
+      </ul>
 
-          <h6 className="mb-1">🇳🇱 {m.filing_nl_title()}</h6>
+      <h6 className="mb-1">🇳🇱 {m.filing_nl_title()}</h6>
+      <p className="text-sm mb-2">
+        {m.filing_nl_intro()}{" "}
+        <a href="https://mijn.belastingdienst.nl/" target="_blank" rel="noreferrer">
+          Mijn Belastingdienst
+        </a>
+        .
+      </p>
+      <Field className="mb-3">
+        <FieldLabel htmlFor="filing-arbeidskorting">
+          {m.filing_nl_arbeidskorting_input()}
+        </FieldLabel>
+        <Input
+          id="filing-arbeidskorting"
+          type="number"
+          min={0}
+          step={1}
+          inputMode="decimal"
+          value={statementValue}
+          onChange={(event) => setStatementValue(event.target.value)}
+          aria-describedby="filing-arbeidskorting-hint"
+        />
+        <FieldDescription id="filing-arbeidskorting-hint">
+          {m.filing_nl_arbeidskorting_input_hint()}
+        </FieldDescription>
+      </Field>
+      <Table bordered className="text-sm mb-2">
+        <ChecklistHead />
+        <TableBody>
+          {nlRows.map((row) => (
+            <ChecklistRow key={row.key} row={row} />
+          ))}
+        </TableBody>
+      </Table>
+      <p className="text-text-muted text-sm mb-6">{m.filing_nl_result_notice()}</p>
+
+      {be && (
+        <>
+          <h6 className="mb-1">🇧🇪 {m.filing_be_title()}</h6>
           <p className="text-sm mb-2">
-            {m.filing_nl_intro()}{" "}
-            <a href="https://mijn.belastingdienst.nl/" target="_blank" rel="noreferrer">
-              Mijn Belastingdienst
+            {m.filing_be_intro()}{" "}
+            <a
+              href="https://financien.belgium.be/nl/E-services/Tax-on-web?language=nl"
+              target="_blank"
+              rel="noreferrer"
+            >
+              MyMinfin / Tax-on-web
             </a>
             .
           </p>
           <Table bordered className="text-sm mb-2">
-            <TableHeader className="bg-surface-3">
-              <TableRow>
-                <TableHead>{m.filing_field()}</TableHead>
-                <TableHead className="text-end">{m.filing_value()}</TableHead>
-                <TableHead>{m.filing_source()}</TableHead>
-              </TableRow>
-            </TableHeader>
+            <ChecklistHead />
             <TableBody>
-              <TableRow>
-                <TableCell>{m.filing_nl_loon()}</TableCell>
-                <TableCell className="text-end">{fmt(inputs.grossSalary)}</TableCell>
-                <TableCell>{m.filing_source_jaaropgave()}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>{m.filing_nl_loonheffing()}</TableCell>
-                <TableCell className="text-end">{fmt(inputs.withheldTaxNL)}</TableCell>
-                <TableCell>{m.filing_source_jaaropgave()}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>{m.filing_nl_arbeidskorting()}</TableCell>
-                <TableCell className="text-end">{m.filing_nl_arbeidskorting_value()}</TableCell>
-                <TableCell>{m.filing_nl_arbeidskorting_source()}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>{m.filing_nl_fully_taxed()}</TableCell>
-                <TableCell className="text-end">{m.filing_nl_fully_taxed_value()}</TableCell>
-                <TableCell>{m.filing_source_workdays()}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>{m.nl_not_taxed_income()}</TableCell>
-                <TableCell className="text-end font-semibold">
-                  {fmt(nl.deelNietInNLBelast)}
-                </TableCell>
-                <TableCell>{m.filing_source_calculated_workdays()}</TableCell>
-              </TableRow>
+              {beGroups.map((group) => (
+                <GroupRows key={group.key} group={group} />
+              ))}
             </TableBody>
           </Table>
-          <p className="text-text-muted text-sm mb-6">{m.filing_nl_result_notice()}</p>
+          <p className="text-text-muted text-sm mb-0">{m.filing_be_result_notice()}</p>
+        </>
+      )}
+    </section>
+  );
+}
 
-          {be && (
-            <>
-              <h6 className="mb-1">🇧🇪 {m.filing_be_title()}</h6>
-              <p className="text-sm mb-2">
-                {m.filing_be_intro()}{" "}
-                <a
-                  href="https://financien.belgium.be/nl/E-services/Tax-on-web?language=nl"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  MyMinfin / Tax-on-web
-                </a>
-                .
-              </p>
-              <Table bordered className="text-sm mb-2">
-                <TableHeader className="bg-surface-3">
-                  <TableRow>
-                    <TableHead>{m.filing_field()}</TableHead>
-                    <TableHead className="text-end">{m.filing_value()}</TableHead>
-                    <TableHead>{m.filing_source()}</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  <TableRow>
-                    <TableCell>{m.filing_be_1250()}</TableCell>
-                    <TableCell className="text-end font-semibold">
-                      {fmt(be.declaredIncome)}
-                    </TableCell>
-                    <TableCell>{m.filing_be_1250_source()}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>{m.filing_be_1257()}</TableCell>
-                    <TableCell className="text-end">{fmt(inputs.socialContributions)}</TableCell>
-                    <TableCell>{m.filing_source_health_insurer()}</TableCell>
-                  </TableRow>
-                  <TableRow variant="secondary" className="">
-                    <TableHead
-                      colSpan={3}
-                      scope="colgroup"
-                      className="text-sm leading-table normal-case tracking-normal text-text px-2 py-table-mobile table:px-3 table:py-table-cell"
-                    >
-                      {m.filing_be_o2_title()}
-                    </TableHead>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>{m.filing_be_1250_nl()}</TableCell>
-                    <TableCell className="text-end font-semibold">
-                      {fmt(Math.max(0, be.declaredIncome - be.beIncome))}
-                    </TableCell>
-                    <TableCell>{m.filing_be_1250_nl_source()}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>{m.filing_be_o2_1257()}</TableCell>
-                    <TableCell className="text-end">{fmt(inputs.socialContributions)}</TableCell>
-                    <TableCell>{m.filing_source_health_insurer()}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>{m.filing_be_1285()}</TableCell>
-                    <TableCell className="text-end">{fmt(inputs.aanvullendPensioen)}</TableCell>
-                    <TableCell>{m.filing_source_pension()}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>{m.filing_be_1437()}</TableCell>
-                    <TableCell className="text-end">{fmt(inputs.roerendeVoorheffing)}</TableCell>
-                    <TableCell>{m.filing_source_bank()}</TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-              <p className="text-text-muted text-sm mb-0">{m.filing_be_result_notice()}</p>
-            </>
-          )}
-        </AccordionContent>
-      </AccordionItem>
-    </Accordion>
+function GroupRows({ group }: { group: Group }) {
+  return (
+    <>
+      {group.title && (
+        <TableRow variant="secondary" className="">
+          <TableHead
+            colSpan={4}
+            scope="colgroup"
+            className="text-sm leading-table normal-case tracking-normal text-text px-2 py-table-mobile table:px-3 table:py-table-cell"
+          >
+            {group.title}
+          </TableHead>
+        </TableRow>
+      )}
+      {group.rows.map((row) => (
+        <ChecklistRow key={row.key} row={row} />
+      ))}
+    </>
   );
 }
