@@ -250,4 +250,13 @@ Existing ceilings are preserved; previously unguarded measurements use about
 5% headroom. The JSON config is the source of truth for limits. CI runs
 `pnpm bundle:test && pnpm bundle:check` after building.
 
+### Budget raise for income year 2026 (2026-11-12)
+
+The initial bundle measured 688.31 kB raw / 211.75 kB gzip on `main`, already at the previous
+ceiling (689 kB / 213 kB) after the filing tab, input export/import, result bar, credit split and
+engine cleanup landed. Enabling income year 2026 adds the year module (about 3.9 kB raw, mostly
+tables and their source notes) and measures 692.17 kB raw / 212.79 kB gzip. The ceilings were reset
+to about 5% above this measurement, following the shared contract: entry 727 kB / 224 kB, total
+1,062 kB / 330 kB. The increase is application code and data, not a dependency or runtime change.
+
 See [Redact compatibility checks](redact-compatibility.md) for repeatable runtime/browser commands, recorded results and unresolved coverage.

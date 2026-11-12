@@ -24,6 +24,7 @@ describe("eigenwoningforfait", () => {
     [2023, [0, 25, 100, 187.5, 1050], 4200],
     [2024, [0, 25, 100, 187.5, 1050], 4585],
     [2025, [0, 25, 100, 187.5, 1050], 4655],
+    [2026, [0, 25, 100, 187.5, 1050], 4725],
   ] as const)("verifies every band in %s", (year, amounts, highBase) => {
     const values = [12500, 25000, 50000, 75000, 300000];
     values.forEach((mortgageHomeValue, i) =>

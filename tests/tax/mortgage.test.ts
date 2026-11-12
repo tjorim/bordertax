@@ -189,6 +189,7 @@ describe("inputs and params", () => {
         2023: 0.3693,
         2024: 0.3697,
         2025: 0.3748,
+        2026: 0.3756,
       };
       expect(cap).toBe(verifiedCaps[year]);
     }

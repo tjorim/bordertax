@@ -905,6 +905,157 @@
         "gewestelijkeRate": 0.33257,
         "serviceVoucherReductionRate": 0
       }
+    },
+    "2026": {
+      "nl": {
+        "mortgageDeductionRateCap": 0.3756,
+        "under": {
+          "incomeTaxBrackets": [
+            {
+              "from": 0,
+              "to": 38883,
+              "rate": 0.081
+            },
+            {
+              "from": 38883,
+              "to": 78426,
+              "rate": 0.3756
+            },
+            {
+              "from": 78426,
+              "to": "Infinity",
+              "rate": 0.495
+            }
+          ],
+          "socialPremiumRate": 0.2765,
+          "socialPremiumMax": 38883,
+          "ahkMax": 3115,
+          "ahkPhaseOutStart": 29736,
+          "ahkPhaseOutRate": 0.06398,
+          "ahkPhaseOutEnd": 78426,
+          "akStages": [
+            {
+              "from": 0,
+              "to": 11965,
+              "baseAmount": 0,
+              "rate": 0.08324
+            },
+            {
+              "from": 11965,
+              "to": 25845,
+              "baseAmount": 996,
+              "rate": 0.31009
+            },
+            {
+              "from": 25845,
+              "to": 45592,
+              "baseAmount": 5300,
+              "rate": 0.0195
+            },
+            {
+              "from": 45592,
+              "to": 132920,
+              "baseAmount": 5685,
+              "rate": -0.0651
+            },
+            {
+              "from": 132920,
+              "to": "Infinity",
+              "baseAmount": 0,
+              "rate": 0
+            }
+          ]
+        },
+        "over": {
+          "incomeTaxBrackets": [
+            {
+              "from": 0,
+              "to": 38883,
+              "rate": 0.081
+            },
+            {
+              "from": 38883,
+              "to": 78426,
+              "rate": 0.3756
+            },
+            {
+              "from": 78426,
+              "to": "Infinity",
+              "rate": 0.495
+            }
+          ],
+          "socialPremiumRate": 0.0975,
+          "socialPremiumMax": 38883,
+          "ahkMax": 1556,
+          "ahkPhaseOutStart": 29736,
+          "ahkPhaseOutRate": 0.03195,
+          "ahkPhaseOutEnd": 78426,
+          "akStages": [
+            {
+              "from": 0,
+              "to": 11965,
+              "baseAmount": 0,
+              "rate": 0.04156
+            },
+            {
+              "from": 11965,
+              "to": 25845,
+              "baseAmount": 498,
+              "rate": 0.15483
+            },
+            {
+              "from": 25845,
+              "to": 45592,
+              "baseAmount": 2647,
+              "rate": 0.00974
+            },
+            {
+              "from": 45592,
+              "to": 132920,
+              "baseAmount": 2840,
+              "rate": -0.0325
+            },
+            {
+              "from": 132920,
+              "to": "Infinity",
+              "baseAmount": 0,
+              "rate": 0
+            }
+          ]
+        }
+      },
+      "be": {
+        "brackets": [
+          {
+            "from": 0,
+            "to": 16720,
+            "rate": 0.25
+          },
+          {
+            "from": 16720,
+            "to": 29510,
+            "rate": 0.4
+          },
+          {
+            "from": 29510,
+            "to": 51070,
+            "rate": 0.45
+          },
+          {
+            "from": 51070,
+            "to": "Infinity",
+            "rate": 0.5
+          }
+        ],
+        "baseBelastingvrijeSom": 11550,
+        "childExtraAmounts": [0, 2030, 5230, 11720, 18970],
+        "extraPerChildAbove4": 7240,
+        "forfaitRate": 0.3,
+        "forfaitMax": 6070,
+        "gereduceerdRate": 0.75043,
+        "gewestelijkeRate": 0.33257,
+        "serviceVoucherReductionRate": 0
+      }
     }
   },
   "eigenwoningforfait": {
@@ -942,6 +1093,12 @@
       "rates": [0, 0.001, 0.002, 0.0025, 0.0035],
       "threshold": 1330000,
       "base": 4655,
+      "excessRate": 0.0235
+    },
+    "2026": {
+      "rates": [0, 0.001, 0.002, 0.0025, 0.0035],
+      "threshold": 1350000,
+      "base": 4725,
       "excessRate": 0.0235
     }
   }

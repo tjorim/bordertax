@@ -65,7 +65,7 @@ describe("strict tax input boundary", () => {
   });
 
   it.each([
-    ["year", 2026],
+    ["year", 2027],
     ["residentCountry", "NL"],
     ["civilStatus", "married"],
     ["belgianRegion", "walloon"],

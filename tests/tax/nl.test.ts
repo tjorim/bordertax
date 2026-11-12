@@ -137,9 +137,8 @@ describe("calculateNLTax", () => {
     );
   });
 
-  // TODO: Re-enable when 2026 support is re-integrated
-  it.skip("works for tax year 2026", () => {
-    const result = calculateNLTax({ ...base, year: 2026 as unknown as TaxInputs["year"] });
+  it("works for tax year 2026", () => {
+    const result = calculateNLTax({ ...base, year: 2026 });
     expect(result.netTaxNL).toBeGreaterThan(0);
     expect(result.brackets.length).toBeGreaterThan(0);
   });
