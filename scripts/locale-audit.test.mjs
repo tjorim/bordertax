@@ -1,5 +1,5 @@
 import { expect, it } from "vitest";
-import { sourceCandidates, frozenMessageCalls } from "./locale-audit.mjs";
+import { sourceCandidates, frozenMessageCalls, localTermErrors } from "./locale-audit.mjs";
 
 it("finds JSX copy, single-word labels, validators, enum prose and template fragments", () => {
   const source = `const labels = { wait: "Even wachten" }; const validate = () => "Geef een naam";
@@ -48,4 +48,14 @@ it("rejects module-level translations while allowing deferred functions and gett
       "const labels = { get title() { return m.settings(); } }; const notice = () => m.settings();",
     ),
   ).toEqual([]);
+});
+
+it("flags employer and place names in message values", () => {
+  expect(
+    localTermErrors({
+      a: "Use the ASML statement",
+      b: "inwoner Hamont",
+      c: "Your employer's statement",
+    }),
+  ).toHaveLength(2);
 });
