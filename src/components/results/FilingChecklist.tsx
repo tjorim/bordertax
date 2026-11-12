@@ -223,7 +223,7 @@ function buildBeGroups(result: TaxResult): Group[] {
 function toClipboardText(nlRows: Row[], beGroups: Group[], year: number): string {
   const line = (row: Row) => `${row.field}\t${row.value}\t${formatLabel(row.format)}`;
   return [
-    `Bordertax · ${year}`,
+    `${m.filing_title()} · ${year}`,
     "",
     m.filing_nl_title(),
     ...nlRows.map(line),
