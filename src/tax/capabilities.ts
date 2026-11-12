@@ -105,7 +105,7 @@ export function getCapabilities() {
       },
     },
     limitations: [
-      "Full-year occupied main home only; positive home income and Wet Hillen not modelled",
+      "Full-year occupied main home only; a positive foreign-home balance is not Dutch income for a qualifying non-resident (zero deduction); its small premium and algemene heffingskorting effect is not modelled",
       "Single person only",
       "Flemish region only",
       "NL-resident unsupported",
