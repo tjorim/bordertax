@@ -41,6 +41,21 @@ The CLI writes `import { cn } from "cn"`; every file here imports `cn` from
 | Compact selection    | –                                 | –           | **No gap**                                       | –                                                     | Selection is a native select, one checkbox and tabs. No segmented/toggle-group need.                                                                                                                                                                                                                                                           |
 | Distribution segment | `ui/distribution-segment.tsx`     | custom      | **Keep**                                         | workday bar, summary, year comparison                 | Chart-specific SVG whose width is an attribute (no inline styles); registry `progress` is a single-value bar.                                                                                                                                                                                                                                  |
 
+## Results reach and input length (issue #444)
+
+- **Field hints** (`fields/FieldHint.tsx`, composition): `FieldDescription` clamped with
+  `line-clamp-2` plus a `Button variant="link" size="xs"` toggle. Registry `popover`/`tooltip`
+  were rejected because a closed popover removes the text from the DOM, which would break
+  `aria-describedby`; the full hint stays readable by assistive technology.
+- **Result bar** (`ResultBar.tsx`, custom): a sticky summary strip. The registry has no
+  equivalent (`card` is a content container, not a pinned bar); it uses a semantic `section`,
+  a `dl` and `Button variant="ghost"` actions.
+- **Filing rows** (`FilingChecklist` `ChecklistRow`, composition): the existing `Table` restyled with
+  `max-table:` utilities into stacked cards (header kept as `sr-only`) rather than a second card
+  list, so one DOM serves both layouts.
+- **Tabs** (`ui/tabs.tsx`): `TabsList` wraps (`flex-wrap`) instead of scrolling horizontally, so
+  every tab stays visible without a scroll affordance. Still custom, as recorded above.
+
 ## Field composition (issue #305)
 
 `ui/field.tsx` is now the registry `field` structure with Bordertax tokens:

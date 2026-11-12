@@ -8,10 +8,7 @@ export function TabsList({ className, ...props }: TabsPrimitive.List.Props) {
   return (
     <TabsPrimitive.List
       activateOnFocus
-      className={cn(
-        "flex flex-nowrap gap-1 overflow-x-auto border-b border-border-soft",
-        className,
-      )}
+      className={cn("flex flex-wrap gap-1 border-b border-border-soft", className)}
       {...props}
     />
   );

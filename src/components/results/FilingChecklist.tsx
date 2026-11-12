@@ -13,6 +13,7 @@ import {
   TableCell,
 } from "@/components/ui/table";
 
+import { cn } from "@/lib/utils";
 import { MORTGAGE_QUALIFYING_MIN_NL_PERCENT } from "@/tax/constants";
 import type { TaxResult } from "@/tax/types";
 import * as m from "@/paraglide/messages.js";
@@ -242,7 +243,7 @@ function toClipboardText(nlRows: Row[], beGroups: Group[], year: number): string
 
 function ChecklistHead() {
   return (
-    <TableHeader className="bg-surface-3">
+    <TableHeader className="bg-surface-3 max-table:sr-only">
       <TableRow>
         <TableHead>{m.filing_field()}</TableHead>
         <TableHead className="text-end">{m.filing_value()}</TableHead>
@@ -255,13 +256,15 @@ function ChecklistHead() {
 
 function ChecklistRow({ row }: { row: Row }) {
   return (
-    <TableRow>
-      <TableCell>{row.field}</TableCell>
-      <TableCell className={row.strong ? "text-end font-semibold" : "text-end"}>
+    <TableRow className="max-table:mb-2 max-table:flex max-table:flex-col max-table:rounded-sm max-table:border max-table:border-border max-table:bg-surface-2">
+      <TableCell className="max-table:pb-0 max-table:font-medium">{row.field}</TableCell>
+      <TableCell className={cn("text-end max-table:py-0", row.strong && "font-semibold")}>
         {row.value}
       </TableCell>
-      <TableCell>{formatLabel(row.format)}</TableCell>
-      <TableCell>{row.source}</TableCell>
+      <TableCell className="max-table:py-0 max-table:text-text-muted">
+        {formatLabel(row.format)}
+      </TableCell>
+      <TableCell className="max-table:pt-0 max-table:text-text-muted">{row.source}</TableCell>
     </TableRow>
   );
 }
@@ -294,7 +297,7 @@ export default function FilingChecklist({ result }: Props) {
 
   return (
     <section aria-labelledby="filing-heading" className="flex flex-col gap-1">
-      <h5 id="filing-heading" className="mb-1">
+      <h5 id="filing-heading" tabIndex={-1} className="mb-1 scroll-mt-32">
         {m.filing_title()}
       </h5>
       <p className="text-text-muted text-sm mb-4">{m.filing_intro()}</p>
@@ -360,9 +363,9 @@ export default function FilingChecklist({ result }: Props) {
           {m.filing_nl_arbeidskorting_input_hint()}
         </FieldDescription>
       </Field>
-      <Table bordered className="text-sm mb-2">
+      <Table bordered className="text-sm mb-2 max-table:block">
         <ChecklistHead />
-        <TableBody>
+        <TableBody className="max-table:block">
           {nlRows.map((row) => (
             <ChecklistRow key={row.key} row={row} />
           ))}
@@ -384,9 +387,9 @@ export default function FilingChecklist({ result }: Props) {
             </a>
             .
           </p>
-          <Table bordered className="text-sm mb-2">
+          <Table bordered className="text-sm mb-2 max-table:block">
             <ChecklistHead />
-            <TableBody>
+            <TableBody className="max-table:block">
               {beGroups.map((group) => (
                 <GroupRows key={group.key} group={group} />
               ))}
@@ -403,11 +406,11 @@ function GroupRows({ group }: { group: Group }) {
   return (
     <>
       {group.title && (
-        <TableRow variant="secondary" className="">
+        <TableRow variant="secondary" className="max-table:block">
           <TableHead
             colSpan={4}
             scope="colgroup"
-            className="text-sm leading-table normal-case tracking-normal text-text px-2 py-table-mobile table:px-3 table:py-table-cell"
+            className="text-sm leading-table normal-case tracking-normal text-text px-2 py-table-mobile max-table:block table:px-3 table:py-table-cell"
           >
             {group.title}
           </TableHead>

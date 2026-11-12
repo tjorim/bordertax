@@ -31,6 +31,7 @@ import {
 } from "./reference/components.js";
 import { AppNavbar } from "../components/AppNavbar";
 import { PageHero } from "../components/PageHero";
+import { useDocumentTitle } from "../lib/useDocumentTitle";
 import { PageFooter } from "../components/PageFooter";
 
 function Formula({ children }: { children: React.ReactNode }) {
@@ -47,6 +48,7 @@ function Formula({ children }: { children: React.ReactNode }) {
 // ── Main page ────────────────────────────────────────────────────
 
 export default function SalarySplitReference() {
+  useDocumentTitle(`${m.ref_ss_hero_title()} · ${m.document_title_suffix()}`);
   return (
     <>
       <AppNavbar>

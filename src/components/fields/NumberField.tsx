@@ -1,6 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { Field, FieldDescription, FieldError, FieldLabel } from "@/components/ui/field";
 import type { ReactNode } from "react";
+import { FieldHint } from "./FieldHint";
 
 export function fieldError(errors: unknown[] | undefined): string | undefined {
   if (!errors?.length) return undefined;
@@ -66,7 +67,11 @@ export function NumberField({
         aria-invalid={!!error}
         aria-describedby={describedBy}
       />
-      {hint && hintId && <FieldDescription id={hintId}>{hint}</FieldDescription>}
+      {hint && hintId && typeof hint === "string" ? (
+        <FieldHint id={hintId}>{hint}</FieldHint>
+      ) : (
+        hint && hintId && <FieldDescription id={hintId}>{hint}</FieldDescription>
+      )}
       {error && <FieldError id={errorId}>{error}</FieldError>}
     </Field>
   );

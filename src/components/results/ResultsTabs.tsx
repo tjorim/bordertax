@@ -1,10 +1,9 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { ChartColumnIcon, ChartPieIcon, ClipboardCheckIcon, HouseIcon } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { lazyView } from "@/lib/lazyView";
-import { calculate } from "@/tax";
 import { isThirtyPercentRulingSupportedResident } from "@/tax/constants";
-import type { TaxInputs } from "@/tax/types";
+import type { TaxInputs, TaxResult } from "@/tax/types";
 import * as m from "@/paraglide/messages.js";
 import { LazyBoundary } from "../LazyBoundary";
 import BEResult from "./BEResult";
@@ -27,14 +26,21 @@ const preloadOnIntent = (view: { preload: () => void }) => ({
   onFocus: view.preload,
 });
 
-interface ResultsTabsProps {
+export interface ResultsTabsProps {
   inputs: TaxInputs;
+  result: TaxResult;
+  tab: string | number | null;
+  onTabChange: (tab: string | number | null) => void;
   onResetInputs: () => void;
 }
 
-export default function ResultsTabs({ inputs, onResetInputs }: ResultsTabsProps) {
-  const result = useMemo(() => calculate(inputs), [inputs]);
-  const [tab, setTab] = useState<string | number | null>("summary");
+export default function ResultsTabs({
+  inputs,
+  result,
+  tab,
+  onTabChange,
+  onResetInputs,
+}: ResultsTabsProps) {
   // These panels load on first selection; later they stay mounted like the other panels.
   const [requested, setRequested] = useState({ years: false, wfh: false, compare: false });
 
@@ -42,7 +48,7 @@ export default function ResultsTabs({ inputs, onResetInputs }: ResultsTabsProps)
     <Tabs
       value={tab}
       onValueChange={(next) => {
-        setTab(next);
+        onTabChange(next);
         if (next === "years" || next === "wfh" || next === "compare") {
           setRequested((prev) => ({ ...prev, [next]: true }));
         }
