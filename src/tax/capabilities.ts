@@ -154,6 +154,8 @@ export function getCapabilities() {
       "30% ruling unsupported for Belgian residents",
       "Simplified estimate, not tax advice",
       "Special social security contribution (BBSZ) and Belgian home benefits are not modelled",
+      "The employee share of a Dutch pension premium is not added back to code 1250; supplementaryPension only drives the 30% federal reduction (code 1285). Check the treatment with FOD Financiën or a tax adviser",
+      "An untaxed commuting allowance (codes 1254/1255), a company car (Dutch versus Belgian addition) and gross wage exchanged for tax-free benefits are not modelled",
     ],
   };
 }

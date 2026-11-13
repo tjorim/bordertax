@@ -434,6 +434,13 @@ export default function FilingChecklist({ result }: Props) {
               ))}
             </TableBody>
           </Table>
+          <p className="text-sm font-medium mb-1">{m.filing_be_not_modelled_title()}</p>
+          <ul className="text-text-muted text-sm mb-2">
+            <li>{m.filing_be_not_modelled_pension()}</li>
+            <li>{m.filing_be_not_modelled_commuting()}</li>
+            <li>{m.filing_be_not_modelled_car()}</li>
+            <li>{m.filing_be_not_modelled_exchanged_wage()}</li>
+          </ul>
           <p className="text-text-muted text-sm mb-0">{m.filing_be_result_notice()}</p>
           {sourcing.applies && <SourcingComparisonSection sourcing={sourcing} />}
         </>
