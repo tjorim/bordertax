@@ -55,6 +55,8 @@ export const StrictTaxInputSchema = z
     sickDaysOutsideNL: fields.sickDaysOutsideNL.nonnegative(),
     healthInsurancePremium: fields.healthInsurancePremium.nonnegative(),
     supplementaryPension: fields.supplementaryPension.nonnegative(),
+    exchangedGrossWage: fields.exchangedGrossWage.nonnegative().default(0),
+    commutingAllowance: fields.commutingAllowance.nonnegative().default(0),
     serviceVouchers: fields.serviceVouchers.nonnegative(),
     reclaimableWithholdingTax: fields.reclaimableWithholdingTax.nonnegative(),
     assessmentIncomeTaxDue: fields.assessmentIncomeTaxDue.nonnegative().optional(),

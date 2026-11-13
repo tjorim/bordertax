@@ -53,6 +53,9 @@ export function defineYear<const Y extends number>(input: YearInput<Y>): YearMod
         gewestelijkeRate: be.gewestelijkeRate ?? BE_GEWESTELIJKE_RATE,
         serviceVoucherReductionRate:
           be.serviceVoucherReductionRate ?? BE_SERVICE_VOUCHER_REDUCTION_RATE,
+        ...(be.commutingExemptionMax === undefined
+          ? {}
+          : { commutingExemptionMax: be.commutingExemptionMax }),
       },
     },
     home: {

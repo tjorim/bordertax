@@ -47,6 +47,8 @@ export const STRICT_INPUT_DESCRIPTIONS = {
   sickDaysOutsideNL: `${DOCUMENT.workdayRecord}: sick days on days scheduled to be worked in Belgium or a third country. Dutch method: days outside NL, so part of deel niet in NL belast. Belgian method: left out of both counts.`,
   healthInsurancePremium: `${DOCUMENT.healthInsurer}: EUR per year, net Dutch basic health-insurance premium (${code("healthInsurancePremium")}).`,
   supplementaryPension: `${DOCUMENT.pensionOrPayslip}: EUR per year, personal supplementary pension contributions (${code("supplementaryPension")}).`,
+  exchangedGrossWage: `${DOCUMENT.pensionOrPayslip}: EUR per year, gross wage exchanged for tax-free benefits (commuting, WKR, union fee, cafeteria plan). Added to the Belgian wage base (code 1250); optional, default 0.`,
+  commutingAllowance: `${DOCUMENT.pensionOrPayslip}: EUR per year, untaxed employer allowance for commuting by own car, paid for days worked in the Netherlands (${code("commutingAllowance")}). Optional, default 0; the exemption (code 1255) is derived.`,
   serviceVouchers: `${DOCUMENT.serviceVoucherStatement}: EUR per year paid for service vouchers (${code("serviceVouchers")}); reduces tax for income years up to 2024 only.`,
   reclaimableWithholdingTax: `${DOCUMENT.bank}: EUR per year, reclaimable Belgian withholding tax on eligible dividends (${code("reclaimableWithholdingTax")}). Not the Dutch wage tax.`,
   assessmentIncomeTaxDue: `${DOCUMENT.dutchAssessment}: EUR per year, income tax due after the heffingskortingen. Give together with assessmentPremiumsDue to replace the estimate in the Belgian calculation (code 1250, O.1/O.2), total tax and net income.`,

@@ -903,7 +903,8 @@
         "forfaitMax": 5930,
         "gereduceerdRate": 0.75043,
         "gewestelijkeRate": 0.33257,
-        "serviceVoucherReductionRate": 0
+        "serviceVoucherReductionRate": 0,
+        "commutingExemptionMax": 490
       }
     },
     "2026": {
@@ -1054,7 +1055,8 @@
         "forfaitMax": 6070,
         "gereduceerdRate": 0.75043,
         "gewestelijkeRate": 0.33257,
-        "serviceVoucherReductionRate": 0
+        "serviceVoucherReductionRate": 0,
+        "commutingExemptionMax": 500
       }
     }
   },

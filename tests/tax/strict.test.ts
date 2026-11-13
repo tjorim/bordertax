@@ -6,6 +6,9 @@ import { getMaxDependentChildren, parseStrictTaxInputs, StrictTaxInputSchema } f
 
 const assessmentFields = ["assessmentIncomeTaxDue", "assessmentPremiumsDue"];
 
+/** Optional document figures that default to 0 when left out. */
+const zeroDefaultFields = ["exchangedGrossWage", "commutingAllowance"];
+
 const singleValueFields = [
   "residentCountry",
   "civilStatus",
@@ -48,12 +51,24 @@ describe("strict tax input boundary", () => {
       (key) =>
         !mortgageFields.includes(key) &&
         !assessmentFields.includes(key) &&
+        !zeroDefaultFields.includes(key) &&
         !singleValueFields.includes(key),
     )) {
       const input = { ...DEFAULT_INPUTS } as Record<string, unknown>;
       delete input[field];
       expect(() => parseStrictTaxInputs(input)).toThrow(field);
     }
+  });
+
+  it("defaults the optional wage-base figures to 0 and rejects negative amounts", () => {
+    const input = { ...DEFAULT_INPUTS } as Record<string, unknown>;
+    for (const field of zeroDefaultFields) delete input[field];
+    const parsed = parseStrictTaxInputs(input);
+    expect(parsed.exchangedGrossWage).toBe(0);
+    expect(parsed.commutingAllowance).toBe(0);
+    expect(() => parseStrictTaxInputs({ ...input, commutingAllowance: -1 })).toThrow(
+      "commutingAllowance",
+    );
   });
 
   it("defaults the fields that have a single legal value and still rejects other values", () => {

@@ -139,6 +139,8 @@ Example `calculate_tax` arguments, grouped by source document:
 
   "healthInsurancePremium": 0,
   "supplementaryPension": 0,
+  "exchangedGrossWage": 0,
+  "commutingAllowance": 0,
   "serviceVouchers": 0,
   "reclaimableWithholdingTax": 0
 }
@@ -150,7 +152,7 @@ Example `calculate_tax` arguments, grouped by source document:
 | Annual tax statement (jaaropgave)     | `annualStatements[]`: `taxableWage` (Loon), `wageTaxWithheld` (loonheffing); 1–10 statements                                                     |
 | Workday record or workday statement   | `daysWorkedNL`, `daysWorkedBE`, `daysWorkedOther`, `sickDaysNL`, `sickDaysOutsideNL`                                                             |
 | Health insurer's annual statement     | `healthInsurancePremium` (Belgian code 1257)                                                                                                     |
-| December payslip or pension statement | `supplementaryPension` (code 1285)                                                                                                               |
+| December payslip or pension statement | `supplementaryPension` (code 1285); optional `exchangedGrossWage`, `commutingAllowance` (code 1254)                                              |
 | Service-voucher annual statement      | `serviceVouchers` (code 3364; reduces tax up to income year 2024)                                                                                |
 | Bank's annual tax statement           | `reclaimableWithholdingTax` (code 1437)                                                                                                          |
 | Dutch assessment (aanslag), optional  | `assessmentIncomeTaxDue`, `assessmentPremiumsDue`, together                                                                                      |
@@ -261,10 +263,10 @@ and clients may round for display.
 Currently supported income years are 2020–2026, for single Belgian residents in
 Flanders working for Dutch employers. Discovery is authoritative as coverage
 changes. The Belgian-resident profile does not support the 30% ruling. BBSZ and
-Belgian home benefits are not modelled. Code 1250 leaves out the employee share of
-a Dutch pension premium (`supplementaryPension` only drives the 30% reduction),
-an untaxed commuting allowance, a company car and gross wage exchanged for
-tax-free benefits. Mortgage eligibility and debt conditions
+Belgian home benefits are not modelled. Code 1250 adds the employee share of a
+Dutch pension premium (`supplementaryPension`) and `exchangedGrossWage` to the
+Dutch fiscal wage; an untaxed `commutingAllowance` is declared at codes
+1254/1255 and in box IV O.2. A company car is not modelled. Mortgage eligibility and debt conditions
 include assumptions; inspect the returned reasons and assumptions. This is a
 simplified estimate, not tax advice. Consult the web app's source references and
 a qualified adviser before filing a return.

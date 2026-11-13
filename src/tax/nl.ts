@@ -165,27 +165,57 @@ export function calculateNLTax(
     Math.min(premiumIncome, p.socialPremiumMax) * p.socialPremiumRate,
   );
 
-  // Both credits use the full wage. A Belgian resident who is insured in the Netherlands receives
-  // the algemene heffingskorting; the Belastingdienst lists it for residents of Belgium
+  // Each credit has a tax part and a premium part (Belastingdienst, "Heffingskortingen"), in
+  // proportion to the first-bracket rates (2025: 8.17 / 35.82 tax, 27.65 / 35.82 premiums). A
+  // Belgian resident insured in the Netherlands receives both credits; the Belastingdienst lists
+  // the algemene heffingskorting for residents of Belgium
   // (belastingdienst.nl, "Ik woon niet in Nederland: welke aftrekposten en kortingen heb ik?").
-  const ahk = calcAHK(taxableWage, p);
-  const ak = calcAK(taxableWage, p);
-
-  const totalCredits = Math.min(ahk + ak, taxBeforeCredits + volksverzekeringen);
-  const netTaxNL = Math.max(0, taxBeforeCredits + volksverzekeringen - totalCredits);
-
-  // Each credit is split into a tax part and a premium part in proportion to the first-bracket
-  // rates (2025: 8.17 / 35.82 tax, 27.65 / 35.82 premiums; Belastingdienst, "Heffingskortingen").
-  // A part that exceeds what it is set against is used against the other charge, so the two
-  // charges always add up to netTaxNL.
+  //
+  // The two parts use different incomes: the tax part the full wage (worldwide income of a
+  // qualifying non-resident), the premium part only the income taxed in the Netherlands (the
+  // workday fraction). Each part is rounded up. This reproduces the arbeidskorting of a
+  // definitieve aanslag 2024 and the algemene heffingskorting of one for 2023 to the euro. The
+  // arbeidskorting on that 2023 assessment (issued July 2026) still used the full wage for both
+  // parts, so assessments issued before the Belastingdienst applied the Hoge Raad rulings on
+  // heffingskortingen can come out lower than this estimate (docs/tax-model.md, Known gaps).
   const firstBracketRate = p.incomeTaxBrackets[0]?.rate ?? 0;
   const taxShare = firstBracketRate / (firstBracketRate + p.socialPremiumRate);
-  const taxPartOfCredits = totalCredits * taxShare;
-  const premiumPartOfCredits = totalCredits - taxPartOfCredits;
-  const taxCreditOverflow = Math.max(0, taxPartOfCredits - taxBeforeCredits);
-  const premiumCreditOverflow = Math.max(0, premiumPartOfCredits - volksverzekeringen);
-  const incomeTaxDue = Math.max(0, taxBeforeCredits - taxPartOfCredits - premiumCreditOverflow);
-  const premiumsDue = Math.max(0, volksverzekeringen - premiumPartOfCredits - taxCreditOverflow);
+  const creditParts = (credit: (income: number, params: NLYearParams) => number) => {
+    const onWage = credit(taxableWage, p);
+    // Nothing is untaxed in the Netherlands: one basis, so the table value stands and is only split.
+    if (incomeBeforeMortgage >= taxableWage) {
+      const tax = Math.round(onWage * taxShare);
+      return { tax, premium: onWage - tax };
+    }
+    return {
+      tax: Math.ceil(onWage * taxShare),
+      premium: Math.ceil(credit(incomeBeforeMortgage, p) * (1 - taxShare)),
+    };
+  };
+  const akParts = creditParts(calcAK);
+  const ahkParts = creditParts(calcAHK);
+  const ak = akParts.tax + akParts.premium;
+  const ahk = ahkParts.tax + ahkParts.premium;
+  const taxPartOfCredits = akParts.tax + ahkParts.tax;
+  const premiumPartOfCredits = akParts.premium + ahkParts.premium;
+
+  // Credits are capped at income tax plus premiums; a capped credit shrinks both parts together.
+  const totalCredits = Math.min(ahk + ak, taxBeforeCredits + volksverzekeringen);
+  const netTaxNL = Math.max(0, taxBeforeCredits + volksverzekeringen - totalCredits);
+  const scale = ahk + ak > 0 ? totalCredits / (ahk + ak) : 0;
+
+  // A part that exceeds what it is set against is used against the other charge, so the two
+  // charges always add up to netTaxNL.
+  const taxCreditOverflow = Math.max(0, taxPartOfCredits * scale - taxBeforeCredits);
+  const premiumCreditOverflow = Math.max(0, premiumPartOfCredits * scale - volksverzekeringen);
+  const incomeTaxDue = Math.max(
+    0,
+    taxBeforeCredits - taxPartOfCredits * scale - premiumCreditOverflow,
+  );
+  const premiumsDue = Math.max(
+    0,
+    volksverzekeringen - premiumPartOfCredits * scale - taxCreditOverflow,
+  );
 
   return {
     nlTaxableIncome,

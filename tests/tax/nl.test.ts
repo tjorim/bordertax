@@ -18,6 +18,8 @@ const base: TaxInputs = {
   thirtyPercentRuling: false,
   healthInsurancePremium: 0,
   supplementaryPension: 0,
+  exchangedGrossWage: 0,
+  commutingAllowance: 0,
   serviceVouchers: 0,
   reclaimableWithholdingTax: 0,
   sickDaysNL: 0,
@@ -209,22 +211,85 @@ describe("calculateNLTax", () => {
   });
 
   it("splits the credits by the first-bracket rates into income tax due and premiums due", () => {
+    // Fully taxed in the Netherlands: one income basis, so the table credit is simply split.
     const result = calculateNLTax({
       ...base,
       annualStatements: [{ taxableWage: 53299, wageTaxWithheld: 0 }],
-      daysWorkedNL: 180,
-      daysWorkedBE: 50,
     });
     const share = 0.0817 / (0.0817 + 0.2765);
     expect(result.incomeTaxDue + result.premiumsDue).toBeCloseTo(result.netTaxNL, 6);
     expect(result.incomeTaxDue).toBeCloseTo(
       result.taxBeforeCredits - result.totalCredits * share,
-      6,
+      0,
     );
     expect(result.premiumsDue).toBeCloseTo(
       result.volksverzekeringen - result.totalCredits * (1 - share),
-      6,
+      0,
     );
+  });
+
+  describe("credit bases when part of the wage is not taxed in the Netherlands", () => {
+    // Synthetic figures. Each credit has a tax part on the full wage and a premium part on the
+    // income taxed in the Netherlands, each rounded up. The expected values come from the same
+    // table lookups made as fully Dutch cases, so they do not depend on the mixed-basis path.
+    const ts = 0.0817 / (0.0817 + 0.2765);
+    const wage = 90000;
+    const dutchIncome = Math.round((wage * 170) / 185);
+    const fullyDutch = (taxableWage: number) =>
+      calculateNLTax({ ...base, annualStatements: [{ taxableWage, wageTaxWithheld: 0 }] });
+    const mixed = calculateNLTax({
+      ...base,
+      annualStatements: [{ taxableWage: wage, wageTaxWithheld: 0 }],
+      daysWorkedNL: 170,
+      daysWorkedBE: 15,
+    });
+
+    it("takes the tax part of the arbeidskorting from the wage and the premium part from the Dutch income", () => {
+      const onWage = fullyDutch(wage).arbeidskorting;
+      const onDutch = fullyDutch(dutchIncome).arbeidskorting;
+      expect(onDutch).toBeGreaterThan(onWage);
+      expect(mixed.arbeidskorting).toBe(Math.ceil(onWage * ts) + Math.ceil(onDutch * (1 - ts)));
+      expect(mixed.arbeidskorting).toBeGreaterThan(onWage);
+      expect(mixed.arbeidskorting).toBeLessThan(onDutch);
+    });
+
+    it("keeps the income tax due and premiums due matching the two credit parts", () => {
+      const taxPart = Math.ceil(fullyDutch(wage).arbeidskorting * ts);
+      const premiumPart = Math.ceil(fullyDutch(dutchIncome).arbeidskorting * (1 - ts));
+      expect(mixed.incomeTaxDue).toBeCloseTo(mixed.taxBeforeCredits - taxPart, 6);
+      expect(mixed.premiumsDue).toBeCloseTo(mixed.volksverzekeringen - premiumPart, 6);
+      expect(mixed.incomeTaxDue + mixed.premiumsDue).toBeCloseTo(mixed.netTaxNL, 6);
+    });
+
+    it("applies the same bases to the algemene heffingskorting", () => {
+      // A wage whose Dutch income falls inside the phase-out while the full wage is past it.
+      const highWage = 78000;
+      const highDutch = Math.round((highWage * 170) / 185);
+      expect(fullyDutch(highWage).algemeneHeffingskorting).toBe(0);
+      expect(fullyDutch(highDutch).algemeneHeffingskorting).toBeGreaterThan(0);
+      const result = calculateNLTax({
+        ...base,
+        annualStatements: [{ taxableWage: highWage, wageTaxWithheld: 0 }],
+        daysWorkedNL: 170,
+        daysWorkedBE: 15,
+      });
+      expect(result.algemeneHeffingskorting).toBe(
+        Math.ceil(fullyDutch(highWage).algemeneHeffingskorting * ts) +
+          Math.ceil(fullyDutch(highDutch).algemeneHeffingskorting * (1 - ts)),
+      );
+      expect(result.algemeneHeffingskorting).toBeGreaterThan(0);
+    });
+
+    it("leaves a fully Dutch case on the table value", () => {
+      expect(fullyDutch(wage).arbeidskorting).toBe(
+        calculateNLTax({
+          ...base,
+          annualStatements: [{ taxableWage: wage, wageTaxWithheld: 0 }],
+          daysWorkedNL: 1,
+          daysWorkedBE: 0,
+        }).arbeidskorting,
+      );
+    });
   });
 
   it("keeps income tax and premiums adding up to the net tax when a credit part overflows", () => {

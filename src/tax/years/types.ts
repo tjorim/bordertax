@@ -58,6 +58,12 @@ export interface BEYearParams {
    * Abolished for cheques purchased from 1 January 2025 onward (income year 2025 / AJ2026+) — 0 from 2025.
    */
   serviceVoucherReductionRate: number;
+  /**
+   * Largest exempt employer allowance for commuting by own car, as entered at code 1255 when the
+   * forfait applies (FOD Financiën, "Vergoedingen woon-werkverkeer": 490 for income year 2025,
+   * 500 for 2026). Left out for years whose amount has not been checked: no exemption is assumed.
+   */
+  commutingExemptionMax?: number;
 }
 
 // ─── Home ownership ───────────────────────────────────────────────────────────
