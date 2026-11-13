@@ -1,7 +1,7 @@
 FROM node:26.13.0 AS build
 WORKDIR /app
 # Node 25+ images no longer ship corepack; keep in sync with `packageManager`.
-RUN npm install -g pnpm@12.16.1
+RUN npm install -g pnpm@12.18.0
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN pnpm install --frozen-lockfile
 COPY . .
