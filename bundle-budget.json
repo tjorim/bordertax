@@ -6,13 +6,13 @@
   "budgets": {
     "entries": {
       "main": {
-        "raw": 727000,
-        "gzip": 224000
+        "raw": 767000,
+        "gzip": 235000
       }
     },
     "total": {
-      "raw": 1062000,
-      "gzip": 330000
+      "raw": 1106000,
+      "gzip": 344000
     }
   },
   "note": "Limits follow measured production builds with about 5% headroom. Existing ceilings are preserved when migrating to the shared implementation. Explain justified increases in docs/ui-maintenance.md; size is a regression signal, not a performance measurement."

@@ -259,4 +259,14 @@ tables and their source notes) and measures 692.17 kB raw / 212.79 kB gzip. The 
 to about 5% above this measurement, following the shared contract: entry 727 kB / 224 kB, total
 1,062 kB / 330 kB. The increase is application code and data, not a dependency or runtime change.
 
+### Budget raise for the Belgian wage base and commuting allowance (2026-11-13)
+
+Two new document inputs (gross wage exchanged for tax-free benefits, untaxed commuting allowance),
+their hints and filing-checklist rows (codes 1254/1255, box IV O.1), the credit split and the
+extra English and Dutch messages take the initial bundle from 726.31 kB raw / 222.38 kB gzip to
+729.96 kB / 223.28 kB (total 1,053.36 kB / 327.21 kB), past the 727 kB raw entry ceiling. The ceilings
+were reset to about 5% above this measurement, following the shared contract: entry 767 kB / 235 kB,
+total 1,106 kB / 344 kB. The increase is application code and message text, not a dependency or
+runtime change.
+
 See [Redact compatibility checks](redact-compatibility.md) for repeatable runtime/browser commands, recorded results and unresolved coverage.
