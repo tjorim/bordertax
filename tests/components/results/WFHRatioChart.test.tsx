@@ -51,6 +51,19 @@ describe("WFHRatioChart mortgage explanation", () => {
   it("does not add a mortgage comparison when the scenario is off", () => {
     render(<WFHRatioChart inputs={{ ...inputs, mortgageEnabled: false, incomeOutsideNL: 0 }} />);
     expect(screen.queryByText(m.wfh_mortgage_no_boundary())).not.toBeInTheDocument();
-    expect(screen.getByText(m.wfh_qualifying_taxpayer_note())).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        m.wfh_qualifying_taxpayer_note({ statement: m.mortgage_income_statement_required() }),
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it("drops the income statement requirement from income year 2026", () => {
+    render(<WFHRatioChart inputs={{ ...inputs, year: 2026 }} />);
+    expect(
+      screen.getByText(
+        m.wfh_qualifying_taxpayer_note({ statement: m.mortgage_income_statement_on_request() }),
+      ),
+    ).toBeInTheDocument();
   });
 });
