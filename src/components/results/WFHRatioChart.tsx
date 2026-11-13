@@ -52,6 +52,7 @@ import { motion } from "@tanstack/charts/motion";
 import { Chart } from "@tanstack/charts/react/core";
 import { calculate } from "@/tax";
 import { eligibilityThreshold } from "@/tax/eligibilityThreshold";
+import { INCOME_STATEMENT_ABOLISHED_FROM_YEAR } from "@/tax/mortgage";
 import { sumAnnualStatements } from "@/tax/statements";
 import { getWorkdayTotals } from "@/tax/workdays";
 import type { TaxInputs } from "@/tax/types";
@@ -719,7 +720,12 @@ export default function WFHRatioChart({ inputs }: Props) {
       {/* The workday estimate never establishes qualification. */}
       <p className="text-text-muted text-sm mt-1 mb-0">
         <InfoIcon aria-hidden="true" className="inline size-4 shrink-0 align-text-bottom me-1" />
-        {m.wfh_qualifying_taxpayer_note()}
+        {m.wfh_qualifying_taxpayer_note({
+          statement:
+            inputs.year >= INCOME_STATEMENT_ABOLISHED_FROM_YEAR
+              ? m.mortgage_income_statement_on_request()
+              : m.mortgage_income_statement_required(),
+        })}
       </p>
 
       {tableOpen && (
