@@ -87,6 +87,11 @@ describe("tax capabilities", () => {
         "Simplified estimate, not tax advice",
       ]),
     );
+    const wageBase = capabilities.limitations.filter((item) =>
+      /code 1250|codes 1254\/1255/.test(item),
+    );
+    expect(wageBase).toHaveLength(2);
+    expect(wageBase.join(" ")).toMatch(/pension premium.*company car.*exchanged/);
   });
 
   it("reports the input schema version, the renames and the source documents", () => {

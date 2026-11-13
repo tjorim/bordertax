@@ -261,7 +261,10 @@ and clients may round for display.
 Currently supported income years are 2020–2026, for single Belgian residents in
 Flanders working for Dutch employers. Discovery is authoritative as coverage
 changes. The Belgian-resident profile does not support the 30% ruling. BBSZ and
-Belgian home benefits are not modelled. Mortgage eligibility and debt conditions
+Belgian home benefits are not modelled. Code 1250 leaves out the employee share of
+a Dutch pension premium (`supplementaryPension` only drives the 30% reduction),
+an untaxed commuting allowance, a company car and gross wage exchanged for
+tax-free benefits. Mortgage eligibility and debt conditions
 include assumptions; inspect the returned reasons and assumptions. This is a
 simplified estimate, not tax advice. Consult the web app's source references and
 a qualified adviser before filing a return.
