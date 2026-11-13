@@ -445,8 +445,20 @@ describe("calculateBETax", () => {
       expect(y2026.commutingExemption).toBe(500);
     });
 
-    it("assumes no exemption for years whose maximum has not been checked", () => {
-      const result = calculateBETax({ ...inputs, year: 2024, commutingAllowance: 2000 }, charge)!;
+    it("uses the maximum of each earlier year from 2021", () => {
+      for (const [year, max] of [
+        [2021, 420],
+        [2022, 430],
+        [2023, 470],
+        [2024, 490],
+      ] as const) {
+        const result = calculateBETax({ ...inputs, year, commutingAllowance: 2000 }, charge)!;
+        expect(result.commutingExemption).toBe(max);
+      }
+    });
+
+    it("assumes no exemption for a year whose maximum has not been checked", () => {
+      const result = calculateBETax({ ...inputs, year: 2020, commutingAllowance: 2000 }, charge)!;
       expect(result.commutingAllowance).toBe(2000);
       expect(result.commutingExemption).toBe(0);
     });

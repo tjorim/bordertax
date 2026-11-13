@@ -60,8 +60,9 @@ export interface BEYearParams {
   serviceVoucherReductionRate: number;
   /**
    * Largest exempt employer allowance for commuting by own car, as entered at code 1255 when the
-   * forfait applies (FOD Financiën, "Vergoedingen woon-werkverkeer": 490 for income year 2025,
-   * 500 for 2026). Left out for years whose amount has not been checked: no exemption is assumed.
+   * forfait applies: 420 (income year 2021), 430 (2022), 470 (2023), 490 (2024 and 2025) and 500
+   * (2026), per FOD Financiën ("Vergoedingen woon-werkverkeer", 2025–2026) and the BDO key-figure
+   * table by assessment year. Left out for years not checked (2020): no exemption is assumed.
    */
   commutingExemptionMax?: number;
 }
