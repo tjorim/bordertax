@@ -19,6 +19,8 @@ const base: TaxInputs = {
   thirtyPercentRuling: false,
   healthInsurancePremium: 0,
   supplementaryPension: 0,
+  exchangedGrossWage: 0,
+  commutingAllowance: 0,
   serviceVouchers: 0,
   reclaimableWithholdingTax: 0,
   sickDaysNL: 0,
@@ -375,14 +377,16 @@ describe("calculateBETax", () => {
     });
 
     it("reports the part of the reductions above the federal part", () => {
-      const without = calculateBETax(inputs, mockNL())!;
+      // The pension premium is added to the wage base, so the federal portion it is set against
+      // is the one for the wage including the premium.
+      const withPension = calculateBETax({ ...inputs, supplementaryPension: 1000 }, mockNL())!;
       const result = calculateBETax(
         { ...inputs, supplementaryPension: 1000, reclaimableWithholdingTax: 5000 },
         mockNL(),
       )!;
       // 30% × 1,000 + 5,000, against the reduced federal portion.
       expect(result.saldoFederaal).toBe(0);
-      expect(result.federalReductionsUnused).toBeCloseTo(5300 - without.gereduceerde, 2);
+      expect(result.federalReductionsUnused).toBeCloseTo(5300 - withPension.gereduceerde, 2);
       expect(result.federalReductionsUnused).toBeGreaterThan(0);
     });
 
@@ -392,6 +396,85 @@ describe("calculateBETax", () => {
       expect(result.gereduceerde).toBe(without.gereduceerde);
       expect(result.saldoGewestelijk).toBe(without.saldoGewestelijk);
       expect(result.federalTax).toBe(result.saldoFederaal);
+    });
+  });
+  describe("Belgian wage base: pension premium, exchanged gross wage and commuting allowance", () => {
+    // Synthetic figures. The Dutch fiscal wage is after the employee pension premium and after
+    // gross wage exchanged for tax-free benefits; Belgium adds both back to the wage (ACV
+    // "bepaling Belgisch belastbaar loon"). The Dutch charge is held fixed to isolate the effect.
+    const inputs: TaxInputs = {
+      ...base,
+      annualStatements: [{ taxableWage: 80000, wageTaxWithheld: 0 }],
+      daysWorkedNL: 170,
+      daysWorkedBE: 15,
+      healthInsurancePremium: 1500,
+    };
+    const charge = { incomeTaxDue: 18000, premiumsDue: 8500, netTaxNL: 26500 };
+    const plain = calculateBETax(inputs, charge)!;
+
+    it("adds the employee pension premium to code 1250 and to the day split", () => {
+      const result = calculateBETax({ ...inputs, supplementaryPension: 3000 }, charge)!;
+      expect(result.declaredIncome).toBeCloseTo(plain.declaredIncome + 3000, 2);
+      // O.1 = (wage base − premiums due) × Belgian fraction, so it grows by the premium × fraction.
+      expect(result.beIncome).toBeCloseTo(plain.beIncome + 3000 * plain.beFraction, 1);
+    });
+
+    it("adds gross wage exchanged for tax-free benefits the same way", () => {
+      const result = calculateBETax({ ...inputs, exchangedGrossWage: 1200 }, charge)!;
+      expect(result.declaredIncome).toBeCloseTo(plain.declaredIncome + 1200, 2);
+      expect(result.beIncome).toBeCloseTo(plain.beIncome + 1200 * plain.beFraction, 1);
+    });
+
+    it("changes nothing when both figures are 0", () => {
+      const result = calculateBETax(
+        { ...inputs, supplementaryPension: 0, exchangedGrossWage: 0, commutingAllowance: 0 },
+        charge,
+      )!;
+      expect(result).toEqual(plain);
+      expect(result.commutingAllowance).toBe(0);
+      expect(result.commutingExemption).toBe(0);
+    });
+
+    it("exempts the commuting allowance up to the own-car maximum of the year (code 1255)", () => {
+      const small = calculateBETax({ ...inputs, commutingAllowance: 300 }, charge)!;
+      expect(small.commutingAllowance).toBe(300);
+      expect(small.commutingExemption).toBe(300);
+      const large = calculateBETax({ ...inputs, commutingAllowance: 2000 }, charge)!;
+      expect(large.commutingExemption).toBe(490); // income year 2025
+      const y2026 = calculateBETax({ ...inputs, year: 2026, commutingAllowance: 2000 }, charge)!;
+      expect(y2026.commutingExemption).toBe(500);
+    });
+
+    it("uses the maximum of each earlier year from 2021", () => {
+      for (const [year, max] of [
+        [2021, 420],
+        [2022, 430],
+        [2023, 470],
+        [2024, 490],
+      ] as const) {
+        const result = calculateBETax({ ...inputs, year, commutingAllowance: 2000 }, charge)!;
+        expect(result.commutingExemption).toBe(max);
+      }
+    });
+
+    it("assumes no exemption for a year whose maximum has not been checked", () => {
+      const result = calculateBETax({ ...inputs, year: 2020, commutingAllowance: 2000 }, charge)!;
+      expect(result.commutingAllowance).toBe(2000);
+      expect(result.commutingExemption).toBe(0);
+    });
+
+    it("adds the taxable rest of the allowance to the net income as exempt Dutch-day income", () => {
+      const result = calculateBETax({ ...inputs, commutingAllowance: 2000 }, charge)!;
+      const taxableRest = 2000 - 490;
+      // Code 1250 itself is unchanged: the allowance is declared at 1254/1255.
+      expect(result.declaredIncome).toBe(plain.declaredIncome);
+      const incomeBeforeCosts = plain.declaredIncome + taxableRest;
+      const costs = plain.professionalExpenses + inputs.healthInsurancePremium;
+      expect(result.netProfessionalIncome).toBeCloseTo(incomeBeforeCosts - costs, 2);
+      // The whole allowance counts on the exempt side, like the Dutch days it was paid for.
+      const exemptShare = (plain.declaredIncome - plain.beIncome + taxableRest) / incomeBeforeCosts;
+      expect(result.vrijgesteld).toBeCloseTo(exemptShare * result.netProfessionalIncome, 2);
+      expect(result.netTaxBE).toBeGreaterThan(plain.netTaxBE);
     });
   });
 });

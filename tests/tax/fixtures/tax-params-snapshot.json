@@ -299,7 +299,8 @@
         "forfaitMax": 4920,
         "gereduceerdRate": 0.75043,
         "gewestelijkeRate": 0.33257,
-        "serviceVoucherReductionRate": 0.2
+        "serviceVoucherReductionRate": 0.2,
+        "commutingExemptionMax": 420
       }
     },
     "2022": {
@@ -450,7 +451,8 @@
         "forfaitMax": 5040,
         "gereduceerdRate": 0.75043,
         "gewestelijkeRate": 0.33257,
-        "serviceVoucherReductionRate": 0.2
+        "serviceVoucherReductionRate": 0.2,
+        "commutingExemptionMax": 430
       }
     },
     "2023": {
@@ -601,7 +603,8 @@
         "forfaitMax": 5520,
         "gereduceerdRate": 0.75043,
         "gewestelijkeRate": 0.33257,
-        "serviceVoucherReductionRate": 0.2
+        "serviceVoucherReductionRate": 0.2,
+        "commutingExemptionMax": 470
       }
     },
     "2024": {
@@ -752,7 +755,8 @@
         "forfaitMax": 5750,
         "gereduceerdRate": 0.75043,
         "gewestelijkeRate": 0.33257,
-        "serviceVoucherReductionRate": 0.2
+        "serviceVoucherReductionRate": 0.2,
+        "commutingExemptionMax": 490
       }
     },
     "2025": {
@@ -903,7 +907,8 @@
         "forfaitMax": 5930,
         "gereduceerdRate": 0.75043,
         "gewestelijkeRate": 0.33257,
-        "serviceVoucherReductionRate": 0
+        "serviceVoucherReductionRate": 0,
+        "commutingExemptionMax": 490
       }
     },
     "2026": {
@@ -1054,7 +1059,8 @@
         "forfaitMax": 6070,
         "gereduceerdRate": 0.75043,
         "gewestelijkeRate": 0.33257,
-        "serviceVoucherReductionRate": 0
+        "serviceVoucherReductionRate": 0,
+        "commutingExemptionMax": 500
       }
     }
   },

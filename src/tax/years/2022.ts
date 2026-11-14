@@ -57,6 +57,8 @@ export const year2022 = defineYear({
     childExtraAmounts: [0, 1690, 4340, 9730, 15740],
     extraPerChildAbove4: null,
     forfaitMax: 5040,
+    // Own-car commuting allowance exemption, code 1255 (aanslagjaar 2023).
+    commutingExemptionMax: 430,
   },
   home: {
     rates: [0, 0.0015, 0.0025, 0.0035, 0.0045],

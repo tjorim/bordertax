@@ -63,6 +63,8 @@ function noWorkdaysResult(): BETaxResult {
     professionalExpenses: 0,
     netProfessionalIncome: 0,
     beIncome: 0,
+    commutingAllowance: 0,
+    commutingExemption: 0,
     nlExemptIncome: 0,
     vrijgesteld: 0,
     volTarief: 0,
@@ -102,33 +104,48 @@ export function calculateBETax(inputs: TaxInputs, nl: DutchChargeForBE): BETaxRe
   // (which would still levy communal tax on it). `TaxResult.noWorkdays` flags the state.
   if (noWorkdays) return noWorkdaysResult();
 
-  // FOD guideline (ACV telework session): W = wage − premiums actually due in the work state,
-  // Y = W × (days outside NL ÷ total days) is taxable in Belgium (box IV O.1), and
-  // Z = W − Y − income tax actually due in the work state is exempt (box IV O.2).
-  const wageAfterPremiums = Math.max(0, taxableWage - nl.premiumsDue);
-  const beIncome = wageAfterPremiums * beFraction;
-
   const {
     healthInsurancePremium,
     supplementaryPension,
+    exchangedGrossWage,
+    commutingAllowance,
     serviceVouchers,
     reclaimableWithholdingTax,
   } = inputs;
 
-  // Declared income: code 1250 = taxable wage − netTaxNL (paid to NL, not seen by BE)
-  const declaredIncome = taxableWage - nl.netTaxNL;
+  // Belgian wage base (ACV telework session, "bepaling Belgisch belastbaar loon"): the Dutch
+  // fiscal wage is after the employee pension premium and after gross wage exchanged for
+  // tax-free benefits; Belgium does not allow those reductions, so both are added back. The
+  // premium is also entered at code 1285 (30% federal reduction).
+  const wageBase = taxableWage + supplementaryPension + exchangedGrossWage;
 
-  // Professional expenses (forfait applied to declared income after the health-insurance premium)
-  const forfaitBase = Math.max(0, declaredIncome - healthInsurancePremium);
+  // FOD guideline (ACV telework session): W = wage − premiums actually due in the work state,
+  // Y = W × (days outside NL ÷ total days) is taxable in Belgium (box IV O.1), and
+  // Z = W − Y − income tax actually due in the work state is exempt (box IV O.2).
+  const wageAfterPremiums = Math.max(0, wageBase - nl.premiumsDue);
+  const beIncome = wageAfterPremiums * beFraction;
+
+  // Declared income: code 1250 = wage base − netTaxNL (paid to NL, not seen by BE)
+  const declaredIncome = wageBase - nl.netTaxNL;
+
+  // Untaxed commuting allowance (code 1254) and its exemption (code 1255, forfait case). The
+  // allowance is paid for commuting to the Netherlands, so it is entered in box IV O.2 as well
+  // and counts as exempt income with progression; the taxable rest raises the net income.
+  const commutingExemption = Math.min(commutingAllowance, p.commutingExemptionMax ?? 0);
+  const commutingTaxable = commutingAllowance - commutingExemption;
+
+  // Professional expenses (forfait applied to the income after the health-insurance premium)
+  const incomeBeforeCosts = declaredIncome + commutingTaxable;
+  const forfaitBase = Math.max(0, incomeBeforeCosts - healthInsurancePremium);
   const forfait = Math.min(p.forfaitRate * forfaitBase, p.forfaitMax);
 
   // Net professional income
-  const netProfessionalIncome = Math.max(0, declaredIncome - healthInsurancePremium - forfait);
+  const netProfessionalIncome = Math.max(0, incomeBeforeCosts - healthInsurancePremium - forfait);
 
   // Code 1250 is Y + Z. Only the Dutch income tax is taken from the exempt side; the premiums are
   // deducted before the day fraction is applied, so they reduce Y and Z in proportion.
-  const nlExemptDeclaredIncome = Math.max(0, declaredIncome - beIncome);
-  const nlExemptShare = declaredIncome > 0 ? nlExemptDeclaredIncome / declaredIncome : 0;
+  const nlExemptDeclaredIncome = Math.max(0, declaredIncome - beIncome) + commutingTaxable;
+  const nlExemptShare = incomeBeforeCosts > 0 ? nlExemptDeclaredIncome / incomeBeforeCosts : 0;
 
   // Exempt and taxable portions of net professional income
   const vrijgesteld = nlExemptShare * netProfessionalIncome;
@@ -185,6 +202,8 @@ export function calculateBETax(inputs: TaxInputs, nl: DutchChargeForBE): BETaxRe
     professionalExpenses: cents(forfait),
     netProfessionalIncome: cents(netProfessionalIncome),
     beIncome: cents(beIncome),
+    commutingAllowance: cents(commutingAllowance),
+    commutingExemption: cents(commutingExemption),
     nlExemptIncome: cents(nlExemptIncome),
     vrijgesteld: cents(vrijgesteld),
     volTarief: cents(volTarief),

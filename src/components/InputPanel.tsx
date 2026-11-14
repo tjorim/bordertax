@@ -56,6 +56,13 @@ interface Props {
 }
 
 type BelgianDocumentKey = keyof typeof BELGIAN_CODES;
+type BelgianDocumentField = {
+  key: BelgianDocumentKey;
+  document: string;
+  label: string;
+  codeDescription: string;
+  hint?: string;
+};
 
 const allowEmptyNumber = (handleChange: (value: number) => void) => (value: number | undefined) =>
   handleChange(value as number);
@@ -628,6 +635,20 @@ export default function InputPanel({ form }: Props) {
                     hint: m.input_supplementary_pension_hint(),
                   },
                   {
+                    key: "exchangedGrossWage",
+                    document: m.input_document_pension(),
+                    label: m.input_exchanged_gross_wage(),
+                    codeDescription: m.code_desc_1250(),
+                    hint: m.input_exchanged_gross_wage_hint(),
+                  },
+                  {
+                    key: "commutingAllowance",
+                    document: m.input_document_pension(),
+                    label: m.input_commuting_allowance(),
+                    codeDescription: m.code_desc_1254(),
+                    hint: m.input_commuting_allowance_hint(),
+                  },
+                  {
                     key: "serviceVouchers",
                     document: m.input_document_service_vouchers(),
                     label: m.input_service_vouchers(),
@@ -642,46 +663,54 @@ export default function InputPanel({ form }: Props) {
                     codeDescription: m.code_desc_1437(),
                     hint: m.input_reclaimable_withholding_tax_hint(),
                   },
-                ] as const satisfies readonly {
-                  key: BelgianDocumentKey;
-                  document: string;
-                  label: string;
-                  codeDescription: string;
-                  hint?: string;
-                }[]
-              ).map((fieldDef) => (
-                <FieldSet key={fieldDef.key} className="gap-2">
-                  <FieldLegend variant="label" className="mb-0 text-text-muted">
-                    {fieldDef.document}
-                  </FieldLegend>
-                  <form.Field
-                    name={fieldDef.key}
-                    validators={[{ run: z.number().min(0), triggers: ["change"] }]}
-                  >
-                    {(field) => (
-                      <CurrencyField
-                        id={fieldDef.key}
-                        label={
-                          <>
-                            {fieldDef.label}
-                            <CodeBadge
-                              code={BELGIAN_CODES[fieldDef.key]}
-                              description={fieldDef.codeDescription}
-                            />
-                          </>
-                        }
-                        min={0}
-                        value={field.value}
-                        onChange={allowEmptyNumber(field.handleChange)}
-                        onBlur={field.handleBlur}
-                        error={fieldError(field.errors as unknown[])}
-                        hint={fieldDef.hint}
-                        hintId={fieldDef.hint ? `${fieldDef.key}-hint` : undefined}
-                      />
-                    )}
-                  </form.Field>
-                </FieldSet>
-              ))}
+                ] as const satisfies readonly BelgianDocumentField[]
+              )
+                // Inputs read from the same document share one group under its name.
+                .reduce<{ document: string; fields: BelgianDocumentField[] }[]>(
+                  (groups, fieldDef) => {
+                    const group = groups.find((entry) => entry.document === fieldDef.document);
+                    if (group) group.fields.push(fieldDef);
+                    else groups.push({ document: fieldDef.document, fields: [fieldDef] });
+                    return groups;
+                  },
+                  [],
+                )
+                .map((group) => (
+                  <FieldSet key={group.document} className="gap-2">
+                    <FieldLegend variant="label" className="mb-0 text-text-muted">
+                      {group.document}
+                    </FieldLegend>
+                    {group.fields.map((fieldDef) => (
+                      <form.Field
+                        key={fieldDef.key}
+                        name={fieldDef.key}
+                        validators={[{ run: z.number().min(0), triggers: ["change"] }]}
+                      >
+                        {(field) => (
+                          <CurrencyField
+                            id={fieldDef.key}
+                            label={
+                              <>
+                                {fieldDef.label}
+                                <CodeBadge
+                                  code={BELGIAN_CODES[fieldDef.key]}
+                                  description={fieldDef.codeDescription}
+                                />
+                              </>
+                            }
+                            min={0}
+                            value={field.value}
+                            onChange={allowEmptyNumber(field.handleChange)}
+                            onBlur={field.handleBlur}
+                            error={fieldError(field.errors as unknown[])}
+                            hint={fieldDef.hint}
+                            hintId={fieldDef.hint ? `${fieldDef.key}-hint` : undefined}
+                          />
+                        )}
+                      </form.Field>
+                    ))}
+                  </FieldSet>
+                ))}
             </FieldGroup>
           </AccordionContent>
         </AccordionItem>

@@ -88,10 +88,12 @@ describe("tax capabilities", () => {
       ]),
     );
     const wageBase = capabilities.limitations.filter((item) =>
-      /code 1250|codes 1254\/1255/.test(item),
+      /code 1250|1254|company car/.test(item),
     );
-    expect(wageBase).toHaveLength(2);
-    expect(wageBase.join(" ")).toMatch(/pension premium.*company car.*exchanged/);
+    expect(wageBase).toHaveLength(3);
+    expect(wageBase.join(" ")).toMatch(/pension premium.*exchangedGrossWage/);
+    expect(wageBase.join(" ")).toMatch(/commutingAllowance.*1254.*1255.*490.*500/);
+    expect(wageBase.join(" ")).toMatch(/company car/);
   });
 
   it("reports the input schema version, the renames and the source documents", () => {
@@ -113,6 +115,8 @@ describe("tax capabilities", () => {
     ]);
     expect(sourceDocuments.healthInsurer).toEqual(["healthInsurancePremium"]);
     expect(belgianCodes).toEqual({
+      exchangedGrossWage: "1250",
+      commutingAllowance: "1254",
       healthInsurancePremium: "1257",
       supplementaryPension: "1285",
       serviceVouchers: "3364",

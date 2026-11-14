@@ -53,6 +53,8 @@ export const year2026 = defineYear({
     forfaitMax: 6070,
     // Dienstencheques: Flemish tax reduction abolished for cheques bought from 1 January 2025.
     serviceVoucherReductionRate: 0,
+    // Own-car commuting allowance exemption, code 1255 (FOD Financiën, income year 2026).
+    commutingExemptionMax: 500,
   },
   home: {
     rates: [0, 0.001, 0.002, 0.0025, 0.0035],
