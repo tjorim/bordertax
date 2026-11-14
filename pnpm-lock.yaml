@@ -213,8 +213,8 @@ importers:
         specifier: ^4.14.0
         version: 4.14.0(playwright-core@1.65.0)
       '@inlang/paraglide-js':
-        specifier: ^3.2.1
-        version: 3.2.1(typescript@7.0.2)(vite@8.3.8(@types/node@26.6.6)(jiti@2.7.0)(terser@5.51.2))
+        specifier: ^3.2.2
+        version: 3.2.2(typescript@7.0.2)(vite@8.3.8(@types/node@26.6.6)(jiti@2.7.0)(terser@5.51.2))
       '@inlang/plugin-m-function-matcher':
         specifier: ^2.4.3
         version: 2.4.3
@@ -596,8 +596,8 @@ packages:
     peerDependencies:
       hono: ^4 || ^5.0.0-0
 
-  '@inlang/paraglide-js@3.2.1':
-    resolution: {integrity: sha512-TxTaxvjEMjDoPlH2iIuTz8gPHPyJUuYl9IgubyyF25qBhPHJtZq019bzoYcgWKyyj4MVuLLiVZK6jOunkVrEfQ==}
+  '@inlang/paraglide-js@3.2.2':
+    resolution: {integrity: sha512-YoQ2aHmzSgC+yfUgKwcJew3F0lFfwLJsriGCbwQHiJfjKGNjhQnbRr0OXoxsy2ulY2/gK8vYpiphuTv2J0wf5Q==}
     hasBin: true
     peerDependencies:
       eslint: ^9.0.0 || ^10.0.0
@@ -4014,7 +4014,7 @@ snapshots:
     dependencies:
       hono: 4.13.17
 
-  '@inlang/paraglide-js@3.2.1(typescript@7.0.2)(vite@8.3.8(@types/node@26.6.6)(jiti@2.7.0)(terser@5.51.2))':
+  '@inlang/paraglide-js@3.2.2(typescript@7.0.2)(vite@8.3.8(@types/node@26.6.6)(jiti@2.7.0)(terser@5.51.2))':
     dependencies:
       '@inlang/recommend-sherlock': 0.2.1
       '@inlang/sdk': 4.2.0
