@@ -7,9 +7,9 @@
  * €206. ACV's split matches a 9.32/35.82 tax share of the heffingskortingen (the 2024 tax-part
  * rate); the engine follows the Belastingdienst 2025 split of 8.17/35.82. The total Dutch charge
  * is the same (€8,588), but the premiums feed O.1 and O.2, so the slide figures are reproduced by
- * entering ACV's split as the Dutch assessment (#432). The estimate-only test at the end shows
- * the engine on its own still lands on ACV's refund within €25; the remaining gap is the 181/231
- * day fraction ACV uses on slide 34 instead of 180/230.
+ * entering ACV's split as the Dutch assessment (#432). The estimate-only test at the end
+ * documents that the engine's own estimate is now about 1,100 euro above ACV's refund (credit
+ * bases, docs/tax-model.md).
  */
 import { describe, expect, it } from "vitest";
 
@@ -97,10 +97,11 @@ describe("ACV telework session, income year 2025", () => {
 
     expect(estimate.nlCharge.source).toBe("estimate");
     expect(assessed.nl).toEqual(estimate.nl);
-    // ACV's premiums are about 206 higher than the Belastingdienst split, income tax lower.
+    // ACV's premiums are higher than the engine's estimate and its income tax lower. The gap was
+    // about 206 euro on the Belastingdienst split of the credits; the engine now also gives the
+    // premium part of the credits the income taxed in the Netherlands, which widens it.
     expect(assessed.nlCharge.premiumsDifference).toBeCloseTo(5874.66 - estimate.nl.premiumsDue, 6);
     expect(assessed.nlCharge.premiumsDifference).toBeGreaterThan(150);
-    expect(assessed.nlCharge.premiumsDifference).toBeLessThan(250);
     expect(assessed.nlCharge.incomeTaxDifference).toBeLessThan(-150);
     expect(assessed.nlCharge.netTaxDifference).toBeCloseTo(
       assessed.nlCharge.premiumsDifference + assessed.nlCharge.incomeTaxDifference,
@@ -108,12 +109,19 @@ describe("ACV telework session, income year 2025", () => {
     );
   });
 
-  it("estimate only: the refund lands within 25 euro of ACV's 4,314", () => {
-    // The gap is ACV's 181/231 fraction on slide 34 against the 180/230 the engine uses.
+  it("estimate only: the refund is about 1,100 euro above ACV's 4,314 (credit bases)", () => {
+    // ACV's refund matches credits worked out on the full wage for both parts, which the engine
+    // used until a definitieve aanslag 2024 showed the premium part on the income taxed in the
+    // Netherlands (docs/tax-model.md, "Known gaps"). The slide predates that treatment or was
+    // worked on the wage basis, so the engine's estimate is now higher than ACV's refund. The
+    // assertion documents the gap; the slide figures themselves stay reproducible with the
+    // assessment entered (the tests above). Revisit when more real assessments are available.
     for (const inputs of [noSick, withSick]) {
       const result = calculate(parseStrictTaxInputs(inputs));
       expect(result.nlCharge.source).toBe("estimate");
-      expect(Math.abs(WITHHELD - result.nl.netTaxNL - ACV_REFUND)).toBeLessThan(25);
+      const refund = WITHHELD - result.nl.netTaxNL;
+      expect(refund - ACV_REFUND).toBeGreaterThan(1000);
+      expect(refund - ACV_REFUND).toBeLessThan(1200);
     }
   });
 

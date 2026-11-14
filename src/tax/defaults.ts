@@ -17,6 +17,8 @@ export const DEFAULT_INPUTS: TaxInputs = {
   sickDaysOutsideNL: 0,
   healthInsurancePremium: 0,
   supplementaryPension: 0,
+  exchangedGrossWage: 0,
+  commutingAllowance: 0,
   serviceVouchers: 0,
   reclaimableWithholdingTax: 0,
   mortgageEnabled: false,

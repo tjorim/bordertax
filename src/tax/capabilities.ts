@@ -154,8 +154,10 @@ export function getCapabilities() {
       "30% ruling unsupported for Belgian residents",
       "Simplified estimate, not tax advice",
       "Special social security contribution (BBSZ) and Belgian home benefits are not modelled",
-      "The employee share of a Dutch pension premium is not added back to code 1250; supplementaryPension only drives the 30% federal reduction (code 1285). Check the treatment with FOD Financiën or a tax adviser",
-      "An untaxed commuting allowance (codes 1254/1255), a company car (Dutch versus Belgian addition) and gross wage exchanged for tax-free benefits are not modelled",
+      "The Belgian wage base (code 1250) adds the employee pension premium (supplementaryPension) and exchangedGrossWage to the Dutch fiscal wage, following the ACV formula for the Belgian taxable wage. No official FOD text names these two additions; check the treatment with FOD Financiën or a tax adviser",
+      "commutingAllowance is declared at code 1254 with the own-car exemption at 1255 (420 for 2021, 430 for 2022, 470 for 2023, 490 for 2024 and 2025, 500 for 2026; no exemption is assumed for 2020) and is assumed paid for days worked in the Netherlands, so it also counts in box IV O.2",
+      "A company car (Dutch versus Belgian addition) is not modelled",
+      "The arbeidskorting and algemene heffingskorting use the full wage for their tax part and the income taxed in the Netherlands for their premium part; this fits assessments issued after the Belastingdienst applied the Hoge Raad rulings and can be higher than an earlier assessment",
     ],
   };
 }

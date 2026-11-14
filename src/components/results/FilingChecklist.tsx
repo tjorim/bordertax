@@ -165,6 +165,24 @@ function buildBeGroups(result: TaxResult): Group[] {
               : m.filing_be_1250_source(),
           strong: true,
         },
+        ...(be.commutingAllowance > 0
+          ? [
+              {
+                key: "1254",
+                field: m.filing_be_1254(),
+                value: fmtExact(be.commutingAllowance),
+                format: "cents" as const,
+                source: m.filing_be_1254_source(),
+              },
+              {
+                key: "1255",
+                field: m.filing_be_1255(),
+                value: fmtExact(be.commutingExemption),
+                format: "cents" as const,
+                source: m.filing_be_1255_source(),
+              },
+            ]
+          : []),
         {
           key: "1257",
           field: m.filing_be_1257(),
@@ -210,6 +228,22 @@ function buildBeGroups(result: TaxResult): Group[] {
       ],
     });
   }
+  if (be.beIncome > 0) {
+    groups.push({
+      key: "o1",
+      title: m.filing_be_o1_title(),
+      rows: [
+        {
+          key: "1250-o1",
+          field: m.filing_be_o1_1250(),
+          value: fmtExact(be.beIncome),
+          format: "cents",
+          source: m.filing_be_o1_1250_source(),
+          strong: true,
+        },
+      ],
+    });
+  }
   groups.push({
     key: "o2",
     title: m.filing_be_o2_title(),
@@ -229,6 +263,17 @@ function buildBeGroups(result: TaxResult): Group[] {
         format: "cents",
         source: m.filing_source_health_insurer(),
       },
+      ...(be.commutingAllowance > 0
+        ? [
+            {
+              key: "1254-nl",
+              field: m.filing_be_o2_1254(),
+              value: fmtExact(be.commutingAllowance),
+              format: "cents" as const,
+              source: m.filing_be_1254_source(),
+            },
+          ]
+        : []),
     ],
   });
   return groups;
@@ -436,10 +481,7 @@ export default function FilingChecklist({ result }: Props) {
           </Table>
           <p className="text-sm font-medium mb-1">{m.filing_be_not_modelled_title()}</p>
           <ul className="text-text-muted text-sm mb-2">
-            <li>{m.filing_be_not_modelled_pension()}</li>
-            <li>{m.filing_be_not_modelled_commuting()}</li>
             <li>{m.filing_be_not_modelled_car()}</li>
-            <li>{m.filing_be_not_modelled_exchanged_wage()}</li>
           </ul>
           <p className="text-text-muted text-sm mb-0">{m.filing_be_result_notice()}</p>
           {sourcing.applies && <SourcingComparisonSection sourcing={sourcing} />}

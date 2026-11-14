@@ -58,6 +58,8 @@ export const year2025 = defineYear({
     forfaitMax: 5930,
     // Dienstencheques regional reduction abolished for cheques bought from 1 January 2025.
     serviceVoucherReductionRate: 0,
+    // Own-car commuting allowance exemption, code 1255 (FOD Financiën, income year 2025).
+    commutingExemptionMax: 490,
   },
   home: {
     rates: [0, 0.001, 0.002, 0.0025, 0.0035],

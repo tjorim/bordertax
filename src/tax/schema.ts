@@ -41,6 +41,8 @@ export const TaxInputFields = {
   sickDaysOutsideNL: z.number(),
   healthInsurancePremium: z.number(),
   supplementaryPension: z.number(),
+  exchangedGrossWage: z.number(),
+  commutingAllowance: z.number(),
   serviceVouchers: z.number(),
   reclaimableWithholdingTax: z.number(),
   assessmentIncomeTaxDue: z.number(),
@@ -56,6 +58,8 @@ export type TaxInputField = keyof typeof TaxInputFields;
 
 /** The Belgian tax-return code each Belgian input is entered under. Metadata, not part of the name. */
 export const BELGIAN_CODES = {
+  exchangedGrossWage: "1250",
+  commutingAllowance: "1254",
   healthInsurancePremium: "1257",
   supplementaryPension: "1285",
   serviceVouchers: "3364",
@@ -87,7 +91,7 @@ export const INPUT_GROUPS = {
     "sickDaysOutsideNL",
   ],
   healthInsurer: ["healthInsurancePremium"],
-  pensionOrPayslip: ["supplementaryPension"],
+  pensionOrPayslip: ["supplementaryPension", "exchangedGrossWage", "commutingAllowance"],
   serviceVoucherStatement: ["serviceVouchers"],
   bank: ["reclaimableWithholdingTax"],
   dutchAssessment: ["assessmentIncomeTaxDue", "assessmentPremiumsDue"],
@@ -147,6 +151,8 @@ export const TaxInputSchema = z.object({
   sickDaysOutsideNL: nonNegativeOr(TaxInputFields.sickDaysOutsideNL, 0),
   healthInsurancePremium: nonNegativeOr(TaxInputFields.healthInsurancePremium, 0),
   supplementaryPension: nonNegativeOr(TaxInputFields.supplementaryPension, 0),
+  exchangedGrossWage: nonNegativeOr(TaxInputFields.exchangedGrossWage, 0),
+  commutingAllowance: nonNegativeOr(TaxInputFields.commutingAllowance, 0),
   serviceVouchers: nonNegativeOr(TaxInputFields.serviceVouchers, 0),
   reclaimableWithholdingTax: nonNegativeOr(TaxInputFields.reclaimableWithholdingTax, 0),
   /**

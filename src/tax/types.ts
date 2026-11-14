@@ -69,8 +69,12 @@ export interface BETaxResult {
   professionalExpenses: number;
   /** Net professional income: declaredIncome − healthInsurancePremium − forfait */
   netProfessionalIncome: number;
-  /** Belgian-taxable part of the wage (box IV O.1): (taxable wage − premiums due) × fraction of days outside NL. */
+  /** Belgian-taxable part of the wage (box IV O.1): (wage base − premiums due) × fraction of days outside NL. */
   beIncome: number;
+  /** Untaxed commuting allowance declared at code 1254 (also in box IV O.2); 0 when not entered. */
+  commutingAllowance: number;
+  /** Exemption at code 1255: the allowance up to the year's maximum for own-car commuting. */
+  commutingExemption: number;
   /** NL-sourced wage (days in NL fraction of the taxable wage), for display purposes. */
   nlExemptIncome: number;
   /** Exempt income (with progression): vrijgesteld portion of netProfessionalIncome */
