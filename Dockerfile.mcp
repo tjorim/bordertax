@@ -1,4 +1,4 @@
-FROM node:26.13.0 AS build
+FROM node:26.13.1 AS build
 WORKDIR /app
 # Node 25+ images no longer ship corepack; keep in sync with `packageManager`.
 RUN npm install -g pnpm@12.18.0
@@ -7,7 +7,7 @@ RUN pnpm install --frozen-lockfile
 COPY . .
 RUN pnpm mcp:build
 
-FROM node:26.13.0-slim
+FROM node:26.13.1-slim
 WORKDIR /app
 COPY --from=build --chown=node:node /app/dist-mcp/http.mjs ./http.mjs
 ARG APP_COMMIT=unknown
