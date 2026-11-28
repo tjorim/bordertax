@@ -51,6 +51,16 @@ For a cascade smoke check, temporarily append a `ref-link-card p-0` button and
 both themes. Unmodified application controls should retain their padding. Keep
 probes out of application markup.
 
+## Pull requests
+
+Open a pull request as a draft while the work is in progress and mark it ready for review once it is complete and its checks pass locally, so reviewers and CI only see finished work; push once per pull request where you can rather than after every small change.
+
+Match review effort to risk: low-risk changes (docs, UI polish, derived read-only views) get one quick review and only real bugs are fixed; keep the full review and fix loop for money, auth, data models, files, exports and permissions.
+
+If a gap fits inside the change in progress, fix it there. When a change surfaces work that is legitimately out of scope (it belongs in another repository, depends on work that does not exist yet, or was excluded by a decision), open a concrete GitHub issue for it before considering the change done, after checking for an existing one.
+
+GitHub issues are living documents: never add comments to them. Record clarifications and decisions by editing the issue body (read it first, keep the original text, add or adjust a clearly headed section).
+
 ## Releases
 
 Releases use CalVer, `YYYY.M.MICRO` (`MICRO` counts releases within a month), tagged `vYYYY.M.MICRO`.
