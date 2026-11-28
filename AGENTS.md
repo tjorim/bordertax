@@ -51,6 +51,10 @@ For a cascade smoke check, temporarily append a `ref-link-card p-0` button and
 both themes. Unmodified application controls should retain their padding. Keep
 probes out of application markup.
 
+## Pull requests
+
+Open a pull request as a draft while the work is in progress and mark it ready for review once it is complete and its checks pass locally, so reviewers and CI only see finished work; push once per pull request where you can rather than after every small change.
+
 ## Releases
 
 Releases use CalVer, `YYYY.M.MICRO` (`MICRO` counts releases within a month), tagged `vYYYY.M.MICRO`.
